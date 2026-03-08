@@ -4,7 +4,7 @@ using BHSDK.Models.V1;
 
 namespace BHSDK.Models.Interfaces
 {
-    public interface ILevel : IModelReflection<LevelV1, ILevel>
+    public interface ILevel : IModelReflection<LevelV1, ILevel>, ILevelCompatibilityModel
     {
         public ILevelMeta Meta { get; set; }
         public ILevelTrack Track { get; set; }
