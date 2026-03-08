@@ -5,24 +5,24 @@ using UnityEngine;
 
 namespace BHSDK.Models.V1.Game
 {
-    public class MarkerV1 : IMarker
+    public class CheckpointV1 : ICheckpoint
     {
         public string Name { get; set; }
-        public string Description { get; set; }
+        public bool Active { get; set; }
         public int Frame { get; set; }
         public IColor Color { get; set; }
 
-        public MarkerV1()
+        public CheckpointV1()
         {
             Name = string.Empty;
-            Description = string.Empty;
+            Active = true;
             Frame = 0;
-            Color = new ColorV1();
+            Color = new ColorV1(1f, 1f, 1f, 1f);
         }
-        public MarkerV1(string name, string description, int frame, IColor color)
+        public CheckpointV1(string name, bool active, int frame, IColor color)
         {
             Name = name;
-            Description = description;
+            Active = active;
             Frame = frame;
             Color = color;
         }

@@ -30,16 +30,5 @@ namespace BHSDK.Utility
             var angle = Mathf.Atan2(sca.y, sca.x) * Rad2Deg + rot;
             return new Vector2(Mathf.Cos(angle / Rad2Deg), Mathf.Sin(angle / Rad2Deg)) * power;
         }
-        
-        public static float ClampStep(float value, float min, float max, float step)
-        {
-            value = Mathf.Floor(value / step) * step;
-            return Mathf.Clamp(value, min, max);
-        }
-        public static Vector3 RandomPointOnCircle(float x, float y, float angle, float radius, Vector3 offset)
-        {
-            angle -= 90f;
-            return new Vector3(x + Mathf.Cos(angle / Rad2Deg), y + Mathf.Sin(angle / Rad2Deg), 0) * radius + offset;
-        }
     }
 }
