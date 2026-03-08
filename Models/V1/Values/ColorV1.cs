@@ -31,6 +31,6 @@ namespace BHSDK.Models.V1.Values
             A = a;
         }
         
-        public UnityEngine.Color GetRandom() => new(R.GetRandom(), G.GetRandom(), B.GetRandom(), A.GetRandom());
+        public UnityEngine.Color Get() => new(R.Get(), G.Get(), B.Get(), A.Get());
     }
 }

@@ -30,7 +30,7 @@ namespace BHSDK.Models.V1.Values
             Radius = radius;
         }
 
-        public Vector2 GetRandom()
+        public Vector2 Get()
         {
             // https://www.youtube.com/watch?v=4y_nmpv-9lI
             // Use distribution through Sqrt, because it uses one number.
@@ -38,8 +38,8 @@ namespace BHSDK.Models.V1.Values
             var distance = Mathf.Sqrt(Random.value);
             var angle = Random.Range(0f, 2f * Mathf.PI);
 
-            var x = distance * Mathf.Cos(angle) * Radius + X.GetRandom();
-            var y = distance * Mathf.Sin(angle) * Radius + Y.GetRandom();
+            var x = distance * Mathf.Cos(angle) * Radius + X.Get();
+            var y = distance * Mathf.Sin(angle) * Radius + Y.Get();
             return new Vector2(x, y);
         }
     }

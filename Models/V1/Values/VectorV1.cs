@@ -24,6 +24,6 @@ namespace BHSDK.Models.V1.Values
             Y = y;
         }
         
-        public Vector2 GetRandom() => new(X.GetRandom(), Y.GetRandom());
+        public Vector2 Get() => new(X.Get(), Y.Get());
     }
 }

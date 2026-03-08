@@ -4,6 +4,6 @@ namespace BHSDK.Models.Interfaces.Values
 {
     public interface IColor
     {
-        public Color GetRandom();
+        public Color Get();
     }
 }

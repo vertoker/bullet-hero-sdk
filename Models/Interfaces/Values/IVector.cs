@@ -4,6 +4,6 @@ namespace BHSDK.Models.Interfaces.Values
 {
     public interface IVector
     {
-        public Vector2 GetRandom();
+        public Vector2 Get();
     }
 }

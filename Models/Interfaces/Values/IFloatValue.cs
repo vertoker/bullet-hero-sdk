@@ -2,6 +2,6 @@
 {
     public interface IFloatValue
     {
-        public float GetRandom();
+        public float Get();
     }
 }

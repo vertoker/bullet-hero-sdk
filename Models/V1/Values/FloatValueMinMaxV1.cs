@@ -19,6 +19,6 @@ namespace BHSDK.Models.V1.Values
             Max = max;
         }
 
-        public float GetRandom() => Random.Range(Min, Max);
+        public float Get() => Random.Range(Min, Max);
     }
 }
