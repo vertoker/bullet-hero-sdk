@@ -8,20 +8,20 @@ namespace BHSDK.Models.V1.Components
     public class RotV1 : IRot
     {
         public int Frame { get; set; }
-        public IFloatValue Angle { get; set; }
-        public EasingType Easing { get; set; }
+        public IFloat Angle { get; set; }
+        public EaseType Ease { get; set; }
 
         public RotV1()
         {
             Frame = 0;
             Angle = new FloatValueV1();
-            Easing = EasingType.Linear;
+            Ease = EaseType.Linear;
         }
-        public RotV1(int frame, IFloatValue angle, EasingType easing)
+        public RotV1(int frame, IFloat angle, EaseType ease)
         {
             Frame = frame;
             Angle = angle;
-            Easing = easing;
+            Ease = ease;
         }
     }
 }

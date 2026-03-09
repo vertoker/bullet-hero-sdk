@@ -1,7 +1,10 @@
-﻿namespace BHSDK.Models.Interfaces.Values
+﻿using BHSDK.Interfaces;
+using BHSDK.Models.V1.Values;
+
+namespace BHSDK.Models.Interfaces.Values
 {
-    public interface IIntValue
+    public interface IIntValue : IInt, IModelReflection<IntValueV1, IIntValue>
     {
-        public int Get();
+        public int Value { get; set; }
     }
 }

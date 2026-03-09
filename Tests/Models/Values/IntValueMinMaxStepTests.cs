@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.V1.Values;
+﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.V1.Values;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace BulletHeroSDK.Tests.Models.Values
         [Author(Metadata.Author.Vertoker)]
         public void ConstructV1()
         {
-            var intValueMinMaxStepV1 = new IntValueMinMaxStepV1();
+            var intValueMinMaxStepV1 = new IntMinMaxStepV1();
             
             Assert.True(intValueMinMaxStepV1.Min == 0);
             Assert.True(intValueMinMaxStepV1.Max == 1);
@@ -24,7 +25,7 @@ namespace BulletHeroSDK.Tests.Models.Values
             const int max = 5;
             const int step = 1;
             
-            var intValueMinMaxStepV1 = new IntValueMinMaxStepV1(min, max, step);
+            var intValueMinMaxStepV1 = new IntMinMaxStepV1(min, max, step);
             
             Assert.True(intValueMinMaxStepV1.Min == min);
             Assert.True(intValueMinMaxStepV1.Max == max);
@@ -33,13 +34,21 @@ namespace BulletHeroSDK.Tests.Models.Values
         
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        public void TypeV1()
+        {
+            var intValueMinMaxStepV1 = new IntMinMaxStepV1();
+            
+            Assert.True(intValueMinMaxStepV1.Type == IntType.RandomMinMaxStep);
+        }
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
         public void GetV1()
         {
             const int min = 2;
             const int max = 5;
             const int step = 1;
             
-            var intValueMinMaxStepV1 = new IntValueMinMaxStepV1(min, max, step);
+            var intValueMinMaxStepV1 = new IntMinMaxStepV1(min, max, step);
 
             var value = intValueMinMaxStepV1.Get();
             Assert.True(min <= value);

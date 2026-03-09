@@ -26,7 +26,7 @@ namespace BulletHeroSDK.Tests.Models.Game
             const string name = "Marker Test";
             const string description = "Marker Description";
             const int frame = 12346;
-            var color = new ColorV1(1f, 1f, 1f, 1f);
+            var color = new ColorValueV1(1f, 1f, 1f, 1f);
             
             var markerV1 = new MarkerV1(name, description, frame, color);
             

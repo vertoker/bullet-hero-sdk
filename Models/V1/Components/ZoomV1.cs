@@ -8,20 +8,20 @@ namespace BHSDK.Models.V1.Components
     public class ZoomV1 : IZoom
     {
         public int Frame { get; set; }
-        public IFloatValue Size { get; set; }
-        public EasingType Easing { get; set; }
+        public IFloat Size { get; set; }
+        public EaseType Ease { get; set; }
 
         public ZoomV1()
         {
             Frame = 0;
             Size = new FloatValueV1();
-            Easing = EasingType.Linear;
+            Ease = EaseType.Linear;
         }
-        public ZoomV1(int frame, IFloatValue size, EasingType easing)
+        public ZoomV1(int frame, IFloat size, EaseType ease)
         {
             Frame = frame;
             Size = size;
-            Easing = easing;
+            Ease = ease;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace BHSDK.Models.V1.Game
             Name = string.Empty;
             Description = string.Empty;
             Frame = 0;
-            Color = new ColorV1();
+            Color = new ColorValueV1();
         }
         public MarkerV1(string name, string description, int frame, IColor color)
         {

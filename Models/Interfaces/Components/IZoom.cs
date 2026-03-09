@@ -8,7 +8,7 @@ namespace BHSDK.Models.Interfaces.Components
     public interface IZoom : IModelReflection<ZoomV1, IZoom>
     {
         public int Frame { get; set; }
-        public IFloatValue Size { get; set; }
-        public EasingType Easing { get; set; }
+        public IFloat Size { get; set; }
+        public EaseType Ease { get; set; }
     }
 }

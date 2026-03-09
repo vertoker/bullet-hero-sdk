@@ -10,5 +10,6 @@ namespace BHSDK.Models.Interfaces.Game
         public List<IPos> Pos { get; set; }
         public List<IRot> Rot { get; set; }
         public List<IZoom> Zoom { get; set; }
+        public List<IClr> Clr { get; set; }
     }
 }

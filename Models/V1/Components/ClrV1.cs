@@ -9,19 +9,19 @@ namespace BHSDK.Models.V1.Components
     {
         public int Frame { get; set; }
         public IColor Color { get; set; }
-        public EasingType Easing { get; set; }
+        public EaseType Ease { get; set; }
 
         public ClrV1()
         {
             Frame = 0;
-            Color = new ColorV1(1f, 1f, 1f, 1f);
-            Easing = EasingType.Linear;
+            Color = new ColorValueV1(1f, 1f, 1f, 1f);
+            Ease = EaseType.Linear;
         }
-        public ClrV1(int frame, IColor color, EasingType easing)
+        public ClrV1(int frame, IColor color, EaseType ease)
         {
             Frame = frame;
             Color = color;
-            Easing = easing;
+            Ease = ease;
         }
     }
 }

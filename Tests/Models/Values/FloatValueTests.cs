@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.V1.Values;
+﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.V1.Values;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -25,6 +26,14 @@ namespace BulletHeroSDK.Tests.Models.Values
             Assert.True(Mathf.Approximately(floatValueV1.Value, value));
         }
         
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TypeV1()
+        {
+            var floatValueV1 = new FloatValueV1();
+            
+            Assert.True(floatValueV1.Type == FloatType.Value);
+        }
         [Test]
         [Author(Metadata.Author.Vertoker)]
         public void GetV1()

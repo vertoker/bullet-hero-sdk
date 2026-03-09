@@ -17,6 +17,7 @@ namespace BulletHeroSDK.Tests.Models.Game
             Assert.True(cameraDataV1.Pos != null);
             Assert.True(cameraDataV1.Rot != null);
             Assert.True(cameraDataV1.Zoom != null);
+            Assert.True(cameraDataV1.Clr != null);
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -25,12 +26,14 @@ namespace BulletHeroSDK.Tests.Models.Game
             var pos = new List<IPos>();
             var rot = new List<IRot>();
             var zoom = new List<IZoom>();
+            var clr = new List<IClr>();
             
-            var cameraDataV1 = new CameraDataV1(pos, rot, zoom);
+            var cameraDataV1 = new CameraDataV1(pos, rot, zoom, clr);
             
             Assert.True(cameraDataV1.Pos == pos);
             Assert.True(cameraDataV1.Rot == rot);
             Assert.True(cameraDataV1.Zoom == zoom);
+            Assert.True(cameraDataV1.Clr == clr);
         }
         
         // other versions add here

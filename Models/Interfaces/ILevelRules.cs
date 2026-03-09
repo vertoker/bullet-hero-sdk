@@ -3,7 +3,7 @@ using BHSDK.Models.V1;
 
 namespace BHSDK.Models.Interfaces
 {
-    public interface ILevelGameplay : IModelReflection<LevelGameplayV1, ILevelGameplay>
+    public interface ILevelRules : IModelReflection<LevelRulesV1, ILevelRules>
     {
         
     }

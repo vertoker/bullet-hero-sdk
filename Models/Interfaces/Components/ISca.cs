@@ -10,6 +10,6 @@ namespace BHSDK.Models.Interfaces.Components
     {
         public int Frame { get; set; }
         public IVector Vector { get; set; }
-        public EasingType Easing { get; set; }
+        public EaseType Ease { get; set; }
     }
 }

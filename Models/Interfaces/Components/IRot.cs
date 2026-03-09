@@ -9,7 +9,7 @@ namespace BHSDK.Models.Interfaces.Components
     public interface IRot : IModelReflection<RotV1, IRot>
     {
         public int Frame { get; set; }
-        public IFloatValue Angle { get; set; }
-        public EasingType Easing { get; set; }
+        public IFloat Angle { get; set; }
+        public EaseType Ease { get; set; }
     }
 }

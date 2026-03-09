@@ -6,7 +6,7 @@
     /// phone screens are different, and therefore a tool
     /// is needed to better customize the position of objects
     /// </summary>
-    public enum Anchor
+    public enum Anchor : byte
     {
         Undefined = 0,
         Left_Top = 1,    Center_Top = 2,    Right_Top = 3,

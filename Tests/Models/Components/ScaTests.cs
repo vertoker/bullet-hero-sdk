@@ -16,21 +16,21 @@ namespace BulletHeroSDK.Tests.Models.Components
             
             Assert.True(scaV1.Frame == 0);
             Assert.True(scaV1.Vector != null);
-            Assert.True(scaV1.Easing == EasingType.Linear);
+            Assert.True(scaV1.Ease == EaseType.Linear);
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
         public void ConstructV1_2()
         {
             const int frame = 1235;
-            const EasingType easing = EasingType.InOutBack;
-            var vector = new VectorV1(1f, 1f);
+            const EaseType ease = EaseType.InOutBack;
+            var vector = new VectorValueV1(1f, 1f);
 
-            var scaV1 = new ScaV1(frame, vector, easing);
+            var scaV1 = new ScaV1(frame, vector, ease);
             
             Assert.True(scaV1.Frame == frame);
             Assert.True(scaV1.Vector == vector);
-            Assert.True(scaV1.Easing == easing);
+            Assert.True(scaV1.Ease == ease);
         }
         
         // other versions add here

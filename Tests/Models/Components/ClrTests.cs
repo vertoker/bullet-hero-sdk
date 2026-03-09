@@ -16,21 +16,21 @@ namespace BulletHeroSDK.Tests.Models.Components
             
             Assert.True(clrV1.Frame == 0);
             Assert.True(clrV1.Color != null);
-            Assert.True(clrV1.Easing == EasingType.Linear);
+            Assert.True(clrV1.Ease == EaseType.Linear);
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
         public void ConstructV1_2()
         {
             const int frame = 1235;
-            const EasingType easing = EasingType.InOutElastic;
-            var color = new ColorV1(1f, 1f, 1f, 1f);
+            const EaseType ease = EaseType.InOutElastic;
+            var color = new ColorValueV1(1f, 1f, 1f, 1f);
             
-            var clrV1 = new ClrV1(frame, color, easing);
+            var clrV1 = new ClrV1(frame, color, ease);
             
             Assert.True(clrV1.Frame == frame);
             Assert.True(clrV1.Color == color);
-            Assert.True(clrV1.Easing == easing);
+            Assert.True(clrV1.Ease == ease);
         }
         
         // other versions add here

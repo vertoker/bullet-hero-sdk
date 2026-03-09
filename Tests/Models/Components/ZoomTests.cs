@@ -16,21 +16,21 @@ namespace BulletHeroSDK.Tests.Models.Components
             
             Assert.True(zoomV1.Frame == 0);
             Assert.True(zoomV1.Size != null);
-            Assert.True(zoomV1.Easing == EasingType.Linear);
+            Assert.True(zoomV1.Ease == EaseType.Linear);
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
         public void ConstructV1_2()
         {
             const int frame = 1437;
-            const EasingType easing = EasingType.InCubic;
+            const EaseType ease = EaseType.InCubic;
             var size = new FloatValueV1(59f);
 
-            var zoomV1 = new ZoomV1(frame, size, easing);
+            var zoomV1 = new ZoomV1(frame, size, ease);
             
             Assert.True(zoomV1.Frame == frame);
             Assert.True(zoomV1.Size == size);
-            Assert.True(zoomV1.Easing == easing);
+            Assert.True(zoomV1.Ease == ease);
         }
         
         // other versions add here

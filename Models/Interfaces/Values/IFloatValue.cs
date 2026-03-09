@@ -1,7 +1,10 @@
-﻿namespace BHSDK.Models.Interfaces.Values
+﻿using BHSDK.Interfaces;
+using BHSDK.Models.V1.Values;
+
+namespace BHSDK.Models.Interfaces.Values
 {
-    public interface IFloatValue
+    public interface IFloatValue : IFloat, IModelReflection<FloatValueV1, IFloatValue>
     {
-        public float Get();
+        public float Value { get; set; }
     }
 }

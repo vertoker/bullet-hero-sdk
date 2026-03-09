@@ -17,7 +17,7 @@ namespace BHSDK.Models.V1.Game
             Name = string.Empty;
             Active = true;
             Frame = 0;
-            Color = new ColorV1(1f, 1f, 1f, 1f);
+            Color = new ColorValueV1(1f, 1f, 1f, 1f);
         }
         public CheckpointV1(string name, bool active, int frame, IColor color)
         {

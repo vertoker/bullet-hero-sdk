@@ -9,19 +9,19 @@ namespace BHSDK.Models.V1.Components
     {
         public int Frame { get; set; }
         public IVector Vector { get; set; }
-        public EasingType Easing { get; set; }
+        public EaseType Ease { get; set; }
 
         public ScaV1()
         {
             Frame = 0;
             Vector = new VectorCircleV1();
-            Easing = EasingType.Linear;
+            Ease = EaseType.Linear;
         }
-        public ScaV1(int frame, IVector vector, EasingType easing)
+        public ScaV1(int frame, IVector vector, EaseType ease)
         {
             Frame = frame;
             Vector = vector;
-            Easing = easing;
+            Ease = ease;
         }
     }
 }

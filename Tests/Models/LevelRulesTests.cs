@@ -1,19 +1,18 @@
 ﻿using BHSDK.Models.Interfaces;
 using BHSDK.Models.V1;
-using BHSDK.Models.V1.Game;
 using NUnit.Framework;
 
 namespace BulletHeroSDK.Tests.Models
 {
-    public class GameplayTests
+    public class LevelRulesTests
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
         public void ConstructV1()
         {
-            var levelGameplayV1 = new LevelGameplayV1();
+            var levelRulesV1 = new LevelRulesV1();
             
-            Assert.True(levelGameplayV1 != null);
+            Assert.True(levelRulesV1 != null);
         }
         
         // other versions add here
@@ -22,9 +21,9 @@ namespace BulletHeroSDK.Tests.Models
         [Author(Metadata.Author.Vertoker)]
         public void ConstructCurrent()
         {
-            var currentType = typeof(LevelGameplayV1);
-            Assert.True(ILevelGameplay.CreateNew().GetType() == currentType);
-            Assert.True(ILevelGameplay.GetModelType == currentType);
+            var currentType = typeof(LevelRulesV1);
+            Assert.True(ILevelRules.CreateNew().GetType() == currentType);
+            Assert.True(ILevelRules.GetModelType == currentType);
         }
     }
 }

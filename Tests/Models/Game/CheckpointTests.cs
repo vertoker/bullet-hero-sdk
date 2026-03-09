@@ -25,7 +25,7 @@ namespace BulletHeroSDK.Tests.Models.Game
             const string name = "Test Checkpoint";
             const bool active = false;
             const int frame = 123;
-            var color = new ColorV1(1f, 1f, 1f, 1f);
+            var color = new ColorValueV1(1f, 1f, 1f, 1f);
             
             var checkpointV1 = new CheckpointV1(name, active, frame, color);
             

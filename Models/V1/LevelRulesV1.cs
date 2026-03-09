@@ -2,7 +2,7 @@
 
 namespace BHSDK.Models.V1
 {
-    public class LevelGameplayV1 : ILevelGameplay
+    public class LevelRulesV1 : ILevelRules
     {
         
     }

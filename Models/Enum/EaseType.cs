@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Enum
 {
-    public enum EasingType
+    public enum EaseType : byte
     {
         Linear = 0, Constant = 1, // core
         InSine = 2, OutSine = 3, InOutSine = 4, // sin() functions

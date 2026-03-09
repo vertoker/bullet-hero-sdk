@@ -8,21 +8,21 @@ namespace BHSDK.Models.V1
     {
         public ILevelMeta Meta { get; set; }
         public ILevelTrack Track { get; set; }
-        public ILevelGameplay Gameplay { get; set; }
+        public ILevelRules Rules { get; set; }
         public IGameLevel Game { get; set; }
 
         public LevelV1()
         {
             Meta = new LevelMetaV1();
             Track = new LevelTrackV1();
-            Gameplay = new LevelGameplayV1();
+            Rules = new LevelRulesV1();
             Game = new GameLevelV1();
         }
-        public LevelV1(ILevelMeta meta, ILevelTrack track, ILevelGameplay gameplay, IGameLevel game)
+        public LevelV1(ILevelMeta meta, ILevelTrack track, ILevelRules rules, IGameLevel game)
         {
             Meta = meta;
             Track = track;
-            Gameplay = gameplay;
+            Rules = rules;
             Game = game;
         }
     }

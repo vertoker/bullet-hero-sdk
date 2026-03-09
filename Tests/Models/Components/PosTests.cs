@@ -17,7 +17,7 @@ namespace BulletHeroSDK.Tests.Models.Components
             Assert.True(posV1.Frame == 0);
             Assert.True(posV1.Vector != null);
             Assert.True(posV1.Anchor == Anchor.Center_Middle);
-            Assert.True(posV1.Easing == EasingType.Linear);
+            Assert.True(posV1.Ease == EaseType.Linear);
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -25,15 +25,15 @@ namespace BulletHeroSDK.Tests.Models.Components
         {
             const int frame = 1235;
             const Anchor anchor = Anchor.Center_Bottom;
-            const EasingType easing = EasingType.InOutBack;
-            var vector = new VectorV1(1f, 1f);
+            const EaseType ease = EaseType.InOutBack;
+            var vector = new VectorValueV1(1f, 1f);
 
-            var posV1 = new PosV1(frame, vector, anchor, easing);
+            var posV1 = new PosV1(frame, vector, anchor, ease);
             
             Assert.True(posV1.Frame == frame);
             Assert.True(posV1.Vector == vector);
             Assert.True(posV1.Anchor == anchor);
-            Assert.True(posV1.Easing == easing);
+            Assert.True(posV1.Ease == ease);
         }
         
         // other versions add here

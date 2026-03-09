@@ -10,21 +10,21 @@ namespace BHSDK.Models.V1.Components
         public int Frame { get; set; }
         public IVector Vector { get; set; }
         public Anchor Anchor { get; set; }
-        public EasingType Easing { get; set; }
+        public EaseType Ease { get; set; }
 
         public PosV1()
         {
             Frame = 0;
-            Vector = new VectorV1();
+            Vector = new VectorValueV1();
             Anchor = Anchor.Center_Middle;
-            Easing = EasingType.Linear;
+            Ease = EaseType.Linear;
         }
-        public PosV1(int frame, IVector vector, Anchor anchor, EasingType easing)
+        public PosV1(int frame, IVector vector, Anchor anchor, EaseType ease)
         {
             Frame = frame;
             Vector = vector;
             Anchor = anchor;
-            Easing = easing;
+            Ease = ease;
         }
     }
 }
