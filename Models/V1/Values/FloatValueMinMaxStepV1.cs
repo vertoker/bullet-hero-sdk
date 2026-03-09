@@ -25,7 +25,7 @@ namespace BHSDK.Models.V1.Values
         public float Get()
         {
             var value = Random.Range(Min, Max);
-            value = Mathf.Clamp(Mathf.Floor(value / Step) * Step, Min, Max);
+            value = Mathf.Clamp(Mathf.Round(value / Step) * Step, Min, Max);
             return value;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Interfaces.Game;
+using BHSDK.Models.Interfaces.Instances;
 using BHSDK.Models.V1.Game;
 using NUnit.Framework;
 
@@ -17,8 +18,9 @@ namespace BulletHeroSDK.Tests.Models.Game
             Assert.True(gameLevelV1.Framerate == 0);
             Assert.True(gameLevelV1.Markers != null);
             Assert.True(gameLevelV1.Checkpoints != null);
-            Assert.True(gameLevelV1.Objects != null);
             Assert.True(gameLevelV1.CameraData != null);
+            Assert.True(gameLevelV1.Instances != null);
+            Assert.True(gameLevelV1.PrefabInstances != null);
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -28,17 +30,19 @@ namespace BulletHeroSDK.Tests.Models.Game
             const int framerate = 60;
             var markers = new List<IMarker>();
             var checkpoints = new List<ICheckpoint>();
-            var objects = new List<ILevelObject>();
             var cameraData = new CameraDataV1();
+            var instances = new List<IInstance>();
+            var prefabInstances = new List<IPrefabInstance>();
             
-            var gameLevelV1 = new GameLevelV1(seed, framerate, markers, checkpoints, objects, cameraData);
+            var gameLevelV1 = new GameLevelV1(seed, framerate, markers, checkpoints, cameraData, instances, prefabInstances);
             
             Assert.True(gameLevelV1.Seed == seed);
             Assert.True(gameLevelV1.Framerate == framerate);
             Assert.True(gameLevelV1.Markers == markers);
             Assert.True(gameLevelV1.Checkpoints == checkpoints);
-            Assert.True(gameLevelV1.Objects == objects);
             Assert.True(gameLevelV1.CameraData == cameraData);
+            Assert.True(gameLevelV1.Instances == instances);
+            Assert.True(gameLevelV1.PrefabInstances == prefabInstances);
         }
         
         // other versions add here

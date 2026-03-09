@@ -15,6 +15,7 @@ namespace BulletHeroSDK.Tests.Models
             
             Assert.True(levelV1.Meta != null);
             Assert.True(levelV1.Track != null);
+            Assert.True(levelV1.Gameplay != null);
             Assert.True(levelV1.Game != null);
         }
         [Test]
@@ -23,12 +24,14 @@ namespace BulletHeroSDK.Tests.Models
         {
             var meta = new LevelMetaV1();
             var track = new LevelTrackV1();
+            var gameplay = new LevelGameplayV1();
             var game = new GameLevelV1();
             
-            var levelV1 = new LevelV1(meta, track, game);
+            var levelV1 = new LevelV1(meta, track, gameplay, game);
             
             Assert.True(levelV1.Meta == meta);
             Assert.True(levelV1.Track == track);
+            Assert.True(levelV1.Gameplay == gameplay);
             Assert.True(levelV1.Game == game);
         }
         

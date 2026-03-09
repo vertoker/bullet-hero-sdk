@@ -8,6 +8,7 @@ namespace BHSDK.Models.Interfaces
     {
         public ILevelMeta Meta { get; set; }
         public ILevelTrack Track { get; set; }
+        public ILevelGameplay Gameplay { get; set; }
         public IGameLevel Game { get; set; }
     }
 }
