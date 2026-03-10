@@ -8,7 +8,7 @@ namespace BHSDK.Models.V1.Instances
     {
         public int InstanceId { get; set; }
         public int ParentInstanceId { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsVisible { get; set; }
         public bool HasCollider { get; set; }
         public int SpriteIndex { get; set; }
         public int SpriteLayer { get; set; }
@@ -25,7 +25,7 @@ namespace BHSDK.Models.V1.Instances
         {
             InstanceId = 0;
             ParentInstanceId = 0;
-            IsActive = true;
+            IsVisible = true;
             HasCollider = true;
             SpriteIndex = 0;
             SpriteLayer = 0;
@@ -38,13 +38,13 @@ namespace BHSDK.Models.V1.Instances
             StartFrame = 0;
             EndFrame = 0;
         }
-        public InstanceV1(int instanceId, int parentInstanceId, bool isActive, bool hasCollider, 
+        public InstanceV1(int instanceId, int parentInstanceId, bool isVisible, bool hasCollider, 
             int spriteIndex, int spriteLayer, int sublingIndex, 
             List<IPos> pos, List<IRot> rot, List<ISca> sca, List<IClr> clr, int startFrame, int endFrame)
         {
             InstanceId = instanceId;
             ParentInstanceId = parentInstanceId;
-            IsActive = isActive;
+            IsVisible = isVisible;
             HasCollider = hasCollider;
             SpriteIndex = spriteIndex;
             SpriteLayer = spriteLayer;

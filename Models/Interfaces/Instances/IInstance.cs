@@ -9,7 +9,7 @@ namespace BHSDK.Models.Interfaces.Instances
     {
         public int InstanceId { get; set; }
         public int ParentInstanceId { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsVisible { get; set; }
         public bool HasCollider { get; set; }
         public int SpriteIndex { get; set; }
         public int SpriteLayer { get; set; }

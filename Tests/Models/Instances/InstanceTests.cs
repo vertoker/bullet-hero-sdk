@@ -16,7 +16,7 @@ namespace BulletHeroSDK.Tests.Models.Instances
             
             Assert.True(instanceV1.InstanceId == 0);
             Assert.True(instanceV1.ParentInstanceId == 0);
-            Assert.True(instanceV1.IsActive);
+            Assert.True(instanceV1.IsVisible);
             Assert.True(instanceV1.HasCollider);
             Assert.True(instanceV1.SpriteIndex == 0);
             Assert.True(instanceV1.SpriteLayer == 0);
@@ -35,7 +35,7 @@ namespace BulletHeroSDK.Tests.Models.Instances
         {
             const int instanceId = 23;
             const int parentInstanceId = 22;
-            const bool isActive = true;
+            const bool isVisible = true;
             const bool hasCollider = false;
             const int spriteIndex = 20;
             const int spriteLayer = 777;
@@ -48,12 +48,12 @@ namespace BulletHeroSDK.Tests.Models.Instances
             const int startFrame = 123;
             const int endFrame = 321;
             
-            var levelObjectV1 = new InstanceV1(instanceId, parentInstanceId, isActive, hasCollider, 
+            var levelObjectV1 = new InstanceV1(instanceId, parentInstanceId, isVisible, hasCollider, 
                 spriteIndex, spriteLayer, sublingIndex, pos, rot, sca, clr, startFrame, endFrame);
             
             Assert.True(levelObjectV1.InstanceId == instanceId);
             Assert.True(levelObjectV1.ParentInstanceId == parentInstanceId);
-            Assert.True(levelObjectV1.IsActive == isActive);
+            Assert.True(levelObjectV1.IsVisible == isVisible);
             Assert.True(levelObjectV1.HasCollider == hasCollider);
             Assert.True(levelObjectV1.SpriteIndex == spriteIndex);
             Assert.True(levelObjectV1.SpriteLayer == spriteLayer);
