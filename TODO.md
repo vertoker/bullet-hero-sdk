@@ -1,0 +1,2 @@
+﻿- add text, with font support
+- add sounds in timing, with custom audio support
