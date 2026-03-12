@@ -1,2 +1,5 @@
-﻿- add text, with font support
-- add sounds in timing, with custom audio support
+﻿- add sounds in timing, with custom audio support
+- add max screen limitations for each level (mappers by self will decide they limitations)
+- add post processing effects
+- add non-post processing effects
+- add themes (like PA, but better)
