@@ -1,0 +1,24 @@
+﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces.Values;
+using Newtonsoft.Json;
+
+namespace BHSDK.Models.Values
+{
+    public class FloatValue : IFloat
+    {
+        [JsonProperty("v")]
+        public float Value { get; set; }
+
+        public FloatValue()
+        {
+            Value = 0f;
+        }
+        public FloatValue(float value)
+        {
+            Value = value;
+        }
+
+        public FloatType Type => FloatType.Value;
+        public float Get() => Value;
+    }
+}

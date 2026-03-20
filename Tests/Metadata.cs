@@ -1,4 +1,4 @@
-﻿namespace BulletHeroSDK.Tests
+﻿namespace BHSDK.Tests
 {
     public static class Metadata
     {
