@@ -1,6 +1,8 @@
 ﻿- add effects
 - add themes (like PA, but better)
-- add player forces (absolute, to point, to several points) (keyframes)
+- rethink modifications
+- add prefabs serialization
+- add themes serialization
 
 Features after release
 - create trigger/event system (like PA, but more like GD)

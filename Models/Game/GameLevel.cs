@@ -30,6 +30,9 @@ namespace BHSDK.Models.Game
         [JsonProperty("ppe")]
         public PostProcessingEvents PostProcessingEvents { get; set; }
         
+        [JsonProperty("pe")]
+        public PlayerEvents PlayerEvents { get; set; }
+        
         
         [JsonProperty("is")]
         public List<Instance> Instances { get; set; }
@@ -45,6 +48,8 @@ namespace BHSDK.Models.Game
             
             Events = new GameEvents();
             CameraEvents = new CameraEvents();
+            PostProcessingEvents = new PostProcessingEvents();
+            PlayerEvents = new PlayerEvents();
             
             Instances = new List<Instance>();
             PrefabInstances = new List<PrefabInstance>();
