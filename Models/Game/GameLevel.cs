@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Base;
 using BHSDK.Models.Instances;
-using BHSDK.Models.Interfaces.Instances;
+using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
@@ -13,19 +16,23 @@ namespace BHSDK.Models.Game
         [JsonProperty("fr")]
         public int Framerate { get; set; }
         
+        // limitations for screen will be chosen by mappers
+        [JsonProperty("sl")]
+        public IScreenLimit ScreenLimit { get; set; }
         
-        [JsonProperty("ms")]
-        public List<Marker> Markers { get; set; }
         
-        [JsonProperty("cs")]
-        public List<Checkpoint> Checkpoints { get; set; }
+        [JsonProperty("e")]
+        public GameEvents Events { get; set; }
         
-        [JsonProperty("cd")]
-        public CameraData CameraData { get; set; }
+        [JsonProperty("ce")]
+        public CameraEvents CameraEvents { get; set; }
+        
+        [JsonProperty("ppe")]
+        public PostProcessingEvents PostProcessingEvents { get; set; }
         
         
         [JsonProperty("is")]
-        public List<IInstance> Instances { get; set; }
+        public List<Instance> Instances { get; set; }
         
         [JsonProperty("pis")]
         public List<PrefabInstance> PrefabInstances { get; set; }
@@ -34,21 +41,22 @@ namespace BHSDK.Models.Game
         {
             Seed = 0;
             Framerate = 0;
-            Markers = new List<Marker>();
-            Checkpoints = new List<Checkpoint>();
-            CameraData = new CameraData();
+            ScreenLimit = new ScreenLimitNone();
             
-            Instances = new List<IInstance>();
+            Events = new GameEvents();
+            CameraEvents = new CameraEvents();
+            
+            Instances = new List<Instance>();
             PrefabInstances = new List<PrefabInstance>();
         }
-        public GameLevel(int seed, int framerate, List<Marker> markers, List<Checkpoint> checkpoints, 
-            CameraData cameraData, List<IInstance> instances, List<PrefabInstance> prefabInstances)
+        public GameLevel(int seed, int framerate, GameEvents gameEvents, CameraEvents cameraEvents, 
+            List<Instance> instances, List<PrefabInstance> prefabInstances)
         {
             Seed = seed;
             Framerate = framerate;
-            Markers = markers;
-            Checkpoints = checkpoints;
-            CameraData = cameraData;
+            
+            Events = gameEvents;
+            CameraEvents = cameraEvents;
             
             Instances = instances;
             PrefabInstances = prefabInstances;

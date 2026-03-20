@@ -1,10 +1,11 @@
 ﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Values;
 
-namespace BHSDK.Serialization
+namespace BHSDK.Serialization.Converters
 {
-    public static class StaticValueTypes
+    public static class ConverterStatics
     {
         public const string TypePropertyName = "t";
         public const string ValuePropertyName = "v";
@@ -46,6 +47,16 @@ namespace BHSDK.Serialization
             {
                 ColorType.Value => typeof(ColorValue),
                 ColorType.RandomMinMax => typeof(ColorMinMax),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+        }
+        public static Type GetScreenLimitType(ScreenLimitType type)
+        {
+            return type switch
+            {
+                ScreenLimitType.None => typeof(ScreenLimitNone),
+                ScreenLimitType.Fixed => typeof(ScreenLimitFixed),
+                ScreenLimitType.Bounds => typeof(ScreenLimitBounds),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }

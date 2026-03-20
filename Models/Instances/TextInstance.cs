@@ -1,44 +1,15 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Base;
 using BHSDK.Models.Components;
 using BHSDK.Models.Enum;
-using BHSDK.Models.Interfaces.Instances;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Instances
 {
-    public class TextInstance : IInstance
+    public class TextInstance : Instance
     {
-        [JsonProperty("id")]
-        public int InstanceId { get; set; }
-        
-        [JsonProperty("pid")]
-        public int ParentInstanceId { get; set; }
-        
-        [JsonProperty("n")]
-        public string Name { get; set; }
-        
-        [JsonProperty("v")]
-        public bool IsVisible { get; set; }
-        
-        
-        [JsonProperty("sf")]
-        public int StartFrame { get; set; }
-        
-        [JsonProperty("ef")]
-        public int EndFrame { get; set; }
-        
-        [JsonProperty("pos")]
-        public List<PosModel> Pos { get; set; }
-        
-        [JsonProperty("rot")]
-        public List<RotModel> Rot { get; set; }
-        
-        [JsonProperty("sca")]
-        public List<ScaModel> Sca { get; set; }
-        
         [JsonProperty("clr")]
-        public List<ClrModel> Clr { get; set; }
-        
+        public List<Clr> Clr { get; set; }
         
         [JsonProperty("t")]
         public string Text { get; set; }
@@ -54,36 +25,17 @@ namespace BHSDK.Models.Instances
 
         public TextInstance()
         {
-            InstanceId = 0;
-            ParentInstanceId = 0;
-            Name = string.Empty;
-            IsVisible = true;
-            
-            StartFrame = 0;
-            EndFrame = 0;
-            Pos = new List<PosModel>();
-            Rot = new List<RotModel>();
-            Sca = new List<ScaModel>();
-            Clr = new List<ClrModel>();
-            
+            Clr = new List<Clr>();
             Text = string.Empty;
             FontName = string.Empty;
             FontSize = 10;
             Alignment = Anchor.Center_Middle;
         }
         public TextInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
-            int startFrame, int endFrame, List<PosModel> pos, List<RotModel> rot, List<ScaModel> sca, List<ClrModel> clr, 
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, List<Clr> clr, 
             string text, string fontName, int fontSize, Anchor alignment)
+            : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca)
         {
-            InstanceId = instanceId;
-            ParentInstanceId = parentInstanceId;
-            Name = name;
-            IsVisible = isVisible;
-            StartFrame = startFrame;
-            EndFrame = endFrame;
-            Pos = pos;
-            Rot = rot;
-            Sca = sca;
             Clr = clr;
             Text = text;
             FontName = fontName;

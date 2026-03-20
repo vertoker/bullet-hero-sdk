@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using BHSDK.Models.Interfaces;
-using BHSDK.Serialization;
 using BHSDK.Serialization.Converters;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Services
+namespace BHSDK.Serialization
 {
     public class SerializationService
     {
@@ -34,6 +32,7 @@ namespace BHSDK.Services
                     new FloatConverter(),
                     new ColorConverter(),
                     new VectorConverter(),
+                    new ScreenLimitConverter(),
                 },
                 Error = (sender, args) =>
                 {

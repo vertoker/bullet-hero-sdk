@@ -1,5 +1,7 @@
-﻿- add sounds in timing, with custom audio support
-- add max screen limitations for each level (mappers by self will decide they limitations)
-- add post processing effects
-- add non-post processing effects
+﻿- add effects
 - add themes (like PA, but better)
+- add player forces (absolute, to point, to several points) (keyframes)
+
+Features after release
+- create trigger/event system (like PA, but more like GD)
+- add sounds in timing, with custom audio support (tutorial level in JSaB)

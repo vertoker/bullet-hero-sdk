@@ -47,11 +47,11 @@ namespace BHSDK.Serialization.Converters
 
                 switch (propertyName)
                 {
-                    case StaticValueTypes.TypePropertyName:
+                    case ConverterStatics.TypePropertyName:
                         intType = serializer.Deserialize<IntType>(reader);
                         break;
-                    case StaticValueTypes.ValuePropertyName:
-                        var type = StaticValueTypes.GetIntType(intType);
+                    case ConverterStatics.ValuePropertyName:
+                        var type = ConverterStatics.GetIntType(intType);
                         value = (IInt)serializer.Deserialize(reader, type);
                         break;
                     default:

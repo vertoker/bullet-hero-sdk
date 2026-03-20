@@ -1,13 +1,14 @@
 ﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class FloatConverter : JsonConverter<IFloat>
+    public class ScreenLimitConverter : JsonConverter<IScreenLimit>
     {
-        public override void WriteJson(JsonWriter writer, IFloat value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, IScreenLimit value, JsonSerializer serializer)
         {
             if (value == null)
             {
@@ -26,15 +27,15 @@ namespace BHSDK.Serialization.Converters
             writer.WriteEndObject();
         }
 
-        public override IFloat ReadJson(JsonReader reader, Type objectType, IFloat existingValue, bool hasExistingValue,
+        public override IScreenLimit ReadJson(JsonReader reader, Type objectType, IScreenLimit existingValue, bool hasExistingValue,
             JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null) return null;
             if (reader.TokenType != JsonToken.StartObject) 
                 throw new JsonSerializationException("Expected StartObject");
 
-            FloatType floatType = default;
-            IFloat value = null;
+            ScreenLimitType screenLimitType = default;
+            IScreenLimit value = null;
 
             while (reader.Read()) // to property name
             {
@@ -48,11 +49,11 @@ namespace BHSDK.Serialization.Converters
                 switch (propertyName)
                 {
                     case ConverterStatics.TypePropertyName:
-                        floatType = serializer.Deserialize<FloatType>(reader);
+                        screenLimitType = serializer.Deserialize<ScreenLimitType>(reader);
                         break;
                     case ConverterStatics.ValuePropertyName:
-                        var type = ConverterStatics.GetFloatType(floatType);
-                        value = (IFloat)serializer.Deserialize(reader, type);
+                        var type = ConverterStatics.GetScreenLimitType(screenLimitType);
+                        value = (IScreenLimit)serializer.Deserialize(reader, type);
                         break;
                     default:
                         reader.Skip();

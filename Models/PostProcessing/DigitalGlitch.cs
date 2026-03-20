@@ -1,0 +1,22 @@
+﻿using BHSDK.Models.Base;
+using BHSDK.Models.Enum;
+using Newtonsoft.Json;
+
+namespace BHSDK.Models.PostProcessing
+{
+    public class DigitalGlitch : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    {
+        [JsonProperty("i")]
+        public float Intensity { get; set; }
+
+        public DigitalGlitch()
+        {
+            Intensity = 0.1f;
+        }
+        public DigitalGlitch(int frame, EaseType ease, float intensity)
+            : base(frame, ease)
+        {
+            Intensity = intensity;
+        }
+    }
+}

@@ -1,6 +1,7 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
@@ -31,6 +32,13 @@ namespace BHSDK.Models.Values
             G = g;
             B = b;
             A = a;
+        }
+        public ColorValue(Color color)
+        {
+            R = color.r;
+            G = color.g;
+            B = color.b;
+            A = color.a;
         }
         public ColorValue(IFloat r, IFloat g, IFloat b, IFloat a)
         {

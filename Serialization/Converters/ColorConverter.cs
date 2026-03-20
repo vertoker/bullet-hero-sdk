@@ -47,11 +47,11 @@ namespace BHSDK.Serialization.Converters
 
                 switch (propertyName)
                 {
-                    case StaticValueTypes.TypePropertyName:
+                    case ConverterStatics.TypePropertyName:
                         colorType = serializer.Deserialize<ColorType>(reader);
                         break;
-                    case StaticValueTypes.ValuePropertyName:
-                        var type = StaticValueTypes.GetColorType(colorType);
+                    case ConverterStatics.ValuePropertyName:
+                        var type = ConverterStatics.GetColorType(colorType);
                         value = (IColor)serializer.Deserialize(reader, type);
                         break;
                     default:

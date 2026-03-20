@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models.Interfaces.Instances;
+using BHSDK.Models.Base;
+using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Instances
@@ -7,17 +8,17 @@ namespace BHSDK.Models.Instances
     public class Prefab : IInstancesProvider
     {
         [JsonProperty("is")]
-        public List<IInstance> Instances { get; set; }
+        public List<Instance> Instances { get; set; }
         
         [JsonProperty("pis")]
         public List<PrefabInstance> PrefabInstances { get; set; }
 
         public Prefab()
         {
-            Instances = new List<IInstance>();
+            Instances = new List<Instance>();
             PrefabInstances = new List<PrefabInstance>();
         }
-        public Prefab(List<IInstance> instances, List<PrefabInstance> prefabInstances)
+        public Prefab(List<Instance> instances, List<PrefabInstance> prefabInstances)
         {
             Instances = instances;
             PrefabInstances = prefabInstances;

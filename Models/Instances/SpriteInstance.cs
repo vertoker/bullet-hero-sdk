@@ -1,46 +1,17 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Base;
 using BHSDK.Models.Components;
-using BHSDK.Models.Interfaces.Instances;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Instances
 {
-    public class SpriteInstance : IInstance
+    public class SpriteInstance : Instance
     {
-        [JsonProperty("id")]
-        public int InstanceId { get; set; }
-        
-        [JsonProperty("pid")]
-        public int ParentInstanceId { get; set; }
-        
-        [JsonProperty("n")]
-        public string Name { get; set; }
-        
-        [JsonProperty("v")]
-        public bool IsVisible { get; set; }
-        
-        
-        [JsonProperty("sf")]
-        public int StartFrame { get; set; }
-        
-        [JsonProperty("ef")]
-        public int EndFrame { get; set; }
-        
-        [JsonProperty("pos")]
-        public List<PosModel> Pos { get; set; }
-        
-        [JsonProperty("rot")]
-        public List<RotModel> Rot { get; set; }
-        
-        [JsonProperty("sca")]
-        public List<ScaModel> Sca { get; set; }
-        
-        [JsonProperty("clr")]
-        public List<ClrModel> Clr { get; set; }
-        
-        
         [JsonProperty("c")]
         public bool HasCollider { get; set; }
+        
+        [JsonProperty("clr")]
+        public List<Clr> Clr { get; set; }
         
         [JsonProperty("si")]
         public int SpriteIndex { get; set; }
@@ -53,40 +24,19 @@ namespace BHSDK.Models.Instances
         
         public SpriteInstance()
         {
-            InstanceId = 0;
-            ParentInstanceId = 0;
-            Name = string.Empty;
-            IsVisible = true;
-            
-            StartFrame = 0;
-            EndFrame = 0;
-            Pos = new List<PosModel>();
-            Rot = new List<RotModel>();
-            Sca = new List<ScaModel>();
-            Clr = new List<ClrModel>();
-            
             HasCollider = true;
+            Clr = new List<Clr>();
             SpriteIndex = 0;
             SpriteLayer = 0;
             SublingIndex = 0;
         }
-        public SpriteInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
-            int startFrame, int endFrame, List<PosModel> pos, List<RotModel> rot, List<ScaModel> sca, List<ClrModel> clr, 
+        public SpriteInstance(int instanceId, int parentInstanceId, string name, bool isVisible, int startFrame, 
+            int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, List<Clr> clr, 
             bool hasCollider, int spriteIndex, int spriteLayer, int sublingIndex)
+            : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca)
         {
-            InstanceId = instanceId;
-            ParentInstanceId = parentInstanceId;
-            Name = name;
-            IsVisible = isVisible;
-            
-            StartFrame = startFrame;
-            EndFrame = endFrame;
-            Pos = pos;
-            Rot = rot;
-            Sca = sca;
-            Clr = clr;
-            
             HasCollider = hasCollider;
+            Clr = clr;
             SpriteIndex = spriteIndex;
             SpriteLayer = spriteLayer;
             SublingIndex = sublingIndex;

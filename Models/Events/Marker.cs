@@ -1,10 +1,11 @@
-﻿using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Game
+namespace BHSDK.Models.Events
 {
-    public class Marker
+    public class Marker : IFrame
     {
         [JsonProperty("n")]
         public string Name { get; set; }
