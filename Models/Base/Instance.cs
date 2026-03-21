@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Components;
+using BHSDK.Models.Enum;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Base
@@ -33,6 +34,12 @@ namespace BHSDK.Models.Base
         
         [JsonProperty("sca")]
         public List<Sca> Sca { get; set; }
+        
+        [JsonProperty("l")]
+        public int Layer { get; set; }
+        
+        [JsonProperty("p")]
+        public Anchor Pivot { get; set; }
 
         protected Instance()
         {
@@ -46,20 +53,23 @@ namespace BHSDK.Models.Base
             Pos = new List<Pos>();
             Rot = new List<Rot>();
             Sca = new List<Sca>();
+            Layer = 0;
+            Pivot = Anchor.Center_Middle;
         }
         protected Instance(int instanceId, int parentInstanceId, string name, bool isVisible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca)
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot)
         {
             InstanceId = instanceId;
             ParentInstanceId = parentInstanceId;
             Name = name;
             IsVisible = isVisible;
-            
             StartFrame = startFrame;
             EndFrame = endFrame;
             Pos = pos;
             Rot = rot;
             Sca = sca;
+            Layer = layer;
+            Pivot = pivot;
         }
     }
 }

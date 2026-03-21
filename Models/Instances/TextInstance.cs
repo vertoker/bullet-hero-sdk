@@ -19,9 +19,6 @@ namespace BHSDK.Models.Instances
         
         [JsonProperty("fs")]
         public int FontSize { get; set; }
-        
-        [JsonProperty("a")]
-        public Anchor Alignment { get; set; }
 
         public TextInstance()
         {
@@ -29,18 +26,16 @@ namespace BHSDK.Models.Instances
             Text = string.Empty;
             FontName = string.Empty;
             FontSize = 10;
-            Alignment = Anchor.Center_Middle;
         }
         public TextInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, List<Clr> clr, 
-            string text, string fontName, int fontSize, Anchor alignment)
-            : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca)
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
+            List<Clr> clr, string text, string fontName, int fontSize)
+            : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
             Clr = clr;
             Text = text;
             FontName = fontName;
             FontSize = fontSize;
-            Alignment = alignment;
         }
     }
 }

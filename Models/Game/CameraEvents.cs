@@ -6,6 +6,10 @@ namespace BHSDK.Models.Game
 {
     public class CameraEvents
     {
+        // Camera - is a unique instance. All new instances by default inherited from camera.
+        // Camera has instanceId and this is always -1 (because 0 - is a fallback).
+        // Camera GO != camera info for parenting, this info just duplicate from camera.transform 
+        
         [JsonProperty("pos")]
         public List<Pos> Pos { get; set; }
         

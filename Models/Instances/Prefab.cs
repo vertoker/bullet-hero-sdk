@@ -7,10 +7,10 @@ namespace BHSDK.Models.Instances
 {
     public class Prefab : IInstancesProvider
     {
-        [JsonProperty("is")]
+        [JsonProperty("i")]
         public List<Instance> Instances { get; set; }
         
-        [JsonProperty("pis")]
+        [JsonProperty("pi")]
         public List<PrefabInstance> PrefabInstances { get; set; }
 
         public Prefab()

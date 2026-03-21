@@ -34,10 +34,10 @@ namespace BHSDK.Models.Game
         public PlayerEvents PlayerEvents { get; set; }
         
         
-        [JsonProperty("is")]
+        [JsonProperty("i")]
         public List<Instance> Instances { get; set; }
         
-        [JsonProperty("pis")]
+        [JsonProperty("pi")]
         public List<PrefabInstance> PrefabInstances { get; set; }
 
         public GameLevel()
