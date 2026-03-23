@@ -3,6 +3,7 @@
     public enum ColorType
     {
         Value = 0,
-        RandomMinMax = 1,
+        ThemeRef = 1,
+        RandomMinMax = 2,
     }
 }

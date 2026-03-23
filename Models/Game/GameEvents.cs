@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Components;
 using BHSDK.Models.Events;
-using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
@@ -16,12 +15,24 @@ namespace BHSDK.Models.Game
         
         [JsonProperty("b")]
         public List<Clr> Backgrounds { get; set; }
+        
+        [JsonProperty("t")]
+        public List<ThemeKeyframe> Themes { get; set; }
 
         public GameEvents()
         {
             Markers = new List<Marker>();
             Checkpoints = new List<Checkpoint>();
             Backgrounds = new List<Clr>();
+            Themes = new List<ThemeKeyframe>();
+        }
+        public GameEvents(List<Marker> markers, List<Checkpoint> checkpoints, 
+            List<Clr> backgrounds, List<ThemeKeyframe> themes)
+        {
+            Markers = markers;
+            Checkpoints = checkpoints;
+            Backgrounds = backgrounds;
+            Themes = themes;
         }
     }
 }

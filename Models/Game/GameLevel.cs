@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Base;
+using BHSDK.Models.Events;
 using BHSDK.Models.Instances;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
@@ -40,6 +41,10 @@ namespace BHSDK.Models.Game
         [JsonProperty("pi")]
         public List<PrefabInstance> PrefabInstances { get; set; }
 
+        
+        [JsonProperty("t")]
+        public List<Theme> Themes { get; set; }
+        
         public GameLevel()
         {
             Seed = 0;
@@ -53,18 +58,26 @@ namespace BHSDK.Models.Game
             
             Instances = new List<Instance>();
             PrefabInstances = new List<PrefabInstance>();
+            
+            Themes = new List<Theme>();
         }
-        public GameLevel(int seed, int framerate, GameEvents gameEvents, CameraEvents cameraEvents, 
-            List<Instance> instances, List<PrefabInstance> prefabInstances)
+        public GameLevel(int seed, int framerate, IScreenLimit screenLimit, GameEvents events, 
+            CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents, PlayerEvents playerEvents, 
+            List<Instance> instances, List<PrefabInstance> prefabInstances, List<Theme> themes)
         {
             Seed = seed;
             Framerate = framerate;
+            ScreenLimit = screenLimit;
             
-            Events = gameEvents;
+            Events = events;
             CameraEvents = cameraEvents;
+            PostProcessingEvents = postProcessingEvents;
+            PlayerEvents = playerEvents;
             
             Instances = instances;
             PrefabInstances = prefabInstances;
+            
+            Themes = themes;
         }
     }
 }

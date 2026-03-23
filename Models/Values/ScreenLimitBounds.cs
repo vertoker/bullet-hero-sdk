@@ -18,18 +18,18 @@ namespace BHSDK.Models.Values
         public ScreenLimitType GetModelType() => ScreenLimitType.Bounds;
         public bool IsValid(float currentAspect)
         {
-            var minAspect = MinAspect.Aspect;
+            var minAspect = MinAspect.GetAspect();
             if (currentAspect < minAspect) return false;
             
-            var maxAspect = MaxAspect.Aspect;
+            var maxAspect = MaxAspect.GetAspect();
             if (currentAspect > maxAspect) return false;
             
             return true;
         }
         public float GetValid(float currentAspect)
         {
-            var minAspect = MinAspect.Aspect;
-            var maxAspect = MaxAspect.Aspect;
+            var minAspect = MinAspect.GetAspect();
+            var maxAspect = MaxAspect.GetAspect();
             return Mathf.Clamp(currentAspect, minAspect, maxAspect);
         }
 

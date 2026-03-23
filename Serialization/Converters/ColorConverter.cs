@@ -20,6 +20,7 @@ namespace BHSDK.Serialization.Converters
             return customType switch
             {
                 ColorType.Value => typeof(ColorValue),
+                ColorType.ThemeRef => typeof(ColorThemeRef),
                 ColorType.RandomMinMax => typeof(ColorMinMax),
                 _ => throw new ArgumentOutOfRangeException(nameof(customType), customType, null)
             };

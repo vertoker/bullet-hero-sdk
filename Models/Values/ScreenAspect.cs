@@ -10,7 +10,7 @@ namespace BHSDK.Models.Values
         [JsonProperty("h")]
         public int Height { get; set; }
         
-        public float Aspect => Width / (float)Height;
+        public float GetAspect() => Width / (float)Height;
 
         public ScreenAspect()
         {
