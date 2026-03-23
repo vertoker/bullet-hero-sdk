@@ -18,7 +18,7 @@ namespace BHSDK.Models.Values
             Value = value;
         }
 
-        public FloatType Type => FloatType.Value;
+        public FloatType GetModelType() => FloatType.Value;
         public float Get() => Value;
     }
 }

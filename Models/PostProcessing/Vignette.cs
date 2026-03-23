@@ -8,10 +8,10 @@ namespace BHSDK.Models.PostProcessing
 {
     public class Vignette : Keyframe
     {
-        [JsonProperty("c")]
+        [JsonProperty("clr")]
         public IColor Color { get; set; } // TODO only RGB
         
-        [JsonProperty("c")]
+        [JsonProperty("ctr")]
         public IVector2 Center { get; set; }
         
         [JsonProperty("i")]

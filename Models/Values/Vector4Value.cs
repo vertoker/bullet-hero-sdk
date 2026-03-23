@@ -40,8 +40,15 @@ namespace BHSDK.Models.Values
             Z = z.Get();
             W = w.Get();
         }
+        public Vector4Value(Vector4 vector)
+        {
+            X = vector.x;
+            Y = vector.y;
+            Z = vector.z;
+            W = vector.w;
+        }
 
-        public VectorType Type => VectorType.Value;
+        public VectorType GetModelType() => VectorType.Value;
         public Vector4 Get() => new(X, Y, Z, W);
     }
 }

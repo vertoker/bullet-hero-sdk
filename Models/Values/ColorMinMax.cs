@@ -68,7 +68,7 @@ namespace BHSDK.Models.Values
             MaxA = maxA.Get();
         }
 
-        public ColorType Type => ColorType.RandomMinMax;
+        public ColorType GetModelType() => ColorType.RandomMinMax;
         public Color Get()
         {
             var r = Random.Range(MinR, MaxR);

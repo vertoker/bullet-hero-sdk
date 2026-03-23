@@ -29,7 +29,7 @@ namespace BHSDK.Models.Values
             Step = step;
         }
 
-        public FloatType Type => FloatType.RandomMinMaxStep;
+        public FloatType GetModelType() => FloatType.RandomMinMaxStep;
         public float Get()
         {
             var value = Random.Range(Min, Max);

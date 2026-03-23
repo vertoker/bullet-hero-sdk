@@ -5,7 +5,7 @@ namespace BHSDK.Models.Interfaces.Values
 {
     public interface IScreenLimit
     {
-        public ScreenLimitType Type { get; }
+        public ScreenLimitType GetModelType();
         public bool IsValid(float currentAspect);
         public float GetValid(float currentAspect);
     }

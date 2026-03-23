@@ -24,7 +24,7 @@ namespace BHSDK.Models.Values
             Max = max;
         }
 
-        public IntType Type => IntType.RandomMinMax;
+        public IntType GetModelType() => IntType.RandomMinMax;
         public int Get() => Random.Range(Min, Max);
     }
 }

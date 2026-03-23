@@ -36,7 +36,7 @@ namespace BHSDK.Models.Values
             Radius = radius.Get();
         }
 
-        public VectorType Type => VectorType.RandomCircle;
+        public VectorType GetModelType() => VectorType.RandomCircle;
         public Vector2 Get()
         {
             // https://www.youtube.com/watch?v=4y_nmpv-9lI

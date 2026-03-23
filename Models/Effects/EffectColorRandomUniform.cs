@@ -1,10 +1,36 @@
 ﻿using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces.Effects;
+using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Values;
+using Newtonsoft.Json;
+using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
     public class EffectColorRandomUniform : IEffectColor
     {
-        public EffectColorType Type => EffectColorType.RandomUniform;
+        [JsonProperty("ca")]
+        public IColor ColorA { get; set; }
+        
+        [JsonProperty("cb")]
+        public IColor ColorB { get; set; }
+        
+        public EffectColorType GetModelType() => EffectColorType.RandomUniform;
+
+        public EffectColorRandomUniform()
+        {
+            ColorA = new ColorValue(Color.white);
+            ColorB = new ColorValue(Color.white);
+        }
+        public EffectColorRandomUniform(Color colorA, Color colorB)
+        {
+            ColorA = new ColorValue(colorA);
+            ColorB = new ColorValue(colorB);
+        }
+        public EffectColorRandomUniform(IColor colorA, IColor colorB)
+        {
+            ColorA = colorA;
+            ColorB = colorB;
+        }
     }
 }

@@ -67,7 +67,7 @@ namespace BHSDK.Models.Values
             Step = step.Get();
         }
 
-        public VectorType Type => VectorType.RandomRectStep;
+        public VectorType GetModelType() => VectorType.RandomRectStep;
         public Vector3 Get()
         {
             var x = Random.Range(MinX, MaxX);

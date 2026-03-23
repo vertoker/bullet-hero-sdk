@@ -4,6 +4,6 @@ namespace BHSDK.Models.Interfaces.Effects
 {
     public interface IEffectAngle
     {
-        public EffectAngleType Type { get; }
+        public EffectAngleType GetModelType();
     }
 }

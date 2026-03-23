@@ -5,7 +5,7 @@ namespace BHSDK.Models.Interfaces.Values
 {
     public interface IVector4
     {
-        public VectorType Type { get; }
+        public VectorType GetModelType();
         public Vector4 Get();
     }
 }

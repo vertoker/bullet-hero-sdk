@@ -8,6 +8,8 @@ namespace BHSDK.Models.Instances
 {
     public class TextInstance : Instance
     {
+        public override InstanceType GetModelType() => InstanceType.Text;
+        
         [JsonProperty("clr")]
         public List<Clr> Clr { get; set; }
         

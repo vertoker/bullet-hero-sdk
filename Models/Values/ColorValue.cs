@@ -48,7 +48,7 @@ namespace BHSDK.Models.Values
             A = a.Get();
         }
 
-        public ColorType Type => ColorType.Value;
-        public UnityEngine.Color Get() => new(R, G, B, A);
+        public ColorType GetModelType() => ColorType.Value;
+        public Color Get() => new(R, G, B, A);
     }
 }

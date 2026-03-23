@@ -45,7 +45,7 @@ namespace BHSDK.Models.Values
             MaxY = maxY.Get();
         }
 
-        public VectorType Type => VectorType.RandomRect;
+        public VectorType GetModelType() => VectorType.RandomRect;
         public Vector2 Get()
         {
             var x = Random.Range(MinX, MaxX);

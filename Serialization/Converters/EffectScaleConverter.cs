@@ -1,66 +1,31 @@
 ﻿using System;
+using BHSDK.Models.Effects;
 using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces.Effects;
+using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class EffectScaleConverter : JsonConverter<IEffectScale>
+    public class EffectScaleConverter : JsonConverterCustomType<IEffectScale, EffectScaleType>
     {
-        public override void WriteJson(JsonWriter writer, IEffectScale value, JsonSerializer serializer)
+        public EffectScaleConverter(JsonSerializer serializerDefault) : base(serializerDefault)
         {
-            if (value == null)
-            {
-                writer.WriteNull();
-                return;
-            }
             
-            writer.WriteStartObject();
-            
-            writer.WritePropertyName("t");
-            serializer.Serialize(writer, value.Type);
-            
-            writer.WritePropertyName("v");
-            serializer.Serialize(writer, value);
-            
-            writer.WriteEndObject();
         }
 
-        public override IEffectScale ReadJson(JsonReader reader, Type objectType, 
-            IEffectScale existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override EffectScaleType GetCustomType(IEffectScale value) => value.GetModelType();
+        public override Type GetType(EffectScaleType customType)
         {
-            if (reader.TokenType == JsonToken.Null) return null;
-            if (reader.TokenType != JsonToken.StartObject) 
-                throw new JsonSerializationException("Expected StartObject");
-
-            EffectScaleType effectScaleType = default;
-            IEffectScale value = null;
-
-            while (reader.Read()) // to property name
+            return customType switch
             {
-                if (reader.TokenType == JsonToken.EndObject) break;
-                if (reader.TokenType != JsonToken.PropertyName)
-                    throw new JsonSerializationException($"Expected property name, got {reader.TokenType}");
-
-                var propertyName = reader.Value?.ToString();
-                reader.Read(); // to property value
-
-                switch (propertyName)
-                {
-                    case ConverterStatics.TypePropertyName:
-                        effectScaleType = serializer.Deserialize<EffectScaleType>(reader);
-                        break;
-                    case ConverterStatics.ValuePropertyName:
-                        var type = ConverterStatics.GetEffectScaleType(effectScaleType);
-                        value = (IEffectScale)serializer.Deserialize(reader, type);
-                        break;
-                    default:
-                        reader.Skip();
-                        break;
-                }
-            }
-
-            return value ?? throw new JsonSerializationException("Missing value");
+                EffectScaleType.Value => typeof(EffectScaleValue),
+                EffectScaleType.CurvesOverLife => typeof(EffectScaleCurvesOverLife),
+                EffectScaleType.CurvesBySpeed => typeof(EffectScaleCurvesBySpeed),
+                EffectScaleType.RandomUniform => typeof(EffectScaleRandomUniform),
+                EffectScaleType.RandomPerComponent => typeof(EffectScaleRandomPerComponent),
+                _ => throw new ArgumentOutOfRangeException(nameof(customType), customType, null)
+            };
         }
     }
 }

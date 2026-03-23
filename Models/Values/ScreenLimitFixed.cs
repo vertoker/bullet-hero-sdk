@@ -12,8 +12,17 @@ namespace BHSDK.Models.Values
         [JsonProperty("a")]
         public ScreenAspect Aspect { get; set; }
         
-        public ScreenLimitType Type => ScreenLimitType.Fixed;
+        public ScreenLimitType GetModelType() => ScreenLimitType.Fixed;
         public bool IsValid(float currentAspect) => Mathf.Approximately(Aspect.Aspect, currentAspect);
         public float GetValid(float currentAspect) => Aspect.Aspect;
+
+        public ScreenLimitFixed()
+        {
+            Aspect = new ScreenAspect();
+        }
+        public ScreenLimitFixed(ScreenAspect aspect)
+        {
+            Aspect = aspect;
+        }
     }
 }

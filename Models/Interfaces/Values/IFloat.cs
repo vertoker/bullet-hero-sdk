@@ -4,7 +4,7 @@ namespace BHSDK.Models.Interfaces.Values
 {
     public interface IFloat
     {
-        public FloatType Type { get; }
+        public FloatType GetModelType();
         public float Get();
     }
 }

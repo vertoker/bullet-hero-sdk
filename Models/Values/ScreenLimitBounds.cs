@@ -15,8 +15,7 @@ namespace BHSDK.Models.Values
         [JsonProperty("mxa")]
         public ScreenAspect MaxAspect { get; set; }
         
-        public ScreenLimitType Type => ScreenLimitType.Bounds;
-
+        public ScreenLimitType GetModelType() => ScreenLimitType.Bounds;
         public bool IsValid(float currentAspect)
         {
             var minAspect = MinAspect.Aspect;
@@ -32,6 +31,17 @@ namespace BHSDK.Models.Values
             var minAspect = MinAspect.Aspect;
             var maxAspect = MaxAspect.Aspect;
             return Mathf.Clamp(currentAspect, minAspect, maxAspect);
+        }
+
+        public ScreenLimitBounds()
+        {
+            MinAspect = new ScreenAspect();
+            MaxAspect = new ScreenAspect();
+        }
+        public ScreenLimitBounds(ScreenAspect minAspect, ScreenAspect maxAspect)
+        {
+            MinAspect = minAspect;
+            MaxAspect = maxAspect;
         }
     }
 }

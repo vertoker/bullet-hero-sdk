@@ -1,67 +1,29 @@
 ﻿using System;
-using BHSDK.Models.Enum;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Values;
+using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class ScreenLimitConverter : JsonConverter<IScreenLimit>
+    public class ScreenLimitConverter : JsonConverterCustomType<IScreenLimit, ScreenLimitType>
     {
-        public override void WriteJson(JsonWriter writer, IScreenLimit value, JsonSerializer serializer)
+        public ScreenLimitConverter(JsonSerializer serializerDefault) : base(serializerDefault)
         {
-            if (value == null)
-            {
-                writer.WriteNull();
-                return;
-            }
             
-            writer.WriteStartObject();
-            
-            writer.WritePropertyName("t");
-            serializer.Serialize(writer, value.Type);
-            
-            writer.WritePropertyName("v");
-            serializer.Serialize(writer, value);
-            
-            writer.WriteEndObject();
         }
 
-        public override IScreenLimit ReadJson(JsonReader reader, Type objectType, IScreenLimit existingValue, bool hasExistingValue,
-            JsonSerializer serializer)
+        public override ScreenLimitType GetCustomType(IScreenLimit value) => value.GetModelType();
+        public override Type GetType(ScreenLimitType customType)
         {
-            if (reader.TokenType == JsonToken.Null) return null;
-            if (reader.TokenType != JsonToken.StartObject) 
-                throw new JsonSerializationException("Expected StartObject");
-
-            ScreenLimitType screenLimitType = default;
-            IScreenLimit value = null;
-
-            while (reader.Read()) // to property name
+            return customType switch
             {
-                if (reader.TokenType == JsonToken.EndObject) break;
-                if (reader.TokenType != JsonToken.PropertyName)
-                    throw new JsonSerializationException($"Expected property name, got {reader.TokenType}");
-
-                var propertyName = reader.Value?.ToString();
-                reader.Read(); // to property value
-
-                switch (propertyName)
-                {
-                    case ConverterStatics.TypePropertyName:
-                        screenLimitType = serializer.Deserialize<ScreenLimitType>(reader);
-                        break;
-                    case ConverterStatics.ValuePropertyName:
-                        var type = ConverterStatics.GetScreenLimitType(screenLimitType);
-                        value = (IScreenLimit)serializer.Deserialize(reader, type);
-                        break;
-                    default:
-                        reader.Skip();
-                        break;
-                }
-            }
-
-            return value ?? throw new JsonSerializationException("Missing value");
+                ScreenLimitType.None => typeof(ScreenLimitNone),
+                ScreenLimitType.Fixed => typeof(ScreenLimitFixed),
+                ScreenLimitType.Bounds => typeof(ScreenLimitBounds),
+                _ => throw new ArgumentOutOfRangeException(nameof(customType), customType, null)
+            };
         }
     }
 }

@@ -4,7 +4,7 @@ namespace BHSDK.Models.Interfaces.Values
 {
     public interface IInt
     {
-        public IntType Type { get; }
+        public IntType GetModelType();
         public int Get();
     }
 }

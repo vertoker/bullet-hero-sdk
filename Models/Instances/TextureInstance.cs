@@ -8,6 +8,8 @@ namespace BHSDK.Models.Instances
 {
     public class TextureInstance : Instance
     {
+        public override InstanceType GetModelType() => InstanceType.Texture;
+        
         [JsonProperty("c")]
         public bool HasCollider { get; set; }
         

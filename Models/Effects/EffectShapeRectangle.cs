@@ -5,6 +5,8 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeRectangle : IEffectShape
     {
-        public EffectShapeType Type => EffectShapeType.Rectangle;
+        // None, inherit TRS from Instance
+        
+        public EffectShapeType GetModelType() => EffectShapeType.Rectangle;
     }
 }

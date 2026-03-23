@@ -4,6 +4,7 @@ namespace BHSDK.Models.Interfaces.Effects
 {
     public interface IEffectShapeSpread
     {
-        public EffectShapeSpreadType Type { get; }
+        public EffectShapeSpreadType GetModelType();
+        public float GetSpread(float time);
     }
 }

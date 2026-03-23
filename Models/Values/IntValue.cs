@@ -18,7 +18,7 @@ namespace BHSDK.Models.Values
             Value = value;
         }
 
-        public IntType Type => IntType.Value;
+        public IntType GetModelType() => IntType.Value;
         public int Get() => Value;
     }
 }

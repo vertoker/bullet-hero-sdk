@@ -28,8 +28,13 @@ namespace BHSDK.Models.Values
             X = x.Get();
             Y = y.Get();
         }
+        public Vector2Value(Vector2 vector)
+        {
+            X = vector.x;
+            Y = vector.y;
+        }
 
-        public VectorType Type => VectorType.Value;
+        public VectorType GetModelType() => VectorType.Value;
         public Vector2 Get() => new(X, Y);
     }
 }

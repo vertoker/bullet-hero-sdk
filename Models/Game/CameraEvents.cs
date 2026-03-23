@@ -20,22 +20,22 @@ namespace BHSDK.Models.Game
         public List<Zoom> Zoom { get; set; }
         
         [JsonProperty("shk")]
-        public List<Shake> Shakes { get; set; }
+        public List<Shake> Shake { get; set; }
 
         public CameraEvents()
         {
             Pos = new List<Pos>();
             Rot = new List<Rot>();
             Zoom = new List<Zoom>();
-            Shakes = new List<Shake>();
+            Shake = new List<Shake>();
         }
         public CameraEvents(List<Pos> pos, List<Rot> rot, 
-            List<Zoom> zoom, List<Shake> shakes)
+            List<Zoom> zoom, List<Shake> shake)
         {
             Pos = pos;
             Rot = rot;
             Zoom = zoom;
-            Shakes = shakes;
+            Shake = shake;
         }
     }
 }

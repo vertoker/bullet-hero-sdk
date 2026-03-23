@@ -6,7 +6,7 @@ namespace BHSDK.Models.Values
 {
     public class ScreenLimitNone : IScreenLimit
     {
-        public ScreenLimitType Type => ScreenLimitType.None;
+        public ScreenLimitType GetModelType() => ScreenLimitType.None;
         public bool IsValid(float currentAspect) => true;
         public float GetValid(float currentAspect) => currentAspect;
     }

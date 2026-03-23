@@ -5,8 +5,10 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Base
 {
-    public abstract class Instance
+    public class Instance
     {
+        public virtual InstanceType GetModelType() => InstanceType.Base;
+        
         [JsonProperty("id")]
         public int InstanceId { get; set; }
         
@@ -41,7 +43,7 @@ namespace BHSDK.Models.Base
         [JsonProperty("p")]
         public Anchor Pivot { get; set; }
 
-        protected Instance()
+        public Instance()
         {
             InstanceId = 0;
             ParentInstanceId = 0;
@@ -56,7 +58,7 @@ namespace BHSDK.Models.Base
             Layer = 0;
             Pivot = Anchor.Center_Middle;
         }
-        protected Instance(int instanceId, int parentInstanceId, string name, bool isVisible, 
+        public Instance(int instanceId, int parentInstanceId, string name, bool isVisible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot)
         {
             InstanceId = instanceId;

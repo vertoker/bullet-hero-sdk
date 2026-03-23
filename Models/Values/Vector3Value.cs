@@ -34,8 +34,14 @@ namespace BHSDK.Models.Values
             Y = y.Get();
             Z = z.Get();
         }
+        public Vector3Value(Vector3 vector)
+        {
+            X = vector.x;
+            Y = vector.y;
+            Z = vector.z;
+        }
 
-        public VectorType Type => VectorType.Value;
+        public VectorType GetModelType() => VectorType.Value;
         public Vector3 Get() => new(X, Y, Z);
     }
 }

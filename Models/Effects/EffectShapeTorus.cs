@@ -1,10 +1,48 @@
 ﻿using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces.Effects;
+using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Values;
+using Newtonsoft.Json;
+using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
     public class EffectShapeTorus : IEffectShape
     {
-        public EffectShapeType Type => EffectShapeType.Torus;
+        [JsonProperty("rmin")]
+        public IFloat RadiusMinor { get; set; }
+        
+        [JsonProperty("rmaj")]
+        public IFloat RadiusMajor { get; set; }
+        
+        [JsonProperty("a")]
+        public IFloat Arc { get; set; }
+        
+        [JsonProperty("spr")]
+        public IEffectShapeSpread Spread { get; set; }
+        
+        public EffectShapeType GetModelType() => EffectShapeType.Torus;
+        
+        public EffectShapeTorus()
+        {
+            RadiusMinor = new FloatValue(0.4f);
+            RadiusMajor = new FloatValue(1f);
+            Arc = new FloatValue(Mathf.PI * 2f);
+            Spread = new EffectShapeSpreadRandom();
+        }
+        public EffectShapeTorus(float radiusMinor, float radiusMajor, float arc, IEffectShapeSpread spread)
+        {
+            RadiusMinor = new FloatValue(radiusMinor);
+            RadiusMajor = new FloatValue(radiusMajor);
+            Arc = new FloatValue(arc);
+            Spread = spread;
+        }
+        public EffectShapeTorus(IFloat radiusMinor, IFloat radiusMajor, IFloat arc, IEffectShapeSpread spread)
+        {
+            RadiusMinor = radiusMinor;
+            RadiusMajor = radiusMajor;
+            Arc = arc;
+            Spread = spread;
+        }
     }
 }
