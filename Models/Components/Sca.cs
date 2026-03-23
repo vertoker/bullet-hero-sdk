@@ -9,16 +9,16 @@ namespace BHSDK.Models.Components
     public class Sca : Keyframe
     {
         [JsonProperty("v")]
-        public IVector Vector { get; set; }
+        public IVector2 Vector2 { get; set; }
 
         public Sca()
         {
-            Vector = new VectorCircle();
+            Vector2 = new Vector2Circle();
         }
-        public Sca(int frame, EaseType ease, IVector vector) 
+        public Sca(int frame, EaseType ease, IVector2 vector2) 
             : base(frame, ease)
         {
-            Vector = vector;
+            Vector2 = vector2;
         }
     }
 }

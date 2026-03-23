@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Instances
 {
-    public class SpriteInstance : Instance
+    public class TextureInstance : Instance
     {
         [JsonProperty("c")]
         public bool HasCollider { get; set; }
@@ -20,14 +20,14 @@ namespace BHSDK.Models.Instances
         [JsonProperty("sbi")]
         public int SublingIndex { get; set; }
         
-        public SpriteInstance()
+        public TextureInstance()
         {
             HasCollider = true;
             Clr = new List<Clr>();
             SpriteIndex = 0;
             SublingIndex = 0;
         }
-        public SpriteInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
+        public TextureInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot,
             bool hasCollider, List<Clr> clr, int spriteIndex, int sublingIndex)
             : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)

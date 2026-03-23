@@ -9,18 +9,18 @@ namespace BHSDK.Models.Components
     public class VelocityPoint : Keyframe
     {
         [JsonProperty("c")]
-        public IVector Center { get; set; }
+        public IVector2 Center { get; set; }
         
         [JsonProperty("f")]
         public float Force { get; set; }
 
         public VelocityPoint()
         {
-            Center = new VectorCircle();
+            Center = new Vector2Circle();
             Force = 1;
         }
         public VelocityPoint(int frame, EaseType ease, 
-            IVector center, float force)
+            IVector2 center, float force)
             : base(frame, ease)
         {
             Center = center;

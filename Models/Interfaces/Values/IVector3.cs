@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace BHSDK.Models.Interfaces.Values
 {
-    public interface IVector
+    public interface IVector3
     {
         public VectorType Type { get; }
-        public Vector2 Get();
+        public Vector3 Get();
     }
 }

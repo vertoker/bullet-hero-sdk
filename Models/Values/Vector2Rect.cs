@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class VectorRect : IVector
+    public class Vector2Rect : IVector2
     {
         [JsonProperty("mnx")]
         public float MinX { get; set; }
@@ -13,30 +13,34 @@ namespace BHSDK.Models.Values
         [JsonProperty("mny")]
         public float MinY { get; set; }
         
+        
         [JsonProperty("mxx")]
         public float MaxX { get; set; }
         
         [JsonProperty("mxy")]
         public float MaxY { get; set; }
 
-        public VectorRect()
+        public Vector2Rect()
         {
             MinX = 0f;
             MinY = 0f;
+            
             MaxX = 1f;
             MaxY = 1f;
         }
-        public VectorRect(float minX, float minY, float maxX, float maxY)
+        public Vector2Rect(float minX, float minY, float maxX, float maxY)
         {
             MinX = minX;
             MinY = minY;
+            
             MaxX = maxX;
             MaxY = maxY;
         }
-        public VectorRect(IFloat minX, IFloat minY, IFloat maxX, IFloat maxY)
+        public Vector2Rect(IFloat minX, IFloat minY, IFloat maxX, IFloat maxY)
         {
             MinX = minX.Get();
             MinY = minY.Get();
+            
             MaxX = maxX.Get();
             MaxY = maxY.Get();
         }

@@ -9,20 +9,20 @@ namespace BHSDK.Models.Components
     public class Pos : Keyframe
     {
         [JsonProperty("v")]
-        public IVector Vector { get; set; }
+        public IVector2 Vector2 { get; set; }
         
         [JsonProperty("a")]
         public Anchor Anchor { get; set; }
 
         public Pos()
         {
-            Vector = new VectorValue();
+            Vector2 = new Vector2Value();
             Anchor = Anchor.Center_Middle;
         }
-        public Pos(int frame, EaseType ease, IVector vector, Anchor anchor) 
+        public Pos(int frame, EaseType ease, IVector2 vector2, Anchor anchor) 
             : base(frame, ease)
         {
-            Vector = vector;
+            Vector2 = vector2;
             Anchor = anchor;
         }
     }

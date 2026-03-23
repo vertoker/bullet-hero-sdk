@@ -12,10 +12,10 @@ namespace BHSDK.Models.PostProcessing
         public float Intensity { get; set; }
         
         [JsonProperty("m")]
-        public IVector Multiplier { get; set; }
+        public IVector2 Multiplier { get; set; }
         
         [JsonProperty("c")]
-        public IVector Center { get; set; }
+        public IVector2 Center { get; set; }
         
         [JsonProperty("s")]
         public float Scale { get; set; }
@@ -23,12 +23,12 @@ namespace BHSDK.Models.PostProcessing
         public LensDistortion()
         {
             Intensity = 0.5f;
-            Multiplier = new VectorValue(1f, 1f);
-            Center = new VectorValue(0.5f, 0.5f);
+            Multiplier = new Vector2Value(1f, 1f);
+            Center = new Vector2Value(0.5f, 0.5f);
             Scale = 1f;
         }
         public LensDistortion(int frame, EaseType ease, 
-            float intensity, IVector multiplier, IVector center, float scale)
+            float intensity, IVector2 multiplier, IVector2 center, float scale)
             : base(frame, ease)
         {
             Intensity = intensity;

@@ -9,16 +9,16 @@ namespace BHSDK.Models.Components
     public class Velocity : Keyframe
     {
         [JsonProperty("v")]
-        public IVector Vector { get; set; }
+        public IVector2 Vector2 { get; set; }
 
         public Velocity()
         {
-            Vector = new VectorCircle();
+            Vector2 = new Vector2Circle();
         }
-        public Velocity(int frame, EaseType ease, IVector vector) 
+        public Velocity(int frame, EaseType ease, IVector2 vector2) 
             : base(frame, ease)
         {
-            Vector = vector;
+            Vector2 = vector2;
         }
     }
 }

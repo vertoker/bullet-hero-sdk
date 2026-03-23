@@ -1,13 +1,13 @@
 ﻿using System;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces.Effects;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class VectorConverter : JsonConverter<IVector>
+    public class EffectAngleConverter : JsonConverter<IEffectAngle>
     {
-        public override void WriteJson(JsonWriter writer, IVector value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, IEffectAngle value, JsonSerializer serializer)
         {
             if (value == null)
             {
@@ -26,15 +26,15 @@ namespace BHSDK.Serialization.Converters
             writer.WriteEndObject();
         }
 
-        public override IVector ReadJson(JsonReader reader, Type objectType, IVector existingValue, bool hasExistingValue,
-            JsonSerializer serializer)
+        public override IEffectAngle ReadJson(JsonReader reader, Type objectType, 
+            IEffectAngle existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null) return null;
             if (reader.TokenType != JsonToken.StartObject) 
                 throw new JsonSerializationException("Expected StartObject");
 
-            VectorType vectorType = default;
-            IVector value = null;
+            EffectAngleType effectAngleType = default;
+            IEffectAngle value = null;
 
             while (reader.Read()) // to property name
             {
@@ -48,11 +48,11 @@ namespace BHSDK.Serialization.Converters
                 switch (propertyName)
                 {
                     case ConverterStatics.TypePropertyName:
-                        vectorType = serializer.Deserialize<VectorType>(reader);
+                        effectAngleType = serializer.Deserialize<EffectAngleType>(reader);
                         break;
                     case ConverterStatics.ValuePropertyName:
-                        var type = ConverterStatics.GetVectorType(vectorType);
-                        value = (IVector)serializer.Deserialize(reader, type);
+                        var type = ConverterStatics.GetEffectAngleType(effectAngleType);
+                        value = (IEffectAngle)serializer.Deserialize(reader, type);
                         break;
                     default:
                         reader.Skip();

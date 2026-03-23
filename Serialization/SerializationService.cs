@@ -28,30 +28,37 @@ namespace BHSDK.Serialization
                 {
                     new LevelDataConverter(compatibilityService),
                     new VersionConverter(),
+                    
                     new IntConverter(),
                     new FloatConverter(),
                     new ColorConverter(),
-                    new VectorConverter(),
+                    new Vector2Converter(),
+                    new Vector3Converter(),
+                    new Vector4Converter(),
+                    
+                    new EffectShapeConverter(),
+                    new EffectAngleConverter(),
+                    new EffectScaleConverter(),
+                    new EffectColorConverter(),
+                    new EffectShapeSpreadConverter(),
+                    
                     new ScreenLimitConverter(),
                 },
                 Error = (sender, args) =>
                 {
-                    if (Application.platform == RuntimePlatform.Android)
-                    {
-                        // Created specially for Android ADB console, this format is more readable (hello Pico 4)
-                        Debug.LogError($"sender: {sender}");
-                        Debug.LogWarning("--------------------------------------------");
-                        Debug.LogError($"object: {args.CurrentObject}");
-                        Debug.LogWarning("--------------------------------------------");
-                        Debug.LogError($"error: {args.ErrorContext.Error}, ");
-                        Debug.LogWarning("--------------------------------------------");
-                        Debug.LogError($"member: {args.ErrorContext.Member}, ");
-                        Debug.LogWarning("--------------------------------------------");
-                        Debug.LogError($"Path: {args.ErrorContext.Path}, ");
-                        Debug.LogWarning("--------------------------------------------");
-                        Debug.LogError($"OriginalObject: {args.ErrorContext.OriginalObject}, ");
-                        Debug.Log("***************************************************");
-                    }
+                    // Created specially for Android ADB console, this format is more readable (hello Pico 4)
+                    Debug.LogError($"sender: {sender}");
+                    Debug.LogWarning("--------------------------------------------");
+                    Debug.LogError($"object: {args.CurrentObject}");
+                    Debug.LogWarning("--------------------------------------------");
+                    Debug.LogError($"error: {args.ErrorContext.Error}, ");
+                    Debug.LogWarning("--------------------------------------------");
+                    Debug.LogError($"member: {args.ErrorContext.Member}, ");
+                    Debug.LogWarning("--------------------------------------------");
+                    Debug.LogError($"Path: {args.ErrorContext.Path}, ");
+                    Debug.LogWarning("--------------------------------------------");
+                    Debug.LogError($"OriginalObject: {args.ErrorContext.OriginalObject}, ");
+                    Debug.Log("***************************************************");
                 }
             };
             Serializer = JsonSerializer.Create(settings);

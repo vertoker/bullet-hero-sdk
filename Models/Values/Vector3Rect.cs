@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class VectorRectStep : IVector
+    public class Vector3Rect : IVector3
     {
         [JsonProperty("mnx")]
         public float MinX { get; set; }
@@ -13,46 +13,57 @@ namespace BHSDK.Models.Values
         [JsonProperty("mny")]
         public float MinY { get; set; }
         
+        [JsonProperty("mnz")]
+        public float MinZ { get; set; }
+        
+        
         [JsonProperty("mxx")]
         public float MaxX { get; set; }
         
         [JsonProperty("mxy")]
         public float MaxY { get; set; }
         
-        [JsonProperty("s")]
-        public float Step { get; set; }
+        [JsonProperty("mxz")]
+        public float MaxZ { get; set; }
 
-        public VectorRectStep()
+        public Vector3Rect()
         {
             MinX = 0f;
             MinY = 0f;
+            MinZ = 0f;
+            
             MaxX = 1f;
             MaxY = 1f;
-            Step = 1f;
+            MaxZ = 1f;
         }
-        public VectorRectStep(float minX, float minY, float maxX, float maxY, float step)
+        public Vector3Rect(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
         {
             MinX = minX;
             MinY = minY;
+            MinZ = minZ;
+            
             MaxX = maxX;
             MaxY = maxY;
-            Step = step;
+            MaxZ = maxZ;
         }
-        public VectorRectStep(IFloat minX, IFloat minY, IFloat maxX, IFloat maxY, IFloat step)
+        public Vector3Rect(IFloat minX, IFloat minY, IFloat minZ, IFloat maxX, IFloat maxY, IFloat maxZ)
         {
             MinX = minX.Get();
             MinY = minY.Get();
+            MinZ = minZ.Get();
+            
             MaxX = maxX.Get();
             MaxY = maxY.Get();
-            Step = step.Get();
+            MaxZ = maxZ.Get();
         }
 
-        public VectorType Type => VectorType.RandomRectStep;
-        public Vector2 Get()
+        public VectorType Type => VectorType.RandomRect;
+        public Vector3 Get()
         {
             var x = Random.Range(MinX, MaxX);
             var y = Random.Range(MinY, MaxY);
-            return new Vector2(x, y);
+            var z = Random.Range(MinZ, MaxZ);
+            return new Vector3(x, y, z);
         }
     }
 }

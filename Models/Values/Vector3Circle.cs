@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 namespace BHSDK.Models.Values
 {
-    public class VectorCircle : IVector
+    public class Vector3Circle : IVector3
     {
         [JsonProperty("x")]
         public float X { get; set; }
@@ -14,30 +14,36 @@ namespace BHSDK.Models.Values
         [JsonProperty("y")]
         public float Y { get; set; }
         
+        [JsonProperty("z")]
+        public float Z { get; set; }
+        
         [JsonProperty("r")]
         public float Radius { get; set; }
         
-        public VectorCircle()
+        public Vector3Circle()
         {
             X = 0f;
             Y = 0f;
+            Z = 0f;
             Radius = 1f;
         }
-        public VectorCircle(float x, float y, float radius)
+        public Vector3Circle(float x, float y, float z, float radius)
         {
             X = x;
             Y = y;
+            Z = z;
             Radius = radius;
         }
-        public VectorCircle(IFloat x, IFloat y, IFloat radius)
+        public Vector3Circle(IFloat x, IFloat y, IFloat z, IFloat radius)
         {
             X = x.Get();
             Y = y.Get();
+            Z = z.Get();
             Radius = radius.Get();
         }
 
         public VectorType Type => VectorType.RandomCircle;
-        public Vector2 Get()
+        public Vector3 Get()
         {
             // https://www.youtube.com/watch?v=4y_nmpv-9lI
             // Use distribution through Sqrt, because it uses one number.
@@ -47,7 +53,8 @@ namespace BHSDK.Models.Values
 
             var x = distance * Mathf.Cos(angle) * Radius + X;
             var y = distance * Mathf.Sin(angle) * Radius + Y;
-            return new Vector2(x, y);
+            var z = distance * Mathf.Cos(angle) * Radius + Z;
+            return new Vector3(x, y, z);
         }
     }
 }

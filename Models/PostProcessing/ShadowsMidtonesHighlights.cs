@@ -41,10 +41,10 @@ namespace BHSDK.Models.PostProcessing
         // TODO graph like in Post Processing menu
         
         [JsonProperty("sl")]
-        public IVector ShadowLimits { get; set; }
+        public IVector2 ShadowLimits { get; set; }
         
         [JsonProperty("hl")]
-        public IVector HighlightLimits { get; set; }
+        public IVector2 HighlightLimits { get; set; }
 
         public ShadowsMidtonesHighlights()
         {
@@ -60,14 +60,14 @@ namespace BHSDK.Models.PostProcessing
             HighlightsColor = new ColorValue(Color.white);
             HighlightsAlpha = 1f;
 
-            ShadowLimits = new VectorValue(0f, 0.3f);
-            HighlightLimits = new VectorValue(0.55f, 1f);
+            ShadowLimits = new Vector2Value(0f, 0.3f);
+            HighlightLimits = new Vector2Value(0.55f, 1f);
         }
         public ShadowsMidtonesHighlights(int frame, EaseType ease, 
             bool shadows, IColor shadowsColor, float shadowsAlpha, 
             bool midtones, IColor midtonesColor, float midtonesAlpha, 
             bool highlights, IColor highlightsColor, float highlightsAlpha, 
-            IVector shadowLimits, IVector highlightLimits)
+            IVector2 shadowLimits, IVector2 highlightLimits)
             : base(frame, ease)
         {
             Shadows = shadows;

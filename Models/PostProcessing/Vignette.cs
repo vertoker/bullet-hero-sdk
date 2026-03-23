@@ -12,7 +12,7 @@ namespace BHSDK.Models.PostProcessing
         public IColor Color { get; set; } // TODO only RGB
         
         [JsonProperty("c")]
-        public IVector Center { get; set; }
+        public IVector2 Center { get; set; }
         
         [JsonProperty("i")]
         public float Intensity { get; set; }
@@ -26,13 +26,13 @@ namespace BHSDK.Models.PostProcessing
         public Vignette()
         {
             Color = new ColorValue(UnityEngine.Color.black);
-            Center = new VectorValue(0.5f, 0.5f);
+            Center = new Vector2Value(0.5f, 0.5f);
             Intensity = 0.3f;
             Smoothness = 0.5f;
             Rounded = false;
         }
         public Vignette(int frame, EaseType ease, IColor color, 
-            IVector center, float intensity, float smoothness, bool rounded)
+            IVector2 center, float intensity, float smoothness, bool rounded)
             : base(frame, ease)
         {
             Color = color;
