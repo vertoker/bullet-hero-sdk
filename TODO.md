@@ -1,4 +1,5 @@
-﻿- add prefabs serialization
+﻿- understand how prefabs will be works
+- add prefabs serialization
 - add effects serialization
 - add themes serialization
 

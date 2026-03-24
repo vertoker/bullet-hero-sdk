@@ -4,9 +4,6 @@ namespace BHSDK.Models.Modifications
 {
     public class Modification
     {
-        // TODO decide: indexed or string path?
-        // TODO add validation for PropertyPath anyway 
-        
         [JsonProperty(ModelNames.Path)]
         public string PropertyPath { get; set; }
         
