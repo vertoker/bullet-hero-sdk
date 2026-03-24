@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models.Other;
+using BHSDK.Models.Modifications;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Instances
@@ -11,10 +11,10 @@ namespace BHSDK.Models.Instances
         // 2. It uses fields and reflection in modifications for finding and replace value in runtime model
         // 3. Play it
         
-        [JsonProperty("sp")]
+        [JsonProperty(ModelNames.Prefab)]
         public Prefab SourcePrefab { get; set; }
         
-        [JsonProperty("ms")]
+        [JsonProperty(ModelNames.Modification)]
         public List<Modification> Modifications { get; set; }
 
         public PrefabInstance()

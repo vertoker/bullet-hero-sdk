@@ -8,7 +8,7 @@ namespace BHSDK.Models.PostProcessing
     {
         // Quality (client settings variable, he set it himself)
         
-        [JsonProperty("i")]
+        [JsonProperty(ModelNames.Intensity)]
         public float Intensity { get; set; }
         
         // Clamp (0.2f, predefined)

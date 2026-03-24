@@ -10,16 +10,16 @@ namespace BHSDK.Models.Instances
     {
         public override InstanceType GetModelType() => InstanceType.Text;
         
-        [JsonProperty("clr")]
+        [JsonProperty(ModelNames.Color)]
         public List<Clr> Clr { get; set; }
         
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Text)]
         public string Text { get; set; }
         
-        [JsonProperty("fn")]
+        [JsonProperty(ModelNames.Font + ModelNames.Name)]
         public string FontName { get; set; }
         
-        [JsonProperty("fs")]
+        [JsonProperty(ModelNames.Font + ModelNames.Size)]
         public int FontSize { get; set; }
 
         public TextInstance()

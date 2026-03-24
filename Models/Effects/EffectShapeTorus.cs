@@ -9,16 +9,16 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeTorus : IEffectShape
     {
-        [JsonProperty("rmin")]
+        [JsonProperty(ModelNames.RadiusMajor)]
         public IFloat RadiusMinor { get; set; }
         
-        [JsonProperty("rmaj")]
+        [JsonProperty(ModelNames.RadiusMinor)]
         public IFloat RadiusMajor { get; set; }
         
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Arc)]
         public IFloat Arc { get; set; }
         
-        [JsonProperty("spr")]
+        [JsonProperty(ModelNames.Spread)]
         public IEffectShapeSpread Spread { get; set; }
         
         public EffectShapeType GetModelType() => EffectShapeType.Torus;

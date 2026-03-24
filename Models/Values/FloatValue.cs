@@ -6,7 +6,7 @@ namespace BHSDK.Models.Values
 {
     public class FloatValue : IFloat
     {
-        [JsonProperty("v")]
+        [JsonProperty(ModelNames.Value)]
         public float Value { get; set; }
 
         public FloatValue()

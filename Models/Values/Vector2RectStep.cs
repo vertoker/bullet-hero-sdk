@@ -7,21 +7,21 @@ namespace BHSDK.Models.Values
 {
     public class Vector2RectStep : IVector2
     {
-        [JsonProperty("mnx")]
+        [JsonProperty(ModelNames.Min + ModelNames.CoordX)]
         public float MinX { get; set; }
         
-        [JsonProperty("mny")]
+        [JsonProperty(ModelNames.Min + ModelNames.CoordY)]
         public float MinY { get; set; }
         
         
-        [JsonProperty("mxx")]
+        [JsonProperty(ModelNames.Max + ModelNames.CoordX)]
         public float MaxX { get; set; }
         
-        [JsonProperty("mxy")]
+        [JsonProperty(ModelNames.Max + ModelNames.CoordY)]
         public float MaxY { get; set; }
         
         
-        [JsonProperty("s")]
+        [JsonProperty(ModelNames.Step)]
         public float Step { get; set; }
 
         public Vector2RectStep()

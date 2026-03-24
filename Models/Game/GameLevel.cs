@@ -11,38 +11,38 @@ namespace BHSDK.Models.Game
 {
     public class GameLevel : IInstancesProvider
     {
-        [JsonProperty("s")]
+        [JsonProperty(ModelNames.Seed)]
         public int Seed { get; set; }
         
-        [JsonProperty("fr")]
+        [JsonProperty(ModelNames.Framerate)]
         public int Framerate { get; set; }
         
         // limitations for screen will be chosen by mappers
-        [JsonProperty("sl")]
+        [JsonProperty(ModelNames.Screen + ModelNames.Limit)]
         public IScreenLimit ScreenLimit { get; set; }
         
         
-        [JsonProperty("e")]
+        [JsonProperty(ModelNames.Event)]
         public GameEvents Events { get; set; }
         
-        [JsonProperty("ce")]
+        [JsonProperty(ModelNames.Camera + ModelNames.Event)]
         public CameraEvents CameraEvents { get; set; }
         
-        [JsonProperty("ppe")]
+        [JsonProperty(ModelNames.PostProcessing + ModelNames.Event)]
         public PostProcessingEvents PostProcessingEvents { get; set; }
         
-        [JsonProperty("pe")]
+        [JsonProperty(ModelNames.Player + ModelNames.Event)]
         public PlayerEvents PlayerEvents { get; set; }
         
         
-        [JsonProperty("i")]
+        [JsonProperty(ModelNames.Instance)]
         public List<Instance> Instances { get; set; }
         
-        [JsonProperty("pi")]
+        [JsonProperty(ModelNames.ParentInstance)]
         public List<PrefabInstance> PrefabInstances { get; set; }
 
         
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Theme)]
         public List<Theme> Themes { get; set; }
         
         public GameLevel()

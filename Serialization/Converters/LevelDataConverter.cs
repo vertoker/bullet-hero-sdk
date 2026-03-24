@@ -1,4 +1,5 @@
 ﻿using System;
+using BHSDK.Models;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters
@@ -22,10 +23,10 @@ namespace BHSDK.Serialization.Converters
             
             writer.WriteStartObject();
             
-            writer.WritePropertyName(LevelData.VersionPropertyName);
+            writer.WritePropertyName(ModelNames.Version);
             serializer.Serialize(writer, value.Version);
             
-            writer.WritePropertyName(LevelData.LevelPropertyName);
+            writer.WritePropertyName(ModelNames.Level);
             serializer.Serialize(writer, value.Level);
             
             writer.WriteEndObject();
@@ -51,10 +52,10 @@ namespace BHSDK.Serialization.Converters
 
                 switch (propertyName)
                 {
-                    case LevelData.VersionPropertyName:
+                    case ModelNames.Version:
                         result.Version = serializer.Deserialize<Version>(reader);
                         break;
-                    case LevelData.LevelPropertyName:
+                    case ModelNames.Level:
                         var levelType = _compatibilityService.GetLevelType(result.Version);
                         result.Level = (ILevel)serializer.Deserialize(reader, levelType);
                         break;

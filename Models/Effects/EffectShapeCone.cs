@@ -9,19 +9,19 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeCone : IEffectShape
     {
-        [JsonProperty("tr")]
+        [JsonProperty(ModelNames.TopRadius)]
         public IFloat TopRadius { get; set; }
         
-        [JsonProperty("br")]
+        [JsonProperty(ModelNames.BaseRadius)]
         public IFloat BaseRadius { get; set; }
         
-        [JsonProperty("h")]
+        [JsonProperty(ModelNames.Height)]
         public IFloat Height { get; set; }
         
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Arc)]
         public IFloat Arc { get; set; }
         
-        [JsonProperty("spr")]
+        [JsonProperty(ModelNames.Spread)]
         public IEffectShapeSpread Spread { get; set; }
         
         public EffectShapeType GetModelType() => EffectShapeType.Cone;

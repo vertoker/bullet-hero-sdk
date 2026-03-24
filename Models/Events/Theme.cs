@@ -9,11 +9,11 @@ namespace BHSDK.Models.Events
     {
         public const int Count = 64;
         
-        [JsonProperty("n")]
+        [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
         
-        [JsonProperty("c")]
-        public ColorValue[] Colors { get; set; }
+        [JsonProperty(ModelNames.Matrix)]
+        public ColorValue[] Matrix { get; set; }
         
         // Theme - is map of colors, level can refer to color via index
         // Theme is a predefined array in runtime
@@ -34,13 +34,13 @@ namespace BHSDK.Models.Events
         public Theme()
         {
             Name = string.Empty;
-            Colors = new ColorValue[Count];
-            Array.Fill(Colors, new ColorValue(Color.white));
+            Matrix = new ColorValue[Count];
+            Array.Fill(Matrix, new ColorValue(Color.white));
         }
-        public Theme(string name, ColorValue[] colors)
+        public Theme(string name, ColorValue[] matrix)
         {
             Name = name;
-            Colors = colors;
+            Matrix = matrix;
         }
     }
 }

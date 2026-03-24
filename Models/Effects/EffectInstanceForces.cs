@@ -7,37 +7,37 @@ namespace BHSDK.Models.Effects
 {
     public class EffectInstanceForces
     {
-        [JsonProperty("gmn")]
+        [JsonProperty(ModelNames.Gravity + ModelNames.Min)]
         public IFloat StartGravityModifierMin { get; set; }
         
-        [JsonProperty("gmx")]
+        [JsonProperty(ModelNames.Gravity + ModelNames.Max)]
         public IFloat StartGravityModifierMax { get; set; }
         
-        [JsonProperty("vmn")]
+        [JsonProperty(ModelNames.Velocity + ModelNames.Min)]
         public IVector2 StartVelocityMin { get; set; }
         
-        [JsonProperty("vmx")]
+        [JsonProperty(ModelNames.Velocity + ModelNames.Max)]
         public IVector2 StartVelocityMax { get; set; }
         
-        [JsonProperty("avmn")]
+        [JsonProperty(ModelNames.Angular + ModelNames.Velocity + ModelNames.Min)]
         public IFloat StartAngularVelocityMin { get; set; }
         
-        [JsonProperty("avmx")]
+        [JsonProperty(ModelNames.Angular + ModelNames.Velocity + ModelNames.Max)]
         public IFloat StartAngularVelocityMax { get; set; }
         
-        [JsonProperty("lv")]
+        [JsonProperty(ModelNames.Linear + ModelNames.Velocity)]
         public IVector2 LinearVelocity { get; set; }
         
-        [JsonProperty("ov")]
+        [JsonProperty(ModelNames.Orbital + ModelNames.Velocity)]
         public IVector3 OrbitalVelocity { get; set; }
         
-        [JsonProperty("oco")]
+        [JsonProperty(ModelNames.Orbital + ModelNames.Center + ModelNames.Offset)]
         public IVector3 OrbitalCenterOffset { get; set; }
         
-        [JsonProperty("vs")]
+        [JsonProperty(ModelNames.Velocity + ModelNames.Speed)]
         public IFloat VelocitySpeedModifier { get; set; }
         
-        [JsonProperty("lf")]
+        [JsonProperty(ModelNames.Linear + ModelNames.Force)]
         public IVector2 LinearForce { get; set; }
 
         public EffectInstanceForces()

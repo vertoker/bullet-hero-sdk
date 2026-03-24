@@ -7,16 +7,16 @@ namespace BHSDK.Models.Events
 {
     public class Marker : IFrame
     {
-        [JsonProperty("n")]
-        public string Name { get; set; }
-        
-        [JsonProperty("d")]
-        public string Description { get; set; }
-        
-        [JsonProperty("f")]
+        [JsonProperty(ModelNames.Frame)]
         public int Frame { get; set; }
         
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Name)]
+        public string Name { get; set; }
+        
+        [JsonProperty(ModelNames.Description)]
+        public string Description { get; set; }
+        
+        [JsonProperty(ModelNames.Color)]
         public IColor Color { get; set; }
 
         public Marker()

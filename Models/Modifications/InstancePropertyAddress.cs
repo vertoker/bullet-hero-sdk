@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
 
-namespace BHSDK.Models.Other
+namespace BHSDK.Models.Modifications
 {
     public class InstancePropertyAddress
     {
-        [JsonProperty("id")]
+        [JsonProperty(ModelNames.InstanceId)]
         public int InstanceId { get; set; }
         
-        [JsonProperty("n")]
+        [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
     }
 }

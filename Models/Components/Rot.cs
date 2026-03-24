@@ -8,7 +8,7 @@ namespace BHSDK.Models.Components
 {
     public class Rot : Keyframe
     {
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Angle)]
         public IFloat Angle { get; set; } // TODO make IAngle
 
         public Rot()

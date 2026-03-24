@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BHSDK.Models.NoGame
 {
     public class LevelTrack
     {
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Title)]
         public string Title { get; set; }
         
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Author)]
         public string Author { get; set; }
         
-        [JsonProperty("ss")]
+        [JsonProperty(ModelNames.Source)]
         public List<LevelTrackSource> Sources { get; set; }
 
         public LevelTrack()

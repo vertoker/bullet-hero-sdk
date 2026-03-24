@@ -8,13 +8,13 @@ namespace BHSDK.Models.Values
 {
     public class Vector2Circle : IVector2
     {
-        [JsonProperty("x")]
+        [JsonProperty(ModelNames.CoordX)]
         public float X { get; set; }
         
-        [JsonProperty("y")]
+        [JsonProperty(ModelNames.CoordY)]
         public float Y { get; set; }
         
-        [JsonProperty("r")]
+        [JsonProperty(ModelNames.Radius)]
         public float Radius { get; set; }
         
         public Vector2Circle()

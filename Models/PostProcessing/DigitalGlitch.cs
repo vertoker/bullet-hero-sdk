@@ -6,7 +6,7 @@ namespace BHSDK.Models.PostProcessing
 {
     public class DigitalGlitch : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
-        [JsonProperty("i")]
+        [JsonProperty(ModelNames.Intensity)]
         public float Intensity { get; set; }
 
         public DigitalGlitch()

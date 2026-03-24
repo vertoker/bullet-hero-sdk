@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace BHSDK.Models.Other
+namespace BHSDK.Models.Modifications
 {
     public static class InstanceMetadata
     {

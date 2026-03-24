@@ -7,10 +7,10 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleCurvesOverLife : IEffectScale
     {
-        [JsonProperty("cx")]
+        [JsonProperty(ModelNames.CurveX)]
         public CurveValue CurveX { get; set; }
         
-        [JsonProperty("cy")]
+        [JsonProperty(ModelNames.CurveY)]
         public CurveValue CurveY { get; set; }
         
         public EffectScaleType GetModelType() => EffectScaleType.CurvesOverLife;

@@ -3,6 +3,7 @@ using BHSDK.Models;
 using BHSDK.Models.Components;
 using BHSDK.Models.Events;
 using BHSDK.Models.Instances;
+using BHSDK.Models.NoGame;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Values;
 using BHSDK.Serialization;

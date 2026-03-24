@@ -16,45 +16,45 @@ namespace BHSDK.Models.Instances
 
         // Core
         
-        [JsonProperty("l")]
+        [JsonProperty(ModelNames.Loop)]
         public bool Loop { get; set; }
         
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Particle + ModelNames.Count)]
         public int ParticleCount { get; set; }
         
-        [JsonProperty("lb")]
+        [JsonProperty(ModelNames.Lifetime)]
         public IVector2 LifetimeBounds { get; set; }
         
-        [JsonProperty("pc")]
+        [JsonProperty(ModelNames.Particle + ModelNames.Collider)]
         public bool ParticleCollider { get; set; }
         
-        [JsonProperty("hs")]
+        [JsonProperty(ModelNames.HasStopTime)]
         public bool HasStopTime { get; set; }
         
-        [JsonProperty("st")]
+        [JsonProperty(ModelNames.StopTime)]
         public float StopTime { get; set; }
         
-        [JsonProperty("pti")]
+        [JsonProperty(ModelNames.Particle + ModelNames.Texture + ModelNames.Index)]
         public int ParticleTextureIndex { get; set; }
         
-        [JsonProperty("pp")]
+        [JsonProperty(ModelNames.Particle + ModelNames.Pivot)]
         public IVector2 ParticlePivot { get; set; }
         
         // Types
         
-        [JsonProperty("fcs")]
+        [JsonProperty(ModelNames.Force)]
         public EffectInstanceForces Forces { get; set; }
         
-        [JsonProperty("eshp")]
+        [JsonProperty(ModelNames.Effect + ModelNames.Shape)]
         public IEffectShape EffectShape { get; set; }
         
-        [JsonProperty("eang")]
+        [JsonProperty(ModelNames.Effect + ModelNames.Angle)]
         public IEffectAngle EffectAngle { get; set; }
         
-        [JsonProperty("esca")]
+        [JsonProperty(ModelNames.Effect + ModelNames.Scale)]
         public IEffectScale EffectScale { get; set; }
         
-        [JsonProperty("eclr")]
+        [JsonProperty(ModelNames.Effect + ModelNames.Color)]
         public IEffectColor EffectColor { get; set; }
 
         public EffectInstance()

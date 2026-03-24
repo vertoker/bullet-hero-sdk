@@ -7,13 +7,13 @@ namespace BHSDK.Models.Values
 {
     public class Vector3Value : IVector3
     {
-        [JsonProperty("x")]
+        [JsonProperty(ModelNames.CoordX)]
         public float X { get; set; }
         
-        [JsonProperty("y")]
+        [JsonProperty(ModelNames.CoordY)]
         public float Y { get; set; }
         
-        [JsonProperty("z")]
+        [JsonProperty(ModelNames.CoordZ)]
         public float Z { get; set; }
 
         public Vector3Value()

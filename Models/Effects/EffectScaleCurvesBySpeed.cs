@@ -9,13 +9,13 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleCurvesBySpeed : IEffectScale
     {
-        [JsonProperty("cx")]
+        [JsonProperty(ModelNames.CurveX)]
         public CurveValue CurveX { get; set; }
         
-        [JsonProperty("cy")]
+        [JsonProperty(ModelNames.CurveY)]
         public CurveValue CurveY { get; set; }
         
-        [JsonProperty("sr")]
+        [JsonProperty(ModelNames.SpeedRange)]
         public IVector2 SpeedRange { get; set; }
 
         public EffectScaleType GetModelType() => EffectScaleType.CurvesBySpeed;

@@ -1,4 +1,6 @@
-﻿namespace BHSDK.Tests
+﻿using NUnit.Framework;
+
+namespace BHSDK.Tests
 {
     public class OtherTests
     {

@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BHSDK.Models.NoGame
 {
     public class LevelMeta
     {
-        [JsonProperty("ln")]
+        [JsonProperty(ModelNames.Name)]
         public string LevelName { get; set; }
         
-        [JsonProperty("lv")]
+        [JsonProperty(ModelNames.Version)]
         public Version LevelVersion { get; set; }
         
-        [JsonProperty("as")]
+        [JsonProperty(ModelNames.Author)]
         public List<Author> Authors { get; set; }
 
         public LevelMeta()

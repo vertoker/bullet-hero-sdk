@@ -9,10 +9,10 @@ namespace BHSDK.Models.Effects
 {
     public class EffectAngleCurvesBySpeed : IEffectAngle
     {
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Curve)]
         public CurveValue Curve { get; set; }
         
-        [JsonProperty("sr")]
+        [JsonProperty(ModelNames.SpeedRange)]
         public IVector2 SpeedRange { get; set; }
         
         public EffectAngleType GetModelType() => EffectAngleType.CurvesBySpeed;

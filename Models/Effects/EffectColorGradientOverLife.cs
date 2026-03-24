@@ -7,7 +7,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorGradientOverLife : IEffectColor
     {
-        [JsonProperty("g")]
+        [JsonProperty(ModelNames.Gradient)]
         public GradientValue Gradient { get; set; }
         
         public EffectColorType GetModelType() => EffectColorType.GradientOverLife;

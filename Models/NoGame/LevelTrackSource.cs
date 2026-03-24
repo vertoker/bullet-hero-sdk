@@ -1,20 +1,20 @@
 ﻿using BHSDK.Models.Enum;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BHSDK.Models.NoGame
 {
     public class LevelTrackSource
     {
-        [JsonProperty("l")]
+        [JsonProperty(ModelNames.Link)]
         public string Link { get; set; }
         
-        [JsonProperty("lt")]
+        [JsonProperty(ModelNames.Link + ModelNames.Type)]
         public AudioLinkType LinkType { get; set; }
         
-        [JsonProperty("st")]
+        [JsonProperty(ModelNames.Start + ModelNames.Time)]
         public float StartTime { get; set; }
         
-        [JsonProperty("et")]
+        [JsonProperty(ModelNames.End + ModelNames.Time)]
         public float EndTime { get; set; }
 
         public LevelTrackSource()

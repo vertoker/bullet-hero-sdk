@@ -8,34 +8,34 @@ namespace BHSDK.Models.PostProcessing
 {
     public class Vignette : Keyframe
     {
-        [JsonProperty("clr")]
-        public IColor Color { get; set; } // TODO only RGB
+        [JsonProperty(ModelNames.Color)]
+        public IColor ColorHDR { get; set; }
         
-        [JsonProperty("ctr")]
+        [JsonProperty(ModelNames.Center)]
         public IVector2 Center { get; set; }
         
-        [JsonProperty("i")]
+        [JsonProperty(ModelNames.Intensity)]
         public float Intensity { get; set; }
         
-        [JsonProperty("s")]
+        [JsonProperty(ModelNames.Smoothness)]
         public float Smoothness { get; set; }
         
-        [JsonProperty("r")]
+        [JsonProperty(ModelNames.Rounded)]
         public bool Rounded { get; set; }
 
         public Vignette()
         {
-            Color = new ColorValue(UnityEngine.Color.black);
+            ColorHDR = new ColorValue(UnityEngine.Color.black);
             Center = new Vector2Value(0.5f, 0.5f);
             Intensity = 0.3f;
             Smoothness = 0.5f;
             Rounded = false;
         }
-        public Vignette(int frame, EaseType ease, IColor color, 
+        public Vignette(int frame, EaseType ease, IColor colorHDR, 
             IVector2 center, float intensity, float smoothness, bool rounded)
             : base(frame, ease)
         {
-            Color = color;
+            ColorHDR = colorHDR;
             Center = center;
             Intensity = intensity;
             Smoothness = smoothness;

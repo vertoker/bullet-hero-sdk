@@ -8,7 +8,7 @@ namespace BHSDK.Models.Components
 {
     public class Zoom : Keyframe
     {
-        [JsonProperty("s")]
+        [JsonProperty(ModelNames.Size)]
         public IFloat Size { get; set; }
 
         public Zoom()

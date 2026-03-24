@@ -9,76 +9,60 @@ namespace BHSDK.Models.PostProcessing
 {
     public class ShadowsMidtonesHighlights : Keyframe
     {
-        [JsonProperty("s")]
+        [JsonProperty(ModelNames.Shadow)]
         public bool Shadows { get; set; }
         
-        [JsonProperty("sc")]
-        public IColor ShadowsColor { get; set; } // TODO only RGB
-        
-        [JsonProperty("sa")]
-        public float ShadowsAlpha { get; set; }
+        [JsonProperty(ModelNames.Shadow + ModelNames.Color)]
+        public IColor ShadowsColor { get; set; }
         
         
-        [JsonProperty("m")]
+        [JsonProperty(ModelNames.Midtone)]
         public bool Midtones { get; set; }
         
-        [JsonProperty("mc")]
-        public IColor MidtonesColor { get; set; } // TODO only RGB
-        
-        [JsonProperty("ma")]
-        public float MidtonesAlpha { get; set; }
+        [JsonProperty(ModelNames.Midtone + ModelNames.Color)]
+        public IColor MidtonesColor { get; set; }
         
         
-        [JsonProperty("h")]
+        [JsonProperty(ModelNames.Highlight)]
         public bool Highlights { get; set; }
         
-        [JsonProperty("hc")]
-        public IColor HighlightsColor { get; set; } // TODO only RGB
+        [JsonProperty(ModelNames.Highlight + ModelNames.Color)]
+        public IColor HighlightsColor { get; set; }
         
-        [JsonProperty("ha")]
-        public float HighlightsAlpha { get; set; }
         
         // TODO graph like in Post Processing menu
         
-        [JsonProperty("sl")]
+        [JsonProperty(ModelNames.Shadow + ModelNames.Limit)]
         public IVector2 ShadowLimits { get; set; }
         
-        [JsonProperty("hl")]
+        [JsonProperty(ModelNames.Highlight + ModelNames.Limit)]
         public IVector2 HighlightLimits { get; set; }
 
         public ShadowsMidtonesHighlights()
         {
             Shadows = false;
             ShadowsColor = new ColorValue(Color.white);
-            ShadowsAlpha = 1f;
-            
             Midtones = false;
             MidtonesColor = new ColorValue(Color.white);
-            MidtonesAlpha = 1f;
-            
             Highlights = false;
             HighlightsColor = new ColorValue(Color.white);
-            HighlightsAlpha = 1f;
-
+            
             ShadowLimits = new Vector2Value(0f, 0.3f);
             HighlightLimits = new Vector2Value(0.55f, 1f);
         }
         public ShadowsMidtonesHighlights(int frame, EaseType ease, 
-            bool shadows, IColor shadowsColor, float shadowsAlpha, 
-            bool midtones, IColor midtonesColor, float midtonesAlpha, 
-            bool highlights, IColor highlightsColor, float highlightsAlpha, 
+            bool shadows, IColor shadowsColor,
+            bool midtones, IColor midtonesColor, 
+            bool highlights, IColor highlightsColor, 
             IVector2 shadowLimits, IVector2 highlightLimits)
             : base(frame, ease)
         {
             Shadows = shadows;
             ShadowsColor = shadowsColor;
-            ShadowsAlpha = shadowsAlpha;
             Midtones = midtones;
             MidtonesColor = midtonesColor;
-            MidtonesAlpha = midtonesAlpha;
             Highlights = highlights;
             HighlightsColor = highlightsColor;
-            HighlightsAlpha = highlightsAlpha;
             ShadowLimits = shadowLimits;
             HighlightLimits = highlightLimits;
         }

@@ -8,10 +8,10 @@ namespace BHSDK.Models.Components
 {
     public class Pos : Keyframe
     {
-        [JsonProperty("v")]
+        [JsonProperty(ModelNames.Vector2)]
         public IVector2 Vector2 { get; set; }
         
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Anchor)]
         public Anchor Anchor { get; set; }
 
         public Pos()

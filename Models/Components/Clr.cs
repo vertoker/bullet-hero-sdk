@@ -8,7 +8,7 @@ namespace BHSDK.Models.Components
 {
     public class Clr : Keyframe
     {
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Color)]
         public IColor Color { get; set; }
 
         public Clr()

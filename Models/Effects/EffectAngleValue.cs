@@ -8,7 +8,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectAngleValue : IEffectAngle
     {
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Angle)]
         public IFloat Angle { get; set; }
         
         public EffectAngleType GetModelType() => EffectAngleType.Value;

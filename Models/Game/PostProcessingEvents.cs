@@ -8,44 +8,44 @@ namespace BHSDK.Models.Game
     {
         // General
         
-        [JsonProperty("blm")]
+        [JsonProperty(ModelNames.Bloom)]
         public List<Bloom> Bloom { get; set; }
         
-        [JsonProperty("chr")]
+        [JsonProperty(ModelNames.Chroma)]
         public List<ChromaticAberration> Chroma { get; set; }
         
-        [JsonProperty("vgn")]
+        [JsonProperty(ModelNames.Vignette)]
         public List<Vignette> Vignette { get; set; }
         
-        [JsonProperty("lns")]
+        [JsonProperty(ModelNames.Lens)]
         public List<LensDistortion> Lens { get; set; }
         
-        [JsonProperty("grn")]
+        [JsonProperty(ModelNames.Grain)]
         public List<FilmGrain> Grain { get; set; }
         
-        [JsonProperty("mbr")]
+        [JsonProperty(ModelNames.MotionBlur)]
         public List<MotionBlur> MotionBlur { get; set; }
         
         // Colors
         
-        [JsonProperty("ccv")]
+        [JsonProperty(ModelNames.ColorCurves)]
         public List<ColorCurves> ColorCurves { get; set; }
         
-        [JsonProperty("lgg")]
+        [JsonProperty(ModelNames.LiftGammaGain)]
         public List<LiftGammaGain> LiftGammaGain { get; set; }
         
-        [JsonProperty("smh")]
+        [JsonProperty(ModelNames.ShadowsMidtonesHighlights)]
         public List<ShadowsMidtonesHighlights> ShadowsMidtonesHighlights { get; set; }
         
-        [JsonProperty("wbl")]
+        [JsonProperty(ModelNames.WhiteBalance)]
         public List<WhiteBalance> WhiteBalance { get; set; }
         
         // Glitches
         
-        [JsonProperty("agl")]
+        [JsonProperty(ModelNames.AnalogGlitch)]
         public List<AnalogGlitch> AnalogGlitch { get; set; }
         
-        [JsonProperty("dgl")]
+        [JsonProperty(ModelNames.DigitalGlitch)]
         public List<DigitalGlitch> DigitalGlitch { get; set; }
 
         public PostProcessingEvents()

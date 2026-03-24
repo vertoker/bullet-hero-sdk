@@ -9,38 +9,38 @@ namespace BHSDK.Models.Base
     {
         public virtual InstanceType GetModelType() => InstanceType.Base;
         
-        [JsonProperty("id")]
+        [JsonProperty(ModelNames.InstanceId)]
         public int InstanceId { get; set; }
         
-        [JsonProperty("pid")]
+        [JsonProperty(ModelNames.ParentInstanceId)]
         public int ParentInstanceId { get; set; }
         
-        [JsonProperty("n")]
+        [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
         
-        [JsonProperty("v")]
+        [JsonProperty(ModelNames.IsVisible)]
         public bool IsVisible { get; set; }
         
         
-        [JsonProperty("sf")]
+        [JsonProperty(ModelNames.Start + ModelNames.Frame)]
         public int StartFrame { get; set; }
         
-        [JsonProperty("ef")]
+        [JsonProperty(ModelNames.End + ModelNames.Frame)]
         public int EndFrame { get; set; }
         
-        [JsonProperty("pos")]
+        [JsonProperty(ModelNames.Position)]
         public List<Pos> Pos { get; set; }
         
-        [JsonProperty("rot")]
+        [JsonProperty(ModelNames.Rotation)]
         public List<Rot> Rot { get; set; }
         
-        [JsonProperty("sca")]
+        [JsonProperty(ModelNames.Scale)]
         public List<Sca> Sca { get; set; }
         
-        [JsonProperty("l")]
+        [JsonProperty(ModelNames.Layer)]
         public int Layer { get; set; }
         
-        [JsonProperty("p")]
+        [JsonProperty(ModelNames.Pivot)]
         public Anchor Pivot { get; set; }
 
         public Instance()

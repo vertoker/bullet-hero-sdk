@@ -7,7 +7,7 @@ namespace BHSDK.Models.Values
 {
     public class CurveValue
     {
-        [JsonProperty("kf")]
+        [JsonProperty(ModelNames.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
         
         public AnimationCurve Get()

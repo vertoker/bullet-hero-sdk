@@ -7,16 +7,16 @@ namespace BHSDK.Models.Events
 {
     public class Checkpoint : IFrame
     {
-        [JsonProperty("f")]
+        [JsonProperty(ModelNames.Frame)]
         public int Frame { get; set; }
         
-        [JsonProperty("n")]
+        [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
         
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Active)]
         public bool Active { get; set; }
         
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Color)]
         public IColor Color { get; set; }
 
         public Checkpoint()

@@ -6,10 +6,10 @@ namespace BHSDK.Models.Base
 {
     public abstract class Keyframe : IFrame
     {
-        [JsonProperty("f")]
+        [JsonProperty(ModelNames.Frame)]
         public int Frame { get; set; }
         
-        [JsonProperty("e")]
+        [JsonProperty(ModelNames.Ease)]
         public EaseType Ease { get; set; }
 
         protected Keyframe()

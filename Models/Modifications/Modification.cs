@@ -1,16 +1,16 @@
 ﻿using Newtonsoft.Json;
 
-namespace BHSDK.Models.Other
+namespace BHSDK.Models.Modifications
 {
     public class Modification
     {
         // TODO decide: indexed or string path?
         // TODO add validation for PropertyPath anyway 
         
-        [JsonProperty("pp")]
+        [JsonProperty(ModelNames.Path)]
         public string PropertyPath { get; set; }
         
-        [JsonProperty("v")]
+        [JsonProperty(ModelNames.Value)]
         public string Value { get; set; }
 
         public Modification()

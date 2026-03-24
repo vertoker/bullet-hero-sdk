@@ -5,10 +5,10 @@ namespace BHSDK.Models.Components
 {
     public class Bln : IFrame
     {
-        [JsonProperty("f")]
+        [JsonProperty(ModelNames.Frame)]
         public int Frame { get; set; }
         
-        [JsonProperty("b")]
+        [JsonProperty(ModelNames.Boolean)]
         public bool Boolean { get; set; }
 
         public Bln()

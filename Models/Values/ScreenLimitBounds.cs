@@ -1,6 +1,4 @@
-﻿using BHSDK.Models.Enum;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Game;
+﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -9,10 +7,10 @@ namespace BHSDK.Models.Values
 {
     public class ScreenLimitBounds : IScreenLimit
     {
-        [JsonProperty("mna")]
+        [JsonProperty(ModelNames.Min + ModelNames.Aspect)]
         public ScreenAspect MinAspect { get; set; }
         
-        [JsonProperty("mxa")]
+        [JsonProperty(ModelNames.Max + ModelNames.Aspect)]
         public ScreenAspect MaxAspect { get; set; }
         
         public ScreenLimitType GetModelType() => ScreenLimitType.Bounds;

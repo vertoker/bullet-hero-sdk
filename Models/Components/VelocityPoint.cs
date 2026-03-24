@@ -8,10 +8,10 @@ namespace BHSDK.Models.Components
 {
     public class VelocityPoint : Keyframe
     {
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Center)]
         public IVector2 Center { get; set; }
         
-        [JsonProperty("f")]
+        [JsonProperty(ModelNames.Force)]
         public float Force { get; set; }
 
         public VelocityPoint()

@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BHSDK.Models.NoGame
 {
     public class Author
     {
-        [JsonProperty("n")]
+        [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
         
-        [JsonProperty("o")]
+        [JsonProperty(ModelNames.Order)]
         public int Order { get; set; }
 
         public Author()

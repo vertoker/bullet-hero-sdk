@@ -9,10 +9,10 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorGradientBySpeed : IEffectColor
     {
-        [JsonProperty("g")]
+        [JsonProperty(ModelNames.Gradient)]
         public GradientValue Gradient { get; set; }
         
-        [JsonProperty("sr")]
+        [JsonProperty(ModelNames.SpeedRange)]
         public IVector2 SpeedRange { get; set; }
 
         public EffectColorType GetModelType() => EffectColorType.GradientBySpeed;

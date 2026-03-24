@@ -1,5 +1,4 @@
-﻿- move property names to single place, make target length 1 or 3
-- add prefabs serialization
+﻿- add prefabs serialization
 - add effects serialization
 - add themes serialization
 

@@ -6,7 +6,7 @@ namespace BHSDK.Models.Values
 {
     public class IntValue : IInt
     {
-        [JsonProperty("v")]
+        [JsonProperty(ModelNames.Value)]
         public int Value { get; set; }
 
         public IntValue()

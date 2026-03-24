@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models
+﻿namespace BHSDK.Models.NoGame
 {
     public class LevelRules
     {

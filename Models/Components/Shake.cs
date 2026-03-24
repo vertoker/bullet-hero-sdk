@@ -6,16 +6,16 @@ namespace BHSDK.Models.Components
 {
     public class Shake : Keyframe
     {
-        [JsonProperty("i")]
+        [JsonProperty(ModelNames.Intensity)]
         public float Intensity { get; set; }
         
-        [JsonProperty("s")]
+        [JsonProperty(ModelNames.Speed)]
         public float Speed { get; set; }
         
-        [JsonProperty("x")]
+        [JsonProperty(ModelNames.IntensityX)]
         public float IntensityX { get; set; }
         
-        [JsonProperty("y")]
+        [JsonProperty(ModelNames.IntensityY)]
         public float IntensityY { get; set; }
 
         public Shake()

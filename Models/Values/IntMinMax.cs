@@ -7,10 +7,10 @@ namespace BHSDK.Models.Values
 {
     public class IntMinMax : IInt
     {
-        [JsonProperty("mn")]
+        [JsonProperty(ModelNames.Min)]
         public int Min { get; set; }
         
-        [JsonProperty("mx")]
+        [JsonProperty(ModelNames.Max)]
         public int Max { get; set; }
 
         public IntMinMax()

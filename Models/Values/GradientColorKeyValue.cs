@@ -6,10 +6,10 @@ namespace BHSDK.Models.Values
 {
     public class GradientColorKeyValue
     {
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Color)]
         public IColor ColorHDR { get; set; }
         
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Time)]
         public IFloat Time { get; set; }
         
         public GradientColorKey Get()

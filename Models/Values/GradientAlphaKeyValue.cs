@@ -6,10 +6,10 @@ namespace BHSDK.Models.Values
 {
     public class GradientAlphaKeyValue
     {
-        [JsonProperty("a")]
+        [JsonProperty(ModelNames.Alpha)]
         public IFloat Alpha { get; set; }
         
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Time)]
         public IFloat Time { get; set; }
 
         public GradientAlphaKey Get()

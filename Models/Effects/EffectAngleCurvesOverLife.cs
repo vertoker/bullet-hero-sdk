@@ -1,6 +1,5 @@
 ﻿using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces.Effects;
-using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
@@ -8,7 +7,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectAngleCurvesOverLife : IEffectAngle
     {
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Curve)]
         public CurveValue Curve { get; set; }
 
         public EffectAngleType GetModelType() => EffectAngleType.CurvesOverLife;

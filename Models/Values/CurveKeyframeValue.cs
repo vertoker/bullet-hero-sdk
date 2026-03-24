@@ -6,22 +6,22 @@ namespace BHSDK.Models.Values
 {
     public class CurveKeyframeValue
     {
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Time)]
         public IFloat Time { get; set; }
         
-        [JsonProperty("v")]
+        [JsonProperty(ModelNames.Value)]
         public IFloat Value { get; set; }
         
-        [JsonProperty("it")]
+        [JsonProperty(ModelNames.In + ModelNames.Tangent)]
         public IFloat InTangent { get; set; }
         
-        [JsonProperty("ot")]
+        [JsonProperty(ModelNames.Out + ModelNames.Tangent)]
         public IFloat OutTangent { get; set; }
         
-        [JsonProperty("iw")]
+        [JsonProperty(ModelNames.In + ModelNames.Weight)]
         public IFloat InWeight { get; set; }
         
-        [JsonProperty("ow")]
+        [JsonProperty(ModelNames.Out + ModelNames.Weight)]
         public IFloat OutWeight { get; set; }
         
         public Keyframe Get()

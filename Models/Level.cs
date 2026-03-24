@@ -1,5 +1,6 @@
 ﻿using System;
 using BHSDK.Models.Game;
+using BHSDK.Models.NoGame;
 using BHSDK.Serialization;
 using Newtonsoft.Json;
 
@@ -9,16 +10,16 @@ namespace BHSDK.Models
     {
         public Version GetVersion() => new(1, 0);
         
-        [JsonProperty("m")]
+        [JsonProperty(ModelNames.Meta)]
         public LevelMeta Meta { get; set; }
         
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Track)]
         public LevelTrack Track { get; set; }
         
-        [JsonProperty("r")]
+        [JsonProperty(ModelNames.Rules)]
         public LevelRules Rules { get; set; }
         
-        [JsonProperty("g")]
+        [JsonProperty(ModelNames.Game)]
         public GameLevel Game { get; set; }
 
         public Level()

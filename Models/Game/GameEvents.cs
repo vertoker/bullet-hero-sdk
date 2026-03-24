@@ -7,16 +7,16 @@ namespace BHSDK.Models.Game
 {
     public class GameEvents
     {
-        [JsonProperty("m")]
+        [JsonProperty(ModelNames.Marker)]
         public List<Marker> Markers { get; set; }
         
-        [JsonProperty("c")]
+        [JsonProperty(ModelNames.Checkpoint)]
         public List<Checkpoint> Checkpoints { get; set; }
         
-        [JsonProperty("b")]
+        [JsonProperty(ModelNames.Background)]
         public List<Clr> Backgrounds { get; set; }
         
-        [JsonProperty("t")]
+        [JsonProperty(ModelNames.Theme)]
         public List<ThemeKeyframe> Themes { get; set; }
 
         public GameEvents()

@@ -6,16 +6,16 @@ namespace BHSDK.Models.Game
 {
     public class PlayerEvents
     {
-        [JsonProperty("v")]
+        [JsonProperty(ModelNames.Velocity)]
         public List<Velocity> Velocities { get; set; }
         
-        [JsonProperty("vp")]
+        [JsonProperty(ModelNames.Velocity + ModelNames.Point)]
         public List<VelocityPoint> VelocityPoints { get; set; }
         
-        [JsonProperty("clr")]
+        [JsonProperty(ModelNames.Color)]
         public List<Clr> Clr { get; set; }
         
-        [JsonProperty("clsn")]
+        [JsonProperty(ModelNames.Collision)]
         public List<Bln> Collisions { get; set; }
 
         public PlayerEvents()

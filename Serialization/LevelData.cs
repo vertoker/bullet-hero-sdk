@@ -1,17 +1,15 @@
 ﻿using System;
+using BHSDK.Models;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization
 {
     public class LevelData
     {
-        public const string VersionPropertyName = "v";
-        public const string LevelPropertyName = "l";
-        
-        [JsonProperty(VersionPropertyName)]
+        [JsonProperty(ModelNames.Version)]
         public Version Version;
         
-        [JsonProperty(LevelPropertyName)]
+        [JsonProperty(ModelNames.Level)]
         public ILevel Level;
 
         public LevelData()

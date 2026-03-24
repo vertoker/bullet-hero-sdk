@@ -7,13 +7,13 @@ namespace BHSDK.Models.Values
 {
     public class IntMinMaxStep : IInt
     {
-        [JsonProperty("mn")]
+        [JsonProperty(ModelNames.Min)]
         public int Min { get; set; }
         
-        [JsonProperty("mx")]
+        [JsonProperty(ModelNames.Max)]
         public int Max { get; set; }
         
-        [JsonProperty("s")]
+        [JsonProperty(ModelNames.Step)]
         public int Step { get; set; }
 
         public IntMinMaxStep()

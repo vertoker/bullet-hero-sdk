@@ -7,10 +7,10 @@ namespace BHSDK.Models.Values
 {
     public class GradientValue
     {
-        [JsonProperty("ak")]
+        [JsonProperty(ModelNames.Alpha + ModelNames.Keys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
         
-        [JsonProperty("ck")]
+        [JsonProperty(ModelNames.Color + ModelNames.Keys)]
         public List<GradientColorKeyValue> ColorKeys { get; set; }
         
         public Gradient Get()

@@ -10,33 +10,33 @@ namespace BHSDK.Models.Instances
     {
         public override InstanceType GetModelType() => InstanceType.Texture;
         
-        [JsonProperty("c")]
-        public bool HasCollider { get; set; }
+        [JsonProperty(ModelNames.Collider)]
+        public bool Collider { get; set; }
         
-        [JsonProperty("clr")]
+        [JsonProperty(ModelNames.Color)]
         public List<Clr> Clr { get; set; }
         
-        [JsonProperty("si")]
-        public int SpriteIndex { get; set; }
+        [JsonProperty(ModelNames.Texture + ModelNames.Index)]
+        public int TextureIndex { get; set; }
         
-        [JsonProperty("sbi")]
+        [JsonProperty(ModelNames.Subling + ModelNames.Index)]
         public int SublingIndex { get; set; }
         
         public TextureInstance()
         {
-            HasCollider = true;
+            Collider = true;
             Clr = new List<Clr>();
-            SpriteIndex = 0;
+            TextureIndex = 0;
             SublingIndex = 0;
         }
         public TextureInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot,
-            bool hasCollider, List<Clr> clr, int spriteIndex, int sublingIndex)
+            bool collider, List<Clr> clr, int textureIndex, int sublingIndex)
             : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
-            HasCollider = hasCollider;
+            Collider = collider;
             Clr = clr;
-            SpriteIndex = spriteIndex;
+            TextureIndex = textureIndex;
             SublingIndex = sublingIndex;
         }
     }
