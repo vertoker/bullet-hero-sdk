@@ -5,7 +5,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapePoint : IEffectShape
     {
-        // None, inherit TRS from Instance
+        // None, inherit TRS from Object
         
         public EffectShapeType GetModelType() => EffectShapeType.Point;
     }

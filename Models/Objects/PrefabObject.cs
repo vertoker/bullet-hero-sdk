@@ -2,29 +2,29 @@
 using BHSDK.Models.Modifications;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Instances
+namespace BHSDK.Models.Objects
 {
-    public class PrefabInstance
+    public class PrefabObject
     {
-        // In build process, this PrefabInstance converted to RuntimeInstance
+        // In build process, this PrefabObject converted to Object
         // 1. Loaded SourcePrefab to runtime model
         // 2. It uses fields and reflection in modifications for finding and replace value in runtime model
         // 3. Play it
         
-        [JsonProperty(ModelNames.Prefab)]
-        public Prefab SourcePrefab { get; set; }
+        [JsonProperty(ModelNames.Prefab + ModelNames.Index)]
+        public int PrefabIndex { get; set; } // reference to all level Prefabs list
         
         [JsonProperty(ModelNames.Modification)]
         public List<Modification> Modifications { get; set; }
 
-        public PrefabInstance()
+        public PrefabObject()
         {
-            SourcePrefab = new Prefab();
+            PrefabIndex = 0;
             Modifications = new List<Modification>();
         }
-        public PrefabInstance(Prefab sourcePrefab, List<Modification> modifications)
+        public PrefabObject(int prefabIndex, List<Modification> modifications)
         {
-            SourcePrefab = sourcePrefab;
+            PrefabIndex = prefabIndex;
             Modifications = modifications;
         }
     }

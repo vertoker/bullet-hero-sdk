@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Base;
 using BHSDK.Models.Events;
-using BHSDK.Models.Instances;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Objects;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
-    public class GameLevel : IInstancesProvider
+    public class GameLevel : IObjectScope
     {
         [JsonProperty(ModelNames.Seed)]
         public int Seed { get; set; }
@@ -35,12 +35,15 @@ namespace BHSDK.Models.Game
         public PlayerEvents PlayerEvents { get; set; }
         
         
-        [JsonProperty(ModelNames.Instance)]
-        public List<Instance> Instances { get; set; }
+        [JsonProperty(ModelNames.Object)]
+        public List<Object> Objects { get; set; }
         
-        [JsonProperty(ModelNames.ParentInstance)]
-        public List<PrefabInstance> PrefabInstances { get; set; }
-
+        [JsonProperty(ModelNames.ParentObject)]
+        public List<PrefabObject> PrefabObjects { get; set; }
+        
+        
+        [JsonProperty(ModelNames.Prefab)]
+        public List<Prefab> Prefabs { get; set; }
         
         [JsonProperty(ModelNames.Theme)]
         public List<Theme> Themes { get; set; }
@@ -48,7 +51,7 @@ namespace BHSDK.Models.Game
         public GameLevel()
         {
             Seed = 0;
-            Framerate = 0;
+            Framerate = 60;
             ScreenLimit = new ScreenLimitNone();
             
             Events = new GameEvents();
@@ -56,14 +59,15 @@ namespace BHSDK.Models.Game
             PostProcessingEvents = new PostProcessingEvents();
             PlayerEvents = new PlayerEvents();
             
-            Instances = new List<Instance>();
-            PrefabInstances = new List<PrefabInstance>();
+            Objects = new List<Object>();
+            PrefabObjects = new List<PrefabObject>();
             
+            Prefabs = new List<Prefab>();
             Themes = new List<Theme>();
         }
         public GameLevel(int seed, int framerate, IScreenLimit screenLimit, GameEvents events, 
             CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents, PlayerEvents playerEvents, 
-            List<Instance> instances, List<PrefabInstance> prefabInstances, List<Theme> themes)
+            List<Object> objects, List<PrefabObject> prefabObjects, List<Prefab> prefabs, List<Theme> themes)
         {
             Seed = seed;
             Framerate = framerate;
@@ -74,9 +78,10 @@ namespace BHSDK.Models.Game
             PostProcessingEvents = postProcessingEvents;
             PlayerEvents = playerEvents;
             
-            Instances = instances;
-            PrefabInstances = prefabInstances;
+            Objects = objects;
+            PrefabObjects = prefabObjects;
             
+            Prefabs = prefabs;
             Themes = themes;
         }
     }

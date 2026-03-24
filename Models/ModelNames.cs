@@ -101,8 +101,8 @@
         public const string Marker = "mrk";
         public const string Checkpoint = "chk";
         public const string Background = "bg";
-        public const string Instance = "inst";
-        public const string ParentInstance = "pinst";
+        public const string Object = "obj";
+        public const string ParentObject = "pobj";
         
         public const string Bloom = "blm";
         public const string Chroma = "chr";
@@ -117,8 +117,8 @@
         public const string AnalogGlitch = "agl";
         public const string DigitalGlitch = "dgl";
         
-        public const string InstanceId = "id";
-        public const string ParentInstanceId = "pid";
+        public const string ObjectId = "id";
+        public const string ParentObjectId = "pid";
         public const string IsVisible = "vis";
         public const string Layer = "lr";
         public const string Pivot = "pvt";

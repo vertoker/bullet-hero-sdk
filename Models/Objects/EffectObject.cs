@@ -8,11 +8,11 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Instances
+namespace BHSDK.Models.Objects
 {
-    public class EffectInstance : Instance
+    public class EffectObject : Object
     {
-        public override InstanceType GetModelType() => InstanceType.Effect;
+        public override ObjectType GetModelType() => ObjectType.Effect;
 
         // Core
         
@@ -57,7 +57,7 @@ namespace BHSDK.Models.Instances
         [JsonProperty(ModelNames.Effect + ModelNames.Color)]
         public IEffectColor EffectColor { get; set; }
 
-        public EffectInstance()
+        public EffectObject()
         {
             Loop = true;
             ParticleCount = 10;
@@ -75,12 +75,12 @@ namespace BHSDK.Models.Instances
             EffectColor = new EffectColorValue();
         }
 
-        public EffectInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
+        public EffectObject(int objectId, int parentObjectId, string name, bool isVisible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
             bool loop, int particleCount, IVector2 lifetimeBounds, bool particleCollider, bool hasStopTime, 
             float stopTime, int particleTextureIndex, IVector2 particlePivot, EffectInstanceForces forces, 
             IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor)
-            : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
             Loop = loop;
             ParticleCount = particleCount;

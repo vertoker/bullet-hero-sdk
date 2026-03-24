@@ -2,22 +2,37 @@
 
 namespace BHSDK.Models.Modifications
 {
+    // Limitations for modifications
+    
+    // 1. Works only for Object and Prefab, not applied to anything else
+    
+    // 2. You can't make Object a child or any Object in Prefab, no parenting from low levels
+    // (but you still can make root of prefab inherit from outside Object, parenting from high levels is allowed)
+    
+    // 3. Modification works only for prefab scope where it's located.
+    // No deep inheritance of changes
+    
     public class Modification
     {
+        [JsonProperty(ModelNames.ObjectId)]
+        public int ObjectId { get; set; } // to which Object this modification is applied
+        
         [JsonProperty(ModelNames.Path)]
-        public string PropertyPath { get; set; }
+        public string Path { get; set; }
         
         [JsonProperty(ModelNames.Value)]
         public string Value { get; set; }
 
         public Modification()
         {
-            PropertyPath = string.Empty;
+            ObjectId = 0;
+            Path = string.Empty;
             Value = string.Empty;
         }
-        public Modification(string propertyPath, string value)
+        public Modification(int objectId, string path, string value)
         {
-            PropertyPath = propertyPath;
+            ObjectId = objectId;
+            Path = path;
             Value = value;
         }
     }

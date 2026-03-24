@@ -64,7 +64,7 @@ namespace BHSDK.Serialization
                 new EffectShapeSpreadConverter(innerSerializer),
 
                 new ScreenLimitConverter(innerSerializer),
-                new InstanceConverter(innerSerializer),
+                new ObjectConverter(innerSerializer),
             };
         }
         

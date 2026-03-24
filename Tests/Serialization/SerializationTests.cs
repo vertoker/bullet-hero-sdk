@@ -2,8 +2,8 @@
 using BHSDK.Models;
 using BHSDK.Models.Components;
 using BHSDK.Models.Events;
-using BHSDK.Models.Instances;
 using BHSDK.Models.NoGame;
+using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Values;
 using BHSDK.Serialization;
@@ -68,25 +68,28 @@ namespace BHSDK.Tests.Serialization
             level.Game.PlayerEvents.Velocities.Add(new Velocity());
             level.Game.PlayerEvents.VelocityPoints.Add(new VelocityPoint());
 
-            var textureInstance = new TextureInstance();
-            textureInstance.Pos.Add(new Pos());
-            textureInstance.Rot.Add(new Rot());
-            textureInstance.Sca.Add(new Sca());
-            textureInstance.Clr.Add(new Clr());
-            level.Game.Instances.Add(textureInstance);
+            var textureObject = new TextureObject();
+            textureObject.Pos.Add(new Pos());
+            textureObject.Rot.Add(new Rot());
+            textureObject.Sca.Add(new Sca());
+            textureObject.Clr.Add(new Clr());
+            level.Game.Objects.Add(textureObject);
 
-            var textInstance = new TextInstance();
-            textInstance.Clr.Add(new Clr());
-            level.Game.Instances.Add(textInstance);
+            var textObject = new TextObject();
+            textObject.Clr.Add(new Clr());
+            level.Game.Objects.Add(textObject);
 
-            var effectInstance = new EffectInstance();
-            level.Game.Instances.Add(effectInstance);
+            var effectObject = new EffectObject();
+            level.Game.Objects.Add(effectObject);
 
-            var prefabInstance = new PrefabInstance();
-            prefabInstance.SourcePrefab.Instances.Add(new TextureInstance());
-            prefabInstance.SourcePrefab.Instances.Add(new TextInstance());
-            prefabInstance.SourcePrefab.Instances.Add(new EffectInstance());
-            level.Game.PrefabInstances.Add(prefabInstance);
+            var prefab = new Prefab();
+            prefab.Objects.Add(new TextureObject());
+            prefab.Objects.Add(new TextObject());
+            prefab.Objects.Add(new EffectObject());
+            level.Game.Prefabs.Add(prefab);
+            
+            var prefabObject = new PrefabObject { PrefabIndex = 0 };
+            level.Game.PrefabObjects.Add(prefabObject);
             
             level.Game.Themes.Add(new Theme());
 

@@ -1,8 +1,8 @@
 ﻿namespace BHSDK.Models.Enum
 {
-    public enum InstanceType
+    public enum ObjectType
     {
-        Base = 0,
+        Object = 0,
         Texture = 1,
         Text = 2,
         Effect = 3,

@@ -4,11 +4,11 @@ using BHSDK.Models.Components;
 using BHSDK.Models.Enum;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Instances
+namespace BHSDK.Models.Objects
 {
-    public class TextInstance : Instance
+    public class TextObject : Object
     {
-        public override InstanceType GetModelType() => InstanceType.Text;
+        public override ObjectType GetModelType() => ObjectType.Text;
         
         [JsonProperty(ModelNames.Color)]
         public List<Clr> Clr { get; set; }
@@ -22,17 +22,17 @@ namespace BHSDK.Models.Instances
         [JsonProperty(ModelNames.Font + ModelNames.Size)]
         public int FontSize { get; set; }
 
-        public TextInstance()
+        public TextObject()
         {
             Clr = new List<Clr>();
             Text = string.Empty;
             FontName = string.Empty;
             FontSize = 10;
         }
-        public TextInstance(int instanceId, int parentInstanceId, string name, bool isVisible, 
+        public TextObject(int objectId, int parentObjectId, string name, bool isVisible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
             List<Clr> clr, string text, string fontName, int fontSize)
-            : base(instanceId, parentInstanceId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
             Clr = clr;
             Text = text;

@@ -5,15 +5,25 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Base
 {
-    public class Instance
+    public class Object
     {
-        public virtual InstanceType GetModelType() => InstanceType.Base;
+        public virtual ObjectType GetModelType() => ObjectType.Object;
         
-        [JsonProperty(ModelNames.InstanceId)]
-        public int InstanceId { get; set; }
+        // Introducing to game identifiers. There are 2 types
         
-        [JsonProperty(ModelNames.ParentInstanceId)]
-        public int ParentInstanceId { get; set; }
+        // 1. ObjectId - stable identifier for saving.
+        // Unique only inside each object scope.
+        // Can be referred (as pid) only in scope.
+        // (but you still can rewrite pid from outside via modifications)
+        
+        // 2. InstanceId - runtime temporary identifier.
+        // Changes every runtime and using for game player only
+        
+        [JsonProperty(ModelNames.ObjectId)]
+        public int ObjectId { get; set; }
+        
+        [JsonProperty(ModelNames.ParentObjectId)]
+        public int ParentObjectId { get; set; }
         
         [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
@@ -43,10 +53,10 @@ namespace BHSDK.Models.Base
         [JsonProperty(ModelNames.Pivot)]
         public Anchor Pivot { get; set; }
 
-        public Instance()
+        public Object()
         {
-            InstanceId = 0;
-            ParentInstanceId = 0;
+            ObjectId = 0;
+            ParentObjectId = 0;
             Name = string.Empty;
             IsVisible = true;
             
@@ -58,11 +68,11 @@ namespace BHSDK.Models.Base
             Layer = 0;
             Pivot = Anchor.Center_Middle;
         }
-        public Instance(int instanceId, int parentInstanceId, string name, bool isVisible, 
+        public Object(int objectId, int parentObjectId, string name, bool isVisible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot)
         {
-            InstanceId = instanceId;
-            ParentInstanceId = parentInstanceId;
+            ObjectId = objectId;
+            ParentObjectId = parentObjectId;
             Name = name;
             IsVisible = isVisible;
             StartFrame = startFrame;
