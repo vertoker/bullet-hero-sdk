@@ -29,6 +29,8 @@
         public const string Int = "int";
         public const string Index = "idx";
         public const string Float = "flt";
+        public const string String = "str";
+        public const string Language = "lng";
         
         public const string Position = "pos";
         public const string Rotation = "rot";

@@ -16,6 +16,13 @@ namespace BHSDK.Models.NoGame
         
         [JsonProperty(ModelNames.End + ModelNames.Time)]
         public float EndTime { get; set; }
+        
+        // TODO add audio parsers for this services
+        // "Spotify", "https://open.spotify.com/artist/{0}"
+        // "SoundCloud", "https://soundcloud.com/{0}"
+        // "Bandcamp", "https://{0}.bandcamp.com"
+        // "Youtube Music", "https://music.youtube.com/channel/{0}"
+        // "Newgrounds", "https://{0}.newgrounds.com/"
 
         public LevelTrackSource()
         {

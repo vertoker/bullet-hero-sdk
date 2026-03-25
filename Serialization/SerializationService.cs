@@ -61,6 +61,7 @@ namespace BHSDK.Serialization
 
                 new IntConverter(innerSerializer),
                 new FloatConverter(innerSerializer),
+                new StringConverter(innerSerializer),
                 new ColorConverter(innerSerializer),
                 new Vector2Converter(innerSerializer),
                 new Vector3Converter(innerSerializer),
