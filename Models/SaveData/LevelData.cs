@@ -1,16 +1,19 @@
 ﻿using System;
-using BHSDK.Models;
+using BHSDK.Models.Interfaces.SaveData;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization
+namespace BHSDK.Models.SaveData
 {
-    public class LevelData
+    public class LevelData : ISaveData
     {
         [JsonProperty(ModelNames.Version)]
-        public Version Version;
+        public Version Version { get; set; }
         
         [JsonProperty(ModelNames.Level)]
-        public ILevel Level;
+        public ILevel Level { get; set; }
+
+        public IData GetData() => Level;
+        public void SetData(object data) => Level = data as ILevel;
 
         public LevelData()
         {

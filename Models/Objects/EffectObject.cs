@@ -1,19 +1,23 @@
-﻿using System.Collections.Generic;
-using BHSDK.Models.Base;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Components;
 using BHSDK.Models.Effects;
 using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces.Effects;
+using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
+using Object = BHSDK.Models.Base.Object;
 
 namespace BHSDK.Models.Objects
 {
-    public class EffectObject : Object
+    public class EffectObject : Object, IEffect
     {
         public override ObjectType GetModelType() => ObjectType.Effect;
 
+        public Version GetVersion() => new(1, 0);
+        
         // Core
         
         [JsonProperty(ModelNames.Loop)]

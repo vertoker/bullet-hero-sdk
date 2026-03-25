@@ -21,15 +21,15 @@ namespace BHSDK.Models.Modifications
         public string Path { get; set; }
         
         [JsonProperty(ModelNames.Value)]
-        public string Value { get; set; }
+        public object Value { get; set; }
 
         public Modification()
         {
             ObjectId = 0;
             Path = string.Empty;
-            Value = string.Empty;
+            Value = null;
         }
-        public Modification(int objectId, string path, string value)
+        public Modification(int objectId, string path, object value)
         {
             ObjectId = objectId;
             Path = path;

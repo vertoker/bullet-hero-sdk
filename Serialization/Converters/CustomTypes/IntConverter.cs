@@ -5,7 +5,7 @@ using BHSDK.Models.Values;
 using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization.Converters
+namespace BHSDK.Serialization.Converters.CustomTypes
 {
     public class IntConverter : JsonConverterCustomType<IInt, IntType>
     {

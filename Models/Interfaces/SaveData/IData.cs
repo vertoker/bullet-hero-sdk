@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace BHSDK.Serialization
+namespace BHSDK.Models.Interfaces.SaveData
 {
-    public interface ILevel
+    public interface IData
     {
         public Version GetVersion();
     }

@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
-using BHSDK.Models.Base;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.SaveData;
 using Newtonsoft.Json;
+using Object = BHSDK.Models.Base.Object;
 
 namespace BHSDK.Models.Objects
 {
-    public class Prefab : IObjectScope
+    public class Prefab : IObjectScope, IPrefab
     {
+        public Version GetVersion() => new(1, 0);
+        
         [JsonProperty(ModelNames.Object)]
         public List<Object> Objects { get; set; }
         

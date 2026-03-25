@@ -5,7 +5,7 @@ using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization.Converters
+namespace BHSDK.Serialization.Converters.CustomTypes
 {
     public class EffectScaleConverter : JsonConverterCustomType<IEffectScale, EffectScaleType>
     {

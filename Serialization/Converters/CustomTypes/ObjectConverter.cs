@@ -1,12 +1,11 @@
 ﻿using System;
-using BHSDK.Models.Base;
 using BHSDK.Models.Enum;
 using BHSDK.Models.Objects;
 using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 using Object = BHSDK.Models.Base.Object;
 
-namespace BHSDK.Serialization.Converters
+namespace BHSDK.Serialization.Converters.CustomTypes
 {
     public class ObjectConverter : JsonConverterCustomType<Object, ObjectType>
     {

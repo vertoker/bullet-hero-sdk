@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Serialization.Converters;
+using BHSDK.Serialization.Converters.CustomTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -47,8 +49,15 @@ namespace BHSDK.Serialization
         {
             return new List<JsonConverter>
             {
-                new LevelDataConverter(compatibilityService),
                 new VersionConverter(),
+                
+                // Effect is also serialized by ObjectConverter.
+                // We already know the type (EffectObject), parse it via default serializer 
+                new EffectDataConverter(compatibilityService, innerSerializer),
+                
+                new LevelDataConverter(compatibilityService),
+                new PrefabDataConverter(compatibilityService),
+                new ThemeDataConverter(compatibilityService),
 
                 new IntConverter(innerSerializer),
                 new FloatConverter(innerSerializer),

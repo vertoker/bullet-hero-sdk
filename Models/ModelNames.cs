@@ -52,7 +52,7 @@
         public const string Color = "clr";
         public const string ColorA = "clra";
         public const string ColorB = "clrb";
-        public const string Alpha = "clr";
+        public const string Alpha = "alp";
         public const string ChannelR = "r";
         public const string ChannelG = "g";
         public const string ChannelB = "b";
@@ -72,7 +72,7 @@
         public const string IntensityY = "itny";
         
         public const string Speed = "spd";
-        public const string SpeedRange = "spdrng";
+        public const string Range = "rng";
         public const string Force = "frc";
         public const string Linear = "lnr";
         public const string Velocity = "vel";

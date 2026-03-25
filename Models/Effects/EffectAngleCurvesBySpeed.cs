@@ -12,7 +12,7 @@ namespace BHSDK.Models.Effects
         [JsonProperty(ModelNames.Curve)]
         public CurveValue Curve { get; set; }
         
-        [JsonProperty(ModelNames.SpeedRange)]
+        [JsonProperty(ModelNames.Speed + ModelNames.Range)]
         public IVector2 SpeedRange { get; set; }
         
         public EffectAngleType GetModelType() => EffectAngleType.CurvesBySpeed;

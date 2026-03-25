@@ -1,10 +1,14 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using BHSDK.Models;
 using BHSDK.Models.Components;
+using BHSDK.Models.Effects;
 using BHSDK.Models.Events;
+using BHSDK.Models.Modifications;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
+using BHSDK.Models.SaveData;
 using BHSDK.Models.Values;
 using BHSDK.Serialization;
 using Newtonsoft.Json;
@@ -17,23 +21,84 @@ namespace BHSDK.Tests.Serialization
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
-        public void TestSerialization()
+        public void TestEffectSerialization()
+        {
+            var settings = new SerializationSettings(Formatting.Indented);
+            var serializationService = new SerializationService(settings);
+
+            var effect = CreateTestEffect();
+
+            var data = new EffectData(effect);
+            var textWriter = new StringWriter();
+            serializationService.Serializer.Serialize(textWriter, data);
+            var json = textWriter.ToString();
+            Debug.Log($"Effect - <color=green>{json}</color>");
+
+            var reader = new JsonTextReader(new StringReader(json));
+            data = serializationService.Serializer.Deserialize<EffectData>(reader);
+        }
+
+        private static EffectObject CreateTestEffect()
+        {
+            var effect = new EffectObject
+            {
+                Name = "TestEffect",
+                Loop = false,
+                ParticleCount = 1200,
+                EffectAngle = new EffectAngleCurvesBySpeed
+                {
+                    Curve = new CurveValue(new List<CurveKeyframeValue>()
+                    {
+                        new(), new()
+                    }),
+                    SpeedRange = new Vector2Circle(0f, 1f, 2f),
+                },
+                EffectColor = new EffectColorGradientRandom
+                {
+                    Gradient = new GradientValue(new List<GradientAlphaKeyValue>
+                    {
+                        new()
+                    }, new List<GradientColorKeyValue>
+                    {
+                        new()
+                    })
+                },
+                EffectScale = new EffectScaleCurvesBySpeed
+                {
+                    CurveX = new CurveValue(),
+                    CurveY = new CurveValue(),
+                    SpeedRange = new Vector2Value(),
+                },
+                EffectShape = new EffectShapeCircle
+                {
+                    Arc = new FloatValue(6.29f),
+                    Radius = new FloatValue(1f),
+                    Spread = new EffectShapeSpreadLoop(1f, 2f),
+                    Thickness = new FloatValue(1f),
+                },
+            };
+            return effect;
+        }
+        
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestLevelSerialization()
         {
             var settings = new SerializationSettings(Formatting.Indented);
             var serializationService = new SerializationService(settings);
 
             var level = CreateTestLevel();
 
-            var levelData = new LevelData(level);
+            var data = new LevelData(level);
             var textWriter = new StringWriter();
-            serializationService.Serializer.Serialize(textWriter, levelData);
+            serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            Debug.Log($"<color=green>{json}</color>");
+            Debug.Log($"Level - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
-            levelData = serializationService.Serializer.Deserialize<LevelData>(reader);
+            data = serializationService.Serializer.Deserialize<LevelData>(reader);
         }
-
+        
         private static Level CreateTestLevel()
         {
             var level = new Level();
@@ -94,6 +159,81 @@ namespace BHSDK.Tests.Serialization
             level.Game.Themes.Add(new Theme());
 
             return level;
+        }
+        
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestPrefabSerialization()
+        {
+            var settings = new SerializationSettings(Formatting.Indented);
+            var serializationService = new SerializationService(settings);
+
+            var prefab = CreateTestPrefab();
+
+            var data = new PrefabData(prefab);
+            var textWriter = new StringWriter();
+            serializationService.Serializer.Serialize(textWriter, data);
+            var json = textWriter.ToString();
+            Debug.Log($"Prefab - <color=green>{json}</color>");
+
+            var reader = new JsonTextReader(new StringReader(json));
+            data = serializationService.Serializer.Deserialize<PrefabData>(reader);
+        }
+
+        private static Prefab CreateTestPrefab()
+        {
+            var prefab = new Prefab();
+            prefab.Objects.Add(new TextureObject());
+            prefab.Objects.Add(new TextObject());
+            prefab.Objects.Add(new EffectObject());
+            
+            var prefabObject = new PrefabObject
+            {
+                PrefabIndex = 0
+            };
+            var modification = new Modification
+            {
+                ObjectId = 123,
+                Path = "id",
+                Value = 321
+            };
+            prefabObject.Modifications.Add(modification);
+            prefab.PrefabObjects.Add(prefabObject);
+            
+            return prefab;
+        }
+        
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestThemeSerialization()
+        {
+            var settings = new SerializationSettings(Formatting.Indented);
+            var serializationService = new SerializationService(settings);
+
+            var theme = CreateTestTheme();
+
+            var data = new ThemeData(theme);
+            var textWriter = new StringWriter();
+            serializationService.Serializer.Serialize(textWriter, data);
+            var json = textWriter.ToString();
+            Debug.Log($"Theme - <color=green>{json}</color>");
+
+            var reader = new JsonTextReader(new StringReader(json));
+            data = serializationService.Serializer.Deserialize<ThemeData>(reader);
+        }
+
+        private static Theme CreateTestTheme()
+        {
+            var theme = new Theme
+            {
+                Matrix =
+                {
+                    [1] = new ColorValue(Color.red),
+                    [2] = new ColorValue(Color.green),
+                    [3] = new ColorValue(Color.blue)
+                }
+            };
+            return theme;
         }
     }
 }

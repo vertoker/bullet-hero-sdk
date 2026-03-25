@@ -1,13 +1,16 @@
 ﻿using System;
+using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Models.Events
+namespace BHSDK.Models.Objects
 {
-    public class Theme
+    public class Theme : ITheme
     {
         public const int Count = 64;
+        
+        public Version GetVersion() => new(1, 0);
         
         [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
