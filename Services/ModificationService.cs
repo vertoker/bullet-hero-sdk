@@ -5,7 +5,7 @@ using System.Reflection;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Modifications
+namespace BHSDK.Services
 {
     public class ModificationService
     {

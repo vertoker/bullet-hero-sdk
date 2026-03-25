@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models.Modifications;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects

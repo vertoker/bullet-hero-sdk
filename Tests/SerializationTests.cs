@@ -4,7 +4,6 @@ using BHSDK.Models;
 using BHSDK.Models.Components;
 using BHSDK.Models.Effects;
 using BHSDK.Models.Events;
-using BHSDK.Models.Modifications;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
@@ -15,7 +14,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace BHSDK.Tests.Serialization
+namespace BHSDK.Tests
 {
     public class SerializationTests
     {
