@@ -1,0 +1,79 @@
+﻿All parameters for audio effects (non-effect values not include here)
+
+Name Inspector, Name Exposed Parameter, Default Value, Min Value, Max Value, Measurement, Recommended Change
+
+Min change = 0.01f
+
+- Core
+  - Pitch, Pitch,   1f, 0.01f, 10f, %, 0.01f
+  - Volume, Volume, 0f, -80f, 20f, dB, 0.1f
+- Lowpass
+  - Mix Level, Lowpass_MixLevel,     -80f, -80f, 0f, dB, 0.1f
+  - Cutoff Freq, Lowpass_CutoffFreq, 5000f, 10f, 22000f, Hz, 1f
+- Highpass
+  - Mix Level, Highpass_MixLevel,     -80f, 0f, dB, 0.1f
+  - Cutoff Freq, Highpass_CutoffFreq, 1000f, 10f, 22000f, Hz, 1f
+- Echo
+  - Mix Level, Echo_MixLevel,       -80f, -80f, 0f, dB, 0.1f
+  - Delay, Echo_Delay,              100f, 1f, 5000f, ms, 1f
+  - Decay, Echo_Decay,              0.8f, 0f, 1f, %, 0.01f
+  - Max Channels, Echo_MaxChannels, 0f, 0f, 16f, ch (channels), 0.01f
+  - Drymix, Echo_DryMix,            1f, 0f, 1f, %, 0.01f
+  - Wetmix, Echo_WetMix,            1f, 0f, 1f, %, 0.01f
+- SFX Reverb
+  - Mix Level, SFXReverb_MixLevel,          -80f, -80f, 0f, dB, 0.1f
+  - Dry Level, SFXReverb_DryLevel,          0f, -10000f, 0f, mB, 1f
+  - Room, SFXReverb_Room,                   -10000f, -10000f, 0f, mB, 1f
+  - Room HF, SFXReverb_RoomHF,              0f, -10000f, 0f, mB, 1f
+  - Room LF, SFXReverb_RoomLF,              0f, -10000f, 0f, mB, 1f
+  - Decay Time, SFXReverb_DecayTime,        1f, 0.1f, 20f, s (seconds), 0.1f
+  - Decay HF Ratio, SFXReverb_DecayHFRatio, 0.5f, 0.1f, 2f, -, 0.01f
+  - Reflections, SFXReverb_Reflections,     -10000f, -10000f, 1000f, mB, 1f
+  - Reflect Delay, SFXReverb_ReflectDelay,  0.02f, 0.00f, 0.3f, -, 0.01f
+  - Reverb, SFXReverb_Reverb,               0f, -10000f, 2000f, mB, 1f
+  - Reverb Delay, SFXReverb_ReverbDelay,    0.04f, 0.00f, 0.1f, s (seconds), 0.01f
+  - Diffusion, SFXReverb_Diffusion,         1f, 0f, 1f, %, 0.01f
+  - Density, SFXReverb_Density,             1f, 0f, 1f, %, 0.01f
+  - HF Reference, SFXReverb_HFReference,    5000f, 20f, 20000f, Hz, 1f
+  - LF Reference, SFXReverb_LFReference,    250, 20f, 1000f, Hz, 1f
+- Chorus
+  - Mix Level, Chorus_MixLevel,       -80f, -80f, 0f, dB, 0.1f
+  - Dry Mix, Chorus_DryMix,           0.5f, 0f, 1f, -, 0.01f
+  - Wet Mix Tap 1, Chorus_WetMixTap1, 0.5f, 0f, 1f, -, 0.01f
+  - Wet Mix Tap 2, Chorus_WetMixTap2, 0.5f, 0f, 1f, -, 0.01f
+  - Wet Mix Tap 3, Chorus_WetMixTap3, 0.5f, 0f, 1f, -, 0.01f
+  - Delay, Chorus_Delay,              40f, 0f, 100f, ms, 0.1f
+  - Rate, Chorus_Rate,                0.8f, 0f, 20f, Hz, 0.1f
+  - Depth, Chorus_Depth,              0.03f, 0f, 1f, -, 0.01f
+  - Feedback, Chorus_Feedback,        0f, -1f, 1f, -, 0.01f
+- Pitch Shifter
+  - Mix Level, PitchShifter_MixLevel,       -80f, -80f, 0f, dB, 0.1f
+  - Pitch, PitchShifter_Pitch,              1f, 0.5f, 2f, x, 0.01f
+  - FFT Size, PitchShifter_FFTSize,         1024, 256, 4096, -, 1f
+  - Overlap, PitchShifter_Overlap,          4f, 1f, 32f, -, 0.1f
+  - Max Channels, PitchShifter_MaxChannels, 0f, 0f, 16f, ch (channels), 0.01f
+- Distortion
+  - Mix Level, Distortion_MixLevel, -80f, -80f, 0f, dB, 0.1f
+  - Level, Distortion_Level,        0.5f, 0f, 1f, -, 0.01f
+- Flange
+  - Mix Level, Flange_MixLevel, -80f, -80f, 0f, dB, 0.1f
+  - Drymix, Flange_DryMix,      0.45f, 0f, 1f, %, 0.01f
+  - Wetmix, Flange_WetMix,      0.55f, 0f, 1f, %, 0.01f
+  - Depth, Flange_Depth,        1f, 0f, 1f, -, 0.01f
+  - Rate, Flange_Rate,          0.1f, 0f, 20f, Hz, 0.1f
+- Compressor
+  - Mix Level, Compressor_MixLevel,      -80f, -80f, 0f, dB, 0.1f
+  - Threshold, Compressor_Threshold,     0f, -60f, 0f, dB, 0.1f
+  - Attack, Compressor_Attack,           50f, 10f, 200f, ms, 1f
+  - Release, Compressor_Release,         50f, 20f, 1000f, ms, 1f
+  - Make up gain, Compressor_MakeUpGain, 0f, 0f, 30f, dB, 0.1f
+- Normalize
+  - Mix Level, Normalize_MixLevel,         -80f, -80f, 0f, dB, 0.1f
+  - Fade In Time, Normalize_FadeInTime,    5000f, 0f, 20000f, ms, 1f
+  - Lowest Volume, Normalize_LowestVolume, 0.1f, 0f, 1f, -, 0.01f
+  - Maximum Amp, Normalize_MaximumAmp,     20f, 0f, 100000f, x, 1f
+- ParamEQ (add graph like in editor)
+  - Mix Level, ParamEQ_MixLevel,           -80f, -80f, 0f, dB, 0.1f
+  - Center Freq, ParamEQ_CenterFreq,       5000f, 20f, 22000f, Hz, 1f
+  - Octave Range, ParamEQ_OctaveRange,     1f, 0.2f, 5f, oct (octave), 0.01f
+  - Frequency Gain, ParamEQ_FrequencyGain, 2f, 0.05f, 3f, -, 0.01f

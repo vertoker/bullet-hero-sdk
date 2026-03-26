@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Base;
-using BHSDK.Models.Events;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Objects;
@@ -11,17 +10,6 @@ namespace BHSDK.Models.Game
 {
     public class GameLevel : IObjectScope
     {
-        [JsonProperty(ModelNames.Seed)]
-        public int Seed { get; set; }
-        
-        [JsonProperty(ModelNames.Framerate)]
-        public int Framerate { get; set; }
-        
-        // limitations for screen will be chosen by mappers
-        [JsonProperty(ModelNames.Screen + ModelNames.Limit)]
-        public IScreenLimit ScreenLimit { get; set; }
-        
-        
         [JsonProperty(ModelNames.Event)]
         public GameEvents Events { get; set; }
         
@@ -50,10 +38,6 @@ namespace BHSDK.Models.Game
         
         public GameLevel()
         {
-            Seed = 0;
-            Framerate = 60;
-            ScreenLimit = new ScreenLimitNone();
-            
             Events = new GameEvents();
             CameraEvents = new CameraEvents();
             PostProcessingEvents = new PostProcessingEvents();
@@ -65,22 +49,16 @@ namespace BHSDK.Models.Game
             Prefabs = new List<Prefab>();
             Themes = new List<Theme>();
         }
-        public GameLevel(int seed, int framerate, IScreenLimit screenLimit, GameEvents events, 
-            CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents, PlayerEvents playerEvents, 
-            List<Object> objects, List<PrefabObject> prefabObjects, List<Prefab> prefabs, List<Theme> themes)
+        public GameLevel(GameEvents events, CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents,
+            PlayerEvents playerEvents, List<Object> objects, List<PrefabObject> prefabObjects,
+            List<Prefab> prefabs, List<Theme> themes)
         {
-            Seed = seed;
-            Framerate = framerate;
-            ScreenLimit = screenLimit;
-            
             Events = events;
             CameraEvents = cameraEvents;
             PostProcessingEvents = postProcessingEvents;
             PlayerEvents = playerEvents;
-            
             Objects = objects;
             PrefabObjects = prefabObjects;
-            
             Prefabs = prefabs;
             Themes = themes;
         }

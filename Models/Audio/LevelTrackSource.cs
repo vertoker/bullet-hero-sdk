@@ -1,7 +1,7 @@
 ﻿using BHSDK.Models.Enum;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.NoGame
+namespace BHSDK.Models.Audio
 {
     public class LevelTrackSource
     {

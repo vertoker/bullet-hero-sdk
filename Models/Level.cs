@@ -1,4 +1,5 @@
 ﻿using System;
+using BHSDK.Models.Audio;
 using BHSDK.Models.Game;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.NoGame;
@@ -10,31 +11,31 @@ namespace BHSDK.Models
     {
         public Version GetVersion() => new(1, 0);
         
+        [JsonProperty(ModelNames.Settings)]
+        public LevelSettings Settings { get; set; }
+        
         [JsonProperty(ModelNames.Meta)]
         public LevelMeta Meta { get; set; }
         
-        [JsonProperty(ModelNames.Track)]
-        public LevelTrack Track { get; set; }
-        
-        [JsonProperty(ModelNames.Rules)]
-        public LevelRules Rules { get; set; }
-        
         [JsonProperty(ModelNames.Game)]
         public GameLevel Game { get; set; }
+        
+        [JsonProperty(ModelNames.Audio)]
+        public AudioLevel Audio { get; set; }
 
         public Level()
         {
+            Settings = new LevelSettings();
             Meta = new LevelMeta();
-            Track = new LevelTrack();
-            Rules = new LevelRules();
             Game = new GameLevel();
+            Audio = new AudioLevel();
         }
-        public Level(LevelMeta meta, LevelTrack track, LevelRules rules, GameLevel game)
+        public Level(LevelSettings settings, LevelMeta meta, GameLevel game, AudioLevel audio)
         {
+            Settings = settings;
             Meta = meta;
-            Track = track;
-            Rules = rules;
             Game = game;
+            Audio = audio;
         }
     }
 }

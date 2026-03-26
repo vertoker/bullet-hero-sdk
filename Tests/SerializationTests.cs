@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using BHSDK.Models;
+using BHSDK.Models.Audio;
 using BHSDK.Models.Components;
 using BHSDK.Models.Effects;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Events;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
@@ -101,10 +103,12 @@ namespace BHSDK.Tests
         private static Level CreateTestLevel()
         {
             var level = new Level();
-            level.Meta.Authors.Add(new Author());
-            level.Track.Sources.Add(new LevelTrackSource());
 
-            level.Game.ScreenLimit = new ScreenLimitBounds();
+            level.Settings.Framerate = 61;
+            level.Settings.ScreenLimit = new ScreenLimitBounds();
+            
+            level.Meta.Authors.Add(new Author());
+            
             level.Game.Events.Backgrounds.Add(new Clr());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
@@ -156,6 +160,12 @@ namespace BHSDK.Tests
             level.Game.PrefabObjects.Add(prefabObject);
             
             level.Game.Themes.Add(new Theme());
+
+            var track = new LevelTrack("cool song", "vertoker", 0, 100, new List<LevelTrackSource>
+            {
+                new("https://bullethero.space", AudioLinkType.DirectUrl, 0, 100),
+            });
+            level.Audio.Tracks.Add(track);
 
             return level;
         }

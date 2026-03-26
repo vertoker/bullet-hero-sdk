@@ -17,8 +17,9 @@
         public const string Version = "vrs";
         public const string Meta = "meta";
         public const string Track = "track";
-        public const string Rules = "rules";
+        public const string Settings = "settings";
         public const string Game = "game";
+        public const string Audio = "audio";
         
         public const string Name = "nm";
         public const string Title = "ttl";
@@ -181,7 +182,8 @@
         public const string Aspect = "asp";
         
         public const string Seed = "seed";
-        public const string Framerate = "frrt";
+        public const string Framerate = "framerate";
+        public const string FrameLength = "framelength";
         public const string Screen = "scr";
         public const string Event = "evt";
         public const string Camera = "cam";
