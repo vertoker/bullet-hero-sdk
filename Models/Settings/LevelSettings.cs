@@ -3,7 +3,7 @@ using BHSDK.Models.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Models
+namespace BHSDK.Models.Settings
 {
     public class LevelSettings
     {

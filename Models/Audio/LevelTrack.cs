@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
@@ -19,6 +20,11 @@ namespace BHSDK.Models.Audio
         
         [JsonProperty(ModelNames.Source)]
         public List<LevelTrackSource> Sources { get; set; }
+        
+        [JsonProperty(ModelNames.AudioEffect)] [CanBeNull]
+        public LevelTrackEffects Effects { get; set; }
+        
+        public bool HasEffects() => Effects != null;
 
         public LevelTrack()
         {
@@ -27,14 +33,17 @@ namespace BHSDK.Models.Audio
             StartTime = 0;
             EndTime = 0;
             Sources = new List<LevelTrackSource>();
+            Effects = new LevelTrackEffects();
         }
-        public LevelTrack(string title, string author, float startTime, float endTime, List<LevelTrackSource> sources)
+        public LevelTrack(string title, string author, float startTime, float endTime, 
+            List<LevelTrackSource> sources, LevelTrackEffects effects)
         {
             Title = title;
             Author = author;
             StartTime = startTime;
             EndTime = endTime;
             Sources = sources;
+            Effects = effects;
         }
     }
 }

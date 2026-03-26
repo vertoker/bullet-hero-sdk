@@ -1,6 +1,8 @@
 ﻿using System;
 using BHSDK.Models;
 using BHSDK.Models.Objects;
+using BHSDK.Models.SaveData;
+using BHSDK.Models.Settings;
 
 namespace BHSDK.Serialization
 {
@@ -21,6 +23,14 @@ namespace BHSDK.Serialization
         public Type GetThemeType(Version version)
         {
             return typeof(Theme);
+        }
+        public Type GetPlayerSettingsType(Version version)
+        {
+            return typeof(PlayerSettings);
+        }
+        public Type GetEditorSettingsType(Version version)
+        {
+            return typeof(EditorSettings);
         }
     }
 }

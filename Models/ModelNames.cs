@@ -14,7 +14,7 @@
         public const string Type = "t";
         public const string Value = "v";
         public const string Level = "lvl";
-        public const string Version = "vrs";
+        public const string Version = "version";
         public const string Meta = "meta";
         public const string Track = "track";
         public const string Settings = "settings";
@@ -140,6 +140,7 @@
         public const string HasStopTime = "hstp";
         public const string StopTime = "stp";
         public const string Effect = "eff";
+        public const string AudioEffect = "audeff";
         public const string Shape = "shp";
         
         public const string Prefab = "pfb";
@@ -189,5 +190,66 @@
         public const string Camera = "cam";
         public const string PostProcessing = "pp";
         public const string Player = "ply";
+        
+        public const string Pitch = "pch";
+        public const string StereoPan = "strpn";
+        public const string Mixer = "mxr";
+        
+        public const string Lowpass = "lwpss";
+        public const string Highpass = "hhpss";
+        public const string Echo = "ech";
+        public const string Reverb = "rvrb";
+        public const string ReverbDelay = Reverb + Delay;
+        public const string Chorus = "crs";
+        public const string PitchShifter = "pchshft";
+        public const string Distortion = "dttn";
+        public const string Flange = "flng";
+        public const string Compressor = "cmpr";
+        public const string Normalize = "nrml";
+        public const string ParamEQ = "prmeq";
+        
+        public const string MixLevel = "mixlvl";
+        public const string DryLevel = "drylvl";
+        public const string CutoffFreq = "ctffrq";
+        public const string Delay = "dly";
+        public const string Decay = "dcy";
+        public const string DecayTime = "dcy" + Time;
+        public const string DecayHFRatio = "dcyhfrto";
+        public const string MaxChannels = "maxchl";
+        public const string DryMix = "drymix";
+        public const string WetMix = "wetmix";
+        public const string WetMixTap1 = WetMix + "tp1";
+        public const string WetMixTap2 = WetMix + "tp2";
+        public const string WetMixTap3 = WetMix + "tp3";
+        public const string Room = "rm";
+        public const string RoomHF = "rmhf";
+        public const string RoomLF = "rmlf";
+        public const string Reflections = "rflt";
+        public const string ReflectDelay = Reflections + Delay;
+        public const string Diffusion = "dfsn";
+        public const string Density = "dnst";
+        public const string HFReference = "hfref";
+        public const string LFReference = "lfref";
+        public const string Rate = "rate";
+        public const string Depth = "dpth";
+        public const string Feedback = "fdbck";
+        public const string FFTSize = "fft" + Size;
+        public const string Overlap = "ovlp";
+        public const string FadeInTime = "fdin" + Time;
+        public const string Volume = "vlm";
+        public const string LowestVolume = "lw" + Volume;
+        public const string MaximumAmp = Max + "amp";
+        public const string CenterFreq = Center + "frq";
+        public const string OctaveRange = "octv" + Range;
+        public const string FrequencyGain = "frq" + Gain;
+        public const string Threshold = "trshld";
+        public const string Attack = "atck";
+        public const string Release = "rls";
+        public const string MakeUpGain = "mkup" + Gain;
+        
+        public const string Autosave = "autosave";
+        public const string AutosaveRate = "autosave" + Rate;
+        public const string PlayerSettings = "player" + Settings;
+        public const string EditorSettings = "editor" + Settings;
     }
 }

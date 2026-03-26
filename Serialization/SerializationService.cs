@@ -58,7 +58,9 @@ namespace BHSDK.Serialization
                 new LevelDataConverter(compatibilityService),
                 new PrefabDataConverter(compatibilityService),
                 new ThemeDataConverter(compatibilityService),
-
+                new PlayerSettingsDataConverter(compatibilityService),
+                new EditorSettingsDataConverter(compatibilityService),
+                
                 new IntConverter(innerSerializer),
                 new FloatConverter(innerSerializer),
                 new StringConverter(innerSerializer),

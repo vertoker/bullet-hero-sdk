@@ -1,9 +1,5 @@
-﻿- make audio tracks as a list of tracks with time bounds (reference - premiere pro)
-  - audio effects via audio master (also bounds metadata)
+﻿Features after alpha release
 - add difficulty metadata (watch OSU for more info)
-- add settings for player (graphics) and editor (autosave)
-
-Features after alpha release
 - create trigger/event system (like PA, but more like GD)
   - first of all - see guide for gd editor
   - https://youtube.com/playlist?list=PLD3NfTCEL4uV7zI5QvMLTDs7qActqY5JB
