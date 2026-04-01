@@ -1,11 +1,11 @@
 {
     "name": "BulletHeroSDK.Tests",
-    "rootNamespace": "BHSDK.Tests",
+    "rootNamespace": "BHSDK",
     "references": [
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Unity.PerformanceTesting",
-        "BulletHeroSDK"
+        "GUID:3e24c967b1310ae4bb23d22884987601",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:c0dd0d10738d4ad4a9de57c559d0ca1b"
     ],
     "includePlatforms": [
         "Editor"
@@ -17,7 +17,7 @@
         "nunit.framework.dll",
         "Newtonsoft.Json.dll"
     ],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],

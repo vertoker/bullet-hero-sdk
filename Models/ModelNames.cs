@@ -183,7 +183,7 @@
         public const string Aspect = "asp";
         
         public const string Seed = "seed";
-        public const string Framerate = "framerate";
+        public const string Framerate = "fps";
         public const string FrameLength = "framelength";
         public const string Screen = "scr";
         public const string Event = "evt";
