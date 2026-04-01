@@ -122,7 +122,7 @@
         
         public const string ObjectId = "id";
         public const string ParentObjectId = "pid";
-        public const string IsVisible = "vis";
+        public const string Visible = "vis";
         public const string Layer = "lr";
         public const string Pivot = "pvt";
         public const string Anchor = "ach";

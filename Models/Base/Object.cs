@@ -28,7 +28,7 @@ namespace BHSDK.Models.Base
         [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
         
-        [JsonProperty(ModelNames.IsVisible)]
+        [JsonProperty(ModelNames.Visible)]
         public bool IsVisible { get; set; }
         
         

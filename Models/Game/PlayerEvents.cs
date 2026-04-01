@@ -6,31 +6,27 @@ namespace BHSDK.Models.Game
 {
     public class PlayerEvents
     {
-        [JsonProperty(ModelNames.Velocity)]
-        public List<Velocity> Velocities { get; set; }
+        // TODO add in the future with events
+        // [JsonProperty(ModelNames.Velocity)]
+        // public List<Velocity> Velocities { get; set; }
+        // [JsonProperty(ModelNames.Velocity + ModelNames.Point)]
+        // public List<VelocityPoint> VelocityPoints { get; set; }
         
-        [JsonProperty(ModelNames.Velocity + ModelNames.Point)]
-        public List<VelocityPoint> VelocityPoints { get; set; }
-        
-        [JsonProperty(ModelNames.Color)]
-        public List<Clr> Clr { get; set; }
+        [JsonProperty(ModelNames.Visible)]
+        public List<Bln> Visible { get; set; }
         
         [JsonProperty(ModelNames.Collision)]
         public List<Bln> Collisions { get; set; }
 
         public PlayerEvents()
         {
-            Velocities = new List<Velocity>();
-            VelocityPoints = new List<VelocityPoint>();
-            Clr = new List<Clr>();
+            Visible = new List<Bln>();
             Collisions = new List<Bln>();
         }
-        public PlayerEvents(List<Velocity> velocities, 
-            List<VelocityPoint> velocityPoints, List<Clr> clr, List<Bln> collisions)
+
+        public PlayerEvents(List<Bln> visible, List<Bln> collisions)
         {
-            Velocities = velocities;
-            VelocityPoints = velocityPoints;
-            Clr = clr;
+            Visible = visible;
             Collisions = collisions;
         }
     }

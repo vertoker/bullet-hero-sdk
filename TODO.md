@@ -3,6 +3,10 @@
 - create trigger/event system (like PA, but more like GD)
   - first of all - see guide for gd editor
   - https://youtube.com/playlist?list=PLD3NfTCEL4uV7zI5QvMLTDs7qActqY5JB
+  - or read PDF files
+  - https://www.robtopgames.com/files/GDEditor-RU.pdf
+  - https://www.robtopgames.com/files/GDRating-RU.pdf
+  - https://www.robtopgames.com/files/GDLeaderboards-RU.pdf
 - add sounds in timing, with custom audio support (tutorial level in JSaB)
 - add JPG, PNG, SVG importing to textures and anywhere usage
 - add tags as metadata for every object in level, only for editor
