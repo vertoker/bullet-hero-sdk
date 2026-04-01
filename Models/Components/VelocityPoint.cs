@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Components
 {
+    // TODO activate for player when add events
     public class VelocityPoint : Keyframe
     {
         [JsonProperty(ModelNames.Center)]

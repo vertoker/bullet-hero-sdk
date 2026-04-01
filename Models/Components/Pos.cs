@@ -17,7 +17,7 @@ namespace BHSDK.Models.Components
         public Pos()
         {
             Vector2 = new Vector2Value();
-            Anchor = Anchor.Center_Middle;
+            Anchor = Anchor.Undefined;
         }
         public Pos(int frame, EaseType ease, IVector2 vector2, Anchor anchor) 
             : base(frame, ease)
