@@ -132,7 +132,7 @@ namespace BHSDK.Tests
             level.Game.PostProcessingEvents.AnalogGlitch.Add(new AnalogGlitch());
             level.Game.PostProcessingEvents.DigitalGlitch.Add(new DigitalGlitch());
 
-            level.Game.PlayerEvents.Visible.Add(new Bln());
+            level.Game.PlayerEvents.Visibles.Add(new Bln());
             level.Game.PlayerEvents.Collisions.Add(new Bln());
 
             var textureObject = new TextureObject();

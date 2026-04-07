@@ -17,7 +17,8 @@ namespace BHSDK.Models.Base
         // (but you still can rewrite pid from outside via modifications)
         
         // 2. InstanceId - runtime temporary identifier.
-        // Changes every runtime and using for game player only
+        // Changes every runtime and using for game player only.
+        // This is not Unity's Object.GetInstanceID(), just same name
         
         [JsonProperty(ModelNames.ObjectId)]
         public int ObjectId { get; set; }
