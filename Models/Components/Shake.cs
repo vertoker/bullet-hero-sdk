@@ -25,9 +25,8 @@ namespace BHSDK.Models.Components
             IntensityX = 1;
             IntensityY = 1;
         }
-        public Shake(int frame, EaseType ease, 
-            float intensity, float speed, float intensityX, float intensityY) 
-            : base(frame, ease)
+        public Shake(int frame, EaseType ease, float intensity, float speed,
+            float intensityX = 1f, float intensityY = 1f) : base(frame, ease)
         {
             Intensity = intensity;
             Speed = speed;
