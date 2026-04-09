@@ -79,12 +79,12 @@ namespace BHSDK.Models.Objects
             EffectColor = new EffectColorValue();
         }
 
-        public EffectObject(int objectId, int parentObjectId, string name, bool isVisible, 
+        public EffectObject(int objectId, int parentObjectId, string name, bool visible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
             bool loop, int particleCount, IVector2 lifetimeBounds, bool particleCollider, bool hasStopTime, 
             float stopTime, int particleTextureIndex, IVector2 particlePivot, EffectInstanceForces forces, 
             IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor)
-            : base(objectId, parentObjectId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
             Loop = loop;
             ParticleCount = particleCount;

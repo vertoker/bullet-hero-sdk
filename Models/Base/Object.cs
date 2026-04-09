@@ -30,7 +30,7 @@ namespace BHSDK.Models.Base
         public string Name { get; set; }
         
         [JsonProperty(ModelNames.Visible)]
-        public bool IsVisible { get; set; }
+        public bool Visible { get; set; }
         
         
         [JsonProperty(ModelNames.Start + ModelNames.Frame)]
@@ -59,7 +59,7 @@ namespace BHSDK.Models.Base
             ObjectId = 0;
             ParentObjectId = 0;
             Name = string.Empty;
-            IsVisible = true;
+            Visible = true;
             
             StartFrame = 0;
             EndFrame = 0;
@@ -69,13 +69,13 @@ namespace BHSDK.Models.Base
             Layer = 0;
             Pivot = Anchor.Center_Middle;
         }
-        public Object(int objectId, int parentObjectId, string name, bool isVisible, 
+        public Object(int objectId, int parentObjectId, string name, bool visible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot)
         {
             ObjectId = objectId;
             ParentObjectId = parentObjectId;
             Name = name;
-            IsVisible = isVisible;
+            Visible = visible;
             StartFrame = startFrame;
             EndFrame = endFrame;
             Pos = pos;

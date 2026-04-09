@@ -31,20 +31,20 @@ namespace BHSDK.Models.Objects
             FontName = string.Empty;
             FontSize = 10;
         }
-        public TextObject(int objectId, int parentObjectId, string name, bool isVisible, 
+        public TextObject(int objectId, int parentObjectId, string name, bool visible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
             List<Clr> clr, string text, string fontName, int fontSize)
-            : base(objectId, parentObjectId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
             Clr = clr;
             Text = new StringValue(text);
             FontName = fontName;
             FontSize = fontSize;
         }
-        public TextObject(int objectId, int parentObjectId, string name, bool isVisible, 
+        public TextObject(int objectId, int parentObjectId, string name, bool visible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
             List<Clr> clr, IString text, string fontName, int fontSize)
-            : base(objectId, parentObjectId, name, isVisible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
             Clr = clr;
             Text = text;
