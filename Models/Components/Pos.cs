@@ -12,14 +12,14 @@ namespace BHSDK.Models.Components
         public IVector2 Vector2 { get; set; }
         
         [JsonProperty(ModelNames.Anchor)]
-        public Anchor Anchor { get; set; }
+        public Alignment Anchor { get; set; }
 
         public Pos()
         {
             Vector2 = new Vector2Value();
-            Anchor = Anchor.Undefined;
+            Anchor = Alignment.MiddleCenter;
         }
-        public Pos(int frame, EaseType ease, IVector2 vector2, Anchor anchor) 
+        public Pos(int frame, EaseType ease, IVector2 vector2, Alignment anchor) 
             : base(frame, ease)
         {
             Vector2 = vector2;

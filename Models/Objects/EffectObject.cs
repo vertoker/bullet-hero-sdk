@@ -80,7 +80,7 @@ namespace BHSDK.Models.Objects
         }
 
         public EffectObject(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, 
             bool loop, int particleCount, IVector2 lifetimeBounds, bool particleCollider, bool hasStopTime, 
             float stopTime, int particleTextureIndex, IVector2 particlePivot, EffectInstanceForces forces, 
             IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor)

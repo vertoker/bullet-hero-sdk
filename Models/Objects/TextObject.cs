@@ -32,7 +32,7 @@ namespace BHSDK.Models.Objects
             FontSize = 10;
         }
         public TextObject(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, 
             List<Clr> clr, string text, string fontName, int fontSize)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
@@ -42,7 +42,7 @@ namespace BHSDK.Models.Objects
             FontSize = fontSize;
         }
         public TextObject(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot, 
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, 
             List<Clr> clr, IString text, string fontName, int fontSize)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {

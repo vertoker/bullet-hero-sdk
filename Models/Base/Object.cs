@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Components;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Base
@@ -16,15 +17,24 @@ namespace BHSDK.Models.Base
         // Can be referred (as pid) only in scope.
         // (but you still can rewrite pid from outside via modifications)
         
-        // 2. in-game indexes - runtime temporary identifier (not id).
-        // Changes every runtime and using for game player only.
-        // This is not Unity's Object.GetInstanceID()
+        // 2. FrameIndex - runtime temporary index (not id, use for direct indexation).
+        // Changes every runtime and using for rendering instances in frame context only
         
         [JsonProperty(ModelNames.ObjectId)]
         public int ObjectId { get; set; }
         
         [JsonProperty(ModelNames.ParentObjectId)]
         public int ParentObjectId { get; set; }
+        
+        // What certain objectId's meaning
+        // - 0 => undefined (for ObjectId) or null (for ParentObjectId), exists as a fallback value
+        // - (1 - int.MaxValue) => user-space objects, valid for both ObjectId and ParentObjectId
+        // All negative numbers (int.MinValue - -1) reserved for core-space objects
+        // - -1 => camera predefined object, exists only in player runtime (for ObjectId - error),
+        // can be used as a parent with unique transform (scale applied as a size, similar with RectTransform)
+
+        public const int UndefinedId = 0;
+        public const int CameraId = -1;
         
         [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
@@ -52,7 +62,7 @@ namespace BHSDK.Models.Base
         public int Layer { get; set; }
         
         [JsonProperty(ModelNames.Pivot)]
-        public Anchor Pivot { get; set; }
+        public Alignment Pivot { get; set; }
 
         public Object()
         {
@@ -67,10 +77,10 @@ namespace BHSDK.Models.Base
             Rot = new List<Rot>();
             Sca = new List<Sca>();
             Layer = 0;
-            Pivot = Anchor.Center_Middle;
+            Pivot = Alignment.MiddleCenter;
         }
         public Object(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot)
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot)
         {
             ObjectId = objectId;
             ParentObjectId = parentObjectId;

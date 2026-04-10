@@ -2,6 +2,7 @@
 using BHSDK.Models.Base;
 using BHSDK.Models.Components;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
@@ -30,7 +31,7 @@ namespace BHSDK.Models.Objects
             SublingIndex = 0;
         }
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Anchor pivot,
+            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot,
             bool collider, List<Clr> clr, int textureIndex, int sublingIndex)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
