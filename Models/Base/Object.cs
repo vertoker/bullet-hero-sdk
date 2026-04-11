@@ -33,8 +33,9 @@ namespace BHSDK.Models.Base
         // - -1 => camera predefined object, exists only in player runtime (for ObjectId - error),
         // can be used as a parent with unique transform (scale applied as a size, similar with RectTransform)
 
-        public const int UndefinedId = 0;
-        public const int CameraId = -1;
+        public const int UndefinedObjectId = 0;
+        public const int UndefinedFrameIndex = int.MinValue;
+        public const int CameraObjectId = -1;
         
         [JsonProperty(ModelNames.Name)]
         public string Name { get; set; }
