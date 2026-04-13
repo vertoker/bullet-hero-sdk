@@ -17,8 +17,17 @@ namespace BHSDK.Models.Objects
         [JsonProperty(ModelNames.Color)]
         public List<Clr> Clr { get; set; }
         
+        // How textureId works
+        // TextureId divide to 2 fields: game-defined and user-defined
+        // all game-defined starts with 0 and counts to negative (0, -1, -2, -3...)
+        // all user-defined starts with 1 and counts to positive (1, 2, 3, 4...)
+        
+        // Internally, they converted from textureId to textureIndex with simple function
+        // textureIndex = textureId < 0 ? -textureId : textureId + <count of game-defined textures>
+        // Count of game-defined textures can be changed with Level version, this validates by validators
+        
         [JsonProperty(ModelNames.Texture + ModelNames.Index)]
-        public int TextureIndex { get; set; }
+        public int TextureId { get; set; }
         
         [JsonProperty(ModelNames.Subling + ModelNames.Index)]
         public int SublingIndex { get; set; }
@@ -27,7 +36,7 @@ namespace BHSDK.Models.Objects
         {
             Collider = true;
             Clr = new List<Clr>();
-            TextureIndex = 0;
+            TextureId = 0;
             SublingIndex = 0;
         }
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, 
@@ -37,7 +46,7 @@ namespace BHSDK.Models.Objects
         {
             Collider = collider;
             Clr = clr;
-            TextureIndex = textureIndex;
+            TextureId = textureIndex;
             SublingIndex = sublingIndex;
         }
     }
