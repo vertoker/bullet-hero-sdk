@@ -13,16 +13,16 @@ namespace BHSDK.Models.Values
         public IFloat Value { get; set; }
         
         [JsonProperty(ModelNames.In + ModelNames.Tangent)]
-        public IFloat InTangent { get; set; }
+        public FloatValue InTangent { get; set; }
         
         [JsonProperty(ModelNames.Out + ModelNames.Tangent)]
-        public IFloat OutTangent { get; set; }
+        public FloatValue OutTangent { get; set; }
         
         [JsonProperty(ModelNames.In + ModelNames.Weight)]
-        public IFloat InWeight { get; set; }
+        public FloatValue InWeight { get; set; }
         
         [JsonProperty(ModelNames.Out + ModelNames.Weight)]
-        public IFloat OutWeight { get; set; }
+        public FloatValue OutWeight { get; set; }
         
         public Keyframe Get()
         {
@@ -50,7 +50,7 @@ namespace BHSDK.Models.Values
             OutWeight = new FloatValue(outWeight);
         }
         public CurveKeyframeValue(IFloat time, IFloat value,
-            IFloat inTangent, IFloat outTangent, IFloat inWeight, IFloat outWeight)
+            FloatValue inTangent, FloatValue outTangent, FloatValue inWeight, FloatValue outWeight)
         {
             Time = time;
             Value = value;

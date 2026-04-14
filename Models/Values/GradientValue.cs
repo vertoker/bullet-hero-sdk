@@ -7,6 +7,8 @@ namespace BHSDK.Models.Values
 {
     public class GradientValue
     {
+        public const int MaxCount = 4;
+        
         [JsonProperty(ModelNames.Alpha + ModelNames.Keys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
         

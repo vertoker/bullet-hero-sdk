@@ -7,6 +7,8 @@ namespace BHSDK.Models.Values
 {
     public class CurveValue
     {
+        public const int MaxCount = 4;
+        
         [JsonProperty(ModelNames.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
         
