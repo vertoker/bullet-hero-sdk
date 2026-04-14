@@ -19,12 +19,12 @@ namespace BHSDK.Models.Effects
 
         public EffectColorGradientBySpeed()
         {
-            Gradient = new GradientValue();
-            SpeedRange = new Vector2Value(0f, 1f);
+            Gradient = new GradientValue(EffectStatic.GetDefaultGradient());
+            SpeedRange = new Vector2Value(EffectStatic.ColorBySpeedRangeDefault);
         }
-        public EffectColorGradientBySpeed(GradientValue gradient, Vector2 speedRange)
+        public EffectColorGradientBySpeed(Gradient gradient, Vector2 speedRange)
         {
-            Gradient = gradient;
+            Gradient = new GradientValue(gradient);
             SpeedRange = new Vector2Value(speedRange);
         }
         public EffectColorGradientBySpeed(GradientValue gradient, IVector2 speedRange)

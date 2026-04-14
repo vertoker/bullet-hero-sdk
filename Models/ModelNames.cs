@@ -29,6 +29,7 @@
         public const string Boolean = "bln";
         public const string Int = "int";
         public const string Index = "idx";
+        public const string Id = "id";
         public const string Float = "flt";
         public const string String = "str";
         public const string Language = "lng";
@@ -76,6 +77,7 @@
         
         public const string Speed = "spd";
         public const string Range = "rng";
+        public const string Core = "core";
         public const string Force = "frc";
         public const string Linear = "lnr";
         public const string Velocity = "vel";
@@ -135,7 +137,7 @@
         public const string Font = "ft";
         
         public const string Loop = "lp";
-        public const string Particle = "ptc";
+        public const string Particle = "ptcl";
         public const string Count = "cnt";
         public const string Lifetime = "lftm";
         public const string HasStopTime = "hstp";

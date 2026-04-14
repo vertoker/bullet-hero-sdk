@@ -25,7 +25,7 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeSpreadRandom()
         {
-            Spread = new FloatValue(0f);
+            Spread = new FloatValue(EffectStatic.ShapeSpreadDefault);
         }
         public EffectShapeSpreadRandom(float spread)
         {

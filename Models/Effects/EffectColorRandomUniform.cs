@@ -19,8 +19,8 @@ namespace BHSDK.Models.Effects
 
         public EffectColorRandomUniform()
         {
-            ColorA = new ColorValue(Color.white);
-            ColorB = new ColorValue(Color.white);
+            ColorA = new ColorValue(EffectStatic.ColorADefault);
+            ColorB = new ColorValue(EffectStatic.ColorBDefault);
         }
         public EffectColorRandomUniform(Color colorA, Color colorB)
         {

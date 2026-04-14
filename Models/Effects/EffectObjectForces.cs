@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectInstanceForces
+    public class EffectObjectForces
     {
         [JsonProperty(ModelNames.Gravity + ModelNames.Min)]
-        public IFloat StartGravityModifierMin { get; set; }
+        public IFloat StartGravityMin { get; set; }
         
         [JsonProperty(ModelNames.Gravity + ModelNames.Max)]
-        public IFloat StartGravityModifierMax { get; set; }
+        public IFloat StartGravityMax { get; set; }
         
         [JsonProperty(ModelNames.Velocity + ModelNames.Min)]
         public IVector2 StartVelocityMin { get; set; }
@@ -35,34 +35,34 @@ namespace BHSDK.Models.Effects
         public IVector3 OrbitalCenterOffset { get; set; }
         
         [JsonProperty(ModelNames.Velocity + ModelNames.Speed)]
-        public IFloat VelocitySpeedModifier { get; set; }
+        public IFloat VelocitySpeed { get; set; }
         
         [JsonProperty(ModelNames.Linear + ModelNames.Force)]
         public IVector2 LinearForce { get; set; }
 
-        public EffectInstanceForces()
+        public EffectObjectForces()
         {
-            StartGravityModifierMin = new FloatValue(0f);
-            StartGravityModifierMax = new FloatValue(0f);
-            StartVelocityMin = new Vector2Value(0f, 0f);
-            StartVelocityMax = new Vector2Value(0f, 0f);
-            StartAngularVelocityMin = new FloatValue(0f);
-            StartAngularVelocityMax = new FloatValue(0f);
-            LinearVelocity = new Vector2Value(0f, 0f);
-            OrbitalVelocity = new Vector3Value(0f, 0f, 0f);
-            OrbitalCenterOffset = new Vector3Value(0f, 0f, 0f);
-            VelocitySpeedModifier = new FloatValue(1f);
-            LinearForce = new Vector2Value(0f, 0f);
+            StartGravityMin = new FloatValue(EffectStatic.StartGravityMinDefault);
+            StartGravityMax = new FloatValue(EffectStatic.StartGravityMaxDefault);
+            StartVelocityMin = new Vector2Value(EffectStatic.StartVelocityMinDefault);
+            StartVelocityMax = new Vector2Value(EffectStatic.StartVelocityMaxDefault);
+            StartAngularVelocityMin = new FloatValue(EffectStatic.StartAngularVelocityMinDefault);
+            StartAngularVelocityMax = new FloatValue(EffectStatic.StartAngularVelocityMaxDefault);
+            LinearVelocity = new Vector2Value(EffectStatic.LinearVelocityDefault);
+            OrbitalVelocity = new Vector3Value(EffectStatic.OrbitalVelocityDefault);
+            OrbitalCenterOffset = new Vector3Value(EffectStatic.OrbitalCenterOffsetDefault);
+            VelocitySpeed = new FloatValue(EffectStatic.VelocitySpeedDefault);
+            LinearForce = new Vector2Value(EffectStatic.LinearForceDefault);
         }
         
-        public EffectInstanceForces(float startGravityModifierMin, float startGravityModifierMax, 
+        public EffectObjectForces(float startGravityMin, float startGravityMax, 
             Vector2 startVelocityMin, Vector2 startVelocityMax, 
             float startAngularVelocityMin, float startAngularVelocityMax, 
             Vector2 linearVelocity, Vector3 orbitalVelocity, Vector3 orbitalCenterOffset, 
-            float velocitySpeedModifier, Vector2 linearForce)
+            float velocitySpeed, Vector2 linearForce)
         {
-            StartGravityModifierMin = new FloatValue(startGravityModifierMin);
-            StartGravityModifierMax = new FloatValue(startGravityModifierMax);
+            StartGravityMin = new FloatValue(startGravityMin);
+            StartGravityMax = new FloatValue(startGravityMax);
             StartVelocityMin = new Vector2Value(startVelocityMin);
             StartVelocityMax = new Vector2Value(startVelocityMax);
             StartAngularVelocityMin = new FloatValue(startAngularVelocityMin);
@@ -70,18 +70,18 @@ namespace BHSDK.Models.Effects
             LinearVelocity = new Vector2Value(linearVelocity);
             OrbitalVelocity = new Vector3Value(orbitalVelocity);
             OrbitalCenterOffset = new Vector3Value(orbitalCenterOffset);
-            VelocitySpeedModifier = new FloatValue(velocitySpeedModifier);
+            VelocitySpeed = new FloatValue(velocitySpeed);
             LinearForce = new Vector2Value(linearForce);
         }
         
-        public EffectInstanceForces(IFloat startGravityModifierMin, IFloat startGravityModifierMax, 
+        public EffectObjectForces(IFloat startGravityMin, IFloat startGravityMax, 
             IVector2 startVelocityMin, IVector2 startVelocityMax, 
             IFloat startAngularVelocityMin, IFloat startAngularVelocityMax, 
             IVector2 linearVelocity, IVector3 orbitalVelocity, IVector3 orbitalCenterOffset, 
-            IFloat velocitySpeedModifier, IVector2 linearForce)
+            IFloat velocitySpeed, IVector2 linearForce)
         {
-            StartGravityModifierMin = startGravityModifierMin;
-            StartGravityModifierMax = startGravityModifierMax;
+            StartGravityMin = startGravityMin;
+            StartGravityMax = startGravityMax;
             StartVelocityMin = startVelocityMin;
             StartVelocityMax = startVelocityMax;
             StartAngularVelocityMin = startAngularVelocityMin;
@@ -89,7 +89,7 @@ namespace BHSDK.Models.Effects
             LinearVelocity = linearVelocity;
             OrbitalVelocity = orbitalVelocity;
             OrbitalCenterOffset = orbitalCenterOffset;
-            VelocitySpeedModifier = velocitySpeedModifier;
+            VelocitySpeed = velocitySpeed;
             LinearForce = linearForce;
         }
     }

@@ -19,8 +19,8 @@ namespace BHSDK.Models.Effects
 
         public EffectScaleRandomUniform()
         {
-            ScaleA = new Vector2Value(1f, 1f);
-            ScaleB = new Vector2Value(1f, 1f);
+            ScaleA = new Vector2Value(EffectStatic.ScaleADefault);
+            ScaleB = new Vector2Value(EffectStatic.ScaleBDefault);
         }
         public EffectScaleRandomUniform(Vector2 scaleA, Vector2 scaleB)
         {

@@ -25,9 +25,9 @@ namespace BHSDK.Models.Effects
 
         public EffectShapeCircle()
         {
-            Radius = new FloatValue(1f);
-            Thickness = new FloatValue(1f);
-            Arc = new FloatValue(Mathf.PI * 2f);
+            Radius = new FloatValue(EffectStatic.CircleRadiusDefault);
+            Thickness = new FloatValue(EffectStatic.CircleThicknessDefault);
+            Arc = new FloatValue(EffectStatic.ShapeArcDefault);
             Spread = new EffectShapeSpreadRandom();
         }
         public EffectShapeCircle(float radius, float thickness, float arc, IEffectShapeSpread spread)

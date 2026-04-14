@@ -31,5 +31,11 @@ namespace BHSDK.Models.Values
         {
             KeyFrames = keyFrames;
         }
+        public CurveValue(AnimationCurve curve)
+        {
+            KeyFrames = new List<CurveKeyframeValue>(curve.length);
+            foreach (var keyframe in curve.keys)
+                KeyFrames.Add(new CurveKeyframeValue(keyframe));
+        }
     }
 }

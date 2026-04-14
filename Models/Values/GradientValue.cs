@@ -40,5 +40,15 @@ namespace BHSDK.Models.Values
             AlphaKeys = alphaKeys;
             ColorKeys = colorKeys;
         }
+        public GradientValue(Gradient gradient)
+        {
+            AlphaKeys = new List<GradientAlphaKeyValue>(gradient.alphaKeyCount);
+            ColorKeys = new List<GradientColorKeyValue>(gradient.colorKeyCount);
+            
+            foreach (var alphaKey in gradient.alphaKeys)
+                AlphaKeys.Add(new GradientAlphaKeyValue(alphaKey));
+            foreach (var colorKey in gradient.colorKeys)
+                ColorKeys.Add(new GradientColorKeyValue(colorKey));
+        }
     }
 }

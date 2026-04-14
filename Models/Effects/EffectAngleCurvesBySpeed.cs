@@ -19,12 +19,12 @@ namespace BHSDK.Models.Effects
 
         public EffectAngleCurvesBySpeed()
         {
-            Curve = new CurveValue();
-            SpeedRange = new Vector2Value(0f, 1f);
+            Curve = new CurveValue(EffectStatic.GetDefaultCurve());
+            SpeedRange = new Vector2Value(EffectStatic.AngleBySpeedRangeDefault);
         }
-        public EffectAngleCurvesBySpeed(CurveValue curve, Vector2 speedRange)
+        public EffectAngleCurvesBySpeed(AnimationCurve curve, Vector2 speedRange)
         {
-            Curve = curve;
+            Curve = new CurveValue(curve);
             SpeedRange = new Vector2Value(speedRange);
         }
         public EffectAngleCurvesBySpeed(CurveValue curve, IVector2 speedRange)

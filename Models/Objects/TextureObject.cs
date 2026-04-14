@@ -26,7 +26,7 @@ namespace BHSDK.Models.Objects
         // textureIndex = textureId >= 0 ? textureId : <count of game-defined textures> - textureId
         // Count of game-defined textures can be changed with Level version, this validates by validators
         
-        [JsonProperty(ModelNames.Texture + ModelNames.Index)]
+        [JsonProperty(ModelNames.Texture + ModelNames.Id)]
         public int TextureId { get; set; }
         
         [JsonProperty(ModelNames.Subling + ModelNames.Index)]

@@ -4,7 +4,7 @@
     {
         Object = 0,
         Texture = 1,
-        Text = 2,
-        Effect = 3,
+        Effect = 2,
+        Text = 3,
     }
 }

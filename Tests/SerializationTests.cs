@@ -45,8 +45,11 @@ namespace BHSDK.Tests
             var effect = new EffectObject
             {
                 Name = "TestEffect",
-                Loop = false,
-                ParticleCount = 1200,
+                Core = new EffectObjectCore
+                {
+                    Loop = false,
+                    ParticleCount = 1200,
+                },
                 EffectAngle = new EffectAngleCurvesBySpeed
                 {
                     Curve = new CurveValue(new List<CurveKeyframeValue>()

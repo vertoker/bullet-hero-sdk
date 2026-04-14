@@ -22,14 +22,14 @@ namespace BHSDK.Models.Effects
         
         public EffectScaleCurvesBySpeed()
         {
-            CurveX = new CurveValue();
-            CurveY = new CurveValue();
-            SpeedRange = new Vector2Value(0f, 1f);
+            CurveX = new CurveValue(EffectStatic.GetDefaultCurve());
+            CurveY = new CurveValue(EffectStatic.GetDefaultCurve());
+            SpeedRange = new Vector2Value(EffectStatic.ScaleBySpeedRangeDefault);
         }
-        public EffectScaleCurvesBySpeed(CurveValue curveX, CurveValue curveY, Vector2 speedRange)
+        public EffectScaleCurvesBySpeed(AnimationCurve curveX, AnimationCurve curveY, Vector2 speedRange)
         {
-            CurveX = curveX;
-            CurveY = curveY;
+            CurveX = new CurveValue(curveX);
+            CurveY = new CurveValue(curveY);
             SpeedRange = new Vector2Value(speedRange);
         }
         public EffectScaleCurvesBySpeed(CurveValue curveX, CurveValue curveY, IVector2 speedRange)

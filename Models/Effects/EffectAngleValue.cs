@@ -15,7 +15,7 @@ namespace BHSDK.Models.Effects
 
         public EffectAngleValue()
         {
-            Angle = new FloatValue(0f);
+            Angle = new FloatValue(EffectStatic.AngleADefault);
         }
         public EffectAngleValue(float angle)
         {

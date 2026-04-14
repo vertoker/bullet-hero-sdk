@@ -16,7 +16,7 @@ namespace BHSDK.Models.Effects
 
         public EffectColorValue()
         {
-            Color = new ColorValue(UnityEngine.Color.white);
+            Color = new ColorValue(EffectStatic.ColorADefault);
         }
         public EffectColorValue(Color color)
         {

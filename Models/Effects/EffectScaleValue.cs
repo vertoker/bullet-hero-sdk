@@ -16,7 +16,7 @@ namespace BHSDK.Models.Effects
 
         public EffectScaleValue()
         {
-            Scale = new Vector2Value(1f, 1f);
+            Scale = new Vector2Value(EffectStatic.ScaleADefault);
         }
         public EffectScaleValue(Vector2 scale)
         {
