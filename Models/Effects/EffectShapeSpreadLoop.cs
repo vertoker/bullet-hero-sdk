@@ -30,8 +30,8 @@ namespace BHSDK.Models.Effects
 
         public EffectShapeSpreadLoop()
         {
-            Spread = new FloatValue(EffectStatic.ShapeSpreadDefault);
-            Speed = new FloatValue(EffectStatic.ShapeSpreadSpeedDefault);
+            Spread = new FloatValue(EffectStatic.ShapeSpread_SpreadDefault);
+            Speed = new FloatValue(EffectStatic.ShapeSpread_SpeedDefault);
         }
         public EffectShapeSpreadLoop(float spread, float speed)
         {

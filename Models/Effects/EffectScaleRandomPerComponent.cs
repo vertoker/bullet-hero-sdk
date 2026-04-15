@@ -19,8 +19,8 @@ namespace BHSDK.Models.Effects
 
         public EffectScaleRandomPerComponent()
         {
-            ScaleA = new Vector2Value(EffectStatic.ScaleADefault);
-            ScaleB = new Vector2Value(EffectStatic.ScaleBDefault);
+            ScaleA = new Vector2Value(EffectStatic.Scale_ADefault);
+            ScaleB = new Vector2Value(EffectStatic.Scale_BDefault);
         }
         public EffectScaleRandomPerComponent(Vector2 scaleA, Vector2 scaleB)
         {

@@ -24,7 +24,7 @@ namespace BHSDK.Models.Effects
         {
             CurveX = new CurveValue(EffectStatic.GetDefaultCurve());
             CurveY = new CurveValue(EffectStatic.GetDefaultCurve());
-            SpeedRange = new Vector2Value(EffectStatic.ScaleBySpeedRangeDefault);
+            SpeedRange = new Vector2Value(EffectStatic.Scale_BySpeedRangeDefault);
         }
         public EffectScaleCurvesBySpeed(AnimationCurve curveX, AnimationCurve curveY, Vector2 speedRange)
         {

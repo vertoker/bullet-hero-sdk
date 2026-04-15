@@ -42,17 +42,17 @@ namespace BHSDK.Models.Effects
 
         public EffectObjectForces()
         {
-            StartGravityMin = new FloatValue(EffectStatic.StartGravityMinDefault);
-            StartGravityMax = new FloatValue(EffectStatic.StartGravityMaxDefault);
-            StartVelocityMin = new Vector2Value(EffectStatic.StartVelocityMinDefault);
-            StartVelocityMax = new Vector2Value(EffectStatic.StartVelocityMaxDefault);
-            StartAngularVelocityMin = new FloatValue(EffectStatic.StartAngularVelocityMinDefault);
-            StartAngularVelocityMax = new FloatValue(EffectStatic.StartAngularVelocityMaxDefault);
-            LinearVelocity = new Vector2Value(EffectStatic.LinearVelocityDefault);
-            OrbitalVelocity = new Vector3Value(EffectStatic.OrbitalVelocityDefault);
-            OrbitalCenterOffset = new Vector3Value(EffectStatic.OrbitalCenterOffsetDefault);
-            VelocitySpeed = new FloatValue(EffectStatic.VelocitySpeedDefault);
-            LinearForce = new Vector2Value(EffectStatic.LinearForceDefault);
+            StartGravityMin = new FloatValue(EffectStatic.Forces_StartGravityMinDefault);
+            StartGravityMax = new FloatValue(EffectStatic.Forces_StartGravityMaxDefault);
+            StartVelocityMin = new Vector2Value(EffectStatic.Forces_StartVelocityMinDefault);
+            StartVelocityMax = new Vector2Value(EffectStatic.Forces_StartVelocityMaxDefault);
+            StartAngularVelocityMin = new FloatValue(EffectStatic.Forces_StartAngularVelocityMinDefault);
+            StartAngularVelocityMax = new FloatValue(EffectStatic.Forces_StartAngularVelocityMaxDefault);
+            LinearVelocity = new Vector2Value(EffectStatic.Forces_LinearVelocityDefault);
+            OrbitalVelocity = new Vector3Value(EffectStatic.Forces_OrbitalVelocityDefault);
+            OrbitalCenterOffset = new Vector3Value(EffectStatic.Forces_OrbitalCenterOffsetDefault);
+            VelocitySpeed = new FloatValue(EffectStatic.Forces_VelocitySpeedDefault);
+            LinearForce = new Vector2Value(EffectStatic.Forces_LinearForceDefault);
         }
         
         public EffectObjectForces(float startGravityMin, float startGravityMax, 

@@ -24,9 +24,9 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeTorus()
         {
-            RadiusMinor = new FloatValue(EffectStatic.TorusRadiusMinorDefault);
-            RadiusMajor = new FloatValue(EffectStatic.TorusRadiusMajorDefault);
-            Arc = new FloatValue(EffectStatic.ShapeArcDefault);
+            RadiusMinor = new FloatValue(EffectStatic.Shape_TorusRadiusMinorDefault);
+            RadiusMajor = new FloatValue(EffectStatic.Shape_TorusRadiusMajorDefault);
+            Arc = new FloatValue(EffectStatic.Shape_ArcDefault);
             Spread = new EffectShapeSpreadRandom();
         }
         public EffectShapeTorus(float radiusMinor, float radiusMajor, float arc, IEffectShapeSpread spread)

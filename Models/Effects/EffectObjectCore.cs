@@ -35,14 +35,14 @@ namespace BHSDK.Models.Effects
 
         public EffectObjectCore()
         {
-            Loop = EffectStatic.LoopDefault;
-            ParticleCount = EffectStatic.ParticleCountDefault;
-            LifetimeBounds = new Vector2Value(EffectStatic.LifetimeBoundsDefault);
-            ParticleCollider = EffectStatic.ParticleColliderDefault;
-            HasStopTime = EffectStatic.HasStopTimeDefault;
-            StopTime = EffectStatic.StopTimeDefault;
-            ParticleTextureId = EffectStatic.ParticleTextureIdDefault;
-            ParticlePivot = new Vector2Value(EffectStatic.PivotDefault);
+            Loop = EffectStatic.Core_LoopDefault;
+            ParticleCount = EffectStatic.Core_ParticleCountDefault;
+            LifetimeBounds = new Vector2Value(EffectStatic.Core_LifetimeBoundsDefault);
+            ParticleCollider = EffectStatic.Core_ParticleColliderDefault;
+            HasStopTime = EffectStatic.Core_HasStopTimeDefault;
+            StopTime = EffectStatic.Core_StopTimeDefault;
+            ParticleTextureId = EffectStatic.Core_ParticleTextureIdDefault;
+            ParticlePivot = new Vector2Value(EffectStatic.Core_PivotDefault);
         }
         
         public EffectObjectCore(bool loop, uint particleCount, Vector2 lifetimeBounds, bool particleCollider,

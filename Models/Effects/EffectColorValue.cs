@@ -16,7 +16,7 @@ namespace BHSDK.Models.Effects
 
         public EffectColorValue()
         {
-            Color = new ColorValue(EffectStatic.ColorADefault);
+            Color = new ColorValue(EffectStatic.Color_ADefault);
         }
         public EffectColorValue(Color color)
         {

@@ -28,10 +28,10 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeCone()
         {
-            TopRadius = new FloatValue(EffectStatic.ConeTopRadiusDefault);
-            BaseRadius = new FloatValue(EffectStatic.ConeBaseRadiusDefault);
-            Arc = new FloatValue(EffectStatic.ShapeArcDefault);
-            Height = new FloatValue(EffectStatic.ConeHeightDefault);
+            TopRadius = new FloatValue(EffectStatic.Shape_ConeTopRadiusDefault);
+            BaseRadius = new FloatValue(EffectStatic.Shape_ConeBaseRadiusDefault);
+            Arc = new FloatValue(EffectStatic.Shape_ArcDefault);
+            Height = new FloatValue(EffectStatic.Shape_ConeHeightDefault);
             Spread = new EffectShapeSpreadRandom();
         }
         public EffectShapeCone(float topRadius, float baseRadius, float arc, float height, IEffectShapeSpread spread)

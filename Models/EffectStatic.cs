@@ -2,6 +2,8 @@
 using BHSDK.Models.Enum.Effects;
 using UnityEngine;
 
+// ReSharper disable InconsistentNaming
+
 namespace BHSDK.Models
 {
     public static class EffectStatic
@@ -10,63 +12,63 @@ namespace BHSDK.Models
         // Defaults
         // -----------------------------------------------------------------------------
         
-        public static readonly bool ParticleColliderDefault = false;
-        public static readonly bool HasStopTimeDefault = false;
-        public static readonly float StopTimeDefault = 10f;
+        public static readonly bool Core_ParticleColliderDefault = false;
+        public static readonly bool Core_HasStopTimeDefault = false;
+        public static readonly float Core_StopTimeDefault = 10f;
         
-        public static readonly bool LoopDefault = true;
-        public static readonly uint ParticleCountDefault = 10;
-        public static readonly Vector2 LifetimeBoundsDefault = new(3f, 3f);
-        public static readonly Vector2 PivotDefault = new(0f, 0f);
-        public static readonly Vector2 GravityConstraintDefault = new(0f, -9.81f);
-        public static readonly int ParticleTextureIdDefault = 1;
+        public static readonly bool Core_LoopDefault = true;
+        public static readonly uint Core_ParticleCountDefault = 10;
+        public static readonly Vector2 Core_LifetimeBoundsDefault = new(3f, 3f);
+        public static readonly Vector2 Core_PivotDefault = new(0f, 0f);
+        public static readonly Vector2 Core_GravityConstraintDefault = new(0f, -9.81f);
+        public static readonly int Core_ParticleTextureIdDefault = 1;
         
-        public static readonly EffectShapeType ShapeTypeDefault = EffectShapeType.Point;
-        public static readonly float CircleRadiusDefault = 1f;
-        public static readonly float ShapeArcDefault = Mathf.PI * 2f;
-        public static readonly float CircleThicknessDefault = 1f;
-        public static readonly Vector2 LineStartDefault = new(0f, 0f);
-        public static readonly Vector2 LineEndDefault = new(1f, 0f);
-        public static readonly float ConeBaseRadiusDefault = 1f;
-        public static readonly float ConeTopRadiusDefault = 0.4f;
-        public static readonly float ConeHeightDefault = 1f;
-        public static readonly float TorusRadiusMinorDefault = 0.4f;
-        public static readonly float TorusRadiusMajorDefault = 1f;
-        public static readonly EffectShapeSpreadType ShapeSpreadTypeDefault = EffectShapeSpreadType.Random;
-        public static readonly float ShapeSpreadDefault = 0f;
-        public static readonly float ShapeSpreadSpeedDefault = 1f;
+        public static readonly byte Shape_TypeDefault = 0;
+        public static readonly float Shape_CircleRadiusDefault = 1f;
+        public static readonly float Shape_ArcDefault = Mathf.PI * 2f;
+        public static readonly float Shape_CircleThicknessDefault = 1f;
+        public static readonly Vector2 Shape_LineStartDefault = new(0f, 0f);
+        public static readonly Vector2 Shape_LineEndDefault = new(1f, 0f);
+        public static readonly float Shape_ConeBaseRadiusDefault = 1f;
+        public static readonly float Shape_ConeTopRadiusDefault = 0.4f;
+        public static readonly float Shape_ConeHeightDefault = 1f;
+        public static readonly float Shape_TorusRadiusMinorDefault = 0.4f;
+        public static readonly float Shape_TorusRadiusMajorDefault = 1f;
+        public static readonly byte ShapeSpread_TypeDefault = 0;
+        public static readonly float ShapeSpread_SpreadDefault = 0f;
+        public static readonly float ShapeSpread_SpeedDefault = 1f;
         
-        public static readonly float StartGravityMinDefault = 0f;
-        public static readonly float StartGravityMaxDefault = 0f;
-        public static readonly Vector2 StartVelocityMinDefault = new(0f, 0f);
-        public static readonly Vector2 StartVelocityMaxDefault = new(0f, 0f);
-        public static readonly float StartAngularVelocityMinDefault = 0f;
-        public static readonly float StartAngularVelocityMaxDefault = 0f;
-        public static readonly Vector3 OrbitalVelocityDefault = new(0f, 0f, 0f);
-        public static readonly Vector2 LinearVelocityDefault = new(0f, 0f);
-        public static readonly Vector3 OrbitalCenterOffsetDefault = new(0f, 0f, 0f);
-        public static readonly float VelocitySpeedDefault = 1f;
-        public static readonly Vector2 LinearForceDefault = new(0f, 0f);
+        public static readonly float Forces_StartGravityMinDefault = 0f;
+        public static readonly float Forces_StartGravityMaxDefault = 0f;
+        public static readonly Vector2 Forces_StartVelocityMinDefault = new(0f, 0f);
+        public static readonly Vector2 Forces_StartVelocityMaxDefault = new(0f, 0f);
+        public static readonly float Forces_StartAngularVelocityMinDefault = 0f;
+        public static readonly float Forces_StartAngularVelocityMaxDefault = 0f;
+        public static readonly Vector3 Forces_OrbitalVelocityDefault = new(0f, 0f, 0f);
+        public static readonly Vector2 Forces_LinearVelocityDefault = new(0f, 0f);
+        public static readonly Vector3 Forces_OrbitalCenterOffsetDefault = new(0f, 0f, 0f);
+        public static readonly float Forces_VelocitySpeedDefault = 1f;
+        public static readonly Vector2 Forces_LinearForceDefault = new(0f, 0f);
         
-        public static readonly Vector2 CollisionPositionDefault = new(0f, 0f);
-        public static readonly float CollisionRotationDefault = 0f;
-        public static readonly Vector2 CollisionScaleDefault = new(1f, 1f);
-        public static readonly bool HasCollisionDefault = false;
+        public static readonly Vector2 Collision_PositionDefault = new(0f, 0f);
+        public static readonly float Collision_RotationDefault = 0f;
+        public static readonly Vector2 Collision_ScaleDefault = new(1f, 1f);
+        public static readonly bool Collision_HasDefault = false;
         
-        public static readonly Color ColorADefault = Color.red;
-        public static readonly Color ColorBDefault = Color.white;
-        public static readonly EffectColorType ColorTypeDefault = EffectColorType.Value;
-        public static readonly Vector2 ColorBySpeedRangeDefault = new(1.3f, 2f);
+        public static readonly Color Color_ADefault = Color.red;
+        public static readonly Color Color_BDefault = Color.white;
+        public static readonly byte Color_TypeDefault = 0;
+        public static readonly Vector2 Color_BySpeedRangeDefault = new(1.3f, 2f);
         
-        public static readonly Vector2 ScaleADefault = new(1f, 1f);
-        public static readonly Vector2 ScaleBDefault = new(1f, 1f);
-        public static readonly EffectScaleType ScaleTypeDefault = EffectScaleType.Value;
-        public static readonly Vector2 ScaleBySpeedRangeDefault = new(0f, 1f);
+        public static readonly Vector2 Scale_ADefault = new(1f, 1f);
+        public static readonly Vector2 Scale_BDefault = new(1f, 1f);
+        public static readonly byte Scale_TypeDefault = 0;
+        public static readonly Vector2 Scale_BySpeedRangeDefault = new(0f, 1f);
         
-        public static readonly float AngleADefault = 0f;
-        public static readonly float AngleBDefault = 0f;
-        public static readonly EffectAngleType AngleTypeDefault = EffectAngleType.Value;
-        public static readonly Vector2 AngleBySpeedRangeDefault = new(0f, 1f);
+        public static readonly float Angle_ADefault = 0f;
+        public static readonly float Angle_BDefault = 0f;
+        public static readonly byte Angle_TypeDefault = 0;
+        public static readonly Vector2 Angle_BySpeedRangeDefault = new(0f, 1f);
 
         public static AnimationCurve GetDefaultCurve()
         {

@@ -22,8 +22,8 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeLine()
         {
-            Start = new Vector2Value(EffectStatic.LineStartDefault);
-            End = new Vector2Value(EffectStatic.LineEndDefault);
+            Start = new Vector2Value(EffectStatic.Shape_LineStartDefault);
+            End = new Vector2Value(EffectStatic.Shape_LineEndDefault);
             Spread = new EffectShapeSpreadRandom();
         }
         public EffectShapeLine(Vector2 start, Vector2 end, IEffectShapeSpread spread)

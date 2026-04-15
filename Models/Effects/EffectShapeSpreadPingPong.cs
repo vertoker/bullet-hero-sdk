@@ -36,8 +36,8 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeSpreadPingPong()
         {
-            Spread = new FloatValue(EffectStatic.ShapeSpreadDefault);
-            Speed = new FloatValue(EffectStatic.ShapeSpreadSpeedDefault);
+            Spread = new FloatValue(EffectStatic.ShapeSpread_SpreadDefault);
+            Speed = new FloatValue(EffectStatic.ShapeSpread_SpeedDefault);
         }
         public EffectShapeSpreadPingPong(float spread, float speed)
         {

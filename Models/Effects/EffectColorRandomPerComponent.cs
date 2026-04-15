@@ -19,8 +19,8 @@ namespace BHSDK.Models.Effects
 
         public EffectColorRandomPerComponent()
         {
-            ColorA = new ColorValue(EffectStatic.ColorADefault);
-            ColorB = new ColorValue(EffectStatic.ColorBDefault);
+            ColorA = new ColorValue(EffectStatic.Color_ADefault);
+            ColorB = new ColorValue(EffectStatic.Color_BDefault);
         }
         public EffectColorRandomPerComponent(Color colorA, Color colorB)
         {
