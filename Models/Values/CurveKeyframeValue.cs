@@ -6,6 +6,8 @@ namespace BHSDK.Models.Values
 {
     public class CurveKeyframeValue
     {
+        // TODO maybe replace FloatValue to IFloat (in editor step)
+        
         [JsonProperty(ModelNames.Time)]
         public FloatValue Time { get; set; }
         
@@ -17,6 +19,7 @@ namespace BHSDK.Models.Values
         
         [JsonProperty(ModelNames.Tangent + ModelNames.Mode)]
         public CurveTangentMode TangentMode { get; set; }
+        
         
         [JsonProperty(ModelNames.In + ModelNames.Tangent)]
         public FloatValue InTangent { get; set; }
