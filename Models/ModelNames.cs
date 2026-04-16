@@ -140,8 +140,10 @@
         public const string Particle = "ptcl";
         public const string Count = "cnt";
         public const string Lifetime = "lftm";
-        public const string HasStopTime = "hstp";
-        public const string StopTime = "stp";
+        public const string Has = "h";
+        public const string Stop = "stp";
+        public const string Local = "lcl";
+        public const string Global = "glbl";
         public const string Effect = "eff";
         public const string AudioEffect = "audeff";
         public const string Shape = "shp";

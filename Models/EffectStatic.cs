@@ -13,8 +13,8 @@ namespace BHSDK.Models
         // -----------------------------------------------------------------------------
         
         public static readonly bool Core_ParticleColliderDefault = false;
-        public static readonly bool Core_HasStopTimeDefault = false;
-        public static readonly float Core_StopTimeDefault = 10f;
+        public static readonly bool Core_HasStopLocalFrameDefault = false;
+        public static readonly int Core_StopLocalFrameDefault = 10;
         
         public static readonly bool Core_LoopDefault = true;
         public static readonly uint Core_ParticleCountDefault = 10;

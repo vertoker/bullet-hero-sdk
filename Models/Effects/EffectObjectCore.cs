@@ -19,11 +19,11 @@ namespace BHSDK.Models.Effects
         [JsonProperty(ModelNames.Particle + ModelNames.Collider)]
         public bool ParticleCollider { get; set; }
         
-        [JsonProperty(ModelNames.HasStopTime)]
-        public bool HasStopTime { get; set; }
+        [JsonProperty(ModelNames.Has + ModelNames.Stop + ModelNames.Local + ModelNames.Frame)]
+        public bool HasStopLocalFrame { get; set; }
         
-        [JsonProperty(ModelNames.StopTime)]
-        public float StopTime { get; set; }
+        [JsonProperty(ModelNames.Stop + ModelNames.Local + ModelNames.Frame)]
+        public int StopLocalFrame { get; set; }
         
         // Same logic as TextureObject.TextureId
         
@@ -39,34 +39,34 @@ namespace BHSDK.Models.Effects
             ParticleCount = EffectStatic.Core_ParticleCountDefault;
             LifetimeBounds = new Vector2Value(EffectStatic.Core_LifetimeBoundsDefault);
             ParticleCollider = EffectStatic.Core_ParticleColliderDefault;
-            HasStopTime = EffectStatic.Core_HasStopTimeDefault;
-            StopTime = EffectStatic.Core_StopTimeDefault;
+            HasStopLocalFrame = EffectStatic.Core_HasStopLocalFrameDefault;
+            StopLocalFrame = EffectStatic.Core_StopLocalFrameDefault;
             ParticleTextureId = EffectStatic.Core_ParticleTextureIdDefault;
             ParticlePivot = new Vector2Value(EffectStatic.Core_PivotDefault);
         }
         
         public EffectObjectCore(bool loop, uint particleCount, Vector2 lifetimeBounds, bool particleCollider,
-            bool hasStopTime, float stopTime, int particleTextureId, Vector2 particlePivot)
+            bool hasStopLocalFrame, int stopLocalFrame, int particleTextureId, Vector2 particlePivot)
         {
             Loop = loop;
             ParticleCount = particleCount;
             LifetimeBounds = new Vector2Value(lifetimeBounds);
             ParticleCollider = particleCollider;
-            HasStopTime = hasStopTime;
-            StopTime = stopTime;
+            HasStopLocalFrame = hasStopLocalFrame;
+            StopLocalFrame = stopLocalFrame;
             ParticleTextureId = particleTextureId;
             ParticlePivot = new Vector2Value(particlePivot);
         }
         
         public EffectObjectCore(bool loop, uint particleCount, IVector2 lifetimeBounds, bool particleCollider,
-            bool hasStopTime, float stopTime, int particleTextureId, IVector2 particlePivot)
+            bool hasStopLocalFrame, int stopLocalFrame, int particleTextureId, IVector2 particlePivot)
         {
             Loop = loop;
             ParticleCount = particleCount;
             LifetimeBounds = lifetimeBounds;
             ParticleCollider = particleCollider;
-            HasStopTime = hasStopTime;
-            StopTime = stopTime;
+            HasStopLocalFrame = hasStopLocalFrame;
+            StopLocalFrame = stopLocalFrame;
             ParticleTextureId = particleTextureId;
             ParticlePivot = particlePivot;
         }
