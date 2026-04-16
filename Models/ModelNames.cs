@@ -182,6 +182,7 @@
         public const string Out = "o";
         public const string Tangent = "t";
         public const string Weight = "w";
+        public const string Mode = "md";
         public const string Keys = "keys";
         public const string Aspect = "asp";
         

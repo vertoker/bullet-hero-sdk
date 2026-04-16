@@ -1,5 +1,4 @@
-﻿using BHSDK.Models.Interfaces.Values;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
@@ -7,10 +6,10 @@ namespace BHSDK.Models.Values
     public class GradientAlphaKeyValue
     {
         [JsonProperty(ModelNames.Alpha)]
-        public IFloat Alpha { get; set; }
+        public FloatValue Alpha { get; set; }
         
         [JsonProperty(ModelNames.Time)]
-        public IFloat Time { get; set; }
+        public FloatValue Time { get; set; }
 
         public GradientAlphaKey Get()
         {
@@ -28,7 +27,7 @@ namespace BHSDK.Models.Values
             Alpha = new FloatValue(alpha);
             Time = new FloatValue(time);
         }
-        public GradientAlphaKeyValue(IFloat alpha, IFloat time)
+        public GradientAlphaKeyValue(FloatValue alpha, FloatValue time)
         {
             Alpha = alpha;
             Time = time;

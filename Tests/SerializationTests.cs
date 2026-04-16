@@ -60,10 +60,10 @@ namespace BHSDK.Tests
                 },
                 EffectColor = new EffectColorGradientRandom
                 {
-                    Gradient = new GradientValue(new List<GradientAlphaKeyValue>
+                    Gradient = new GradientValue(new List<GradientColorKeyValue>
                     {
                         new()
-                    }, new List<GradientColorKeyValue>
+                    }, new List<GradientAlphaKeyValue>
                     {
                         new()
                     })

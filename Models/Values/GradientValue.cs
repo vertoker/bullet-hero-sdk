@@ -9,36 +9,35 @@ namespace BHSDK.Models.Values
     {
         public const int MaxCount = 4;
         
-        [JsonProperty(ModelNames.Alpha + ModelNames.Keys)]
-        public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
-        
         [JsonProperty(ModelNames.Color + ModelNames.Keys)]
         public List<GradientColorKeyValue> ColorKeys { get; set; }
         
+        [JsonProperty(ModelNames.Alpha + ModelNames.Keys)]
+        public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
+        
         public Gradient Get()
         {
-            Span<GradientAlphaKey> alphaKeys = stackalloc GradientAlphaKey[AlphaKeys.Count];
             Span<GradientColorKey> colorKeys = stackalloc GradientColorKey[ColorKeys.Count];
+            Span<GradientAlphaKey> alphaKeys = stackalloc GradientAlphaKey[AlphaKeys.Count];
             
-            for (var i = 0; i < alphaKeys.Length; i++) alphaKeys[i] = AlphaKeys[i].Get();
             for (var i = 0; i < colorKeys.Length; i++) colorKeys[i] = ColorKeys[i].Get();
+            for (var i = 0; i < alphaKeys.Length; i++) alphaKeys[i] = AlphaKeys[i].Get();
             
             var gradient = new Gradient();
-            gradient.SetAlphaKeys(alphaKeys);
-            gradient.SetColorKeys(colorKeys);
+            gradient.SetKeys(colorKeys, alphaKeys);
             
             return gradient;
         }
 
         public GradientValue()
         {
-            AlphaKeys = new List<GradientAlphaKeyValue>();
             ColorKeys = new List<GradientColorKeyValue>();
+            AlphaKeys = new List<GradientAlphaKeyValue>();
         }
-        public GradientValue(List<GradientAlphaKeyValue> alphaKeys, List<GradientColorKeyValue> colorKeys)
+        public GradientValue(List<GradientColorKeyValue> colorKeys, List<GradientAlphaKeyValue> alphaKeys)
         {
-            AlphaKeys = alphaKeys;
             ColorKeys = colorKeys;
+            AlphaKeys = alphaKeys;
         }
         public GradientValue(Gradient gradient)
         {

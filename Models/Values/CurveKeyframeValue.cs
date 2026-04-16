@@ -1,4 +1,4 @@
-﻿using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Enum.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -7,10 +7,16 @@ namespace BHSDK.Models.Values
     public class CurveKeyframeValue
     {
         [JsonProperty(ModelNames.Time)]
-        public IFloat Time { get; set; }
+        public FloatValue Time { get; set; }
         
         [JsonProperty(ModelNames.Value)]
-        public IFloat Value { get; set; }
+        public FloatValue Value { get; set; }
+        
+        [JsonProperty(ModelNames.Weight + ModelNames.Mode)]
+        public CurveWeightedMode WeightedMode { get; set; }
+        
+        [JsonProperty(ModelNames.Tangent + ModelNames.Mode)]
+        public CurveTangentMode TangentMode { get; set; }
         
         [JsonProperty(ModelNames.In + ModelNames.Tangent)]
         public FloatValue InTangent { get; set; }
@@ -34,26 +40,54 @@ namespace BHSDK.Models.Values
         {
             Time = new FloatValue(0f);
             Value = new FloatValue(0f);
+            WeightedMode = CurveWeightedMode.None;
+            TangentMode = CurveTangentMode.Free;
             InTangent = new FloatValue(0f);
             OutTangent = new FloatValue(0f);
             InWeight = new FloatValue(0f);
             OutWeight = new FloatValue(0f);
         }
-        public CurveKeyframeValue(float time, float value,
+        public CurveKeyframeValue(float time, float value)
+        {
+            Time = new FloatValue(time);
+            Value = new FloatValue(value);
+            WeightedMode = CurveWeightedMode.None;
+            TangentMode = CurveTangentMode.Free;
+            InTangent = new FloatValue(0f);
+            OutTangent = new FloatValue(0f);
+            InWeight = new FloatValue(0f);
+            OutWeight = new FloatValue(0f);
+        }
+        public CurveKeyframeValue(FloatValue time, FloatValue value)
+        {
+            Time = time;
+            Value = value;
+            WeightedMode = CurveWeightedMode.None;
+            TangentMode = CurveTangentMode.Free;
+            InTangent = new FloatValue(0f);
+            OutTangent = new FloatValue(0f);
+            InWeight = new FloatValue(0f);
+            OutWeight = new FloatValue(0f);
+        }
+        public CurveKeyframeValue(float time, float value, 
             float inTangent, float outTangent, float inWeight, float outWeight)
         {
             Time = new FloatValue(time);
             Value = new FloatValue(value);
+            WeightedMode = CurveWeightedMode.Both;
+            TangentMode = CurveTangentMode.Free;
             InTangent = new FloatValue(inTangent);
             OutTangent = new FloatValue(outTangent);
             InWeight = new FloatValue(inWeight);
             OutWeight = new FloatValue(outWeight);
         }
-        public CurveKeyframeValue(IFloat time, IFloat value,
+        public CurveKeyframeValue(FloatValue time, FloatValue value,
             FloatValue inTangent, FloatValue outTangent, FloatValue inWeight, FloatValue outWeight)
         {
             Time = time;
             Value = value;
+            WeightedMode = CurveWeightedMode.Both;
+            TangentMode = CurveTangentMode.Free;
             InTangent = inTangent;
             OutTangent = outTangent;
             InWeight = inWeight;
@@ -63,6 +97,8 @@ namespace BHSDK.Models.Values
         {
             Time = new FloatValue(keyframe.time);
             Value = new FloatValue(keyframe.value);
+            WeightedMode = (CurveWeightedMode)keyframe.weightedMode;
+            TangentMode = CurveTangentMode.Free;
             InTangent = new FloatValue(keyframe.inTangent);
             OutTangent = new FloatValue(keyframe.outTangent);
             InWeight = new FloatValue(keyframe.inWeight);
