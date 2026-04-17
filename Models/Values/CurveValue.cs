@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BHSDK.Models.Enum.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -12,6 +13,12 @@ namespace BHSDK.Models.Values
         [JsonProperty(ModelNames.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
         
+        [JsonProperty(ModelNames.Pre + ModelNames.Wrap + ModelNames.Mode)]
+        public CurveWrapMode PreWrapMode { get; set; }
+        
+        [JsonProperty(ModelNames.Post + ModelNames.Wrap + ModelNames.Mode)]
+        public CurveWrapMode PostWrapMode { get; set; }
+        
         public AnimationCurve Get()
         {
             Span<Keyframe> keyframes = stackalloc Keyframe[KeyFrames.Count];
@@ -19,6 +26,8 @@ namespace BHSDK.Models.Values
             
             var curve = new AnimationCurve();
             curve.SetKeys(keyframes);
+            curve.preWrapMode = (WrapMode)PreWrapMode;
+            curve.postWrapMode = (WrapMode)PostWrapMode;
             
             return curve;
         }
@@ -26,16 +35,22 @@ namespace BHSDK.Models.Values
         public CurveValue()
         {
             KeyFrames = new List<CurveKeyframeValue>();
+            PreWrapMode = CurveWrapMode.Default;
+            PostWrapMode = CurveWrapMode.Default;
         }
-        public CurveValue(List<CurveKeyframeValue> keyFrames)
+        public CurveValue(List<CurveKeyframeValue> keyFrames, CurveWrapMode preWrapMode, CurveWrapMode postWrapMode)
         {
             KeyFrames = keyFrames;
+            PreWrapMode = preWrapMode;
+            PostWrapMode = postWrapMode;
         }
         public CurveValue(AnimationCurve curve)
         {
             KeyFrames = new List<CurveKeyframeValue>(curve.length);
             foreach (var keyframe in curve.keys)
                 KeyFrames.Add(new CurveKeyframeValue(keyframe));
+            PreWrapMode = (CurveWrapMode)curve.preWrapMode;
+            PostWrapMode = (CurveWrapMode)curve.postWrapMode;
         }
     }
 }

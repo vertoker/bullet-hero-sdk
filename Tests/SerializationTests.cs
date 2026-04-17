@@ -5,6 +5,7 @@ using BHSDK.Models.Audio;
 using BHSDK.Models.Components;
 using BHSDK.Models.Effects;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Events;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
@@ -52,10 +53,10 @@ namespace BHSDK.Tests
                 },
                 EffectAngle = new EffectAngleCurvesBySpeed
                 {
-                    Curve = new CurveValue(new List<CurveKeyframeValue>()
+                    Curve = new CurveValue(new List<CurveKeyframeValue>
                     {
                         new(), new()
-                    }),
+                    }, CurveWrapMode.Default, CurveWrapMode.Default),
                     SpeedRange = new Vector2Circle(0f, 1f, 2f),
                 },
                 EffectColor = new EffectColorGradientRandom
@@ -66,7 +67,7 @@ namespace BHSDK.Tests
                     }, new List<GradientAlphaKeyValue>
                     {
                         new()
-                    })
+                    }, GradientInterpolationMode.PerceptualBlend, GradientColorSpace.Linear)
                 },
                 EffectScale = new EffectScaleCurvesBySpeed
                 {

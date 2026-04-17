@@ -50,11 +50,6 @@ namespace BHSDK.Models
         public static readonly float Forces_VelocitySpeedDefault = 1f;
         public static readonly Vector2 Forces_LinearForceDefault = new(0f, 0f);
         
-        public static readonly Vector2 Collision_PositionDefault = new(0f, 0f);
-        public static readonly float Collision_RotationDefault = 0f;
-        public static readonly Vector2 Collision_ScaleDefault = new(1f, 1f);
-        public static readonly bool Collision_HasDefault = false;
-        
         public static readonly Color Color_ADefault = Color.red;
         public static readonly Color Color_BDefault = Color.white;
         public static readonly byte Color_TypeDefault = 0;
@@ -74,7 +69,12 @@ namespace BHSDK.Models
         {
             var key0 = new Keyframe(0f, 0f);
             var key1 = new Keyframe(1f, 1f);
-            return new AnimationCurve(key0, key1);
+            var curve = new AnimationCurve(key0, key1)
+            {
+                postWrapMode = WrapMode.Default,
+                preWrapMode = WrapMode.Default
+            };
+            return curve;
         }
         public static Gradient GetDefaultGradient()
         {
@@ -89,6 +89,9 @@ namespace BHSDK.Models
             alphaKeys[1] = new GradientAlphaKey(1f, 1f);
             
             gradient.SetKeys(colorKeys, alphaKeys);
+            gradient.mode = GradientMode.PerceptualBlend;
+            gradient.colorSpace = ColorSpace.Linear;
+            
             return gradient;
         }
     }

@@ -186,6 +186,10 @@
         public const string Weight = "w";
         public const string Mode = "md";
         public const string Keys = "keys";
+        public const string Pre = "pre";
+        public const string Post = "pst";
+        public const string Wrap = "wrp";
+        public const string Space = "spc";
         public const string Aspect = "asp";
         
         public const string Seed = "seed";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BHSDK.Models.Enum.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -15,6 +16,12 @@ namespace BHSDK.Models.Values
         [JsonProperty(ModelNames.Alpha + ModelNames.Keys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
         
+        [JsonProperty(ModelNames.Mode)]
+        public GradientInterpolationMode Mode { get; set; }
+        
+        [JsonProperty(ModelNames.Color + ModelNames.Space)]
+        public GradientColorSpace ColorSpace { get; set; }
+        
         public Gradient Get()
         {
             Span<GradientColorKey> colorKeys = stackalloc GradientColorKey[ColorKeys.Count];
@@ -22,9 +29,11 @@ namespace BHSDK.Models.Values
             
             for (var i = 0; i < colorKeys.Length; i++) colorKeys[i] = ColorKeys[i].Get();
             for (var i = 0; i < alphaKeys.Length; i++) alphaKeys[i] = AlphaKeys[i].Get();
-            
+
             var gradient = new Gradient();
             gradient.SetKeys(colorKeys, alphaKeys);
+            gradient.mode = (GradientMode)Mode;
+            gradient.colorSpace = (ColorSpace)ColorSpace;
             
             return gradient;
         }
@@ -33,11 +42,16 @@ namespace BHSDK.Models.Values
         {
             ColorKeys = new List<GradientColorKeyValue>();
             AlphaKeys = new List<GradientAlphaKeyValue>();
+            Mode = GradientInterpolationMode.PerceptualBlend;
+            ColorSpace = GradientColorSpace.Linear;
         }
-        public GradientValue(List<GradientColorKeyValue> colorKeys, List<GradientAlphaKeyValue> alphaKeys)
+        public GradientValue(List<GradientColorKeyValue> colorKeys, List<GradientAlphaKeyValue> alphaKeys,
+            GradientInterpolationMode mode, GradientColorSpace colorSpace)
         {
             ColorKeys = colorKeys;
             AlphaKeys = alphaKeys;
+            Mode = mode;
+            ColorSpace = colorSpace;
         }
         public GradientValue(Gradient gradient)
         {
@@ -48,6 +62,9 @@ namespace BHSDK.Models.Values
                 AlphaKeys.Add(new GradientAlphaKeyValue(alphaKey));
             foreach (var colorKey in gradient.colorKeys)
                 ColorKeys.Add(new GradientColorKeyValue(colorKey));
+
+            Mode = (GradientInterpolationMode)gradient.mode;
+            ColorSpace = (GradientColorSpace)gradient.colorSpace;
         }
     }
 }
