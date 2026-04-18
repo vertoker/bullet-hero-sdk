@@ -5,11 +5,13 @@ using BHSDK.Models.Audio;
 using BHSDK.Models.Components;
 using BHSDK.Models.Effects;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Enum.Resources;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Events;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
+using BHSDK.Models.Resources;
 using BHSDK.Models.SaveData;
 using BHSDK.Models.Settings;
 using BHSDK.Models.Values;
@@ -165,9 +167,9 @@ namespace BHSDK.Tests
             level.Game.Themes.Add(new Theme());
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack("cool song", "vertoker", 0, 100, new List<LevelTrackSource>
+            var track = new LevelTrack("cool song", "vertoker", 0, 100, new List<AudioResourceKey>
             {
-                new("https://bullethero.space", AudioLinkType.DirectUrl, 0, 100),
+                new(0f, ResourceUriType.DirectUrl, "https://bullethero.space"),
             }, trackEffects);
             level.Audio.Tracks.Add(track);
 

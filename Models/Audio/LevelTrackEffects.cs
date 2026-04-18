@@ -52,11 +52,11 @@ namespace BHSDK.Models.Audio
 
         public LevelTrackEffects()
         {
-            Volume = 1f; // 0f - 1f, 0.01f
-            StereoPan = 0f; // -1f - 1f, 0.01f
-            UseMixer = false;
-            Pitch = 1f; // 0.01f - 10f, 0.01f, %
+            Volume = AudioStatic.VolumeDefault;
+            StereoPan = AudioStatic.StereoPanDefault;
+            UseMixer = AudioStatic.UseMixerDefault;
             
+            Pitch = AudioStatic.Core_PitchDefault;
             Lowpass = new AudioLowpass();
             Highpass = new AudioHighpass();
             Echo = new AudioEcho();

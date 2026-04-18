@@ -9,7 +9,7 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioLowpass()
         {
-            CutoffFreq = 5000f; // 10f - 22000f, 1f, Hz
+            CutoffFreq = AudioStatic.Lowpass_CutoffFreq;
         }
         public AudioLowpass(float mixLevel, float cutoffFreq) : base(mixLevel)
         {

@@ -48,20 +48,20 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioReverb()
         {
-            DryLevel = 0f; // -10000f - 0f, 1f, mB
-            Room = -10000f; // -10000f - 0f, 1f, mB
-            RoomHF = 0f; // -10000f - 0f, 1f, mB
-            RoomLF = 0f; // -10000f - 0f, 1f, mB
-            DecayTime = 1f; // 0.1f - 20f, 0.1f, s
-            DecayHFRatio = 0.5f; // 0.1f - 2f, 0.01f
-            Reflections = -10000f; // -10000f - 1000f, 1f, mB
-            ReflectDelay = 0.02f; // 0f - 0.3f, 0.01f, s
-            Reverb = 0f; // -10000f - 2000f, 1f, mB
-            ReverbDelay = 0.04f; // 0f - 0.1f, 0.01f, s
-            Diffusion = 1f; // 0f - 1f, 0.01f, %
-            Density = 1f; // 0f - 1f, 0.01f, %
-            HFReference = 5000f; // 20f - 20000f, 1f, Hz
-            LFReference = 250f; // 20f - 1000f, 1f, Hz 
+            DryLevel = AudioStatic.Reverb_DryLevel;
+            Room = AudioStatic.Reverb_Room;
+            RoomHF = AudioStatic.Reverb_RoomHF;
+            RoomLF = AudioStatic.Reverb_RoomLF;
+            DecayTime = AudioStatic.Reverb_DecayTime;
+            DecayHFRatio = AudioStatic.Reverb_DecayHFRatio;
+            Reflections = AudioStatic.Reverb_Reflections;
+            ReflectDelay = AudioStatic.Reverb_ReflectDelay;
+            Reverb = AudioStatic.Reverb_Reverb;
+            ReverbDelay = AudioStatic.Reverb_ReverbDelay;
+            Diffusion = AudioStatic.Reverb_Diffusion;
+            Density = AudioStatic.Reverb_Density;
+            HFReference = AudioStatic.Reverb_HFReference;
+            LFReference = AudioStatic.Reverb_LFReference; 
         }
         public AudioReverb(float mixLevel, float dryLevel, float room, float roomHF, float roomLF, 
             float decayTime, float decayHFRatio, float reflections, float reflectDelay, float reverb,

@@ -15,9 +15,9 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioNormalize()
         {
-            FadeInTime = 5000f; // 0f - 20000f, 1f, ms
-            LowestVolume = 0.1f; // 0f - 1f, 0.01f, -
-            MaximumAmp = 20f; // 0f - 100000f, 1f, x
+            FadeInTime = AudioStatic.Normalize_FadeInTime;
+            LowestVolume = AudioStatic.Normalize_LowestVolume;
+            MaximumAmp = AudioStatic.Normalize_MaximumAmp;
         }
         public AudioNormalize(float mixLevel, float fadeInTime,
             float lowestVolume, float maximumAmp) : base(mixLevel)

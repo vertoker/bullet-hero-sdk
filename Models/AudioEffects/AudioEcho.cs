@@ -21,11 +21,11 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioEcho()
         {
-            Delay = 100f; // 1f - 5000f, 1f, ms
-            Decay = 0.8f; // 0f - 1f, 0.01f, %
-            MaxChannels = 0f; // 0f - 16f, 0.01f, ch
-            DryMix = 1f; // 0f - 1f, 0.01f, %
-            WetMix = 1f; // 0f - 1f, 0.01f, %
+            Delay = AudioStatic.Echo_Delay;
+            Decay = AudioStatic.Echo_Decay;
+            MaxChannels = AudioStatic.Echo_MaxChannels;
+            DryMix = AudioStatic.Echo_DryMix;
+            WetMix = AudioStatic.Echo_WetMix;
         }
         public AudioEcho(float mixLevel, float delay, float decay,
             float maxChannels, float dryMix, float wetMix) : base(mixLevel)

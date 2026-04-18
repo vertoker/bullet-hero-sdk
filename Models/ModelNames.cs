@@ -157,6 +157,7 @@
         public const string Author = "ath";
         public const string Source = "src";
         public const string Link = "lnk";
+        public const string Uri = "uri";
         
         public const string ScanLineJitter = "slj";
         public const string Vertical = "vtl";
