@@ -23,7 +23,7 @@ namespace BHSDK.Models.Objects
         // all user-defined starts with 1 and counts to negative (-1, -2, -3, -4...)
         
         // Internally, they converted from textureId to textureIndex with simple function
-        // textureIndex = textureId >= 0 ? textureId : <count of game-defined textures> - textureId
+        // textureIndex = textureId >= 0 ? textureId : <count of game-defined textures> - textureId - 1
         // Count of game-defined textures can be changed with Level version, this validates by validators
         
         [JsonProperty(ModelNames.Texture + ModelNames.Id)]

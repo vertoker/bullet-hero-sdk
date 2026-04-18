@@ -22,6 +22,7 @@ namespace BHSDK.Models
         public static readonly Vector2 Core_PivotDefault = new(0f, 0f);
         public static readonly Vector2 Core_GravityConstraintDefault = new(0f, -9.81f);
         public static readonly int Core_ParticleTextureIdDefault = 1;
+        public static readonly int Core_ParticleTextureIndexDefault = 1;
         
         public static readonly byte Shape_TypeDefault = 0;
         public static readonly float Shape_CircleRadiusDefault = 1f;
