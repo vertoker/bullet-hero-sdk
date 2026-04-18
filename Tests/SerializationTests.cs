@@ -10,6 +10,7 @@ using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Events;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
+using BHSDK.Models.Other;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Resources;
 using BHSDK.Models.SaveData;
@@ -167,10 +168,9 @@ namespace BHSDK.Tests
             level.Game.Themes.Add(new Theme());
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack("cool song", "vertoker", 0, 100, new List<AudioResourceKey>
-            {
-                new(0f, ResourceUriType.DirectUrl, "https://bullethero.space"),
-            }, trackEffects);
+            var track = new LevelTrack(1, "cool song", "vertoker", 0, 1000, 0f,
+                new List<AudioResourceKey> { new(ResourceUriType.DirectUrl, "https://bullethero.space"), },
+                trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;

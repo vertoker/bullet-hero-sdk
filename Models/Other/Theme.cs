@@ -4,7 +4,7 @@ using BHSDK.Models.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Models.Objects
+namespace BHSDK.Models.Other
 {
     public class Theme : ITheme
     {

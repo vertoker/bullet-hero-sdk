@@ -5,7 +5,7 @@ namespace BHSDK.Models.Audio
 {
     public class AudioLevel
     {
-        // temporary solution because master channels created only in Unity
+        // because master channels created only in Unity
         public const int FrameTrackLimit = 16;
         
         [JsonProperty(ModelNames.Track)]

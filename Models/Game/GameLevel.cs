@@ -3,6 +3,8 @@ using BHSDK.Models.Base;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Objects;
+using BHSDK.Models.Other;
+using BHSDK.Models.Resources;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
@@ -36,6 +38,9 @@ namespace BHSDK.Models.Game
         [JsonProperty(ModelNames.Theme)]
         public List<Theme> Themes { get; set; }
         
+        [JsonProperty(ModelNames.Texture)]
+        public List<LevelTexture> Textures { get; set; }
+        
         public GameLevel()
         {
             Events = new GameEvents();
@@ -48,19 +53,23 @@ namespace BHSDK.Models.Game
             
             Prefabs = new List<Prefab>();
             Themes = new List<Theme>();
+            Textures = new List<LevelTexture>();
         }
         public GameLevel(GameEvents events, CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents,
             PlayerEvents playerEvents, List<Object> objects, List<PrefabObject> prefabObjects,
-            List<Prefab> prefabs, List<Theme> themes)
+            List<Prefab> prefabs, List<Theme> themes, List<LevelTexture> textures)
         {
             Events = events;
             CameraEvents = cameraEvents;
             PostProcessingEvents = postProcessingEvents;
             PlayerEvents = playerEvents;
+            
             Objects = objects;
             PrefabObjects = prefabObjects;
+            
             Prefabs = prefabs;
             Themes = themes;
+            Textures = textures;
         }
     }
 }

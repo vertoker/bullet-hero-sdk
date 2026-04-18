@@ -9,6 +9,16 @@ namespace BHSDK.Models.Audio
     {
         public const int MaxSourcesCount = 4;
         
+        // Same logic as Object.ObjectId, but only for audio and much simpler
+        // 0 - undefined
+        // 1, 2, 3... - user-defined audio
+        // negative space is banned for consistency
+        
+        [JsonProperty(ModelNames.Id)]
+        public int AudioId { get; set; }
+        
+        public const int UndefinedId = 0;
+        
         [JsonProperty(ModelNames.Title)]
         public string Title { get; set; }
         
@@ -28,30 +38,35 @@ namespace BHSDK.Models.Audio
         [JsonProperty(ModelNames.End + ModelNames.Frame)]
         public int EndFrame { get; set; }
         
+        [JsonProperty(ModelNames.Offset + ModelNames.Time)]
+        public float OffsetTime { get; set; }
+        
         [JsonProperty(ModelNames.Source)]
         public List<AudioResourceKey> Sources { get; set; }
         
         [JsonProperty(ModelNames.AudioEffect)] [CanBeNull]
         public LevelTrackEffects Effects { get; set; }
         
-        public bool HasEffects() => Effects != null;
-
         public LevelTrack()
         {
+            AudioId = 0;
             Title = string.Empty;
             Author = string.Empty;
             StartFrame = 0;
             EndFrame = 0;
+            OffsetTime = 0f;
             Sources = new List<AudioResourceKey>();
             Effects = new LevelTrackEffects();
         }
-        public LevelTrack(string title, string author, int startFrame, int endFrame, 
+        public LevelTrack(int audioId, string title, string author, int startFrame, int endFrame, float offsetTime, 
             List<AudioResourceKey> sources, LevelTrackEffects effects)
         {
+            AudioId = audioId;
             Title = title;
             Author = author;
             StartFrame = startFrame;
             EndFrame = endFrame;
+            OffsetTime = offsetTime;
             Sources = sources;
             Effects = effects;
         }
