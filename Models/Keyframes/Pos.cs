@@ -4,7 +4,7 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Components
+namespace BHSDK.Models.Keyframes
 {
     public class Pos : Keyframe
     {

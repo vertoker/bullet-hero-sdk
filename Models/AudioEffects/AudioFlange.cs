@@ -18,10 +18,10 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioFlange()
         {
-            DryMix = AudioStatic.Flange_DryMix;
-            WetMix = AudioStatic.Flange_WetMix;
-            Depth = AudioStatic.Flange_Depth;
-            Rate = AudioStatic.Flange_Rate;
+            DryMix = AudioStatic.Flange_DryMixDefault;
+            WetMix = AudioStatic.Flange_WetMixDefault;
+            Depth = AudioStatic.Flange_DepthDefault;
+            Rate = AudioStatic.Flange_RateDefault;
         }
         public AudioFlange(float mixLevel, float dryMix, float wetMix,
             float depth, float rate) : base(mixLevel)

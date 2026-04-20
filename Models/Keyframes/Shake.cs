@@ -2,7 +2,7 @@
 using BHSDK.Models.Enum;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Components
+namespace BHSDK.Models.Keyframes
 {
     public class Shake : Keyframe
     {

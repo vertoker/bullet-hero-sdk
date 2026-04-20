@@ -4,18 +4,19 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Components
+namespace BHSDK.Models.Keyframes
 {
-    public class Sca : Keyframe
+    // TODO activate for player when add events
+    public class Velocity : Keyframe
     {
         [JsonProperty(ModelNames.Vector2)]
         public IVector2 Vector2 { get; set; }
 
-        public Sca()
+        public Velocity()
         {
             Vector2 = new Vector2Circle();
         }
-        public Sca(int frame, EaseType ease, IVector2 vector2) 
+        public Velocity(int frame, EaseType ease, IVector2 vector2) 
             : base(frame, ease)
         {
             Vector2 = vector2;

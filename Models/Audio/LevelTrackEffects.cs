@@ -1,4 +1,6 @@
-﻿using BHSDK.Models.AudioEffects;
+﻿using System.Collections.Generic;
+using BHSDK.Models.AudioEffects;
+using BHSDK.Models.Keyframes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
@@ -6,16 +8,15 @@ namespace BHSDK.Models.Audio
     public class LevelTrackEffects
     {
         [JsonProperty(ModelNames.Volume)]
-        public float Volume { get; set; }
+        public List<Flt> Volume { get; set; }
         
         [JsonProperty(ModelNames.StereoPan)]
-        public float StereoPan { get; set; }
+        public List<Flt> StereoPan { get; set; }
+        
+        // TODO add Inverse, play track in reverse
         
         [JsonProperty(ModelNames.Mixer)]
-        public bool UseMixer { get; set; }
-        
-        [JsonProperty(ModelNames.Pitch)]
-        public float Pitch { get; set; }
+        public bool Active { get; set; }
         
         [JsonProperty(ModelNames.Lowpass)]
         public AudioLowpass Lowpass { get; set; }
@@ -52,11 +53,10 @@ namespace BHSDK.Models.Audio
 
         public LevelTrackEffects()
         {
-            Volume = AudioStatic.VolumeDefault;
-            StereoPan = AudioStatic.StereoPanDefault;
-            UseMixer = AudioStatic.UseMixerDefault;
+            Volume = new List<Flt>();
+            StereoPan = new List<Flt>();
+            Active = AudioStatic.ActiveDefault;
             
-            Pitch = AudioStatic.Core_PitchDefault;
             Lowpass = new AudioLowpass();
             Highpass = new AudioHighpass();
             Echo = new AudioEcho();
@@ -70,15 +70,14 @@ namespace BHSDK.Models.Audio
             ParamEQ = new AudioParamEQ();
         }
 
-        public LevelTrackEffects(float volume, float stereoPan, bool useMixer, float pitch, 
+        public LevelTrackEffects(List<Flt> volume, List<Flt> stereoPan, bool active, 
             AudioLowpass lowpass, AudioHighpass highpass, AudioEcho echo, AudioReverb reverb, 
             AudioChorus chorus, AudioPitchShifter pitchShifter, AudioDistortion distortion, 
             AudioFlange flange, AudioCompressor compressor, AudioNormalize normalize, AudioParamEQ paramEQ)
         {
             Volume = volume;
             StereoPan = stereoPan;
-            UseMixer = useMixer;
-            Pitch = pitch;
+            Active = active;
             
             Lowpass = lowpass;
             Highpass = highpass;

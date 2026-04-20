@@ -9,7 +9,7 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioEffect()
         {
-            MixLevel = -80f; // -80f - 0f, 0.1f, dB
+            MixLevel = AudioStatic.MixLevelDefault;
         }
         public AudioEffect(float mixLevel)
         {

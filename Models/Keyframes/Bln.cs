@@ -1,7 +1,7 @@
 ﻿using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Components
+namespace BHSDK.Models.Keyframes
 {
     public class Bln : IFrame
     {
@@ -9,17 +9,17 @@ namespace BHSDK.Models.Components
         public int Frame { get; set; }
         
         [JsonProperty(ModelNames.Boolean)]
-        public bool Boolean { get; set; }
+        public bool Value { get; set; }
 
         public Bln()
         {
             Frame = 0;
-            Boolean = false;
+            Value = false;
         }
-        public Bln(int frame, bool boolean)
+        public Bln(int frame, bool value)
         {
             Frame = frame;
-            Boolean = boolean;
+            Value = value;
         }
     }
 }

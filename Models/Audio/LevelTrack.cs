@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Resources;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
@@ -44,7 +43,7 @@ namespace BHSDK.Models.Audio
         [JsonProperty(ModelNames.Source)]
         public List<AudioResourceKey> Sources { get; set; }
         
-        [JsonProperty(ModelNames.AudioEffect)] [CanBeNull]
+        [JsonProperty(ModelNames.AudioEffect)]
         public LevelTrackEffects Effects { get; set; }
         
         public LevelTrack()

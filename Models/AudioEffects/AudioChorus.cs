@@ -30,14 +30,14 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioChorus()
         {
-            DryMix = AudioStatic.Chorus_DryMix;
-            WetMixTap1 = AudioStatic.Chorus_WetMixTap1;
-            WetMixTap2 = AudioStatic.Chorus_WetMixTap2;
-            WetMixTap3 = AudioStatic.Chorus_WetMixTap3;
-            Delay = AudioStatic.Chorus_Delay;
-            Rate = AudioStatic.Chorus_Rate;
-            Depth = AudioStatic.Chorus_Depth;
-            Feedback = AudioStatic.Chorus_Feedback;
+            DryMix = AudioStatic.Chorus_DryMixDefault;
+            WetMixTap1 = AudioStatic.Chorus_WetMixTap1Default;
+            WetMixTap2 = AudioStatic.Chorus_WetMixTap2Default;
+            WetMixTap3 = AudioStatic.Chorus_WetMixTap3Default;
+            Delay = AudioStatic.Chorus_DelayDefault;
+            Rate = AudioStatic.Chorus_RateDefault;
+            Depth = AudioStatic.Chorus_DepthDefault;
+            Feedback = AudioStatic.Chorus_FeedbackDefault;
         }
         public AudioChorus(float mixLevel, float dryMix,
             float wetMixTap1, float wetMixTap2, float wetMixTap3,

@@ -18,10 +18,10 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioCompressor()
         {
-            Threshold = AudioStatic.Compressor_Threshold;
-            Attack = AudioStatic.Compressor_Attack;
-            Release = AudioStatic.Compressor_Release;
-            MakeUpGain = AudioStatic.Compressor_MakeUpGain;
+            Threshold = AudioStatic.Compressor_ThresholdDefault;
+            Attack = AudioStatic.Compressor_AttackDefault;
+            Release = AudioStatic.Compressor_ReleaseDefault;
+            MakeUpGain = AudioStatic.Compressor_MakeUpGainDefault;
         }
         public AudioCompressor(float mixLevel, float threshold,
             float attack, float release, float makeUpGain) : base(mixLevel)

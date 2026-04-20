@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models.Components;
+using BHSDK.Models.Keyframes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game

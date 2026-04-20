@@ -18,10 +18,10 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioPitchShifter()
         {
-            Pitch = AudioStatic.PitchShifter_Pitch;
-            FFTSize = AudioStatic.PitchShifter_FFTSize;
-            Overlap = AudioStatic.PitchShifter_Overlap;
-            MaxChannels = AudioStatic.PitchShifter_MaxChannels;
+            Pitch = AudioStatic.PitchShifter_PitchDefault;
+            FFTSize = AudioStatic.PitchShifter_FFTSizeDefault;
+            Overlap = AudioStatic.PitchShifter_OverlapDefault;
+            MaxChannels = AudioStatic.PitchShifter_MaxChannelsDefault;
         }
         public AudioPitchShifter(float mixLevel, float pitch, float fftSize,
             float overlap, float maxChannels) : base(mixLevel)

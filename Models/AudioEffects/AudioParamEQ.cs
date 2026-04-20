@@ -15,9 +15,9 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioParamEQ()
         {
-            CenterFreq = AudioStatic.ParamEQ_CenterFreq;
-            OctaveRange = AudioStatic.ParamEQ_OctaveRange;
-            FrequencyGain = AudioStatic.ParamEQ_FrequencyGain;
+            CenterFreq = AudioStatic.ParamEQ_CenterFreqDefault;
+            OctaveRange = AudioStatic.ParamEQ_OctaveRangeDefault;
+            FrequencyGain = AudioStatic.ParamEQ_FrequencyGainDefault;
         }
         public AudioParamEQ(float mixLevel, float centerFreq,
             float octaveRange, float frequencyGain) : base(mixLevel)

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Base;
-using BHSDK.Models.Components;
 using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 

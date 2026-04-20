@@ -9,7 +9,7 @@ namespace BHSDK.Models.AudioEffects
 
         public AudioDistortion()
         {
-            Level = AudioStatic.Distortion_Level;
+            Level = AudioStatic.Distortion_LevelDefault;
         }
         public AudioDistortion(float mixLevel, float level) : base(mixLevel)
         {
