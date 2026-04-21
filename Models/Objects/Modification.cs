@@ -29,7 +29,6 @@ namespace BHSDK.Models.Objects
             Path = string.Empty;
             Value = null;
         }
-
         public Modification(int objectId, string path, object value)
         {
             ObjectId = objectId;

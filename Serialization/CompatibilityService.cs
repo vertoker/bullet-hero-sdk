@@ -1,9 +1,9 @@
 ﻿using System;
 using BHSDK.Models;
 using BHSDK.Models.Objects;
-using BHSDK.Models.Other;
 using BHSDK.Models.SaveData;
 using BHSDK.Models.Settings;
+using BHSDK.Models.Values;
 
 namespace BHSDK.Serialization
 {

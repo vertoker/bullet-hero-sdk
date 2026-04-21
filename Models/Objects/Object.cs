@@ -4,7 +4,7 @@ using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Base
+namespace BHSDK.Models.Objects
 {
     public class Object
     {

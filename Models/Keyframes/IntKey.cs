@@ -1,21 +1,20 @@
-﻿using BHSDK.Models.Base;
-using BHSDK.Models.Enum;
+﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class Flt : Keyframe
+    public class IntKey : Keyframe
     {
         [JsonProperty(ModelNames.Float)]
-        public IFloat Value { get; set; }
+        public IInt Value { get; set; }
 
-        public Flt()
+        public IntKey()
         {
-            Value = new FloatValue(0f);
+            Value = new IntValue(0);
         }
-        public Flt(int frame, EaseType ease, IFloat value)
+        public IntKey(int frame, EaseType ease, IInt value)
             : base(frame, ease)
         {
             Value = value;

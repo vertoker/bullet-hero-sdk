@@ -3,11 +3,12 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 using UnityEngine;
-using Keyframe = BHSDK.Models.Base.Keyframe;
+using Keyframe = BHSDK.Models.Keyframes.Keyframe;
+using Keyframes_Keyframe = BHSDK.Models.Keyframes.Keyframe;
 
 namespace BHSDK.Models.PostProcessing
 {
-    public class LiftGammaGain : Keyframe
+    public class LiftGammaGain : Keyframes_Keyframe
     {
         [JsonProperty(ModelNames.Lift)]
         public bool Lift { get; set; }

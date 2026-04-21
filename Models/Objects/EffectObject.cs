@@ -8,7 +8,7 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
-using Object = BHSDK.Models.Base.Object;
+using Object = BHSDK.Models.Objects.Object;
 
 namespace BHSDK.Models.Objects
 {
@@ -45,7 +45,6 @@ namespace BHSDK.Models.Objects
             EffectScale = new EffectScaleValue();
             EffectColor = new EffectColorValue();
         }
-        
         public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
             List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, EffectObjectCore core,
             EffectObjectForces forces, IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor) 

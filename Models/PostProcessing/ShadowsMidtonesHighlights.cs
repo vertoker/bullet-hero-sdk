@@ -3,11 +3,12 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 using UnityEngine;
-using Keyframe = BHSDK.Models.Base.Keyframe;
+using Keyframe = BHSDK.Models.Keyframes.Keyframe;
+using Keyframes_Keyframe = BHSDK.Models.Keyframes.Keyframe;
 
 namespace BHSDK.Models.PostProcessing
 {
-    public class ShadowsMidtonesHighlights : Keyframe
+    public class ShadowsMidtonesHighlights : Keyframes_Keyframe
     {
         [JsonProperty(ModelNames.Shadow)]
         public bool Shadows { get; set; }

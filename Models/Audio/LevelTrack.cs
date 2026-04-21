@@ -40,8 +40,11 @@ namespace BHSDK.Models.Audio
         [JsonProperty(ModelNames.Offset + ModelNames.Local + ModelNames.Time)]
         public float OffsetLocalTime { get; set; }
         
-        [JsonProperty(ModelNames.Source)]
-        public List<AudioResourceKey> Sources { get; set; }
+        // positive with 0 - game-defined (0 is silence), negative - user-defined
+        // more about resourceId and how it works, read in Resource.cs file
+        
+        [JsonProperty(ModelNames.Audio + ModelNames.Resource + ModelNames.Id)]
+        public int AudioResourceId { get; set; }
         
         [JsonProperty(ModelNames.AudioEffect)]
         public LevelTrackEffects Effects { get; set; }
@@ -54,11 +57,11 @@ namespace BHSDK.Models.Audio
             StartFrame = 0;
             EndFrame = 0;
             OffsetLocalTime = 0f;
-            Sources = new List<AudioResourceKey>();
+            AudioResourceId = 0;
             Effects = new LevelTrackEffects();
         }
         public LevelTrack(int audioId, string title, string author, int startFrame, int endFrame, float offsetLocalTime, 
-            List<AudioResourceKey> sources, LevelTrackEffects effects)
+            int audioResourceId, LevelTrackEffects effects)
         {
             AudioId = audioId;
             Title = title;
@@ -66,7 +69,7 @@ namespace BHSDK.Models.Audio
             StartFrame = startFrame;
             EndFrame = endFrame;
             OffsetLocalTime = offsetLocalTime;
-            Sources = sources;
+            AudioResourceId = audioResourceId;
             Effects = effects;
         }
     }

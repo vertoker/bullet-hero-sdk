@@ -1,10 +1,9 @@
 ﻿using System;
 using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Models.Other
+namespace BHSDK.Models.Values
 {
     public class Theme : ITheme
     {

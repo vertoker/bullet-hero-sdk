@@ -1,5 +1,6 @@
 ﻿namespace BHSDK.Models
 {
+    // TODO rewrite this class, make new Names, remake to full_names and rework all other classes 
     public static class ModelNames
     {
         public const string Frame = "fr";
@@ -20,6 +21,8 @@
         public const string Settings = "settings";
         public const string Game = "game";
         public const string Audio = "audio";
+        public const string Resources = "resources";
+        public const string Byte = "byte";
         
         public const string Name = "nm";
         public const string Title = "ttl";
@@ -135,6 +138,8 @@
         public const string Subling = "sbl";
         public const string Text = "txt";
         public const string Font = "ft";
+        public const string Direction = "drction";
+        public const string Resource = "rsrc";
         
         public const string Loop = "lp";
         public const string Particle = "ptcl";
@@ -162,6 +167,10 @@
         public const string ScanLineJitter = "slj";
         public const string Vertical = "vtl";
         public const string Horizontal = "hrl";
+        public const string Alignment = "alignment";
+        public const string Over = "over";
+        public const string Under = "under";
+        public const string Distribution = "distribution";
         public const string Jump = "jmp";
         public const string Drift = "dft";
         public const string Hue = "hue";
@@ -189,6 +198,7 @@
         public const string Keys = "keys";
         public const string Pre = "pre";
         public const string Post = "pst";
+        public const string Word = "wrd";
         public const string Wrap = "wrp";
         public const string Space = "spc";
         public const string Aspect = "asp";

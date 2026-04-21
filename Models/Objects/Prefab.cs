@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
 using Newtonsoft.Json;
-using Object = BHSDK.Models.Base.Object;
+using Object = BHSDK.Models.Objects.Object;
 
 namespace BHSDK.Models.Objects
 {

@@ -3,7 +3,7 @@ using BHSDK.Models.Enum;
 using BHSDK.Models.Objects;
 using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
-using Object = BHSDK.Models.Base.Object;
+using Object = BHSDK.Models.Objects.Object;
 
 namespace BHSDK.Serialization.Converters.CustomTypes
 {

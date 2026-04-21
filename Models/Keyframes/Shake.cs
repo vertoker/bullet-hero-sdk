@@ -1,5 +1,4 @@
-﻿using BHSDK.Models.Base;
-using BHSDK.Models.Enum;
+﻿using BHSDK.Models.Enum;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes

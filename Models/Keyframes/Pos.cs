@@ -1,5 +1,4 @@
-﻿using BHSDK.Models.Base;
-using BHSDK.Models.Enum;
+﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;

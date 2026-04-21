@@ -10,7 +10,6 @@ using BHSDK.Models.Events;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
-using BHSDK.Models.Other;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Resources;
 using BHSDK.Models.SaveData;
@@ -139,8 +138,8 @@ namespace BHSDK.Tests
             level.Game.PostProcessingEvents.AnalogGlitch.Add(new AnalogGlitch());
             level.Game.PostProcessingEvents.DigitalGlitch.Add(new DigitalGlitch());
 
-            level.Game.PlayerEvents.Visibles.Add(new Bln());
-            level.Game.PlayerEvents.Collisions.Add(new Bln());
+            level.Game.PlayerEvents.Visibles.Add(new BoolKey());
+            level.Game.PlayerEvents.Collisions.Add(new BoolKey());
 
             var textureObject = new TextureObject();
             textureObject.Pos.Add(new Pos());
@@ -166,11 +165,23 @@ namespace BHSDK.Tests
             level.Game.PrefabObjects.Add(prefabObject);
             
             level.Game.Themes.Add(new Theme());
+            
+            level.Resources.Textures.Add(new TextureResource(-1, new List<ResourceKey>
+            {
+                new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png")
+            }));
+            level.Resources.Fonts.Add(new FontResource(-1, new List<ResourceKey>
+            {
+                new(ResourceUriType.DirectUrl, "https://github.com/google/fonts/raw/refs/heads/main/ofl/dekko/Dekko-Regular.ttf"),
+            }));
+            level.Resources.Audios.Add(new AudioResource(-1, new List<ResourceKey>
+            {
+                new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
+            }));
 
             var trackEffects = new LevelTrackEffects();
             var track = new LevelTrack(1, "cool song", "vertoker", 0, 1000, 0f,
-                new List<AudioResourceKey> { new(ResourceUriType.DirectUrl, "https://bullethero.space"), },
-                trackEffects);
+                0, trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;

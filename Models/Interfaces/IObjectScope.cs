@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models.Base;
 using BHSDK.Models.Objects;
 
 namespace BHSDK.Models.Interfaces

@@ -3,6 +3,7 @@ using BHSDK.Models.Audio;
 using BHSDK.Models.Game;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.NoGame;
+using BHSDK.Models.Resources;
 using BHSDK.Models.Settings;
 using Newtonsoft.Json;
 
@@ -23,6 +24,9 @@ namespace BHSDK.Models
         
         [JsonProperty(ModelNames.Audio)]
         public AudioLevel Audio { get; set; }
+        
+        [JsonProperty(ModelNames.Resources)]
+        public LevelResources Resources { get; set; }
 
         public Level()
         {
@@ -30,13 +34,15 @@ namespace BHSDK.Models
             Meta = new LevelMeta();
             Game = new GameLevel();
             Audio = new AudioLevel();
+            Resources = new LevelResources();
         }
-        public Level(LevelSettings settings, LevelMeta meta, GameLevel game, AudioLevel audio)
+        public Level(LevelSettings settings, LevelMeta meta, GameLevel game, AudioLevel audio, LevelResources resources)
         {
             Settings = settings;
             Meta = meta;
             Game = game;
             Audio = audio;
+            Resources = resources;
         }
     }
 }

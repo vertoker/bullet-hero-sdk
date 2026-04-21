@@ -2,7 +2,7 @@
 using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Base
+namespace BHSDK.Models.Keyframes
 {
     public abstract class Keyframe : IFrame
     {

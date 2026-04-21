@@ -8,10 +8,10 @@ namespace BHSDK.Models.Audio
     public class LevelTrackEffects
     {
         [JsonProperty(ModelNames.Volume)]
-        public List<Flt> Volume { get; set; }
+        public List<FloatKey> Volume { get; set; }
         
         [JsonProperty(ModelNames.StereoPan)]
-        public List<Flt> StereoPan { get; set; }
+        public List<FloatKey> StereoPan { get; set; }
         
         // TODO add Inverse, play track in reverse
         
@@ -53,8 +53,8 @@ namespace BHSDK.Models.Audio
 
         public LevelTrackEffects()
         {
-            Volume = new List<Flt>();
-            StereoPan = new List<Flt>();
+            Volume = new List<FloatKey>();
+            StereoPan = new List<FloatKey>();
             Active = AudioStatic.ActiveDefault;
             
             Lowpass = new AudioLowpass();
@@ -70,7 +70,7 @@ namespace BHSDK.Models.Audio
             ParamEQ = new AudioParamEQ();
         }
 
-        public LevelTrackEffects(List<Flt> volume, List<Flt> stereoPan, bool active, 
+        public LevelTrackEffects(List<FloatKey> volume, List<FloatKey> stereoPan, bool active, 
             AudioLowpass lowpass, AudioHighpass highpass, AudioEcho echo, AudioReverb reverb, 
             AudioChorus chorus, AudioPitchShifter pitchShifter, AudioDistortion distortion, 
             AudioFlange flange, AudioCompressor compressor, AudioNormalize normalize, AudioParamEQ paramEQ)

@@ -13,21 +13,21 @@ namespace BHSDK.Models.Game
         // public List<VelocityPoint> VelocityPoints { get; set; }
         
         [JsonProperty(ModelNames.Visible)]
-        public List<Bln> Visibles { get; set; } // player can see himself
+        public List<BoolKey> Visibles { get; set; } // player can see himself
         
         [JsonProperty(ModelNames.Control)]
-        public List<Bln> Controls { get; set; } // player can control himself
+        public List<BoolKey> Controls { get; set; } // player can control himself
         
         [JsonProperty(ModelNames.Collision)]
-        public List<Bln> Collisions { get; set; } // active collision detection system for player
+        public List<BoolKey> Collisions { get; set; } // active collision detection system for player
 
         public PlayerEvents()
         {
-            Visibles = new List<Bln>();
-            Controls = new List<Bln>();
-            Collisions = new List<Bln>();
+            Visibles = new List<BoolKey>();
+            Controls = new List<BoolKey>();
+            Collisions = new List<BoolKey>();
         }
-        public PlayerEvents(List<Bln> visibles, List<Bln> controls, List<Bln> collisions)
+        public PlayerEvents(List<BoolKey> visibles, List<BoolKey> controls, List<BoolKey> collisions)
         {
             Visibles = visibles;
             Controls = controls;
