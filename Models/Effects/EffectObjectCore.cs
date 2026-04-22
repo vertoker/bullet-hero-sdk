@@ -27,8 +27,8 @@ namespace BHSDK.Models.Effects
         
         // Same logic as TextureObject.TextureId
         
-        [JsonProperty(ModelNames.Particle + ModelNames.Texture + ModelNames.Id)]
-        public int ParticleTextureId { get; set; }
+        [JsonProperty(ModelNames.Texture + ModelNames.Resource + ModelNames.Id)]
+        public int TextureResourceId { get; set; }
         
         [JsonProperty(ModelNames.Particle + ModelNames.Pivot)]
         public IVector2 ParticlePivot { get; set; }
@@ -41,12 +41,12 @@ namespace BHSDK.Models.Effects
             ParticleCollider = EffectStatic.Core_ParticleColliderDefault;
             HasStopLocalFrame = EffectStatic.Core_HasStopLocalFrameDefault;
             StopLocalFrame = EffectStatic.Core_StopLocalFrameDefault;
-            ParticleTextureId = EffectStatic.Core_ParticleTextureIdDefault;
+            TextureResourceId = EffectStatic.Core_TextureResourceIdDefault;
             ParticlePivot = new Vector2Value(EffectStatic.Core_PivotDefault);
         }
         
         public EffectObjectCore(bool loop, uint particleCount, Vector2 lifetimeBounds, bool particleCollider,
-            bool hasStopLocalFrame, int stopLocalFrame, int particleTextureId, Vector2 particlePivot)
+            bool hasStopLocalFrame, int stopLocalFrame, int textureResourceId, Vector2 particlePivot)
         {
             Loop = loop;
             ParticleCount = particleCount;
@@ -54,12 +54,12 @@ namespace BHSDK.Models.Effects
             ParticleCollider = particleCollider;
             HasStopLocalFrame = hasStopLocalFrame;
             StopLocalFrame = stopLocalFrame;
-            ParticleTextureId = particleTextureId;
+            TextureResourceId = textureResourceId;
             ParticlePivot = new Vector2Value(particlePivot);
         }
         
         public EffectObjectCore(bool loop, uint particleCount, IVector2 lifetimeBounds, bool particleCollider,
-            bool hasStopLocalFrame, int stopLocalFrame, int particleTextureId, IVector2 particlePivot)
+            bool hasStopLocalFrame, int stopLocalFrame, int textureResourceId, IVector2 particlePivot)
         {
             Loop = loop;
             ParticleCount = particleCount;
@@ -67,7 +67,7 @@ namespace BHSDK.Models.Effects
             ParticleCollider = particleCollider;
             HasStopLocalFrame = hasStopLocalFrame;
             StopLocalFrame = stopLocalFrame;
-            ParticleTextureId = particleTextureId;
+            TextureResourceId = textureResourceId;
             ParticlePivot = particlePivot;
         }
     }

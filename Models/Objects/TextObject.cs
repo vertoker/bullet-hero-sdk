@@ -12,6 +12,9 @@ namespace BHSDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.Text;
         
+        [JsonProperty(ModelNames.Size)]
+        public List<Sca> Sizes { get; set; }
+        
         [JsonProperty(ModelNames.Color)]
         public List<Clr> Clr { get; set; }
         
@@ -50,6 +53,7 @@ namespace BHSDK.Models.Objects
         
         public TextObject()
         {
+            Sizes = new List<Sca>();
             Clr = new List<Clr>();
             FontSizes = new List<FloatKey>();
             Text = new StringValue(string.Empty);
@@ -64,12 +68,13 @@ namespace BHSDK.Models.Objects
             LeadingDistribution = TextStatic.LeadingDistributionDefault;
         }
         public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
-            List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, List<Clr> clr, 
+            List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, List<Sca> sizes, List<Clr> clr, 
             List<FloatKey> fontSizes, IString text, int fontResourceId, TextObjectDirection direction, bool wordWrap, 
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment, 
             TextObjectOverEdge overEdge, TextObjectUnderEdge underEdge, TextObjectLeadingDistribution leadingDistribution)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
+            Sizes = sizes;
             Clr = clr;
             FontSizes = fontSizes;
             Text = text;

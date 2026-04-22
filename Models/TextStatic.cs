@@ -1,9 +1,13 @@
 ﻿using BHSDK.Models.Enum.Text;
+using UnityEngine;
 
 namespace BHSDK.Models
 {
     public static class TextStatic
     {
+        public static readonly Vector2 SizeFallback = new(1f, 1f);
+        public static readonly float FontSizeFallback = 1f;
+        
         public static readonly TextObjectDirection DirectionDefault = TextObjectDirection.Auto;
         public static readonly bool WordWrapDefault = true;
         public static readonly TextObjectHorizontalAlignment HorizontalAlignmentDefault = TextObjectHorizontalAlignment.Center;
