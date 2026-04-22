@@ -10,13 +10,13 @@ namespace BHSDK.Models.Values
     {
         public const int MaxCount = 4;
         
-        [JsonProperty(ModelNames.Keys)]
+        [JsonProperty(Names.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
         
-        [JsonProperty(ModelNames.Pre + ModelNames.Wrap + ModelNames.Mode)]
+        [JsonProperty(Names.PreWrapMode)]
         public CurveWrapMode PreWrapMode { get; set; }
         
-        [JsonProperty(ModelNames.Post + ModelNames.Wrap + ModelNames.Mode)]
+        [JsonProperty(Names.PostWrapMode)]
         public CurveWrapMode PostWrapMode { get; set; }
         
         public AnimationCurve Get()

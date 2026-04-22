@@ -4,16 +4,16 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioCompressor : AudioEffect
     {
-        [JsonProperty(ModelNames.Threshold)]
+        [JsonProperty(Names.Threshold)]
         public float Threshold { get; set; }
         
-        [JsonProperty(ModelNames.Attack)]
+        [JsonProperty(Names.Attack)]
         public float Attack { get; set; }
         
-        [JsonProperty(ModelNames.Release)]
+        [JsonProperty(Names.Release)]
         public float Release { get; set; }
         
-        [JsonProperty(ModelNames.MakeUpGain)]
+        [JsonProperty(Names.MakeUpGain)]
         public float MakeUpGain { get; set; }
 
         public AudioCompressor()

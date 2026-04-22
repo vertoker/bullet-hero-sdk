@@ -7,10 +7,10 @@ namespace BHSDK.Models.Values
 {
     public class FloatMinMax : IFloat
     {
-        [JsonProperty(ModelNames.Min)]
+        [JsonProperty(Names.Min)]
         public float Min { get; set; }
         
-        [JsonProperty(ModelNames.Max)]
+        [JsonProperty(Names.Max)]
         public float Max { get; set; }
 
         public FloatMinMax()

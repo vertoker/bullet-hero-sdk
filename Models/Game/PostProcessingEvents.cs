@@ -8,44 +8,44 @@ namespace BHSDK.Models.Game
     {
         // General
         
-        [JsonProperty(ModelNames.Bloom)]
+        [JsonProperty(Names.BloomShort)]
         public List<Bloom> Bloom { get; set; }
         
-        [JsonProperty(ModelNames.Chroma)]
+        [JsonProperty(Names.ChromaShort)]
         public List<ChromaticAberration> Chroma { get; set; }
         
-        [JsonProperty(ModelNames.Vignette)]
+        [JsonProperty(Names.VignetteShort)]
         public List<Vignette> Vignette { get; set; }
         
-        [JsonProperty(ModelNames.Lens)]
+        [JsonProperty(Names.LensShort)]
         public List<LensDistortion> Lens { get; set; }
         
-        [JsonProperty(ModelNames.Grain)]
+        [JsonProperty(Names.GrainShort)]
         public List<FilmGrain> Grain { get; set; }
         
-        [JsonProperty(ModelNames.MotionBlur)]
+        [JsonProperty(Names.MotionBlurShort)]
         public List<MotionBlur> MotionBlur { get; set; }
         
         // Colors
         
-        [JsonProperty(ModelNames.ColorCurves)]
+        [JsonProperty(Names.ColorCurvesShort)]
         public List<ColorCurves> ColorCurves { get; set; }
         
-        [JsonProperty(ModelNames.LiftGammaGain)]
+        [JsonProperty(Names.LiftGammaGainShort)]
         public List<LiftGammaGain> LiftGammaGain { get; set; }
         
-        [JsonProperty(ModelNames.ShadowsMidtonesHighlights)]
+        [JsonProperty(Names.ShadowsMidtonesHighlightsShort)]
         public List<ShadowsMidtonesHighlights> ShadowsMidtonesHighlights { get; set; }
         
-        [JsonProperty(ModelNames.WhiteBalance)]
+        [JsonProperty(Names.WhiteBalanceShort)]
         public List<WhiteBalance> WhiteBalance { get; set; }
         
         // Glitches
         
-        [JsonProperty(ModelNames.AnalogGlitch)]
+        [JsonProperty(Names.AnalogGlitchShort)]
         public List<AnalogGlitch> AnalogGlitch { get; set; }
         
-        [JsonProperty(ModelNames.DigitalGlitch)]
+        [JsonProperty(Names.DigitalGlitchShort)]
         public List<DigitalGlitch> DigitalGlitch { get; set; }
 
         public PostProcessingEvents()

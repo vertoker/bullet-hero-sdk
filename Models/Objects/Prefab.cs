@@ -11,10 +11,10 @@ namespace BHSDK.Models.Objects
     {
         public Version GetVersion() => new(1, 0);
         
-        [JsonProperty(ModelNames.Object)]
+        [JsonProperty(Names.Objects)]
         public List<Object> Objects { get; set; }
         
-        [JsonProperty(ModelNames.ParentObject)]
+        [JsonProperty(Names.ParentObjects)]
         public List<PrefabObject> PrefabObjects { get; set; }
 
         public Prefab()

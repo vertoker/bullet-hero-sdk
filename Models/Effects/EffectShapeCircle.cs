@@ -9,16 +9,16 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeCircle : IEffectShape
     {
-        [JsonProperty(ModelNames.Radius)]
+        [JsonProperty(Names.Radius)]
         public IFloat Radius { get; set; }
         
-        [JsonProperty(ModelNames.Thickness)]
+        [JsonProperty(Names.Thickness)]
         public IFloat Thickness { get; set; }
         
-        [JsonProperty(ModelNames.Arc)]
+        [JsonProperty(Names.Arc)]
         public IFloat Arc { get; set; }
         
-        [JsonProperty(ModelNames.Spread)]
+        [JsonProperty(Names.Spread)]
         public IEffectShapeSpread Spread { get; set; }
         
         public EffectShapeType GetModelType() => EffectShapeType.Circle;

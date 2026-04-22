@@ -6,16 +6,16 @@ namespace BHSDK.Models.PostProcessing
 {
     public class AnalogGlitch : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
-        [JsonProperty(ModelNames.ScanLineJitter)]
+        [JsonProperty(Names.ScanLineJitter)]
         public float ScanLineJitter { get; set; }
         
-        [JsonProperty(ModelNames.Vertical + ModelNames.Jump)]
+        [JsonProperty(Names.VerticalJump)]
         public float VerticalJump { get; set; }
         
-        [JsonProperty(ModelNames.Horizontal + ModelNames.Shake)]
+        [JsonProperty(Names.HorizontalShake)]
         public float HorizontalShake { get; set; }
         
-        [JsonProperty(ModelNames.Color + ModelNames.Drift)]
+        [JsonProperty(Names.ColorDrift)]
         public float ColorDrift { get; set; }
 
         public AnalogGlitch()

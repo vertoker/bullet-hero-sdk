@@ -7,7 +7,7 @@ namespace BHSDK.Models.Keyframes
 {
     public class Clr : Keyframe
     {
-        [JsonProperty(ModelNames.Color)]
+        [JsonProperty(Names.Color)]
         public IColor Value { get; set; }
 
         public Clr()

@@ -7,48 +7,48 @@ namespace BHSDK.Models.Audio
 {
     public class LevelTrackEffects
     {
-        [JsonProperty(ModelNames.Volume)]
+        [JsonProperty(Names.Volume)]
         public List<FloatKey> Volume { get; set; }
         
-        [JsonProperty(ModelNames.StereoPan)]
+        [JsonProperty(Names.StereoPan)]
         public List<FloatKey> StereoPan { get; set; }
         
         // TODO add Inverse, play track in reverse
         
-        [JsonProperty(ModelNames.Mixer)]
+        [JsonProperty(Names.Active)]
         public bool Active { get; set; }
         
-        [JsonProperty(ModelNames.Lowpass)]
+        [JsonProperty(Names.Lowpass)]
         public AudioLowpass Lowpass { get; set; }
         
-        [JsonProperty(ModelNames.Highpass)]
+        [JsonProperty(Names.Highpass)]
         public AudioHighpass Highpass { get; set; }
         
-        [JsonProperty(ModelNames.Echo)]
+        [JsonProperty(Names.Echo)]
         public AudioEcho Echo { get; set; }
         
-        [JsonProperty(ModelNames.Reverb)]
+        [JsonProperty(Names.Reverb)]
         public AudioReverb Reverb { get; set; }
         
-        [JsonProperty(ModelNames.Chorus)]
+        [JsonProperty(Names.Chorus)]
         public AudioChorus Chorus { get; set; }
         
-        [JsonProperty(ModelNames.PitchShifter)]
+        [JsonProperty(Names.PitchShifter)]
         public AudioPitchShifter PitchShifter { get; set; }
         
-        [JsonProperty(ModelNames.Distortion)]
+        [JsonProperty(Names.Distortion)]
         public AudioDistortion Distortion { get; set; }
         
-        [JsonProperty(ModelNames.Flange)]
+        [JsonProperty(Names.Flange)]
         public AudioFlange Flange { get; set; }
         
-        [JsonProperty(ModelNames.Compressor)]
+        [JsonProperty(Names.Compressor)]
         public AudioCompressor Compressor { get; set; }
         
-        [JsonProperty(ModelNames.Normalize)]
+        [JsonProperty(Names.Normalize)]
         public AudioNormalize Normalize { get; set; }
         
-        [JsonProperty(ModelNames.ParamEQ)]
+        [JsonProperty(Names.ParamEQ)]
         public AudioParamEQ ParamEQ { get; set; }
 
         public LevelTrackEffects()

@@ -20,10 +20,10 @@ namespace BHSDK.Models.Objects
         // 2. FrameIndex - runtime temporary index (not id, use for direct indexation).
         // Changes every runtime and using for rendering instances in frame context only
         
-        [JsonProperty(ModelNames.ObjectId)]
+        [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; }
         
-        [JsonProperty(ModelNames.ParentObjectId)]
+        [JsonProperty(Names.ParentObjectId)]
         public int ParentObjectId { get; set; }
         
         // What certain objectId's meaning
@@ -37,32 +37,32 @@ namespace BHSDK.Models.Objects
         public const int UndefinedFrameIndex = int.MinValue;
         public const int CameraId = -1;
         
-        [JsonProperty(ModelNames.Name)]
+        [JsonProperty(Names.Name)]
         public string Name { get; set; }
         
-        [JsonProperty(ModelNames.Visible)]
+        [JsonProperty(Names.VisibleShort)]
         public bool Visible { get; set; }
         
         
-        [JsonProperty(ModelNames.Start + ModelNames.Frame)]
+        [JsonProperty(Names.StartFrameShort)]
         public int StartFrame { get; set; }
         
-        [JsonProperty(ModelNames.End + ModelNames.Frame)]
+        [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
         
-        [JsonProperty(ModelNames.Position)]
+        [JsonProperty(Names.Position)]
         public List<Pos> Pos { get; set; }
         
-        [JsonProperty(ModelNames.Rotation)]
+        [JsonProperty(Names.Rotation)]
         public List<Rot> Rot { get; set; }
         
-        [JsonProperty(ModelNames.Scale)]
+        [JsonProperty(Names.Scale)]
         public List<Sca> Sca { get; set; }
         
-        [JsonProperty(ModelNames.Layer)]
+        [JsonProperty(Names.LayerShort)]
         public int Layer { get; set; }
         
-        [JsonProperty(ModelNames.Pivot)]
+        [JsonProperty(Names.PivotShort)]
         public Alignment Pivot { get; set; }
 
         public Object()

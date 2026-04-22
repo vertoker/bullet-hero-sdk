@@ -14,7 +14,7 @@ namespace BHSDK.Serialization.Converters
             _compatibilityService = compatibilityService;
         }
 
-        protected override string GetObjectPropertyName() => ModelNames.Level;
+        protected override string GetObjectPropertyName() => Names.Level;
         protected override Type GetType(Version version) => _compatibilityService.GetLevelType(version);
     }
 }

@@ -9,7 +9,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorValue : IEffectColor
     {
-        [JsonProperty(ModelNames.Color)]
+        [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
         
         public EffectColorType GetModelType() => EffectColorType.Value;

@@ -6,10 +6,10 @@ namespace BHSDK.Models.Values
 {
     public class StringLanguage
     {
-        [JsonProperty(ModelNames.Language)]
+        [JsonProperty(Names.Language)]
         public SystemLanguage Language { get; set; }
         
-        [JsonProperty(ModelNames.String)]
+        [JsonProperty(Names.ValueShort)]
         public string Value { get; set; }
 
         public StringLanguage()

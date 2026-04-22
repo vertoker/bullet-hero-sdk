@@ -8,29 +8,29 @@ namespace BHSDK.Models.Values
     {
         // TODO maybe replace FloatValue to IFloat (in editor step)
         
-        [JsonProperty(ModelNames.Time)]
+        [JsonProperty(Names.TimeShort)]
         public FloatValue Time { get; set; }
         
-        [JsonProperty(ModelNames.Value)]
+        [JsonProperty(Names.ValueShort)]
         public FloatValue Value { get; set; }
         
-        [JsonProperty(ModelNames.Weight + ModelNames.Mode)]
+        [JsonProperty(Names.WeightedMode)]
         public CurveWeightedMode WeightedMode { get; set; }
         
-        [JsonProperty(ModelNames.Tangent + ModelNames.Mode)]
+        [JsonProperty(Names.TangentMode)]
         public CurveTangentMode TangentMode { get; set; }
         
         
-        [JsonProperty(ModelNames.In + ModelNames.Tangent)]
+        [JsonProperty(Names.InTangent)]
         public FloatValue InTangent { get; set; }
         
-        [JsonProperty(ModelNames.Out + ModelNames.Tangent)]
+        [JsonProperty(Names.OutTangent)]
         public FloatValue OutTangent { get; set; }
         
-        [JsonProperty(ModelNames.In + ModelNames.Weight)]
+        [JsonProperty(Names.InWeight)]
         public FloatValue InWeight { get; set; }
         
-        [JsonProperty(ModelNames.Out + ModelNames.Weight)]
+        [JsonProperty(Names.OutWeight)]
         public FloatValue OutWeight { get; set; }
         
         public Keyframe Get()

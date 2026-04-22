@@ -7,37 +7,37 @@ namespace BHSDK.Models.Effects
 {
     public class EffectObjectForces
     {
-        [JsonProperty(ModelNames.Gravity + ModelNames.Min)]
+        [JsonProperty(Names.GravityMin)]
         public IFloat StartGravityMin { get; set; }
         
-        [JsonProperty(ModelNames.Gravity + ModelNames.Max)]
+        [JsonProperty(Names.GravityMax)]
         public IFloat StartGravityMax { get; set; }
         
-        [JsonProperty(ModelNames.Velocity + ModelNames.Min)]
+        [JsonProperty(Names.VelocityMin)]
         public IVector2 StartVelocityMin { get; set; }
         
-        [JsonProperty(ModelNames.Velocity + ModelNames.Max)]
+        [JsonProperty(Names.VelocityMax)]
         public IVector2 StartVelocityMax { get; set; }
         
-        [JsonProperty(ModelNames.Angular + ModelNames.Velocity + ModelNames.Min)]
+        [JsonProperty(Names.AngularVelocityMin)]
         public IFloat StartAngularVelocityMin { get; set; }
         
-        [JsonProperty(ModelNames.Angular + ModelNames.Velocity + ModelNames.Max)]
+        [JsonProperty(Names.AngularVelocityMax)]
         public IFloat StartAngularVelocityMax { get; set; }
         
-        [JsonProperty(ModelNames.Linear + ModelNames.Velocity)]
+        [JsonProperty(Names.LinearVelocity)]
         public IVector2 LinearVelocity { get; set; }
         
-        [JsonProperty(ModelNames.Orbital + ModelNames.Velocity)]
+        [JsonProperty(Names.OrbitalVelocity)]
         public IVector3 OrbitalVelocity { get; set; }
         
-        [JsonProperty(ModelNames.Orbital + ModelNames.Center + ModelNames.Offset)]
+        [JsonProperty(Names.OrbitalCenterOffset)]
         public IVector3 OrbitalCenterOffset { get; set; }
         
-        [JsonProperty(ModelNames.Velocity + ModelNames.Speed)]
+        [JsonProperty(Names.VelocitySpeed)]
         public IFloat VelocitySpeed { get; set; }
         
-        [JsonProperty(ModelNames.Linear + ModelNames.Force)]
+        [JsonProperty(Names.LinearForce)]
         public IVector2 LinearForce { get; set; }
 
         public EffectObjectForces()

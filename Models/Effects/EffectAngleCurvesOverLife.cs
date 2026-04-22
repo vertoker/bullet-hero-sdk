@@ -8,7 +8,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectAngleCurvesOverLife : IEffectAngle
     {
-        [JsonProperty(ModelNames.Curve)]
+        [JsonProperty(Names.Curve)]
         public CurveValue Curve { get; set; }
 
         public EffectAngleType GetModelType() => EffectAngleType.CurvesOverLife;

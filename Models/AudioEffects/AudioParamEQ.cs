@@ -4,13 +4,13 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioParamEQ : AudioEffect
     {
-        [JsonProperty(ModelNames.CenterFreq)]
+        [JsonProperty(Names.CenterFreq)]
         public float CenterFreq { get; set; }
         
-        [JsonProperty(ModelNames.OctaveRange)]
+        [JsonProperty(Names.OctaveRange)]
         public float OctaveRange { get; set; }
         
-        [JsonProperty(ModelNames.FrequencyGain)]
+        [JsonProperty(Names.FreqGain)]
         public float FrequencyGain { get; set; }
 
         public AudioParamEQ()

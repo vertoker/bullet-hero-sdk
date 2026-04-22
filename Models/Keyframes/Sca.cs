@@ -7,7 +7,7 @@ namespace BHSDK.Models.Keyframes
 {
     public class Sca : Keyframe
     {
-        [JsonProperty(ModelNames.Vector2)]
+        [JsonProperty(Names.Vector2)]
         public IVector2 Vector2 { get; set; }
 
         public Sca()

@@ -4,16 +4,16 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioPitchShifter : AudioEffect
     {
-        [JsonProperty(ModelNames.Pitch)]
+        [JsonProperty(Names.Pitch)]
         public float Pitch { get; set; }
         
-        [JsonProperty(ModelNames.FFTSize)]
+        [JsonProperty(Names.FFTSize)]
         public float FFTSize { get; set; }
         
-        [JsonProperty(ModelNames.Overlap)]
+        [JsonProperty(Names.Overlap)]
         public float Overlap { get; set; }
         
-        [JsonProperty(ModelNames.MaxChannels)]
+        [JsonProperty(Names.MaxChannels)]
         public float MaxChannels { get; set; }
 
         public AudioPitchShifter()

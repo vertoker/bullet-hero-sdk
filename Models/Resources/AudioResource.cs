@@ -9,7 +9,7 @@ namespace BHSDK.Models.Resources
         // id for user-defined resources, allowed only negative (started with -1, 0 is uninitialized)
         // more about resourceId and how it works, read in Resource.cs file
         
-        [JsonProperty(ModelNames.Audio + ModelNames.Resource + ModelNames.Id)]
+        [JsonProperty(Names.AudioResourceId)]
         public int AudioResourceId { get; set; }
         
         public override ResourceType Type => ResourceType.Audio;

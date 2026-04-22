@@ -8,13 +8,13 @@ namespace BHSDK.Models.NoGame
 {
     public class LevelMeta
     {
-        [JsonProperty(ModelNames.Name)]
+        [JsonProperty(Names.Name)]
         public IString LevelName { get; set; }
         
-        [JsonProperty(ModelNames.Version)]
+        [JsonProperty(Names.Version)]
         public Version LevelVersion { get; set; }
         
-        [JsonProperty(ModelNames.Author)]
+        [JsonProperty(Names.Authors)]
         public List<Author> Authors { get; set; }
 
         public LevelMeta()

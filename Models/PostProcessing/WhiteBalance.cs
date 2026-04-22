@@ -6,10 +6,10 @@ namespace BHSDK.Models.PostProcessing
 {
     public class WhiteBalance : Keyframe
     {
-        [JsonProperty(ModelNames.Temperature)]
+        [JsonProperty(Names.Temperature)]
         public float Temperature { get; set; }
         
-        [JsonProperty(ModelNames.Tint)]
+        [JsonProperty(Names.Tint)]
         public float Tint { get; set; }
 
         public WhiteBalance()

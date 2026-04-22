@@ -6,10 +6,10 @@ namespace BHSDK.Models.SaveData
 {
     public class LevelData : ISaveData
     {
-        [JsonProperty(ModelNames.Version)]
+        [JsonProperty(Names.Version)]
         public Version Version { get; set; }
         
-        [JsonProperty(ModelNames.Level)]
+        [JsonProperty(Names.Level)]
         public ILevel Level { get; set; }
 
         public IData GetData() => Level;

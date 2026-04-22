@@ -10,30 +10,30 @@ namespace BHSDK.Models.Game
 {
     public class GameLevel : IObjectScope
     {
-        [JsonProperty(ModelNames.Event)]
+        [JsonProperty(Names.Events)]
         public GameEvents Events { get; set; }
         
-        [JsonProperty(ModelNames.Camera + ModelNames.Event)]
+        [JsonProperty(Names.CameraEvents)]
         public CameraEvents CameraEvents { get; set; }
         
-        [JsonProperty(ModelNames.PostProcessing + ModelNames.Event)]
+        [JsonProperty(Names.PostProcessingEvents)]
         public PostProcessingEvents PostProcessingEvents { get; set; }
         
-        [JsonProperty(ModelNames.Player + ModelNames.Event)]
+        [JsonProperty(Names.PlayerEvents)]
         public PlayerEvents PlayerEvents { get; set; }
         
         
-        [JsonProperty(ModelNames.Object)]
+        [JsonProperty(Names.Objects)]
         public List<Object> Objects { get; set; }
         
-        [JsonProperty(ModelNames.ParentObject)]
+        [JsonProperty(Names.ParentObjects)]
         public List<PrefabObject> PrefabObjects { get; set; }
         
         
-        [JsonProperty(ModelNames.Prefab)]
+        [JsonProperty(Names.Prefabs)]
         public List<Prefab> Prefabs { get; set; }
         
-        [JsonProperty(ModelNames.Theme)]
+        [JsonProperty(Names.Themes)]
         public List<Theme> Themes { get; set; }
         
         public GameLevel()

@@ -8,10 +8,10 @@ namespace BHSDK.Models.Effects
 {
     public class EffectAngleRandomPerComponent : IEffectAngle
     {
-        [JsonProperty(ModelNames.AngleA)]
+        [JsonProperty(Names.AngleA)]
         public IFloat AngleA { get; set; }
         
-        [JsonProperty(ModelNames.AngleB)]
+        [JsonProperty(Names.AngleB)]
         public IFloat AngleB { get; set; }
         
         public EffectAngleType GetModelType() => EffectAngleType.RandomPerComponent;

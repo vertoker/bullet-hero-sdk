@@ -9,7 +9,7 @@ namespace BHSDK.Models.Values
 {
     public class ScreenLimitFixed : IScreenLimit
     {
-        [JsonProperty(ModelNames.Aspect)]
+        [JsonProperty(Names.Aspect)]
         public ScreenAspect Aspect { get; set; }
         
         public ScreenLimitType GetModelType() => ScreenLimitType.Fixed;

@@ -6,10 +6,10 @@ namespace BHSDK.Models.PostProcessing
 {
     public class ColorCurves : Keyframe
     {
-        [JsonProperty(ModelNames.Hue + ModelNames.Vs + ModelNames.Hue)]
+        [JsonProperty(Names.HueVsHue)]
         public float HueVsHue { get; set; }
         
-        [JsonProperty(ModelNames.Sat + ModelNames.Vs + ModelNames.Sat)]
+        [JsonProperty(Names.SatVsSat)]
         public float SatVsSat { get; set; }
         
         // TODO add more values, especially for curves

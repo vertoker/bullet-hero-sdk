@@ -18,7 +18,7 @@ namespace BHSDK.Serialization.Converters
             OverrideValueSerializer = serializerDefault;
         }
 
-        protected override string GetObjectPropertyName() => ModelNames.Effect;
+        protected override string GetObjectPropertyName() => Names.Effect;
         protected override Type GetType(Version version) => _compatibilityService.GetEffectType(version);
     }
 }

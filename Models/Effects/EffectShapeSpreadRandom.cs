@@ -9,7 +9,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeSpreadRandom : IEffectShapeSpread
     {
-        [JsonProperty(ModelNames.Spread)]
+        [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }
         
         public EffectShapeSpreadType GetModelType() => EffectShapeSpreadType.Random;

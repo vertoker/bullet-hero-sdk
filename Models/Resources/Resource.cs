@@ -24,7 +24,7 @@ namespace BHSDK.Models.Resources
         // (in real code don't used resourceId, it uses typed id like textureResourceId and textureResourceIndex)
         // Count of game-defined resources (textures etc.) can be changed with Level version, this validates by validators
         
-        [JsonProperty(ModelNames.Source)]
+        [JsonProperty(Names.Src)]
         public List<ResourceKey> Sources { get; set; }
         
         public abstract ResourceType Type { get; }

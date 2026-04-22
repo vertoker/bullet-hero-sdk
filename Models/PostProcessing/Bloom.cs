@@ -10,13 +10,13 @@ namespace BHSDK.Models.PostProcessing
     {
         // Threshold - 0 (always, not a parameter)
         
-        [JsonProperty(ModelNames.Intensity)]
+        [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
         
-        [JsonProperty(ModelNames.Scatter)]
+        [JsonProperty(Names.Scatter)]
         public float Scatter { get; set; }
         
-        [JsonProperty(ModelNames.Color)]
+        [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
         
         // Filter (player choose in settings: high - Gaussian, mid - Dual, low - Kawase)

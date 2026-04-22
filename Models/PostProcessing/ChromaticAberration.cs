@@ -6,7 +6,7 @@ namespace BHSDK.Models.PostProcessing
 {
     public class ChromaticAberration : Keyframe
     {
-        [JsonProperty(ModelNames.Intensity)]
+        [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
 
         public ChromaticAberration()

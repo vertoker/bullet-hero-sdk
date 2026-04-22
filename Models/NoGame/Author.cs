@@ -6,10 +6,10 @@ namespace BHSDK.Models.NoGame
 {
     public class Author
     {
-        [JsonProperty(ModelNames.Name)]
+        [JsonProperty(Names.Name)]
         public IString Name { get; set; }
         
-        [JsonProperty(ModelNames.Order)]
+        [JsonProperty(Names.Order)]
         public int Order { get; set; }
 
         public Author()

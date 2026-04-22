@@ -6,10 +6,10 @@ namespace BHSDK.Models.SaveData
 {
     public class ThemeData : ISaveData
     {
-        [JsonProperty(ModelNames.Version)]
+        [JsonProperty(Names.Version)]
         public Version Version { get; set; }
         
-        [JsonProperty(ModelNames.Theme)]
+        [JsonProperty(Names.Theme)]
         public ITheme Theme { get; set; }
 
         public IData GetData() => Theme;

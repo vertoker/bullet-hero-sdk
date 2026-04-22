@@ -8,10 +8,10 @@ namespace BHSDK.Models.Resources
     {
         // URI - Universal Resource Identifier, either for paths, urls or keys
         
-        [JsonProperty(ModelNames.Uri + ModelNames.Type)]
+        [JsonProperty(Names.UriType)]
         public ResourceUriType UriType { get; set; }
         
-        [JsonProperty(ModelNames.Uri)]
+        [JsonProperty(Names.Uri)]
         public string Uri { get; set; }
         
         public ResourceKey()

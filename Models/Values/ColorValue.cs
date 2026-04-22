@@ -7,16 +7,16 @@ namespace BHSDK.Models.Values
 {
     public class ColorValue : IColor
     {
-        [JsonProperty(ModelNames.ChannelR)]
+        [JsonProperty(Names.ChannelR)]
         public float R { get; set; }
         
-        [JsonProperty(ModelNames.ChannelG)]
+        [JsonProperty(Names.ChannelG)]
         public float G { get; set; }
         
-        [JsonProperty(ModelNames.ChannelB)]
+        [JsonProperty(Names.ChannelB)]
         public float B { get; set; }
         
-        [JsonProperty(ModelNames.ChannelA)]
+        [JsonProperty(Names.ChannelA)]
         public float A { get; set; }
 
         public ColorValue()

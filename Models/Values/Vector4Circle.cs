@@ -8,19 +8,19 @@ namespace BHSDK.Models.Values
 {
     public class Vector4Circle : IVector4
     {
-        [JsonProperty(ModelNames.CoordX)]
+        [JsonProperty(Names.CoordX)]
         public float X { get; set; }
         
-        [JsonProperty(ModelNames.CoordY)]
+        [JsonProperty(Names.CoordY)]
         public float Y { get; set; }
         
-        [JsonProperty(ModelNames.CoordZ)]
+        [JsonProperty(Names.CoordZ)]
         public float Z { get; set; }
         
-        [JsonProperty(ModelNames.CoordW)]
+        [JsonProperty(Names.CoordW)]
         public float W { get; set; }
         
-        [JsonProperty(ModelNames.Radius)]
+        [JsonProperty(Names.Radius)]
         public float Radius { get; set; }
         
         public Vector4Circle()

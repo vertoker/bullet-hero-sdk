@@ -8,10 +8,10 @@ namespace BHSDK.Models.Settings
     {
         public Version GetVersion() => new(1, 0);
         
-        [JsonProperty(ModelNames.Autosave)]
+        [JsonProperty(Names.Autosave)]
         public bool Autosave { get; set; }
         
-        [JsonProperty(ModelNames.AutosaveRate)]
+        [JsonProperty(Names.AutosaveRate)]
         public float AutosaveRate { get; set; }
 
         public EditorSettings()

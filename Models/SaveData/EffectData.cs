@@ -6,10 +6,10 @@ namespace BHSDK.Models.SaveData
 {
     public class EffectData : ISaveData
     {
-        [JsonProperty(ModelNames.Version)]
+        [JsonProperty(Names.Version)]
         public Version Version { get; set; }
         
-        [JsonProperty(ModelNames.Effect)]
+        [JsonProperty(Names.Effect)]
         public IEffect Effect { get; set; }
 
         public IData GetData() => Effect;

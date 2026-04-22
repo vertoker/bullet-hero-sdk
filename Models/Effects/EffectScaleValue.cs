@@ -9,7 +9,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleValue : IEffectScale
     {
-        [JsonProperty(ModelNames.Scale)]
+        [JsonProperty(Names.Scale)]
         public IVector2 Scale { get; set; }
         
         public EffectScaleType GetModelType() => EffectScaleType.Value;

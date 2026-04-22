@@ -7,30 +7,30 @@ namespace BHSDK.Models.Effects
 {
     public class EffectObjectCore
     {
-        [JsonProperty(ModelNames.Loop)]
+        [JsonProperty(Names.Loop)]
         public bool Loop { get; set; }
         
-        [JsonProperty(ModelNames.Particle + ModelNames.Count)]
+        [JsonProperty(Names.ParticleCount)]
         public uint ParticleCount { get; set; }
         
-        [JsonProperty(ModelNames.Lifetime)]
+        [JsonProperty(Names.Lifetime)]
         public IVector2 LifetimeBounds { get; set; }
         
-        [JsonProperty(ModelNames.Particle + ModelNames.Collider)]
+        [JsonProperty(Names.ParticleCollider)]
         public bool ParticleCollider { get; set; }
         
-        [JsonProperty(ModelNames.Has + ModelNames.Stop + ModelNames.Local + ModelNames.Frame)]
+        [JsonProperty(Names.HasStopLocalFrame)]
         public bool HasStopLocalFrame { get; set; }
         
-        [JsonProperty(ModelNames.Stop + ModelNames.Local + ModelNames.Frame)]
+        [JsonProperty(Names.StopLocalFrame)]
         public int StopLocalFrame { get; set; }
         
         // Same logic as TextureObject.TextureId
         
-        [JsonProperty(ModelNames.Texture + ModelNames.Resource + ModelNames.Id)]
+        [JsonProperty(Names.TextureResourceId)]
         public int TextureResourceId { get; set; }
         
-        [JsonProperty(ModelNames.Particle + ModelNames.Pivot)]
+        [JsonProperty(Names.ParticlePivot)]
         public IVector2 ParticlePivot { get; set; }
 
         public EffectObjectCore()

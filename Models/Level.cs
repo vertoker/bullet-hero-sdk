@@ -13,19 +13,19 @@ namespace BHSDK.Models
     {
         public Version GetVersion() => new(1, 0);
         
-        [JsonProperty(ModelNames.Settings)]
+        [JsonProperty(Names.Settings)]
         public LevelSettings Settings { get; set; }
         
-        [JsonProperty(ModelNames.Meta)]
+        [JsonProperty(Names.Meta)]
         public LevelMeta Meta { get; set; }
         
-        [JsonProperty(ModelNames.Game)]
+        [JsonProperty(Names.Game)]
         public GameLevel Game { get; set; }
         
-        [JsonProperty(ModelNames.Audio)]
+        [JsonProperty(Names.Audio)]
         public AudioLevel Audio { get; set; }
         
-        [JsonProperty(ModelNames.Resources)]
+        [JsonProperty(Names.Resources)]
         public LevelResources Resources { get; set; }
 
         public Level()

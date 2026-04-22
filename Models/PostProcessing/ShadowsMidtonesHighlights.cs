@@ -10,33 +10,33 @@ namespace BHSDK.Models.PostProcessing
 {
     public class ShadowsMidtonesHighlights : Keyframes_Keyframe
     {
-        [JsonProperty(ModelNames.Shadow)]
+        [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
         
-        [JsonProperty(ModelNames.Shadow + ModelNames.Color)]
+        [JsonProperty(Names.ShadowColor)]
         public IColor ShadowsColor { get; set; }
         
         
-        [JsonProperty(ModelNames.Midtone)]
+        [JsonProperty(Names.Midtone)]
         public bool Midtones { get; set; }
         
-        [JsonProperty(ModelNames.Midtone + ModelNames.Color)]
+        [JsonProperty(Names.MidtoneColor)]
         public IColor MidtonesColor { get; set; }
         
         
-        [JsonProperty(ModelNames.Highlight)]
+        [JsonProperty(Names.Highlight)]
         public bool Highlights { get; set; }
         
-        [JsonProperty(ModelNames.Highlight + ModelNames.Color)]
+        [JsonProperty(Names.HighlightColor)]
         public IColor HighlightsColor { get; set; }
         
         
         // TODO graph like in Post Processing menu
         
-        [JsonProperty(ModelNames.Shadow + ModelNames.Limit)]
+        [JsonProperty(Names.ShadowLimit)]
         public IVector2 ShadowLimits { get; set; }
         
-        [JsonProperty(ModelNames.Highlight + ModelNames.Limit)]
+        [JsonProperty(Names.HighlightLimit)]
         public IVector2 HighlightLimits { get; set; }
 
         public ShadowsMidtonesHighlights()

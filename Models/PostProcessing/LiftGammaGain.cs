@@ -10,24 +10,22 @@ namespace BHSDK.Models.PostProcessing
 {
     public class LiftGammaGain : Keyframes_Keyframe
     {
-        [JsonProperty(ModelNames.Lift)]
+        [JsonProperty(Names.Lift)]
         public bool Lift { get; set; }
         
-        [JsonProperty(ModelNames.Lift + ModelNames.Color)]
+        [JsonProperty(Names.LiftColor)]
         public IColor LiftColor { get; set; }
         
-        
-        [JsonProperty(ModelNames.Gamma)]
+        [JsonProperty(Names.Gamma)]
         public bool Gamma { get; set; }
         
-        [JsonProperty(ModelNames.Gamma + ModelNames.Color)]
+        [JsonProperty(Names.GammaColor)]
         public IColor GammaColor { get; set; }
         
-        
-        [JsonProperty(ModelNames.Gain)]
+        [JsonProperty(Names.Gain)]
         public bool Gain { get; set; }
         
-        [JsonProperty(ModelNames.Gain + ModelNames.Color)]
+        [JsonProperty(Names.GainColor)]
         public IColor GainColor { get; set; }
 
         public LiftGammaGain()

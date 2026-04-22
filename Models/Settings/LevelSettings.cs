@@ -7,17 +7,17 @@ namespace BHSDK.Models.Settings
 {
     public class LevelSettings
     {
-        [JsonProperty(ModelNames.Seed)]
+        [JsonProperty(Names.Seed)]
         public int Seed { get; set; }
         
-        [JsonProperty(ModelNames.Framerate)]
+        [JsonProperty(Names.Fps)]
         public int Framerate { get; set; }
         
-        [JsonProperty(ModelNames.FrameLength)]
+        [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
         
         // limitations for screen will be chosen by mappers
-        [JsonProperty(ModelNames.Screen + ModelNames.Limit)]
+        [JsonProperty(Names.ScreenLimit)]
         public IScreenLimit ScreenLimit { get; set; }
 
         public LevelSettings()

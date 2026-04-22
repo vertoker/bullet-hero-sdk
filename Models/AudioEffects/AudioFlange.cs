@@ -4,16 +4,16 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioFlange : AudioEffect
     {
-        [JsonProperty(ModelNames.DryMix)]
+        [JsonProperty(Names.DryMix)]
         public float DryMix { get; set; }
         
-        [JsonProperty(ModelNames.WetMix)]
+        [JsonProperty(Names.WetMix)]
         public float WetMix { get; set; }
         
-        [JsonProperty(ModelNames.Depth)]
+        [JsonProperty(Names.Depth)]
         public float Depth { get; set; }
         
-        [JsonProperty(ModelNames.Rate)]
+        [JsonProperty(Names.Rate)]
         public float Rate { get; set; }
 
         public AudioFlange()

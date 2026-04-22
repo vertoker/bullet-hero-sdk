@@ -7,7 +7,7 @@ namespace BHSDK.Models.Keyframes
 {
     public class IntKey : Keyframe
     {
-        [JsonProperty(ModelNames.Float)]
+        [JsonProperty(Names.Int)]
         public IInt Value { get; set; }
 
         public IntKey()

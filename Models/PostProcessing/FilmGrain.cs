@@ -6,10 +6,10 @@ namespace BHSDK.Models.PostProcessing
 {
     public class FilmGrain : Keyframe
     {
-        [JsonProperty(ModelNames.Type)]
+        [JsonProperty(Names.Type)]
         public FilmGrainType Type { get; set; }
         
-        [JsonProperty(ModelNames.Intensity)]
+        [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
 
         public FilmGrain()

@@ -10,16 +10,16 @@ namespace BHSDK.Models.Values
     {
         public const int MaxCount = 4;
         
-        [JsonProperty(ModelNames.Color + ModelNames.Keys)]
+        [JsonProperty(Names.ColorKeys)]
         public List<GradientColorKeyValue> ColorKeys { get; set; }
         
-        [JsonProperty(ModelNames.Alpha + ModelNames.Keys)]
+        [JsonProperty(Names.AlphaKeys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
         
-        [JsonProperty(ModelNames.Mode)]
+        [JsonProperty(Names.Mode)]
         public GradientInterpolationMode Mode { get; set; }
         
-        [JsonProperty(ModelNames.Color + ModelNames.Space)]
+        [JsonProperty(Names.ColorSpace)]
         public GradientColorSpace ColorSpace { get; set; }
         
         public Gradient Get()

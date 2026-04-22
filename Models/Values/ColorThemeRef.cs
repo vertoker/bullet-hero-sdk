@@ -7,7 +7,7 @@ namespace BHSDK.Models.Values
 {
     public class ColorThemeRef : IColor
     {
-        [JsonProperty(ModelNames.Theme + ModelNames.Index)]
+        [JsonProperty(Names.ThemeIndex)]
         public IntValue ThemeIndex { get; set; }
         
         public ColorType GetModelType() => ColorType.ThemeRef;

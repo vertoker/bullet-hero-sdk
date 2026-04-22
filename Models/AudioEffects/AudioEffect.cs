@@ -4,7 +4,7 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioEffect
     {
-        [JsonProperty(ModelNames.MixLevel)]
+        [JsonProperty(Names.MixLevel)]
         public float MixLevel { get; set; }
 
         public AudioEffect()

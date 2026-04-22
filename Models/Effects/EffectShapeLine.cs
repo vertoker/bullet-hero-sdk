@@ -9,13 +9,13 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeLine : IEffectShape
     {
-        [JsonProperty(ModelNames.Start + ModelNames.Vector2)]
+        [JsonProperty(Names.Start)]
         public IVector2 Start { get; set; }
         
-        [JsonProperty(ModelNames.End + ModelNames.Vector2)]
+        [JsonProperty(Names.End)]
         public IVector2 End { get; set; }
         
-        [JsonProperty(ModelNames.Spread)]
+        [JsonProperty(Names.Spread)]
         public IEffectShapeSpread Spread { get; set; }
         
         public EffectShapeType GetModelType() => EffectShapeType.Line;

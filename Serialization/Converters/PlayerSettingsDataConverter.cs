@@ -14,7 +14,7 @@ namespace BHSDK.Serialization.Converters
             _compatibilityService = compatibilityService;
         }
 
-        protected override string GetObjectPropertyName() => ModelNames.PlayerSettings;
+        protected override string GetObjectPropertyName() => Names.PlayerSettings;
         protected override Type GetType(Version version) => _compatibilityService.GetPlayerSettingsType(version);
     }
 }

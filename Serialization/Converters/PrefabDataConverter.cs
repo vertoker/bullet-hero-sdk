@@ -14,7 +14,7 @@ namespace BHSDK.Serialization.Converters
             _compatibilityService = compatibilityService;
         }
 
-        protected override string GetObjectPropertyName() => ModelNames.Prefab;
+        protected override string GetObjectPropertyName() => Names.Prefab;
         protected override Type GetType(Version version) => _compatibilityService.GetPrefabType(version);
     }
 }

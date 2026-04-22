@@ -10,19 +10,19 @@ namespace BHSDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.Texture;
         
-        [JsonProperty(ModelNames.Collider)]
+        [JsonProperty(Names.ColliderShort)]
         public bool Collider { get; set; }
         
-        [JsonProperty(ModelNames.Color)]
+        [JsonProperty(Names.Color)]
         public List<Clr> Clr { get; set; }
         
         // positive with 0 - game-defined (0 is white square), negative - user-defined
         // more about resourceId and how it works, read in Resource.cs file
         
-        [JsonProperty(ModelNames.Texture + ModelNames.Resource + ModelNames.Id)]
+        [JsonProperty(Names.TextureResourceId)]
         public int TextureResourceId { get; set; }
         
-        [JsonProperty(ModelNames.Subling + ModelNames.Index)]
+        [JsonProperty(Names.SublingIndex)]
         public int SublingIndex { get; set; }
         
         public TextureObject()

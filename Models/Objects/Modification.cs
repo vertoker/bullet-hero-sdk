@@ -14,13 +14,13 @@ namespace BHSDK.Models.Objects
 
     public class Modification
     {
-        [JsonProperty(ModelNames.ObjectId)]
+        [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; } // to which Object this modification is applied
 
-        [JsonProperty(ModelNames.Path)]
+        [JsonProperty(Names.PathShort)]
         public string Path { get; set; }
 
-        [JsonProperty(ModelNames.Value)]
+        [JsonProperty(Names.ValueShort)]
         public object Value { get; set; }
 
         public Modification()

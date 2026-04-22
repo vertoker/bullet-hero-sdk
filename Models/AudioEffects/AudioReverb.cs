@@ -4,46 +4,46 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioReverb : AudioEffect
     {
-        [JsonProperty(ModelNames.DryLevel)]
+        [JsonProperty(Names.DryLevel)]
         public float DryLevel { get; set; }
         
-        [JsonProperty(ModelNames.Room)]
+        [JsonProperty(Names.Room)]
         public float Room { get; set; }
         
-        [JsonProperty(ModelNames.RoomHF)]
+        [JsonProperty(Names.RoomHF)]
         public float RoomHF { get; set; }
         
-        [JsonProperty(ModelNames.RoomLF)]
+        [JsonProperty(Names.RoomLF)]
         public float RoomLF { get; set; }
         
-        [JsonProperty(ModelNames.DecayTime)]
+        [JsonProperty(Names.DecayTime)]
         public float DecayTime { get; set; }
         
-        [JsonProperty(ModelNames.DecayHFRatio)]
+        [JsonProperty(Names.DecayHFRatio)]
         public float DecayHFRatio { get; set; }
         
-        [JsonProperty(ModelNames.Reflections)]
+        [JsonProperty(Names.Reflections)]
         public float Reflections { get; set; }
         
-        [JsonProperty(ModelNames.ReflectDelay)]
+        [JsonProperty(Names.ReflectDelay)]
         public float ReflectDelay { get; set; }
         
-        [JsonProperty(ModelNames.Reverb)]
+        [JsonProperty(Names.Reverb)]
         public float Reverb { get; set; }
         
-        [JsonProperty(ModelNames.ReverbDelay)]
+        [JsonProperty(Names.ReverbDelay)]
         public float ReverbDelay { get; set; }
         
-        [JsonProperty(ModelNames.Diffusion)]
+        [JsonProperty(Names.Diffusion)]
         public float Diffusion { get; set; }
         
-        [JsonProperty(ModelNames.Density)]
+        [JsonProperty(Names.Density)]
         public float Density { get; set; }
         
-        [JsonProperty(ModelNames.HFReference)]
+        [JsonProperty(Names.HFRef)]
         public float HFReference { get; set; }
         
-        [JsonProperty(ModelNames.LFReference)]
+        [JsonProperty(Names.LFRef)]
         public float LFReference { get; set; }
 
         public AudioReverb()

@@ -5,7 +5,7 @@ namespace BHSDK.Models.Values
 {
     public class Alignment
     {
-        [JsonProperty(ModelNames.Value)]
+        [JsonProperty(Names.ValueShort)]
         public IVector2 Value { get; set; }
 
         public static readonly Vector2Value TopLeftValue =      new(0.0f, 1.0f);

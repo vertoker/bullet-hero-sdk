@@ -8,16 +8,16 @@ namespace BHSDK.Models.PostProcessing
 {
     public class LensDistortion : Keyframe
     {
-        [JsonProperty(ModelNames.Intensity)]
+        [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
         
-        [JsonProperty(ModelNames.Multiplier)]
+        [JsonProperty(Names.Multiplier)]
         public IVector2 Multiplier { get; set; }
         
-        [JsonProperty(ModelNames.Center)]
+        [JsonProperty(Names.Center)]
         public IVector2 Center { get; set; }
         
-        [JsonProperty(ModelNames.Scale)]
+        [JsonProperty(Names.Scale)]
         public float Scale { get; set; }
 
         public LensDistortion()

@@ -7,23 +7,23 @@ namespace BHSDK.Models.Values
 {
     public class Vector3Rect : IVector3
     {
-        [JsonProperty(ModelNames.Min + ModelNames.CoordX)]
+        [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
         
-        [JsonProperty(ModelNames.Min + ModelNames.CoordY)]
+        [JsonProperty(Names.MinY)]
         public float MinY { get; set; }
         
-        [JsonProperty(ModelNames.Min + ModelNames.CoordZ)]
+        [JsonProperty(Names.MinZ)]
         public float MinZ { get; set; }
         
         
-        [JsonProperty(ModelNames.Max + ModelNames.CoordX)]
+        [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }
         
-        [JsonProperty(ModelNames.Max + ModelNames.CoordY)]
+        [JsonProperty(Names.MaxY)]
         public float MaxY { get; set; }
         
-        [JsonProperty(ModelNames.Max + ModelNames.CoordZ)]
+        [JsonProperty(Names.MaxZ)]
         public float MaxZ { get; set; }
 
         public Vector3Rect()

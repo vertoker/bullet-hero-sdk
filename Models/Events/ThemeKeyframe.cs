@@ -6,7 +6,7 @@ namespace BHSDK.Models.Events
 {
     public class ThemeKeyframe : Keyframe
     {
-        [JsonProperty(ModelNames.Theme + ModelNames.Index)]
+        [JsonProperty(Names.ThemeIndex)]
         public int ThemeIndex { get; set; } // reference to all level Themes list
 
         public ThemeKeyframe()

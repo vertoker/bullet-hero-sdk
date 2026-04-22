@@ -10,16 +10,16 @@ namespace BHSDK.Models.Game
         // Camera has instanceId and this is always -1 (because 0 - is a fallback).
         // Camera GO != camera info for parenting, this info just duplicate from camera.transform 
         
-        [JsonProperty(ModelNames.Position)]
+        [JsonProperty(Names.Position)]
         public List<Pos> Pos { get; set; }
         
-        [JsonProperty(ModelNames.Rotation)]
+        [JsonProperty(Names.Rotation)]
         public List<Rot> Rot { get; set; }
         
-        [JsonProperty(ModelNames.Zoom)]
+        [JsonProperty(Names.Zoom)]
         public List<Zoom> Zoom { get; set; }
         
-        [JsonProperty(ModelNames.Shake)]
+        [JsonProperty(Names.Shake)]
         public List<Shake> Shake { get; set; }
 
         public CameraEvents()

@@ -6,10 +6,10 @@ namespace BHSDK.Models.SaveData
 {
     public class PlayerSettingsData : ISaveData
     {
-        [JsonProperty(ModelNames.Version)]
+        [JsonProperty(Names.Version)]
         public Version Version { get; set; }
         
-        [JsonProperty(ModelNames.PlayerSettings)]
+        [JsonProperty(Names.PlayerSettings)]
         public IPlayerSettings PlayerSettings { get; set; }
 
         public IData GetData() => PlayerSettings;

@@ -7,7 +7,7 @@ namespace BHSDK.Models.Keyframes
 {
     public class FloatKey : Keyframe
     {
-        [JsonProperty(ModelNames.Float)]
+        [JsonProperty(Names.Float)]
         public IFloat Value { get; set; }
 
         public FloatKey()

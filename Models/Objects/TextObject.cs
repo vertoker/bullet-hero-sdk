@@ -12,43 +12,43 @@ namespace BHSDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.Text;
         
-        [JsonProperty(ModelNames.Size)]
+        [JsonProperty(Names.Size)]
         public List<Sca> Sizes { get; set; }
         
-        [JsonProperty(ModelNames.Color)]
+        [JsonProperty(Names.Color)]
         public List<Clr> Clr { get; set; }
         
-        [JsonProperty(ModelNames.Font + ModelNames.Size)]
+        [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
         
-        [JsonProperty(ModelNames.Text)]
+        [JsonProperty(Names.Text)]
         public IString Text { get; set; }
         
         // positive with 0 - game-defined (0 is NotoSans), negative - user-defined
         // more about resourceId and how it works, read in Resource.cs file
         
-        [JsonProperty(ModelNames.Font + ModelNames.Resource + ModelNames.Id)]
+        [JsonProperty(Names.FontResourceId)]
         public int FontResourceId { get; set; }
         
-        [JsonProperty(ModelNames.Direction)]
+        [JsonProperty(Names.Direction)]
         public TextObjectDirection Direction { get; set; }
         
-        [JsonProperty(ModelNames.Word + ModelNames.Wrap)]
+        [JsonProperty(Names.WordWrap)]
         public bool WordWrap { get; set; }
         
-        [JsonProperty(ModelNames.Horizontal + ModelNames.Alignment)]
+        [JsonProperty(Names.HorizontalAlignment)]
         public TextObjectHorizontalAlignment HorizontalAlignment { get; set; }
         
-        [JsonProperty(ModelNames.Vertical + ModelNames.Alignment)]
+        [JsonProperty(Names.VerticalAlignment)]
         public TextObjectVerticalAlignment VerticalAlignment { get; set; }
         
-        [JsonProperty(ModelNames.Over)]
+        [JsonProperty(Names.OverEdge)]
         public TextObjectOverEdge OverEdge { get; set; }
         
-        [JsonProperty(ModelNames.Under)]
+        [JsonProperty(Names.UnderEdge)]
         public TextObjectUnderEdge UnderEdge { get; set; }
         
-        [JsonProperty(ModelNames.Distribution)]
+        [JsonProperty(Names.Distrib)]
         public TextObjectLeadingDistribution LeadingDistribution { get; set; }
         
         public TextObject()

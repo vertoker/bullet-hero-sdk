@@ -4,13 +4,13 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioNormalize : AudioEffect
     {
-        [JsonProperty(ModelNames.FadeInTime)]
+        [JsonProperty(Names.FadeInTime)]
         public float FadeInTime { get; set; }
         
-        [JsonProperty(ModelNames.LowestVolume)]
+        [JsonProperty(Names.LowestVolume)]
         public float LowestVolume { get; set; }
         
-        [JsonProperty(ModelNames.MaximumAmp)]
+        [JsonProperty(Names.MaximumAmp)]
         public float MaximumAmp { get; set; }
 
         public AudioNormalize()

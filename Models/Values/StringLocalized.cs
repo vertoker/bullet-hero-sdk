@@ -9,7 +9,7 @@ namespace BHSDK.Models.Values
 {
     public class StringLocalized : IString
     {
-        [JsonProperty(ModelNames.Language + ModelNames.String)]
+        [JsonProperty(Names.Strings)]
         public List<StringLanguage> Strings { get; set; }
 
         public StringLocalized()

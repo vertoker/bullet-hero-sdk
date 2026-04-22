@@ -7,10 +7,10 @@ namespace BHSDK.Models.Values
     {
         // TODO maybe replace FloatValue to IFloat (color too) (in editor step)
         
-        [JsonProperty(ModelNames.Color)]
+        [JsonProperty(Names.Color)]
         public ColorValue ColorHDR { get; set; }
         
-        [JsonProperty(ModelNames.Time)]
+        [JsonProperty(Names.TimeShort)]
         public FloatValue Time { get; set; }
         
         public GradientColorKey Get()

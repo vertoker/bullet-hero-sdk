@@ -6,7 +6,7 @@ namespace BHSDK.Models.Values
 {
     public class StringValue : IString
     {
-        [JsonProperty(ModelNames.String)]
+        [JsonProperty(Names.ValueShort)]
         public string Value { get; set; }
 
         public StringValue()

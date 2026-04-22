@@ -8,7 +8,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorGradientRandom : IEffectColor
     {
-        [JsonProperty(ModelNames.Gradient)]
+        [JsonProperty(Names.Gradient)]
         public GradientValue Gradient { get; set; }
 
         public EffectColorType GetModelType() => EffectColorType.GradientRandom;

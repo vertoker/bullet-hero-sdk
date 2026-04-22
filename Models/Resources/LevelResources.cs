@@ -5,13 +5,13 @@ namespace BHSDK.Models.Resources
 {
     public class LevelResources
     {
-        [JsonProperty(ModelNames.Texture)]
+        [JsonProperty(Names.Textures)]
         public List<TextureResource> Textures { get; set; }
         
-        [JsonProperty(ModelNames.Font)]
+        [JsonProperty(Names.Fonts)]
         public List<FontResource> Fonts { get; set; }
         
-        [JsonProperty(ModelNames.Audio)]
+        [JsonProperty(Names.Audios)]
         public List<AudioResource> Audios { get; set; }
 
         public LevelResources()

@@ -8,19 +8,19 @@ namespace BHSDK.Models.PostProcessing
 {
     public class Vignette : Keyframe
     {
-        [JsonProperty(ModelNames.Color)]
+        [JsonProperty(Names.Color)]
         public IColor ColorHDR { get; set; }
         
-        [JsonProperty(ModelNames.Center)]
+        [JsonProperty(Names.Center)]
         public IVector2 Center { get; set; }
         
-        [JsonProperty(ModelNames.Intensity)]
+        [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
         
-        [JsonProperty(ModelNames.Smoothness)]
+        [JsonProperty(Names.Smoothness)]
         public float Smoothness { get; set; }
         
-        [JsonProperty(ModelNames.Rounded)]
+        [JsonProperty(Names.Rounded)]
         public bool Rounded { get; set; }
 
         public Vignette()

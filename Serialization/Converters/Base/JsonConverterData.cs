@@ -17,7 +17,7 @@ namespace BHSDK.Serialization.Converters.Base
             
             writer.WriteStartObject();
             
-            writer.WritePropertyName(ModelNames.Version);
+            writer.WritePropertyName(Names.Version);
             serializer.Serialize(writer, value.Version);
             
             writer.WritePropertyName(GetObjectPropertyName());
@@ -46,7 +46,7 @@ namespace BHSDK.Serialization.Converters.Base
                 var propertyName = reader.Value?.ToString();
                 reader.Read(); // to property value
 
-                if (propertyName == ModelNames.Version)
+                if (propertyName == Names.Version)
                 {
                     result.Version = serializer.Deserialize<Version>(reader);
                 }

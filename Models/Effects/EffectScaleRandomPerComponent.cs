@@ -9,10 +9,10 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleRandomPerComponent : IEffectScale
     {
-        [JsonProperty(ModelNames.ScaleX)]
+        [JsonProperty(Names.ScaleX)]
         public IVector2 ScaleA { get; set; }
         
-        [JsonProperty(ModelNames.ScaleY)]
+        [JsonProperty(Names.ScaleY)]
         public IVector2 ScaleB { get; set; }
         
         public EffectScaleType GetModelType() => EffectScaleType.RandomPerComponent;

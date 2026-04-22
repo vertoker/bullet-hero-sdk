@@ -4,7 +4,7 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioDistortion : AudioEffect
     {
-        [JsonProperty(ModelNames.Level)]
+        [JsonProperty(Names.Level)]
         public float Level { get; set; }
 
         public AudioDistortion()

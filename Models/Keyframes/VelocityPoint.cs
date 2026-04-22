@@ -8,10 +8,10 @@ namespace BHSDK.Models.Keyframes
     // TODO activate for player when add events
     public class VelocityPoint : Keyframe
     {
-        [JsonProperty(ModelNames.Center)]
+        [JsonProperty(Names.Center)]
         public IVector2 Center { get; set; }
         
-        [JsonProperty(ModelNames.Force)]
+        [JsonProperty(Names.Force)]
         public float Force { get; set; }
 
         public VelocityPoint()

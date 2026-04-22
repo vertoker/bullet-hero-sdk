@@ -11,10 +11,10 @@ namespace BHSDK.Models.Values
         
         public Version GetVersion() => new(1, 0);
         
-        [JsonProperty(ModelNames.Name)]
+        [JsonProperty(Names.Name)]
         public string Name { get; set; }
         
-        [JsonProperty(ModelNames.Matrix)]
+        [JsonProperty(Names.Matrix)]
         public ColorValue[] Matrix { get; set; }
         
         // Theme - is map of colors, level can refer to color via index

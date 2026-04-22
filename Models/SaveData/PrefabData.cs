@@ -6,10 +6,10 @@ namespace BHSDK.Models.SaveData
 {
     public class PrefabData : ISaveData
     {
-        [JsonProperty(ModelNames.Version)]
+        [JsonProperty(Names.Version)]
         public Version Version { get; set; }
         
-        [JsonProperty(ModelNames.Prefab)]
+        [JsonProperty(Names.Prefab)]
         public IPrefab Prefab { get; set; }
 
         public IData GetData() => Prefab;

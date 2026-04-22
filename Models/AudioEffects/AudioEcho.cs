@@ -4,19 +4,19 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioEcho : AudioEffect
     {
-        [JsonProperty(ModelNames.Delay)]
+        [JsonProperty(Names.Delay)]
         public float Delay { get; set; }
         
-        [JsonProperty(ModelNames.Decay)]
+        [JsonProperty(Names.Decay)]
         public float Decay { get; set; }
         
-        [JsonProperty(ModelNames.MaxChannels)]
+        [JsonProperty(Names.MaxChannels)]
         public float MaxChannels { get; set; }
         
-        [JsonProperty(ModelNames.DryMix)]
+        [JsonProperty(Names.DryMix)]
         public float DryMix { get; set; }
         
-        [JsonProperty(ModelNames.WetMix)]
+        [JsonProperty(Names.WetMix)]
         public float WetMix { get; set; }
 
         public AudioEcho()

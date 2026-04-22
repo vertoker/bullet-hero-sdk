@@ -4,28 +4,28 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioChorus : AudioEffect
     {
-        [JsonProperty(ModelNames.DryMix)]
+        [JsonProperty(Names.DryMix)]
         public float DryMix { get; set; }
         
-        [JsonProperty(ModelNames.WetMixTap1)]
+        [JsonProperty(Names.WetMixTap1)]
         public float WetMixTap1 { get; set; }
         
-        [JsonProperty(ModelNames.WetMixTap2)]
+        [JsonProperty(Names.WetMixTap2)]
         public float WetMixTap2 { get; set; }
         
-        [JsonProperty(ModelNames.WetMixTap3)]
+        [JsonProperty(Names.WetMixTap3)]
         public float WetMixTap3 { get; set; }
         
-        [JsonProperty(ModelNames.Delay)]
+        [JsonProperty(Names.Delay)]
         public float Delay { get; set; }
         
-        [JsonProperty(ModelNames.Rate)]
+        [JsonProperty(Names.Rate)]
         public float Rate { get; set; }
         
-        [JsonProperty(ModelNames.Depth)]
+        [JsonProperty(Names.Depth)]
         public float Depth { get; set; }
         
-        [JsonProperty(ModelNames.Feedback)]
+        [JsonProperty(Names.Feedback)]
         public float Feedback { get; set; }
 
         public AudioChorus()

@@ -7,10 +7,10 @@ namespace BHSDK.Models.Values
     {
         // TODO maybe replace FloatValue to IFloat (in editor step)
         
-        [JsonProperty(ModelNames.Alpha)]
+        [JsonProperty(Names.AlphaShort)]
         public FloatValue Alpha { get; set; }
         
-        [JsonProperty(ModelNames.Time)]
+        [JsonProperty(Names.TimeShort)]
         public FloatValue Time { get; set; }
 
         public GradientAlphaKey Get()

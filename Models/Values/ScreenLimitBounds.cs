@@ -7,10 +7,10 @@ namespace BHSDK.Models.Values
 {
     public class ScreenLimitBounds : IScreenLimit
     {
-        [JsonProperty(ModelNames.Min + ModelNames.Aspect)]
+        [JsonProperty(Names.MinAspect)]
         public ScreenAspect MinAspect { get; set; }
         
-        [JsonProperty(ModelNames.Max + ModelNames.Aspect)]
+        [JsonProperty(Names.MaxAspect)]
         public ScreenAspect MaxAspect { get; set; }
         
         public ScreenLimitType GetModelType() => ScreenLimitType.Bounds;

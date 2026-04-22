@@ -13,15 +13,15 @@ namespace BHSDK.Models.Audio
         // 1, 2, 3... - user-defined audio
         // negative space is banned for consistency
         
-        [JsonProperty(ModelNames.Id)]
+        [JsonProperty(Names.AudioId)]
         public int AudioId { get; set; }
         
-        public const int UndefinedId = 0;
+        public const int UndefinedAudioId = 0;
         
-        [JsonProperty(ModelNames.Title)]
+        [JsonProperty(Names.Title)]
         public string Title { get; set; }
         
-        [JsonProperty(ModelNames.Author)]
+        [JsonProperty(Names.Author)]
         public string Author { get; set; }
         
         // TODO add audio parsers for this services
@@ -31,22 +31,22 @@ namespace BHSDK.Models.Audio
         // "Youtube Music", "https://music.youtube.com/channel/{0}"
         // "Newgrounds", "https://{0}.newgrounds.com/"
         
-        [JsonProperty(ModelNames.Start + ModelNames.Frame)]
+        [JsonProperty(Names.StartFrameShort)]
         public int StartFrame { get; set; }
         
-        [JsonProperty(ModelNames.End + ModelNames.Frame)]
+        [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
         
-        [JsonProperty(ModelNames.Offset + ModelNames.Local + ModelNames.Time)]
+        [JsonProperty(Names.OffsetLocalTime)]
         public float OffsetLocalTime { get; set; }
         
         // positive with 0 - game-defined (0 is silence), negative - user-defined
         // more about resourceId and how it works, read in Resource.cs file
         
-        [JsonProperty(ModelNames.Audio + ModelNames.Resource + ModelNames.Id)]
+        [JsonProperty(Names.AudioResourceId)]
         public int AudioResourceId { get; set; }
         
-        [JsonProperty(ModelNames.AudioEffect)]
+        [JsonProperty(Names.Effects)]
         public LevelTrackEffects Effects { get; set; }
         
         public LevelTrack()

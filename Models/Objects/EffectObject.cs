@@ -18,22 +18,22 @@ namespace BHSDK.Models.Objects
 
         public Version GetVersion() => new(1, 0);
         
-        [JsonProperty(ModelNames.Core)]
+        [JsonProperty(Names.Core)]
         public EffectObjectCore Core { get; set; }
         
-        [JsonProperty(ModelNames.Force)]
+        [JsonProperty(Names.Core)]
         public EffectObjectForces Forces { get; set; }
         
-        [JsonProperty(ModelNames.Effect + ModelNames.Shape)]
+        [JsonProperty(Names.EffShape)]
         public IEffectShape EffectShape { get; set; }
         
-        [JsonProperty(ModelNames.Effect + ModelNames.Angle)]
+        [JsonProperty(Names.EffAngle)]
         public IEffectAngle EffectAngle { get; set; }
         
-        [JsonProperty(ModelNames.Effect + ModelNames.Scale)]
+        [JsonProperty(Names.EffScale)]
         public IEffectScale EffectScale { get; set; }
         
-        [JsonProperty(ModelNames.Effect + ModelNames.Color)]
+        [JsonProperty(Names.EffColor)]
         public IEffectColor EffectColor { get; set; }
 
         public EffectObject()

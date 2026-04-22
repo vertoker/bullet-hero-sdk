@@ -7,29 +7,29 @@ namespace BHSDK.Models.Values
 {
     public class ColorMinMax : IColor
     {
-        [JsonProperty(ModelNames.Min + ModelNames.ChannelR)]
+        [JsonProperty(Names.MinR)]
         public float MinR { get; set; }
         
-        [JsonProperty(ModelNames.Min + ModelNames.ChannelG)]
+        [JsonProperty(Names.MinG)]
         public float MinG { get; set; }
         
-        [JsonProperty(ModelNames.Min + ModelNames.ChannelB)]
+        [JsonProperty(Names.MinB)]
         public float MinB { get; set; }
         
-        [JsonProperty(ModelNames.Min + ModelNames.ChannelA)]
+        [JsonProperty(Names.MinA)]
         public float MinA { get; set; }
         
         
-        [JsonProperty(ModelNames.Max + ModelNames.ChannelR)]
+        [JsonProperty(Names.MaxR)]
         public float MaxR { get; set; }
         
-        [JsonProperty(ModelNames.Max + ModelNames.ChannelG)]
+        [JsonProperty(Names.MaxG)]
         public float MaxG { get; set; }
         
-        [JsonProperty(ModelNames.Max + ModelNames.ChannelB)]
+        [JsonProperty(Names.MaxB)]
         public float MaxB { get; set; }
         
-        [JsonProperty(ModelNames.Max + ModelNames.ChannelA)]
+        [JsonProperty(Names.MaxA)]
         public float MaxA { get; set; }
 
         public ColorMinMax()

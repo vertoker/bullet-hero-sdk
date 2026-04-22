@@ -9,10 +9,10 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeSpreadPingPong : IEffectShapeSpread
     {
-        [JsonProperty(ModelNames.Spread)]
+        [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }
         
-        [JsonProperty(ModelNames.Speed)]
+        [JsonProperty(Names.Speed)]
         public IFloat Speed { get; set; }
 
         public EffectShapeSpreadType GetModelType() => EffectShapeSpreadType.PingPong;

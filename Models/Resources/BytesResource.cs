@@ -9,7 +9,7 @@ namespace BHSDK.Models.Resources
         // id for user-defined resources, allowed only negative (started with -1, 0 is uninitialized)
         // more about resourceId and how it works, read in Resource.cs file
         
-        [JsonProperty(ModelNames.Byte + ModelNames.Resource + ModelNames.Id)]
+        [JsonProperty(Names.ByteResourceId)]
         public int ByteResourceId { get; set; }
         
         public override ResourceType Type => ResourceType.Bytes;

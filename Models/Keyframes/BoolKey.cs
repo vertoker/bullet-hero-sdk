@@ -5,10 +5,10 @@ namespace BHSDK.Models.Keyframes
 {
     public class BoolKey : IFrame
     {
-        [JsonProperty(ModelNames.Frame)]
+        [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         
-        [JsonProperty(ModelNames.Boolean)]
+        [JsonProperty(Names.Bool)]
         public bool Value { get; set; }
 
         public BoolKey()

@@ -9,10 +9,10 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorRandomPerComponent : IEffectColor
     {
-        [JsonProperty(ModelNames.ColorA)]
+        [JsonProperty(Names.ColorA)]
         public IColor ColorA { get; set; }
         
-        [JsonProperty(ModelNames.ColorB)]
+        [JsonProperty(Names.ColorB)]
         public IColor ColorB { get; set; }
         
         public EffectColorType GetModelType() => EffectColorType.RandomPerComponent;

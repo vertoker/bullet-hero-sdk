@@ -4,7 +4,7 @@ namespace BHSDK.Models.AudioEffects
 {
     public class AudioLowpass : AudioEffect
     {
-        [JsonProperty(ModelNames.CutoffFreq)]
+        [JsonProperty(Names.CutoffFreq)]
         public float CutoffFreq { get; set; }
 
         public AudioLowpass()

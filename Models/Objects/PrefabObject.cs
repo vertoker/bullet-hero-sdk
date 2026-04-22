@@ -10,10 +10,10 @@ namespace BHSDK.Models.Objects
         // 2. It uses fields and reflection in modifications for finding and replace value in runtime model
         // 3. Play it
         
-        [JsonProperty(ModelNames.Prefab + ModelNames.Index)]
+        [JsonProperty(Names.PrefabIndex)]
         public int PrefabIndex { get; set; } // reference to all level Prefabs list
         
-        [JsonProperty(ModelNames.Modification)]
+        [JsonProperty(Names.Mod)]
         public List<Modification> Modifications { get; set; }
 
         public PrefabObject()
