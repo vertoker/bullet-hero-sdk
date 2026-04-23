@@ -6,7 +6,6 @@ namespace BHSDK.Models.Keyframes
 {
     public abstract class Keyframe : IFrame
     {
-        // TODO make all frames to local frames
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         

@@ -56,6 +56,7 @@
         
         public const string Index = "idx";
         public const string Id = "id";
+        public const string Guid = "guid";
         
         public const string Position = "pos";
         public const string Rotation = "rot";
@@ -177,6 +178,8 @@
         public const string Stop = "stop";
         public const string Local = "local";
         public const string Global = "global";
+        public const string LocalShort = "l";
+        public const string GlobalShort = "g";
         public const string Effect = "effect";
         public const string Effects = "effects";
         public const string Eff = "eff";
@@ -345,13 +348,16 @@
         
         // Instances
         
-        public const string ObjectId = Id;
+        public const string LevelId = Level + _ + Id;
         public const string AudioId = AudioShort + Id;
+        public const string ObjectId = Id;
         public const string ParentObjectId = ParentShort + ObjectId;
         
+        public const string LocalFrame = Local + _ + Frame;
+        public const string LocalFrameShort = LocalShort + FrameShort;
         public const string StartFrameShort = StartShort + FrameShort;
         public const string EndFrameShort = EndShort + FrameShort;
-        public const string StopLocalFrame = Stop + _ + Local + _ + Frame;
+        public const string StopLocalFrame = Stop + _ + LocalFrame;
         public const string HasStopLocalFrame = Has + _ + StopLocalFrame;
         public const string OffsetLocalTime = Offset + _ + Local + _ + Time;
         
