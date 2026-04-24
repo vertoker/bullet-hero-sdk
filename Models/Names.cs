@@ -92,6 +92,7 @@
         public const string Range = "range";
         public const string Core = "core";
         public const string Force = "force";
+        public const string Forces = "forces";
         public const string Linear = "linear";
         public const string Velocity = "velocity";
         public const string Point = "point";
@@ -426,7 +427,7 @@
         public const string ColorSpace = Color + _ + Space;
         
         public const string MinAspect = Min + _ + Aspect;
-        public const string MaxAspect = Min + _ + Aspect;
+        public const string MaxAspect = Max + _ + Aspect;
         
         public const string LanguageStrings = Language + _ + Strings;
         

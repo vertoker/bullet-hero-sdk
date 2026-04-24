@@ -21,7 +21,7 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.Core)]
         public EffectObjectCore Core { get; set; }
         
-        [JsonProperty(Names.Core)]
+        [JsonProperty(Names.Forces)]
         public EffectObjectForces Forces { get; set; }
         
         [JsonProperty(Names.EffShape)]
