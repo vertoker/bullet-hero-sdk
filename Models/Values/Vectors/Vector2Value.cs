@@ -3,45 +3,38 @@ using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Models.Values
+namespace BHSDK.Models.Values.Vectors
 {
-    public class Vector3Value : IVector3
+    public class Vector2Value : IVector2
     {
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
         
         [JsonProperty(Names.CoordY)]
         public float Y { get; set; }
-        
-        [JsonProperty(Names.CoordZ)]
-        public float Z { get; set; }
 
-        public Vector3Value()
+        public Vector2Value()
         {
             X = 0f;
             Y = 0f;
-            Z = 0f;
         }
-        public Vector3Value(float x, float y, float z)
+        public Vector2Value(float x, float y)
         {
             X = x;
             Y = y;
-            Z = z;
         }
-        public Vector3Value(IFloat x, IFloat y, IFloat z)
+        public Vector2Value(IFloat x, IFloat y)
         {
             X = x.Get();
             Y = y.Get();
-            Z = z.Get();
         }
-        public Vector3Value(Vector3 vector)
+        public Vector2Value(Vector2 vector)
         {
             X = vector.x;
             Y = vector.y;
-            Z = vector.z;
         }
 
         public VectorType GetModelType() => VectorType.Value;
-        public Vector3 Get() => new(X, Y, Z);
+        public Vector2 Get() => new(X, Y);
     }
 }

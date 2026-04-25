@@ -2,6 +2,7 @@
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
+using BHSDK.Models.Values.Vectors;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing

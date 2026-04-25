@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Values.Vectors;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values

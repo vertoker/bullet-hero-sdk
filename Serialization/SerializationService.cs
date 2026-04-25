@@ -68,6 +68,7 @@ namespace BHSDK.Serialization
                 new Vector2Converter(innerSerializer),
                 new Vector3Converter(innerSerializer),
                 new Vector4Converter(innerSerializer),
+                new ShapeCollisionConverter(innerSerializer),
 
                 new EffectShapeConverter(innerSerializer),
                 new EffectAngleConverter(innerSerializer),

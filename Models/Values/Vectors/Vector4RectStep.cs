@@ -3,7 +3,7 @@ using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Models.Values
+namespace BHSDK.Models.Values.Vectors
 {
     public class Vector4RectStep : IVector4
     {

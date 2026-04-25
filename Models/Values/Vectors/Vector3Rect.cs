@@ -3,9 +3,9 @@ using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace BHSDK.Models.Values
+namespace BHSDK.Models.Values.Vectors
 {
-    public class Vector2Rect : IVector2
+    public class Vector3Rect : IVector3
     {
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
@@ -13,44 +13,57 @@ namespace BHSDK.Models.Values
         [JsonProperty(Names.MinY)]
         public float MinY { get; set; }
         
+        [JsonProperty(Names.MinZ)]
+        public float MinZ { get; set; }
+        
         
         [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }
         
         [JsonProperty(Names.MaxY)]
         public float MaxY { get; set; }
+        
+        [JsonProperty(Names.MaxZ)]
+        public float MaxZ { get; set; }
 
-        public Vector2Rect()
+        public Vector3Rect()
         {
             MinX = 0f;
             MinY = 0f;
+            MinZ = 0f;
             
             MaxX = 1f;
             MaxY = 1f;
+            MaxZ = 1f;
         }
-        public Vector2Rect(float minX, float minY, float maxX, float maxY)
+        public Vector3Rect(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
         {
             MinX = minX;
             MinY = minY;
+            MinZ = minZ;
             
             MaxX = maxX;
             MaxY = maxY;
+            MaxZ = maxZ;
         }
-        public Vector2Rect(IFloat minX, IFloat minY, IFloat maxX, IFloat maxY)
+        public Vector3Rect(IFloat minX, IFloat minY, IFloat minZ, IFloat maxX, IFloat maxY, IFloat maxZ)
         {
             MinX = minX.Get();
             MinY = minY.Get();
+            MinZ = minZ.Get();
             
             MaxX = maxX.Get();
             MaxY = maxY.Get();
+            MaxZ = maxZ.Get();
         }
 
         public VectorType GetModelType() => VectorType.RandomRect;
-        public Vector2 Get()
+        public Vector3 Get()
         {
             var x = Random.Range(MinX, MaxX);
             var y = Random.Range(MinY, MaxY);
-            return new Vector2(x, y);
+            var z = Random.Range(MinZ, MaxZ);
+            return new Vector3(x, y, z);
         }
     }
 }

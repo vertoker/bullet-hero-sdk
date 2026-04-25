@@ -15,6 +15,7 @@ using BHSDK.Models.Resources;
 using BHSDK.Models.SaveData;
 using BHSDK.Models.Settings;
 using BHSDK.Models.Values;
+using BHSDK.Models.Values.Vectors;
 using BHSDK.Serialization;
 using Newtonsoft.Json;
 using NUnit.Framework;

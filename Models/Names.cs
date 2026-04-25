@@ -83,10 +83,16 @@
         public const string ValueB = "b";
         public const string ValueC = "c";
         public const string ValueD = "d";
-        
-        public const string Center = "center";
-        
-        public const string Intensity = "intensity";
+        public const string Num0 = "0";
+        public const string Num1 = "1";
+        public const string Num2 = "2";
+        public const string Num3 = "3";
+        public const string Num4 = "4";
+        public const string Num5 = "5";
+        public const string Num6 = "6";
+        public const string Num7 = "7";
+        public const string Num8 = "8";
+        public const string Num9 = "9";
         
         public const string Speed = "speed";
         public const string Range = "range";
@@ -96,14 +102,19 @@
         public const string Linear = "linear";
         public const string Velocity = "velocity";
         public const string Point = "point";
+        public const string PointShort = "p";
         public const string Angular = "aglular";
         public const string Orbital = "orbital";
         public const string Gravity = "gravity";
         public const string Offset = "offset";
+        public const string Center = "center";
+        public const string CenterShort = "c";
+        public const string Intensity = "intensity";
         public const string Collision = "collision";
         public const string Collisions = "collisions";
         
         public const string Radius = "radius";
+        public const string RadiusShort = "r";
         public const string Major = "major";
         public const string Minor = "minor";
         public const string Top = "top";
@@ -411,6 +422,10 @@
         public const string MaxY = Max + CoordY;
         public const string MaxZ = Max + CoordZ;
         public const string MaxW = Max + CoordW;
+        
+        public const string Point1 = PointShort + Num1;
+        public const string Point2 = PointShort + Num2;
+        public const string Point3 = PointShort + Num3;
         
         public const string WeightedMode = WeightShort + ModeShort;
         public const string TangentMode = TangentShort + ModeShort;

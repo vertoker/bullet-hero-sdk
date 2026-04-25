@@ -2,6 +2,7 @@
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Models.Values.Vectors;
 using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 

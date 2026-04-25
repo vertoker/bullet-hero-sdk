@@ -1,5 +1,6 @@
 ﻿using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Models.Values.Vectors;
 using Newtonsoft.Json;
 using UnityEngine;
 

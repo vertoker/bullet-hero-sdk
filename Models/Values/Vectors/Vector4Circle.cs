@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace BHSDK.Models.Values
+namespace BHSDK.Models.Values.Vectors
 {
     public class Vector4Circle : IVector4
     {
