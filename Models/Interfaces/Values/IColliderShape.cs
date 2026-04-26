@@ -2,8 +2,8 @@
 
 namespace BHSDK.Models.Interfaces.Values
 {
-    public interface ICollisionShape
+    public interface IColliderShape
     {
-        public ShapeType GetModelType();
+        public ColliderShapeType GetModelType();
     }
 }

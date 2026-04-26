@@ -13,18 +13,24 @@ namespace BHSDK.Models.Resources
         
         [JsonProperty(Names.Audios)]
         public List<AudioResource> Audios { get; set; }
+        
+        [JsonProperty(Names.Shapes)]
+        public List<CompositeColliderShape> Shapes { get; set; }
 
         public LevelResources()
         {
             Textures = new List<TextureResource>();
             Fonts = new List<FontResource>();
             Audios = new List<AudioResource>();
+            Shapes = new List<CompositeColliderShape>();
         }
-        public LevelResources(List<TextureResource> textures, List<FontResource> fonts, List<AudioResource> audios)
+        public LevelResources(List<TextureResource> textures, List<FontResource> fonts,
+            List<AudioResource> audios, List<CompositeColliderShape> shapes)
         {
             Textures = textures;
             Fonts = fonts;
             Audios = audios;
+            Shapes = shapes;
         }
     }
 }

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values.Shapes
 {
-    public class RectangleCollisionShape : ICollisionShape
+    public class RectangleColliderShape : IColliderShape
     {
         [JsonProperty(Names.CenterShort)]
         public Vector2Value Center { get; set; }
@@ -16,25 +16,31 @@ namespace BHSDK.Models.Values.Shapes
         [JsonProperty(Names.HeightShort)]
         public float Height { get; set; }
         
-        public ShapeType GetModelType() => ShapeType.Rectangle;
+        [JsonProperty(Names.Angle)]
+        public float Angle { get; set; }
+        
+        public ColliderShapeType GetModelType() => ColliderShapeType.Rectangle;
 
-        public RectangleCollisionShape()
+        public RectangleColliderShape()
         {
             Center = new Vector2Value(0f, 0f);
             Width = 1f;
             Height = 1f;
+            Angle = 0f;
         }
-        public RectangleCollisionShape(float x, float y, float width, float height)
+        public RectangleColliderShape(float x, float y, float width, float height, float angle)
         {
             Center = new Vector2Value(x, y);
             Width = width;
             Height = height;
+            Angle = angle;
         }
-        public RectangleCollisionShape(Vector2Value center, float width, float height)
+        public RectangleColliderShape(Vector2Value center, float width, float height, float angle)
         {
             Center = center;
             Width = width;
             Height = height;
+            Angle = angle;
         }
     }
 }

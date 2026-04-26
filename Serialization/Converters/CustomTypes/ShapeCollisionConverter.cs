@@ -7,24 +7,22 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters.CustomTypes
 {
-    public class ShapeCollisionConverter : JsonConverterCustomType<ICollisionShape, ShapeType>
+    public class ShapeCollisionConverter : JsonConverterCustomType<IColliderShape, ColliderShapeType>
     {
         public ShapeCollisionConverter(JsonSerializer serializerDefault) : base(serializerDefault)
         {
             
         }
 
-        public override ShapeType GetCustomType(ICollisionShape value) => value.GetModelType();
+        public override ColliderShapeType GetCustomType(IColliderShape value) => value.GetModelType();
 
-        public override Type GetType(ShapeType customType)
+        public override Type GetType(ColliderShapeType customType)
         {
             return customType switch
             {
-                ShapeType.Point => typeof(PointCollisionShape),
-                ShapeType.Line => typeof(LineCollisionShape),
-                ShapeType.Circle => typeof(CircleCollisionShape),
-                ShapeType.Rectangle => typeof(RectangleCollisionShape),
-                ShapeType.Triangle => typeof(TriangleCollisionShape),
+                ColliderShapeType.Circle => typeof(CircleColliderShape),
+                ColliderShapeType.Rectangle => typeof(RectangleColliderShape),
+                ColliderShapeType.Triangle => typeof(TriangleColliderShape),
                 _ => throw new ArgumentOutOfRangeException(nameof(customType), customType, null)
             };
         }

@@ -102,6 +102,7 @@
         public const string Linear = "linear";
         public const string Velocity = "velocity";
         public const string Point = "point";
+        public const string Points = "points";
         public const string PointShort = "p";
         public const string Angular = "aglular";
         public const string Orbital = "orbital";
@@ -195,7 +196,8 @@
         public const string Effect = "effect";
         public const string Effects = "effects";
         public const string Eff = "eff";
-        public const string Shape = "shp";
+        public const string Shape = "shape";
+        public const string Shapes = "shapes";
         
         public const string Prefab = "prefab";
         public const string Prefabs = "prefabs";
@@ -391,6 +393,7 @@
         public const string AudioResourceId = Audio + _ + Res + _ + Id;
         public const string ByteResourceId = Byte + _ + Res + _ + Id;
         public const string TextResourceId = Text + _ + Res + _ + Id;
+        public const string ColliderId = Collider + _ + Id;
         public const string UriType = Uri + _ + Type;
         public const string SublingIndex = Subling + _ + Index;
         
