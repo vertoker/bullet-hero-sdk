@@ -16,17 +16,17 @@ namespace BHSDK.Models.Resources
         public List<AudioResource> Audios { get; set; }
         
         [JsonProperty(Names.Shapes)]
-        public List<CompositeColliderShape> CompositeShapes { get; set; }
+        public List<CompositeCollider> CompositeShapes { get; set; }
 
         public LevelResources()
         {
             Textures = new List<TextureResource>();
             Fonts = new List<FontResource>();
             Audios = new List<AudioResource>();
-            CompositeShapes = new List<CompositeColliderShape>();
+            CompositeShapes = new List<CompositeCollider>();
         }
         public LevelResources(List<TextureResource> textures, List<FontResource> fonts,
-            List<AudioResource> audios, List<CompositeColliderShape> compositeShapes)
+            List<AudioResource> audios, List<CompositeCollider> compositeShapes)
         {
             Textures = textures;
             Fonts = fonts;

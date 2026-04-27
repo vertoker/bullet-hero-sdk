@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
-    public class CompositeColliderShape
+    public class CompositeCollider
     {
         public const int MaxCount = 64;
         
@@ -14,14 +14,14 @@ namespace BHSDK.Models.Values
         public int ColliderId { get; set; }
         
         [JsonProperty(Names.TrianglesShort)]
-        public List<TriangleColliderShape> Triangles { get; set; }
+        public List<TriangleCollider> Triangles { get; set; }
 
-        public CompositeColliderShape()
+        public CompositeCollider()
         {
             ColliderId = 0;
-            Triangles = new List<TriangleColliderShape>();
+            Triangles = new List<TriangleCollider>();
         }
-        public CompositeColliderShape(int colliderId, List<TriangleColliderShape> triangles)
+        public CompositeCollider(int colliderId, List<TriangleCollider> triangles)
         {
             ColliderId = colliderId;
             Triangles = triangles;
