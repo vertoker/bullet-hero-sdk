@@ -172,7 +172,7 @@
         public const string AnchorShort = "a";
         
         public const string Collider = "collider";
-        public const string ColliderShort = "cld";
+        public const string ColliderShort = "c";
         public const string Texture = "texture";
         public const string Textures = "textures";
         public const string Subling = "sbl";
@@ -365,6 +365,7 @@
         public const string LevelId = Level + _ + Id;
         public const string AudioId = AudioShort + Id;
         public const string ObjectId = Id;
+        public const string ColliderId = ColliderShort + Id;
         public const string ParentObjectId = ParentShort + ObjectId;
         
         public const string LocalFrame = Local + _ + Frame;
@@ -393,7 +394,6 @@
         public const string AudioResourceId = Audio + _ + Res + _ + Id;
         public const string ByteResourceId = Byte + _ + Res + _ + Id;
         public const string TextResourceId = Text + _ + Res + _ + Id;
-        public const string ColliderId = Collider + _ + Id;
         public const string UriType = Uri + _ + Type;
         public const string SublingIndex = Subling + _ + Index;
         

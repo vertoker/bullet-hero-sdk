@@ -13,6 +13,9 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.ColliderShort)]
         public bool Collider { get; set; }
         
+        [JsonProperty(Names.ColliderId)]
+        public int ColliderId { get; set; }
+        
         [JsonProperty(Names.Color)]
         public List<Clr> Clr { get; set; }
         
@@ -28,16 +31,18 @@ namespace BHSDK.Models.Objects
         public TextureObject()
         {
             Collider = true;
+            ColliderId = 0;
             Clr = new List<Clr>();
             TextureResourceId = 0;
             SublingIndex = 0;
         }
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, 
             int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot,
-            bool collider, List<Clr> clr, int textureResourceId, int sublingIndex)
+            bool collider, int colliderId, List<Clr> clr, int textureResourceId, int sublingIndex)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
         {
             Collider = collider;
+            ColliderId = colliderId;
             Clr = clr;
             TextureResourceId = textureResourceId;
             SublingIndex = sublingIndex;
