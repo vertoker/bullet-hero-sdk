@@ -1,11 +1,10 @@
-﻿using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Values.Shapes
+namespace BHSDK.Models.Values
 {
-    public class TriangleColliderShape : IColliderShape
+    public class TriangleColliderShape
     {
         [JsonProperty(Names.Point1)]
         public Vector2Value Point1 { get; set; }
@@ -16,8 +15,6 @@ namespace BHSDK.Models.Values.Shapes
         [JsonProperty(Names.Point3)]
         public Vector2Value Point3 { get; set; }
         
-        public ColliderShapeType GetModelType() => ColliderShapeType.Triangle;
-
         public TriangleColliderShape()
         {
             Point1 = new Vector2Value(-0.5f, -0.5f);

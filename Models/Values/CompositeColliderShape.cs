@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Resources
+namespace BHSDK.Models.Values
 {
     public class CompositeColliderShape
     {
-        public const int MaxCount = 128;
+        public const int MaxCount = 64;
         
         // id for user-defined colliders, allowed only negative (started with -1, 0 is uninitialized)
         // this works like resource, but integrated in model. Works only with TextureObject
@@ -14,18 +13,18 @@ namespace BHSDK.Models.Resources
         [JsonProperty(Names.ColliderId)]
         public int ColliderId { get; set; }
         
-        [JsonProperty(Names.Shapes)]
-        public List<IColliderShape> Shapes { get; set; }
+        [JsonProperty(Names.TrianglesShort)]
+        public List<TriangleColliderShape> Triangles { get; set; }
 
         public CompositeColliderShape()
         {
             ColliderId = 0;
-            Shapes = new List<IColliderShape>();
+            Triangles = new List<TriangleColliderShape>();
         }
-        public CompositeColliderShape(int colliderId, List<IColliderShape> shapes)
+        public CompositeColliderShape(int colliderId, List<TriangleColliderShape> triangles)
         {
             ColliderId = colliderId;
-            Shapes = shapes;
+            Triangles = triangles;
         }
     }
 }

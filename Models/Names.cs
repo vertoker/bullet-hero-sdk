@@ -198,6 +198,9 @@
         public const string Eff = "eff";
         public const string Shape = "shape";
         public const string Shapes = "shapes";
+        public const string Triangle = "triangle";
+        public const string Triangles = "triangles";
+        public const string TrianglesShort = "tris";
         
         public const string Prefab = "prefab";
         public const string Prefabs = "prefabs";
