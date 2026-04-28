@@ -1,14 +1,16 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectAngleCurvesBySpeed : IEffectAngle
+    public class EffectAngleCurvesBySpeed : IEffectAngle, ICopyable<EffectAngleCurvesBySpeed>
     {
         [JsonProperty(Names.Curve)]
         public CurveValue Curve { get; set; }
@@ -33,5 +35,8 @@ namespace BHSDK.Models.Effects
             Curve = curve;
             SpeedRange = speedRange;
         }
+
+        IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleCurvesBySpeed(Curve.Copy(), SpeedRange.Copy());
+        public EffectAngleCurvesBySpeed Copy() => new(Curve.Copy(), SpeedRange.Copy());
     }
 }

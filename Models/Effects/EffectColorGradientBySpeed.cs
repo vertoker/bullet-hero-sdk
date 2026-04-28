@@ -1,14 +1,16 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectColorGradientBySpeed : IEffectColor
+    public class EffectColorGradientBySpeed : IEffectColor, ICopyable<EffectColorGradientBySpeed>
     {
         [JsonProperty(Names.Gradient)]
         public GradientValue Gradient { get; set; }
@@ -33,5 +35,8 @@ namespace BHSDK.Models.Effects
             Gradient = gradient;
             SpeedRange = speedRange;
         }
+
+        IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorGradientBySpeed(Gradient.Copy(), SpeedRange.Copy());
+        public EffectColorGradientBySpeed Copy() => new(Gradient.Copy(), SpeedRange.Copy());
     }
 }

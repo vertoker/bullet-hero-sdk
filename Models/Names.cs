@@ -16,6 +16,8 @@
         public const string Step = "step";
         public const string Start = "start";
         public const string End = "end";
+        public const string Prev = "prev";
+        public const string Next = "next";
         public const string StartShort = "s";
         public const string EndShort = "e";
         
@@ -56,6 +58,7 @@
         
         public const string Index = "idx";
         public const string Id = "id";
+        public const string Ids = "ids";
         public const string Guid = "guid";
         
         public const string Position = "pos";
@@ -365,9 +368,13 @@
         
         // Instances
         
-        public const string LevelId = Level + _ + Id;
+        public const string LevelGuid = Level + _ + Guid;
+        public const string PrefabGuid = Prefab + _ + Guid;
         public const string AudioId = AudioShort + Id;
         public const string ObjectId = Id;
+        public const string PrevObjectId = Prev + _ + Id;
+        public const string NextObjectId = Next + _ + Id;
+        public const string ObjectIds = Ids;
         public const string ColliderId = ColliderShort + Id;
         public const string ParentObjectId = ParentShort + ObjectId;
         

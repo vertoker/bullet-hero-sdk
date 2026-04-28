@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class Clr : Keyframe
+    public class Clr : Keyframe, ICopyable<Clr>
     {
         [JsonProperty(Names.Color)]
         public IColor Value { get; set; }
@@ -19,5 +20,7 @@ namespace BHSDK.Models.Keyframes
         {
             Value = value;
         }
+
+        public Clr Copy() => new(Frame, Ease, Value.Copy());
     }
 }

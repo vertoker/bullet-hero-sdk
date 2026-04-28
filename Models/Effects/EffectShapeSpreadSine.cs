@@ -1,10 +1,11 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectShapeSpreadSine : IEffectShapeSpread
+    public class EffectShapeSpreadSine : IEffectShapeSpread, ICopyable<EffectShapeSpreadSine>
     {
         public EffectShapeSpreadType GetModelType() => EffectShapeSpreadType.Sine;
         public float GetSpread(float time)
@@ -15,5 +16,8 @@ namespace BHSDK.Models.Effects
             random *= 2f;
             return random;
         }
+        
+        IEffectShapeSpread ICopyable<IEffectShapeSpread>.Copy() => new EffectShapeSpreadSine();
+        public EffectShapeSpreadSine Copy() => new();
     }
 }

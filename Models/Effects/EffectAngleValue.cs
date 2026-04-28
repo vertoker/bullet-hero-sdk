@@ -1,12 +1,14 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectAngleValue : IEffectAngle
+    public class EffectAngleValue : IEffectAngle, ICopyable<EffectAngleValue>
     {
         [JsonProperty(Names.Angle)]
         public IFloat Angle { get; set; }
@@ -25,5 +27,8 @@ namespace BHSDK.Models.Effects
         {
             Angle = angle;
         }
+
+        IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleValue(Angle.Copy());
+        public EffectAngleValue Copy() => new(Angle.Copy());
     }
 }

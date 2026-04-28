@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
-    public class TextureObject : Object
+    public class TextureObject : Object, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.Texture;
         
@@ -46,6 +48,17 @@ namespace BHSDK.Models.Objects
             Clr = clr;
             TextureResourceId = textureResourceId;
             SublingIndex = sublingIndex;
+        }
+
+        public void Update(TextureObject src)
+        {
+            base.Update(src);
+            
+            Collider = src.Collider;
+            ColliderId = src.ColliderId;
+            Clr = src.Clr.Select(clr => clr.Copy()).ToList();
+            TextureResourceId = src.TextureResourceId;
+            SublingIndex = src.SublingIndex;
         }
     }
 }

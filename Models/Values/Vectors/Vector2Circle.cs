@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -6,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace BHSDK.Models.Values.Vectors
 {
-    public class Vector2Circle : IVector2
+    public class Vector2Circle : IVector2, ICopyable<Vector2Circle>
     {
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
@@ -49,5 +50,8 @@ namespace BHSDK.Models.Values.Vectors
             var y = distance * Mathf.Sin(angle) * Radius + Y;
             return new Vector2(x, y);
         }
+
+        IVector2 ICopyable<IVector2>.Copy() => new Vector2Circle(X, Y, Radius);
+        public Vector2Circle Copy() => new(X, Y, Radius);
     }
 }

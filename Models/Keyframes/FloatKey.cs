@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class FloatKey : Keyframe
+    public class FloatKey : Keyframe, ICopyable<FloatKey>
     {
         [JsonProperty(Names.Float)]
         public IFloat Value { get; set; }
@@ -19,5 +20,7 @@ namespace BHSDK.Models.Keyframes
         {
             Value = value;
         }
+
+        public FloatKey Copy() => new(Frame, Ease, Value.Copy());
     }
 }

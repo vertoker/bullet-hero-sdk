@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace BHSDK.Models.Interfaces.Values
 {
-    public interface IVector4
+    public interface IVector4 : ICopyable<IVector4>
     {
         public VectorType GetModelType();
         public Vector4 Get();

@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using BHSDK.Models.Interfaces;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class GradientColorKeyValue
+    public class GradientColorKeyValue : ICopyable<GradientColorKeyValue>
     {
         // TODO maybe replace FloatValue to IFloat (color too) (in editor step)
         
@@ -11,25 +12,20 @@ namespace BHSDK.Models.Values
         public ColorValue ColorHDR { get; set; }
         
         [JsonProperty(Names.TimeShort)]
-        public FloatValue Time { get; set; }
+        public float Time { get; set; }
         
         public GradientColorKey Get()
         {
-            var key = new GradientColorKey(ColorHDR.Get(), Time.Get());
+            var key = new GradientColorKey(ColorHDR.Get(), Time);
             return key;
         }
 
         public GradientColorKeyValue()
         {
             ColorHDR = new ColorValue(Color.white);
-            Time = new FloatValue(0f);
+            Time = 0f;
         }
-        public GradientColorKeyValue(Color colorHDR, float time)
-        {
-            ColorHDR = new ColorValue(colorHDR);
-            Time = new FloatValue(time);
-        }
-        public GradientColorKeyValue(ColorValue colorHDR, FloatValue time)
+        public GradientColorKeyValue(ColorValue colorHDR, float time)
         {
             ColorHDR = colorHDR;
             Time = time;
@@ -37,7 +33,9 @@ namespace BHSDK.Models.Values
         public GradientColorKeyValue(GradientColorKey key)
         {
             ColorHDR = new ColorValue(key.color);
-            Time = new FloatValue(key.time);
+            Time = key.time;
         }
+
+        public GradientColorKeyValue Copy() => new(ColorHDR.Copy(), Time);
     }
 }

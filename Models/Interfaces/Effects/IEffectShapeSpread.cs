@@ -2,7 +2,7 @@
 
 namespace BHSDK.Models.Interfaces.Effects
 {
-    public interface IEffectShapeSpread
+    public interface IEffectShapeSpread : ICopyable<IEffectShapeSpread>
     {
         public EffectShapeSpreadType GetModelType();
         public float GetSpread(float time);

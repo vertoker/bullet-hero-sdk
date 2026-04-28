@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace BHSDK.Models
+namespace BHSDK.Utils
 {
     public static class AudioStatic
     {

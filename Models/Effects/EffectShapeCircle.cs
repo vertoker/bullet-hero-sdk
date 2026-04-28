@@ -1,13 +1,15 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectShapeCircle : IEffectShape
+    public class EffectShapeCircle : IEffectShape, ICopyable<EffectShapeCircle>
     {
         [JsonProperty(Names.Radius)]
         public IFloat Radius { get; set; }
@@ -44,5 +46,8 @@ namespace BHSDK.Models.Effects
             Arc = arc;
             Spread = spread;
         }
+
+        IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeCircle(Radius.Copy(), Thickness.Copy(), Arc.Copy(), Spread.Copy());
+        public EffectShapeCircle Copy() => new(Radius.Copy(), Thickness.Copy(), Arc.Copy(), Spread.Copy());
     }
 }

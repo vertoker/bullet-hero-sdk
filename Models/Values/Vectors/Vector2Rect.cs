@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
-    public class Vector2Rect : IVector2
+    public class Vector2Rect : IVector2, ICopyable<Vector2Rect>
     {
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
@@ -52,5 +53,8 @@ namespace BHSDK.Models.Values.Vectors
             var y = Random.Range(MinY, MaxY);
             return new Vector2(x, y);
         }
+
+        IVector2 ICopyable<IVector2>.Copy() => new Vector2Rect(MinX, MinY, MaxX, MaxY);
+        public Vector2Rect Copy() => new(MinX, MinY, MaxX, MaxY);
     }
 }

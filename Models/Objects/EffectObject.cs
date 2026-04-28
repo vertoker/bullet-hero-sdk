@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using BHSDK.Models.Effects;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
-using Object = BHSDK.Models.Objects.Object;
 
 namespace BHSDK.Models.Objects
 {
-    public class EffectObject : Object, IEffect
+    public class EffectObject : Object, IEffect, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.Effect;
 
@@ -56,6 +55,18 @@ namespace BHSDK.Models.Objects
             EffectAngle = effectAngle;
             EffectScale = effectScale;
             EffectColor = effectColor;
+        }
+
+        public void Update(EffectObject src)
+        {
+            base.Update(this);
+            
+            Core.Update(src.Core);
+            Forces.Update(src.Forces);
+            EffectShape = src.EffectShape.Copy();
+            EffectAngle = src.EffectAngle.Copy();
+            EffectScale = src.EffectScale.Copy();
+            EffectColor = src.EffectColor.Copy();
         }
     }
 }

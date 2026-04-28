@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using BHSDK.Models;
 using BHSDK.Models.Audio;
@@ -162,7 +163,7 @@ namespace BHSDK.Tests
             prefab.Objects.Add(new EffectObject());
             level.Game.Prefabs.Add(prefab);
             
-            var prefabObject = new PrefabObject { PrefabIndex = 0 };
+            var prefabObject = new PrefabObject { PrefabGuid = Guid.NewGuid() };
             level.Game.PrefabObjects.Add(prefabObject);
             
             level.Game.Themes.Add(new Theme());
@@ -216,12 +217,12 @@ namespace BHSDK.Tests
             
             var prefabObject = new PrefabObject
             {
-                PrefabIndex = 0
+                PrefabGuid = Guid.NewGuid(),
             };
             var modification = new Modification
             {
                 ObjectId = 123,
-                Path = "id",
+                Path = ObjectPropertyPath.Object_StartFrame,
                 Value = 321
             };
             prefabObject.Modifications.Add(modification);

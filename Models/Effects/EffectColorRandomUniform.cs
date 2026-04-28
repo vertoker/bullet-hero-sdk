@@ -1,13 +1,15 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectColorRandomUniform : IEffectColor
+    public class EffectColorRandomUniform : IEffectColor, ICopyable<EffectColorRandomUniform>
     {
         [JsonProperty(Names.ColorA)]
         public IColor ColorA { get; set; }
@@ -32,5 +34,8 @@ namespace BHSDK.Models.Effects
             ColorA = colorA;
             ColorB = colorB;
         }
+
+        IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorRandomUniform(ColorA.Copy(), ColorB.Copy());
+        public EffectColorRandomUniform Copy() => new(ColorA.Copy(), ColorB.Copy());
     }
 }

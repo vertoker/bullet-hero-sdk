@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
-    public class Object
+    public class Object : IUpdatable<Object>
     {
         public virtual ObjectType GetModelType() => ObjectType.Object;
         
         // Introducing to game identifiers. There are 2 types
         
         // 1. ObjectId - stable identifier for saving.
-        // Unique only inside each object scope.
-        // Can be referred (as pid) only in scope.
-        // (but you still can rewrite pid from outside via modifications)
+        // Unique only inside each object scope. Can be referred (as pid) only in scope.
+        // When PrefabObjects converts to regular Objects, they change all ids for each hierarchy level
         
         // 2. FrameIndex - runtime temporary index (not id, use for direct indexation).
         // Changes every runtime and using for rendering instances in frame context only
@@ -94,6 +95,21 @@ namespace BHSDK.Models.Objects
             Sca = sca;
             Layer = layer;
             Pivot = pivot;
+        }
+
+        public void Update(Object src)
+        {
+            ObjectId = src.ObjectId;
+            ParentObjectId = src.ParentObjectId;
+            Name = src.Name;
+            Visible = src.Visible;
+            StartFrame = src.StartFrame;
+            EndFrame = src.EndFrame;
+            Pos = src.Pos.Select(p => p.Copy()).ToList();
+            Rot = src.Rot.Select(r => r.Copy()).ToList();
+            Sca = src.Sca.Select(s => s.Copy()).ToList();
+            Layer = src.Layer;
+            Pivot = src.Pivot.Copy();
         }
     }
 }

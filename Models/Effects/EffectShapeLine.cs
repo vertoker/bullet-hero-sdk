@@ -1,14 +1,16 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectShapeLine : IEffectShape
+    public class EffectShapeLine : IEffectShape, ICopyable<EffectShapeLine>
     {
         [JsonProperty(Names.Start)]
         public IVector2 Start { get; set; }
@@ -39,5 +41,8 @@ namespace BHSDK.Models.Effects
             End = end;
             Spread = spread;
         }
+
+        IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeLine(Start.Copy(), End.Copy(), Spread.Copy());
+        public EffectShapeLine Copy() => new(Start.Copy(), End.Copy(), Spread.Copy());
     }
 }

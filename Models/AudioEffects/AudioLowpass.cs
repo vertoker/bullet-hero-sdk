@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BHSDK.Utils;
+using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {

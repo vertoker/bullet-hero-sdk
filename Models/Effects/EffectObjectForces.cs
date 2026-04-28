@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectObjectForces
+    public class EffectObjectForces : IUpdatable<EffectObjectForces>
     {
         [JsonProperty(Names.GravityMin)]
         public IFloat StartGravityMin { get; set; }
@@ -92,6 +94,21 @@ namespace BHSDK.Models.Effects
             OrbitalCenterOffset = orbitalCenterOffset;
             VelocitySpeed = velocitySpeed;
             LinearForce = linearForce;
+        }
+
+        public void Update(EffectObjectForces src)
+        {
+            StartGravityMax = src.StartGravityMax;
+            StartGravityMin = src.StartGravityMin;
+            StartVelocityMin = src.StartVelocityMin;
+            StartVelocityMax = src.StartVelocityMax;
+            StartAngularVelocityMin = src.StartAngularVelocityMin;
+            StartAngularVelocityMax = src.StartAngularVelocityMax;
+            LinearVelocity = src.LinearVelocity;
+            OrbitalVelocity = src.OrbitalVelocity;
+            OrbitalCenterOffset = src.OrbitalCenterOffset;
+            VelocitySpeed = src.VelocitySpeed;
+            LinearForce = src.LinearForce;
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
-    public class Alignment
+    public class Alignment : ICopyable<Alignment>
     {
         [JsonProperty(Names.ValueShort)]
         public IVector2 Value { get; set; }
@@ -51,5 +52,7 @@ namespace BHSDK.Models.Values
         {
             Value = value;
         }
+
+        public Alignment Copy() => new(Value.Copy());
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class GradientValue
+    public class GradientValue : ICopyable<GradientValue>
     {
         public const int MaxCount = 4;
         
@@ -66,5 +68,8 @@ namespace BHSDK.Models.Values
             Mode = (GradientInterpolationMode)gradient.mode;
             ColorSpace = (GradientColorSpace)gradient.colorSpace;
         }
+
+        public GradientValue Copy() => new(ColorKeys.Select(color => color.Copy()).ToList(),
+            AlphaKeys.Select(alpha => alpha.Copy()).ToList(), Mode, ColorSpace);
     }
 }

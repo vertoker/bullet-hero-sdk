@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
-    public class Vector4Value : IVector4
+    public class Vector4Value : IVector4, ICopyable<Vector4Value>
     {
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
@@ -50,5 +51,8 @@ namespace BHSDK.Models.Values.Vectors
 
         public VectorType GetModelType() => VectorType.Value;
         public Vector4 Get() => new(X, Y, Z, W);
+        
+        IVector4 ICopyable<IVector4>.Copy() => new Vector4Value(X, Y, Z, W);
+        public Vector4Value Copy() => new(X, Y, Z, W);
     }
 }

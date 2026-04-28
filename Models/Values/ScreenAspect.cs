@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using BHSDK.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
-    public class ScreenAspect
+    public class ScreenAspect : ICopyable<ScreenAspect>
     {
         [JsonProperty(Names.WidthShort)]
         public int Width { get; set; }
@@ -22,5 +23,7 @@ namespace BHSDK.Models.Values
             Width = width;
             Height = height;
         }
+
+        public ScreenAspect Copy() => new(Width, Height);
     }
 }

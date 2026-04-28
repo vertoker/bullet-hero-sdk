@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Linq;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class Theme : ITheme
+    public class Theme : ITheme, ICopyable<Theme>
     {
         public const int Count = 64;
         
@@ -44,5 +46,7 @@ namespace BHSDK.Models.Values
             Name = name;
             Matrix = matrix;
         }
+
+        public Theme Copy() => new(Name, Matrix.Select(color => color.Copy()).ToArray());
     }
 }

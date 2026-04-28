@@ -2,7 +2,7 @@
 
 namespace BHSDK.Models.Interfaces.Effects
 {
-    public interface IEffectShape
+    public interface IEffectShape : ICopyable<IEffectShape>
     {
         public EffectShapeType GetModelType();
     }

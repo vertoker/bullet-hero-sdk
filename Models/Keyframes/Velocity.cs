@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Keyframes
 {
     // TODO activate for player when add events
-    public class Velocity : Keyframe
+    public class Velocity : Keyframe, ICopyable<Velocity>
     {
         [JsonProperty(Names.Vector2)]
         public IVector2 Vector2 { get; set; }
@@ -21,5 +22,7 @@ namespace BHSDK.Models.Keyframes
         {
             Vector2 = vector2;
         }
+
+        public Velocity Copy() => new(Frame, Ease, Vector2.Copy());
     }
 }

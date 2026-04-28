@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class Rot : Keyframe
+    public class Rot : Keyframe, ICopyable<Rot>
     {
         [JsonProperty(Names.Angle)]
         public IFloat Angle { get; set; }
@@ -19,5 +20,7 @@ namespace BHSDK.Models.Keyframes
         {
             Angle = angle;
         }
+
+        public Rot Copy() => new(Frame, Ease, Angle.Copy());
     }
 }

@@ -1,13 +1,15 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectShapeCone : IEffectShape
+    public class EffectShapeCone : IEffectShape, ICopyable<EffectShapeCone>
     {
         [JsonProperty(Names.TopRadius)]
         public IFloat TopRadius { get; set; }
@@ -50,5 +52,8 @@ namespace BHSDK.Models.Effects
             Height = height;
             Spread = spread;
         }
+
+        IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeCone(TopRadius.Copy(), BaseRadius.Copy(), Arc.Copy(), Height.Copy(), Spread.Copy());
+        public EffectShapeCone Copy() => new(TopRadius.Copy(), BaseRadius.Copy(), Arc.Copy(), Height.Copy(), Spread.Copy());
     }
 }

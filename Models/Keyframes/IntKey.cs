@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class IntKey : Keyframe
+    public class IntKey : Keyframe, ICopyable<IntKey>
     {
         [JsonProperty(Names.Int)]
         public IInt Value { get; set; }
@@ -19,5 +20,7 @@ namespace BHSDK.Models.Keyframes
         {
             Value = value;
         }
+
+        public IntKey Copy() => new(Frame, Ease, Value.Copy());
     }
 }

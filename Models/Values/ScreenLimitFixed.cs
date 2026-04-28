@@ -1,13 +1,14 @@
 ﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Game;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class ScreenLimitFixed : IScreenLimit
+    public class ScreenLimitFixed : IScreenLimit, ICopyable<ScreenLimitFixed>
     {
         [JsonProperty(Names.Aspect)]
         public ScreenAspect Aspect { get; set; }
@@ -24,5 +25,8 @@ namespace BHSDK.Models.Values
         {
             Aspect = aspect;
         }
+
+        IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitFixed(Aspect.Copy());
+        public ScreenLimitFixed Copy() => new(Aspect.Copy());
     }
 }

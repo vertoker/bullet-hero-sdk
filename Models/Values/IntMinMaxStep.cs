@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class IntMinMaxStep : IInt
+    public class IntMinMaxStep : IInt, ICopyable<IntMinMaxStep>
     {
         [JsonProperty(Names.Min)]
         public int Min { get; set; }
@@ -36,5 +37,8 @@ namespace BHSDK.Models.Values
             value = Mathf.Clamp(Mathf.RoundToInt(value / (float)Step) * Step, Min, Max);
             return value;
         }
+
+        IInt ICopyable<IInt>.Copy() => new IntMinMaxStep(Min, Max, Step);
+        public IntMinMaxStep Copy() => new(Min, Max, Step);
     }
 }

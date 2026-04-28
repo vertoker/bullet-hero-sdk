@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class ColorValue : IColor
+    public class ColorValue : IColor, ICopyable<ColorValue>
     {
         [JsonProperty(Names.ChannelR)]
         public float R { get; set; }
@@ -50,5 +51,8 @@ namespace BHSDK.Models.Values
 
         public ColorType GetModelType() => ColorType.Value;
         public Color Get() => new(R, G, B, A);
+
+        IColor ICopyable<IColor>.Copy() => new ColorValue(R, G, B, A);
+        public ColorValue Copy() => new(R, G, B, A);
     }
 }

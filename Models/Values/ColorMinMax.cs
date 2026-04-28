@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class ColorMinMax : IColor
+    public class ColorMinMax : IColor, ICopyable<ColorMinMax>
     {
         [JsonProperty(Names.MinR)]
         public float MinR { get; set; }
@@ -77,5 +78,8 @@ namespace BHSDK.Models.Values
             var a = Random.Range(MinA, MaxA);
             return new Color(r, g, b, a);
         }
+
+        IColor ICopyable<IColor>.Copy() => new ColorMinMax(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
+        public ColorMinMax Copy() => new(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
     }
 }

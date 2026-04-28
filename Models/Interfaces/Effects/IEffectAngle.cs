@@ -2,7 +2,7 @@
 
 namespace BHSDK.Models.Interfaces.Effects
 {
-    public interface IEffectAngle
+    public interface IEffectAngle : ICopyable<IEffectAngle>
     {
         public EffectAngleType GetModelType();
     }

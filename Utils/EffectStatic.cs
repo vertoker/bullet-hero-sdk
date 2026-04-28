@@ -1,10 +1,10 @@
 ﻿using System;
-using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Values;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 
-namespace BHSDK.Models
+namespace BHSDK.Utils
 {
     public static class EffectStatic
     {
@@ -12,14 +12,13 @@ namespace BHSDK.Models
         // Defaults
         // -----------------------------------------------------------------------------
         
-        public static readonly bool Core_ParticleColliderDefault = false;
         public static readonly bool Core_HasStopLocalFrameDefault = false;
         public static readonly int Core_StopLocalFrameDefault = 10;
         
         public static readonly bool Core_LoopDefault = true;
         public static readonly uint Core_ParticleCountDefault = 10;
         public static readonly Vector2 Core_LifetimeBoundsDefault = new(3f, 3f);
-        public static readonly Vector2 Core_PivotDefault = new(0f, 0f);
+        public static readonly Vector2 Core_PivotDefault = Alignment.MiddleCenterValue.Get();
         public static readonly Vector2 Core_GravityConstraintDefault = new(0f, -9.81f);
         public static readonly int Core_TextureResourceIdDefault = 1;
         

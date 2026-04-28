@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectObjectCore
+    public class EffectObjectCore : IUpdatable<EffectObjectCore>
     {
         [JsonProperty(Names.Loop)]
         public bool Loop { get; set; }
@@ -16,9 +18,6 @@ namespace BHSDK.Models.Effects
         
         [JsonProperty(Names.Lifetime)]
         public IVector2 LifetimeBounds { get; set; }
-        
-        [JsonProperty(Names.ParticleCollider)]
-        public bool ParticleCollider { get; set; }
         
         [JsonProperty(Names.HasStopLocalFrame)]
         public bool HasStopLocalFrame { get; set; }
@@ -32,44 +31,52 @@ namespace BHSDK.Models.Effects
         public int TextureResourceId { get; set; }
         
         [JsonProperty(Names.ParticlePivot)]
-        public IVector2 ParticlePivot { get; set; }
+        public Alignment ParticlePivot { get; set; }
 
         public EffectObjectCore()
         {
             Loop = EffectStatic.Core_LoopDefault;
             ParticleCount = EffectStatic.Core_ParticleCountDefault;
             LifetimeBounds = new Vector2Value(EffectStatic.Core_LifetimeBoundsDefault);
-            ParticleCollider = EffectStatic.Core_ParticleColliderDefault;
             HasStopLocalFrame = EffectStatic.Core_HasStopLocalFrameDefault;
             StopLocalFrame = EffectStatic.Core_StopLocalFrameDefault;
             TextureResourceId = EffectStatic.Core_TextureResourceIdDefault;
-            ParticlePivot = new Vector2Value(EffectStatic.Core_PivotDefault);
+            ParticlePivot = new Alignment(new Vector2Value(EffectStatic.Core_PivotDefault));
         }
         
-        public EffectObjectCore(bool loop, uint particleCount, Vector2 lifetimeBounds, bool particleCollider,
+        public EffectObjectCore(bool loop, uint particleCount, Vector2 lifetimeBounds,
             bool hasStopLocalFrame, int stopLocalFrame, int textureResourceId, Vector2 particlePivot)
         {
             Loop = loop;
             ParticleCount = particleCount;
             LifetimeBounds = new Vector2Value(lifetimeBounds);
-            ParticleCollider = particleCollider;
             HasStopLocalFrame = hasStopLocalFrame;
             StopLocalFrame = stopLocalFrame;
             TextureResourceId = textureResourceId;
-            ParticlePivot = new Vector2Value(particlePivot);
+            ParticlePivot = new Alignment(new Vector2Value(particlePivot));
         }
         
-        public EffectObjectCore(bool loop, uint particleCount, IVector2 lifetimeBounds, bool particleCollider,
-            bool hasStopLocalFrame, int stopLocalFrame, int textureResourceId, IVector2 particlePivot)
+        public EffectObjectCore(bool loop, uint particleCount, IVector2 lifetimeBounds,
+            bool hasStopLocalFrame, int stopLocalFrame, int textureResourceId, Alignment particlePivot)
         {
             Loop = loop;
             ParticleCount = particleCount;
             LifetimeBounds = lifetimeBounds;
-            ParticleCollider = particleCollider;
             HasStopLocalFrame = hasStopLocalFrame;
             StopLocalFrame = stopLocalFrame;
             TextureResourceId = textureResourceId;
             ParticlePivot = particlePivot;
+        }
+
+        public void Update(EffectObjectCore src)
+        {
+            Loop = src.Loop;
+            ParticleCount = src.ParticleCount;
+            LifetimeBounds = src.LifetimeBounds;
+            HasStopLocalFrame = src.HasStopLocalFrame;
+            StopLocalFrame = src.StopLocalFrame;
+            TextureResourceId = src.TextureResourceId;
+            ParticlePivot = src.ParticlePivot;
         }
     }
 }

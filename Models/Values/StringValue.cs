@@ -1,10 +1,11 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
-    public class StringValue : IString
+    public class StringValue : IString, ICopyable<StringValue>
     {
         [JsonProperty(Names.ValueShort)]
         public string Value { get; set; }
@@ -20,5 +21,8 @@ namespace BHSDK.Models.Values
 
         public StringType GetModelType() => StringType.Value;
         public string Get() => Value;
+        
+        IString ICopyable<IString>.Copy() => new StringValue(Value);
+        public StringValue Copy() => new(Value);
     }
 }

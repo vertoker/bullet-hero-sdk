@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
-    public class Vector2RectStep : IVector2
+    public class Vector2RectStep : IVector2, ICopyable<Vector2RectStep>
     {
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
@@ -66,5 +67,8 @@ namespace BHSDK.Models.Values.Vectors
             y = Mathf.RoundToInt(y / Step) * Step;
             return new Vector2(x, y);
         }
+
+        IVector2 ICopyable<IVector2>.Copy() => new Vector2RectStep(MinX, MinY, MaxX, MaxY, Step);
+        public Vector2RectStep Copy() => new(MinX, MinY, MaxX, MaxY, Step);
     }
 }

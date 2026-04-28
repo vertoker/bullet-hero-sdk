@@ -1,7 +1,7 @@
 ﻿using BHSDK.Models.Enum.Text;
 using UnityEngine;
 
-namespace BHSDK.Models
+namespace BHSDK.Utils
 {
     public static class TextStatic
     {

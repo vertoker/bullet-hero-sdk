@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class CurveValue
+    public class CurveValue : ICopyable<CurveValue>
     {
         public const int MaxCount = 4;
         
@@ -52,5 +54,7 @@ namespace BHSDK.Models.Values
             PreWrapMode = (CurveWrapMode)curve.preWrapMode;
             PostWrapMode = (CurveWrapMode)curve.postWrapMode;
         }
+
+        public CurveValue Copy() => new(KeyFrames.Select(keyframe => keyframe.Copy()).ToList(), PostWrapMode, PreWrapMode);
     }
 }

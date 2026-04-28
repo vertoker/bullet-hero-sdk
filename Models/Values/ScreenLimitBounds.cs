@@ -1,11 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class ScreenLimitBounds : IScreenLimit
+    public class ScreenLimitBounds : IScreenLimit, ICopyable<ScreenLimitBounds>
     {
         [JsonProperty(Names.MinAspect)]
         public ScreenAspect MinAspect { get; set; }
@@ -41,5 +42,8 @@ namespace BHSDK.Models.Values
             MinAspect = minAspect;
             MaxAspect = maxAspect;
         }
+
+        IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitBounds(MinAspect.Copy(), MaxAspect.Copy());
+        public ScreenLimitBounds Copy() => new(MinAspect.Copy(), MaxAspect.Copy());
     }
 }

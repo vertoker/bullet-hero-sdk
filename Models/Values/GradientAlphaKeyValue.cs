@@ -1,43 +1,41 @@
-﻿using Newtonsoft.Json;
+﻿using BHSDK.Models.Interfaces;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
-    public class GradientAlphaKeyValue
+    public class GradientAlphaKeyValue : ICopyable<GradientAlphaKeyValue>
     {
         // TODO maybe replace FloatValue to IFloat (in editor step)
         
         [JsonProperty(Names.AlphaShort)]
-        public FloatValue Alpha { get; set; }
+        public float Alpha { get; set; }
         
         [JsonProperty(Names.TimeShort)]
-        public FloatValue Time { get; set; }
+        public float Time { get; set; }
 
         public GradientAlphaKey Get()
         {
-            var key = new GradientAlphaKey(Alpha.Get(), Time.Get());
+            var key = new GradientAlphaKey(Alpha, Time);
             return key;
         }
 
         public GradientAlphaKeyValue()
         {
-            Alpha = new FloatValue(1f);
-            Time = new FloatValue(0f);
+            Alpha = 1f;
+            Time = 0f;
         }
         public GradientAlphaKeyValue(float alpha, float time)
-        {
-            Alpha = new FloatValue(alpha);
-            Time = new FloatValue(time);
-        }
-        public GradientAlphaKeyValue(FloatValue alpha, FloatValue time)
         {
             Alpha = alpha;
             Time = time;
         }
         public GradientAlphaKeyValue(GradientAlphaKey key)
         {
-            Alpha = new FloatValue(key.alpha);
-            Time = new FloatValue(key.time);
+            Alpha = key.alpha;
+            Time = key.time;
         }
+
+        public GradientAlphaKeyValue Copy() => new(Alpha, Time);
     }
 }

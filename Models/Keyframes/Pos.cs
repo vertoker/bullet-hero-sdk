@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class Pos : Keyframe
+    public class Pos : Keyframe, ICopyable<Pos>
     {
         [JsonProperty(Names.Vector2)]
         public IVector2 Vector2 { get; set; }
@@ -25,5 +26,7 @@ namespace BHSDK.Models.Keyframes
             Vector2 = vector2;
             Anchor = anchor;
         }
+
+        public Pos Copy() => new(Frame, Ease, Vector2.Copy(), Anchor.Copy());
     }
 }

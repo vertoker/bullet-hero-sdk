@@ -1,12 +1,14 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Values;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectAngleCurvesOverLife : IEffectAngle
+    public class EffectAngleCurvesOverLife : IEffectAngle, ICopyable<EffectAngleCurvesOverLife>
     {
         [JsonProperty(Names.Curve)]
         public CurveValue Curve { get; set; }
@@ -25,5 +27,8 @@ namespace BHSDK.Models.Effects
         {
             Curve = curve;
         }
+
+        IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleCurvesOverLife(Curve.Copy());
+        public EffectAngleCurvesOverLife Copy() => new(Curve.Copy());
     }
 }

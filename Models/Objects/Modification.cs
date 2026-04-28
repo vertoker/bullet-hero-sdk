@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces.Values;
+using BHSDK.Models.Values;
+using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
@@ -15,10 +19,13 @@ namespace BHSDK.Models.Objects
     public class Modification
     {
         [JsonProperty(Names.ObjectId)]
-        public int ObjectId { get; set; } // to which Object this modification is applied
+        public int ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
 
         [JsonProperty(Names.PathShort)]
-        public string Path { get; set; }
+        public ObjectPropertyPath Path { get; set; }
+
+        [JsonProperty(Names.Index)]
+        public int Index { get; set; }
 
         [JsonProperty(Names.ValueShort)]
         public object Value { get; set; }
@@ -26,13 +33,15 @@ namespace BHSDK.Models.Objects
         public Modification()
         {
             ObjectId = 0;
-            Path = string.Empty;
+            Path = ObjectPropertyPath.None;
+            Index = 0;
             Value = null;
         }
-        public Modification(int objectId, string path, object value)
+        public Modification(int objectId, ObjectPropertyPath path, int index, object value)
         {
             ObjectId = objectId;
             Path = path;
+            Index = index;
             Value = value;
         }
     }

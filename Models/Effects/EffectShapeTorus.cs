@@ -1,12 +1,14 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectShapeTorus : IEffectShape
+    public class EffectShapeTorus : IEffectShape, ICopyable<EffectShapeTorus>
     {
         [JsonProperty(Names.RadiusMajor)]
         public IFloat RadiusMinor { get; set; }
@@ -43,5 +45,8 @@ namespace BHSDK.Models.Effects
             Arc = arc;
             Spread = spread;
         }
+
+        IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeTorus(RadiusMinor.Copy(), RadiusMajor.Copy(), Arc.Copy(), Spread.Copy());
+        public EffectShapeTorus Copy() => new(RadiusMinor.Copy(), RadiusMajor.Copy(), Arc.Copy(), Spread.Copy());
     }
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class BoolKey : IFrame
+    public class BoolKey : IFrame, ICopyable<BoolKey>
     {
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
@@ -21,5 +21,7 @@ namespace BHSDK.Models.Keyframes
             Frame = frame;
             Value = value;
         }
+
+        public BoolKey Copy() => new(Frame, Value);
     }
 }

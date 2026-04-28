@@ -1,9 +1,10 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
-    public class Shake : Keyframe
+    public class Shake : Keyframe, ICopyable<Shake>
     {
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
@@ -32,5 +33,7 @@ namespace BHSDK.Models.Keyframes
             IntensityX = intensityX;
             IntensityY = intensityY;
         }
+
+        public Shake Copy() => new(Frame, Ease, Intensity, Speed, IntensityX, IntensityY);
     }
 }

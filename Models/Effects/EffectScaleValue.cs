@@ -1,14 +1,16 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectScaleValue : IEffectScale
+    public class EffectScaleValue : IEffectScale, ICopyable<EffectScaleValue>
     {
         [JsonProperty(Names.Scale)]
         public IVector2 Scale { get; set; }
@@ -27,5 +29,8 @@ namespace BHSDK.Models.Effects
         {
             Scale = scale;
         }
+
+        IEffectScale ICopyable<IEffectScale>.Copy() => new EffectScaleValue(Scale.Copy());
+        public EffectScaleValue Copy() => new(Scale.Copy());
     }
 }

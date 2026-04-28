@@ -2,7 +2,7 @@
 
 namespace BHSDK.Models.Interfaces.Effects
 {
-    public interface IEffectColor
+    public interface IEffectColor : ICopyable<IEffectColor>
     {
         public EffectColorType GetModelType();
     }

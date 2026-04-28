@@ -1,13 +1,15 @@
 ﻿using BHSDK.Models.Enum.Effects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
-    public class EffectShapeSpreadRandom : IEffectShapeSpread
+    public class EffectShapeSpreadRandom : IEffectShapeSpread, ICopyable<EffectShapeSpreadRandom>
     {
         [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }
@@ -35,5 +37,8 @@ namespace BHSDK.Models.Effects
         {
             Spread = spread;
         }
+        
+        IEffectShapeSpread ICopyable<IEffectShapeSpread>.Copy() => new EffectShapeSpreadRandom(Spread.Copy());
+        public EffectShapeSpreadRandom Copy() => new(Spread.Copy());
     }
 }
