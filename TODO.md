@@ -15,6 +15,4 @@
 Features after successful full release
 - add doxygen for all code
 - console window with TUI, maybe fully supported SLI
-- write to UniText author, get commercial license and sponsor him to write ECS implementation.
-Good job for everyone and fastest text for game
 - 2 game mode: camera follow to player using lerp, direction is always up

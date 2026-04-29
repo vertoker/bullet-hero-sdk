@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BHSDK.Utils;
+using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
@@ -12,8 +13,8 @@ namespace BHSDK.Models.Objects
 
         public ObjectIdModification()
         {
-            PrevObjectId = Object.UndefinedId;
-            NextObjectId = Object.UndefinedId;
+            PrevObjectId = ObjectStatic.UndefinedId;
+            NextObjectId = ObjectStatic.UndefinedId;
         }
         public ObjectIdModification(int prevObjectId, int nextObjectId)
         {

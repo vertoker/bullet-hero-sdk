@@ -33,10 +33,6 @@ namespace BHSDK.Models.Objects
         // All negative numbers (int.MinValue - -1) reserved for core-space objects
         // - -1 => camera predefined object, exists only in player runtime (for ObjectId - error),
         // can be used as a parent with unique transform (scale applied as a size, similar with RectTransform)
-
-        public const int UndefinedId = 0;
-        public const int UndefinedFrameIndex = int.MinValue;
-        public const int CameraId = -1;
         
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
