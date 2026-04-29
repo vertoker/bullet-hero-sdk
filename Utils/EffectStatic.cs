@@ -28,6 +28,7 @@ namespace BHSDK.Utils
         public static readonly float Shape_CircleThicknessDefault = 1f;
         public static readonly Vector2 Shape_LineStartDefault = new(0f, 0f);
         public static readonly Vector2 Shape_LineEndDefault = new(1f, 0f);
+        public static readonly Vector2 Shape_BoxSizeDefault = new(1f, 1f);
         public static readonly float Shape_ConeBaseRadiusDefault = 1f;
         public static readonly float Shape_ConeTopRadiusDefault = 0.4f;
         public static readonly float Shape_ConeHeightDefault = 1f;
