@@ -222,7 +222,7 @@ namespace BHSDK.Tests
             var modification = new Modification
             {
                 ObjectId = 123,
-                Path = ObjectPropertyPath.Object_StartFrame,
+                Path = "sf",
                 Value = 321
             };
             prefabObject.Modifications.Add(modification);

@@ -22,10 +22,7 @@ namespace BHSDK.Models.Objects
         public int ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
 
         [JsonProperty(Names.PathShort)]
-        public ObjectPropertyPath Path { get; set; }
-
-        [JsonProperty(Names.Index)]
-        public int Index { get; set; }
+        public string Path { get; set; }
 
         [JsonProperty(Names.ValueShort)]
         public object Value { get; set; }
@@ -33,15 +30,13 @@ namespace BHSDK.Models.Objects
         public Modification()
         {
             ObjectId = 0;
-            Path = ObjectPropertyPath.None;
-            Index = 0;
+            Path = string.Empty;
             Value = null;
         }
-        public Modification(int objectId, ObjectPropertyPath path, int index, object value)
+        public Modification(int objectId, string path, object value)
         {
             ObjectId = objectId;
             Path = path;
-            Index = index;
             Value = value;
         }
     }

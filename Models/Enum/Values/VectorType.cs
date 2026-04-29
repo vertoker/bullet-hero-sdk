@@ -18,7 +18,7 @@
         RandomRectStep = 2,
         
         /// <summary>
-        /// Random point in circle, use 
+        /// Random point in circle, use sqrt method
         /// </summary>
         RandomCircle = 3,
     }
