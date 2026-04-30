@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Enum.Effects
 {
-    public enum EffectShapeSpreadType
+    public enum EffectShapeSpreadType : byte
     {
         Random = 0,
         Loop = 1,

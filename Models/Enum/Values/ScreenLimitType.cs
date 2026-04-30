@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Enum.Values
 {
-    public enum ScreenLimitType
+    public enum ScreenLimitType : byte
     {
         None = 0,
         Fixed = 1,

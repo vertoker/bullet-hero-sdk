@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Enum.Values
 {
-    public enum GradientColorSpace
+    public enum GradientColorSpace : sbyte
     {
         Uninitialized = -1, // 0xFFFFFFFF
         Gamma = 0,

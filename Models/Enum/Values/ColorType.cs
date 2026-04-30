@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Enum.Values
 {
-    public enum ColorType
+    public enum ColorType : byte
     {
         Value = 0,
         ThemeRef = 1,

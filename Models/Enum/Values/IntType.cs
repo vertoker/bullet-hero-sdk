@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Enum.Values
 {
-    public enum IntType
+    public enum IntType : byte
     {
         Value = 0,
         RandomMinMax = 1,

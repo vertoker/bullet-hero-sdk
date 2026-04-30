@@ -98,13 +98,11 @@ namespace BHSDK.Serialization
             }
         }
         
-        public const string SerializedDataMimeType = "application/unity.bullethero ";
-        
         public string Serialize(ILevel level)
         {
             throw new NotImplementedException();
             
-            if (level == null) return string.Empty;
+            /*if (level == null) return string.Empty;
             
             using var textWriter = new StringWriter();
             textWriter.Write(SerializedDataMimeType);
@@ -112,7 +110,7 @@ namespace BHSDK.Serialization
             
             var json = textWriter.ToString();
             // if serializer doesn't write anything - header can't be added, see deserialize realization
-            return json.Length == SerializedDataMimeType.Length ? string.Empty : json;
+            return json.Length == SerializedDataMimeType.Length ? string.Empty : json;*/
 
             // var json = JsonConvert.SerializeObject(level, _settings);
             // if (string.IsNullOrEmpty(json)) return json;
@@ -122,12 +120,12 @@ namespace BHSDK.Serialization
         public bool CanDeserialize(string json)
         {
             throw new NotImplementedException();
-            return json != null && json.StartsWith(SerializedDataMimeType);
+            // return json != null && json.StartsWith(SerializedDataMimeType);
         }
         public ILevel Deserialize(string json, bool autoUpdate = true)
         {
             throw new NotImplementedException();
-            using var stringReader = new StringReader(json);
+            /*using var stringReader = new StringReader(json);
             
             if (json.StartsWith(SerializedDataMimeType))
                 for (var i = 0; i < SerializedDataMimeType.Length; i++)
@@ -138,7 +136,7 @@ namespace BHSDK.Serialization
             // var level = JsonConvert.DeserializeObject<ILevel>(json, _settings);
             
             //if (autoUpdate) level = _compatibilityService.UpdateModel(level);
-            return level;
+            return level;*/
         }
     }
 }

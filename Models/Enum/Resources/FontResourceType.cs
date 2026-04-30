@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Enum.Resources
 {
-    public enum FontResourceType
+    public enum FontResourceType : byte
     {
         Undefined = 0,
         TTF = 1,

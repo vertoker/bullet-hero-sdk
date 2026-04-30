@@ -18,7 +18,7 @@ namespace BHSDK.Utils
         public static readonly bool Core_LoopDefault = true;
         public static readonly uint Core_ParticleCountDefault = 10;
         public static readonly Vector2 Core_LifetimeBoundsDefault = new(3f, 3f);
-        public static readonly Vector2 Core_PivotDefault = Alignment.MiddleCenterValue.Get();
+        public static readonly Vector2 Core_PivotDefault = new(0.5f, 0.5f); // Alignment.MiddleCenterValue.Get();
         public static readonly Vector2 Core_GravityConstraintDefault = new(0f, -9.81f);
         public static readonly int Core_TextureResourceIdDefault = 1;
         
