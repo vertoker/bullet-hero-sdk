@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -18,28 +17,11 @@ namespace BHSDK.Models.Effects
         public IFloat Speed { get; set; }
 
         public EffectShapeSpreadType GetModelType() => EffectShapeSpreadType.PingPong;
-        public float GetSpread(float time)
-        {
-            var random = time * Speed.Get();
-            
-            var spread = Spread.Get();
-            if (spread != 0)
-                random = Mathf.RoundToInt(random / spread) * spread;
-
-            random /= 2f;
-            random = Mathf.Repeat(random, 1f);
-            random *= 2f;
-            random -= 1f;
-            random = Mathf.Abs(random);
-            random = 1f - random;
-            
-            return random;
-        }
         
         public EffectShapeSpreadPingPong()
         {
-            Spread = new FloatValue(EffectStatic.ShapeSpread_SpreadDefault);
-            Speed = new FloatValue(EffectStatic.ShapeSpread_SpeedDefault);
+            Spread = new FloatValue(EffectStatic.ShapeSpread_Spread_Default);
+            Speed = new FloatValue(EffectStatic.ShapeSpread_Speed_Default);
         }
         public EffectShapeSpreadPingPong(float spread, float speed)
         {

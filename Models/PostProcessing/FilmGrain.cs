@@ -1,5 +1,7 @@
 ﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Keyframes;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
@@ -9,6 +11,8 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Type)]
         public FilmGrainType Type { get; set; }
         
+        [RuleInRange(PostProcessingRules.FilmGrain.IntensityMin,
+            PostProcessingRules.FilmGrain.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
 

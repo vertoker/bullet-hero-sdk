@@ -2,21 +2,27 @@
 using System.Collections.Generic;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.NoGame
 {
     public class LevelMeta
     {
+        [RuleNotNull, RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Name)]
         public IString LevelName { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Version)]
         public Version LevelVersion { get; set; }
         
+        [RuleGuidNotEmpty]
         [JsonProperty(Names.LevelGuid)]
         public Guid LevelGuid { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(8)]
         [JsonProperty(Names.Authors)]
         public List<Author> Authors { get; set; }
 

@@ -5,6 +5,7 @@ using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Resources;
 using BHSDK.Models.Settings;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models
@@ -13,18 +14,23 @@ namespace BHSDK.Models
     {
         public Version GetVersion() => new(1, 0);
         
+        [RuleNotNull]
         [JsonProperty(Names.Settings)]
         public LevelSettings Settings { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Meta)]
         public LevelMeta Meta { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Game)]
         public GameLevel Game { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Audio)]
         public AudioLevel Audio { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Resources)]
         public LevelResources Resources { get; set; }
 

@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -21,13 +20,16 @@ namespace BHSDK.Models.Effects
 
         public EffectColorRandomUniform()
         {
-            ColorA = new ColorValue(EffectStatic.Color_ADefault);
-            ColorB = new ColorValue(EffectStatic.Color_BDefault);
-        }
-        public EffectColorRandomUniform(Color colorA, Color colorB)
-        {
-            ColorA = new ColorValue(colorA);
-            ColorB = new ColorValue(colorB);
+            ColorA = new ColorValue(
+                EffectStatic.Color_A_R_Default,
+                EffectStatic.Color_A_G_Default,
+                EffectStatic.Color_A_B_Default,
+                EffectStatic.Color_A_A_Default);
+            ColorB = new ColorValue(
+                EffectStatic.Color_B_R_Default,
+                EffectStatic.Color_B_G_Default,
+                EffectStatic.Color_B_B_Default,
+                EffectStatic.Color_B_A_Default);
         }
         public EffectColorRandomUniform(IColor colorA, IColor colorB)
         {

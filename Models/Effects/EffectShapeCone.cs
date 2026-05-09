@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -30,19 +29,11 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeCone()
         {
-            TopRadius = new FloatValue(EffectStatic.Shape_ConeTopRadiusDefault);
-            BaseRadius = new FloatValue(EffectStatic.Shape_ConeBaseRadiusDefault);
-            Arc = new FloatValue(EffectStatic.Shape_ArcDefault);
-            Height = new FloatValue(EffectStatic.Shape_ConeHeightDefault);
+            TopRadius = new FloatValue(EffectStatic.Shape_ConeTopRadius_Default);
+            BaseRadius = new FloatValue(EffectStatic.Shape_ConeBaseRadius_Default);
+            Arc = new FloatValue(EffectStatic.Shape_Arc_Default);
+            Height = new FloatValue(EffectStatic.Shape_ConeHeight_Default);
             Spread = new EffectShapeSpreadRandom();
-        }
-        public EffectShapeCone(float topRadius, float baseRadius, float arc, float height, IEffectShapeSpread spread)
-        {
-            TopRadius = new FloatValue(topRadius);
-            BaseRadius = new FloatValue(baseRadius);
-            Arc = new FloatValue(arc);
-            Height = new FloatValue(height);
-            Spread = spread;
         }
         public EffectShapeCone(IFloat topRadius, IFloat baseRadius, IFloat arc, IFloat height, IEffectShapeSpread spread)
         {

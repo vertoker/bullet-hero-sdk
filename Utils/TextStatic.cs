@@ -1,19 +1,21 @@
 ﻿using BHSDK.Models.Enum.Text;
-using UnityEngine;
+
+// ReSharper disable InconsistentNaming
 
 namespace BHSDK.Utils
 {
     public static class TextStatic
     {
-        public static readonly Vector2 SizeFallback = new(1f, 1f);
-        public static readonly float FontSizeFallback = 1f;
+        public const float Size_X_Fallback = 1f;
+        public const float Size_Y_Fallback = 1f;
+        public const float FontSize_Fallback = 1f;
         
-        public static readonly TextObjectDirection DirectionDefault = TextObjectDirection.Auto;
-        public static readonly bool WordWrapDefault = true;
-        public static readonly TextObjectHorizontalAlignment HorizontalAlignmentDefault = TextObjectHorizontalAlignment.Center;
-        public static readonly TextObjectVerticalAlignment VerticalAlignmentDefault = TextObjectVerticalAlignment.Middle;
-        public static readonly TextObjectOverEdge OverEdgeDefault = TextObjectOverEdge.Ascent;
-        public static readonly TextObjectUnderEdge UnderEdgeDefault = TextObjectUnderEdge.Descent;
-        public static readonly TextObjectLeadingDistribution LeadingDistributionDefault = TextObjectLeadingDistribution.HalfLeading;
+        public const TextObjectDirection Direction_Default = TextObjectDirection.Auto;
+        public const bool WordWrap_Default = true;
+        public const TextObjectHorizontalAlignment HorizontalAlignment_Default = TextObjectHorizontalAlignment.Center;
+        public const TextObjectVerticalAlignment VerticalAlignment_Default = TextObjectVerticalAlignment.Middle;
+        public const TextObjectOverEdge OverEdge_Default = TextObjectOverEdge.Ascent;
+        public const TextObjectUnderEdge UnderEdge_Default = TextObjectUnderEdge.Descent;
+        public const TextObjectLeadingDistribution LeadingDistribution_Default = TextObjectLeadingDistribution.HalfLeading;
     }
 }

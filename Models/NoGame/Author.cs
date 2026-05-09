@@ -1,14 +1,18 @@
 ﻿using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.NoGame
 {
     public class Author
     {
+        [RuleNotNull, RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Name)]
         public IString Name { get; set; }
         
+        [RuleInRange(-10000, 10000)]
         [JsonProperty(Names.Order)]
         public int Order { get; set; }
 

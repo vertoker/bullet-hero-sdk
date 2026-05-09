@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Fixers
 {
-    public struct LevelFixerSettings
+    public class LevelFixerSettings
     {
         
     }

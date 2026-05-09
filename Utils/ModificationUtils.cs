@@ -6,7 +6,6 @@ using BHSDK.Models.Objects;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
 using Newtonsoft.Json;
-using UnityEngine;
 using Object = BHSDK.Models.Objects.Object;
 
 namespace BHSDK.Utils
@@ -23,7 +22,7 @@ namespace BHSDK.Utils
         
         static ModificationUtils()
         {
-            Debug.Log($"Init ModificationUtils");
+            // Debug.Log($"Init ModificationUtils");
             
             // Objects
             
@@ -66,7 +65,7 @@ namespace BHSDK.Utils
             {
                 if (currentObject == null)
                 {
-                    Debug.LogWarning($"CurrentObject is null, index={i}");
+                    // Debug.LogWarning($"CurrentObject is null, index={i}");
                     return;
                 }
                 
@@ -74,7 +73,7 @@ namespace BHSDK.Utils
                 (Type type, string name) key = (currentObject.GetType(), segment.Name);
                 if (!Data.TryGetValue(key, out var value))
                 {
-                    Debug.LogWarning($"Can't find data for key {key.type}/{key.name}");
+                    // Debug.LogWarning($"Can't find data for key {key.type}/{key.name}");
                     return;
                 }
 
@@ -101,7 +100,7 @@ namespace BHSDK.Utils
             
             if (currentObject == null)
             {
-                Debug.LogWarning($"CurrentObject is null, index={preLength}");
+                // Debug.LogWarning($"CurrentObject is null, index={preLength}");
                 return;
             }
             
@@ -109,7 +108,7 @@ namespace BHSDK.Utils
             (Type type, string name) lastKey = (currentObject.GetType(), lastSegment.Name);
             if (!Data.TryGetValue(lastKey, out var lastValue))
             {
-                Debug.LogWarning($"Can't find data for key {lastKey.type}/{lastKey.name}");
+                // Debug.LogWarning($"Can't find data for key {lastKey.type}/{lastKey.name}");
                 return;
             }
             
@@ -146,7 +145,7 @@ namespace BHSDK.Utils
         {
             if (from == to) return true;
             
-            Debug.LogWarning($"Type mismatch, from={from}, to={to}");
+            // Debug.LogWarning($"Type mismatch, from={from}, to={to}");
             return false;
         }
         private static object GetListValue(PropertyInfo info, PathSegment segment, object currentObject)
@@ -284,7 +283,7 @@ namespace BHSDK.Utils
                 }
             }
             
-            Debug.Log($"t: {type}, pt: {propertyType}, pn: {propertyName}");
+            // Debug.Log($"t: {type}, pt: {propertyType}, pn: {propertyName}");
             return (propertyType, propertyCategory);
         }
 
@@ -301,13 +300,13 @@ namespace BHSDK.Utils
             List = 1,
             Array = 2,
         }
-        private struct PathSegment
+        public struct PathSegment
         {
             public string Name;
             public int Index;
         }
 
-        private static void ParsePath(string path, List<PathSegment> buffer)
+        public static void ParsePath(string path, List<PathSegment> buffer)
         {
             buffer.Clear();
             var index = 0;
@@ -318,7 +317,7 @@ namespace BHSDK.Utils
                 var name = path[startIndex..index];
                 if (name.Length == 0)
                 {
-                    Debug.LogWarning($"FormatException: Empty name at {index} in '{path}'");
+                    // Debug.LogWarning($"FormatException: Empty name at {index} in '{path}'");
                     buffer.Clear();
                     return;
                 }
@@ -331,7 +330,7 @@ namespace BHSDK.Utils
                     while (index < path.Length && path[index] != ']') index++;
                     if (index == path.Length)
                     {
-                        Debug.LogWarning($"FormatException: Missing ']'");
+                        // Debug.LogWarning($"FormatException: Missing ']'");
                         buffer.Clear();
                         return;
                     }

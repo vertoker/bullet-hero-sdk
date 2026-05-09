@@ -2,11 +2,9 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -19,11 +17,9 @@ namespace BHSDK.Models.Effects
 
         public EffectScaleValue()
         {
-            Scale = new Vector2Value(EffectStatic.Scale_ADefault);
-        }
-        public EffectScaleValue(Vector2 scale)
-        {
-            Scale = new Vector2Value(scale);
+            Scale = new Vector2Value(
+                EffectStatic.Scale_A_X_Default,
+                EffectStatic.Scale_A_Y_Default);
         }
         public EffectScaleValue(IVector2 scale)
         {

@@ -2,12 +2,15 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
     public class Rot : Keyframe, ICopyable<Rot>
     {
+        [RuleNotNull, RuleIFloatInRange(ValueRules.MinCoord, ValueRules.MaxCoord)]
         [JsonProperty(Names.Angle)]
         public IFloat Angle { get; set; }
 

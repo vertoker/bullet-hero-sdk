@@ -1,11 +1,14 @@
 ﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
     public abstract class Keyframe : IFrame
     {
+        [RuleMin(FrameRules.MinFrame)]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         

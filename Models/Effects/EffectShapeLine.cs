@@ -2,11 +2,9 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -25,15 +23,13 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeLine()
         {
-            Start = new Vector2Value(EffectStatic.Shape_LineStartDefault);
-            End = new Vector2Value(EffectStatic.Shape_LineEndDefault);
+            Start = new Vector2Value(
+                EffectStatic.Shape_LineStart_X_Default,
+                EffectStatic.Shape_LineStart_Y_Default);
+            End = new Vector2Value(
+                EffectStatic.Shape_LineEnd_X_Default,
+                EffectStatic.Shape_LineEnd_Y_Default);
             Spread = new EffectShapeSpreadRandom();
-        }
-        public EffectShapeLine(Vector2 start, Vector2 end, IEffectShapeSpread spread)
-        {
-            Start = new Vector2Value(start);
-            End = new Vector2Value(end);
-            Spread = spread;
         }
         public EffectShapeLine(IVector2 start, IVector2 end, IEffectShapeSpread spread)
         {

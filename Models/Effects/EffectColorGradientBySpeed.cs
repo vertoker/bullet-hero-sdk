@@ -6,7 +6,6 @@ using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -22,13 +21,10 @@ namespace BHSDK.Models.Effects
 
         public EffectColorGradientBySpeed()
         {
-            Gradient = new GradientValue(EffectStatic.GetDefaultGradient());
-            SpeedRange = new Vector2Value(EffectStatic.Color_BySpeedRangeDefault);
-        }
-        public EffectColorGradientBySpeed(Gradient gradient, Vector2 speedRange)
-        {
-            Gradient = new GradientValue(gradient);
-            SpeedRange = new Vector2Value(speedRange);
+            Gradient = EffectStatic.GetGradient_Default();
+            SpeedRange = new Vector2Value(
+                EffectStatic.Color_BySpeedRange_X_Default,
+                EffectStatic.Color_BySpeedRange_Y_Default);
         }
         public EffectColorGradientBySpeed(GradientValue gradient, IVector2 speedRange)
         {

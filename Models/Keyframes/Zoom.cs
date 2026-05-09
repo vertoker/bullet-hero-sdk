@@ -2,12 +2,15 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
     public class Zoom : Keyframe, ICopyable<Zoom>
     {
+        [RuleNotNull, RuleIFloatInRange(ValueRules.MinZoom, ValueRules.MaxZoom)]
         [JsonProperty(Names.Size)]
         public IFloat Size { get; set; }
 

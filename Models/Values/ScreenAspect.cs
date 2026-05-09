@@ -1,15 +1,20 @@
 ﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
     public class ScreenAspect : ICopyable<ScreenAspect>
     {
+        [RuleMin(1)]
         [JsonProperty(Names.WidthShort)]
         public int Width { get; set; }
         
+        [RuleMin(1)]
         [JsonProperty(Names.HeightShort)]
         public int Height { get; set; }
+        
+        // TODO add vertical/horizontal metadata (for phones and special modes)
         
         public float GetAspect() => Width / (float)Height;
 

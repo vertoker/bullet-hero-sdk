@@ -20,7 +20,6 @@ namespace BHSDK.Models.Values
         }
 
         public FloatType GetModelType() => FloatType.Value;
-        public float Get() => Value;
         
         IFloat ICopyable<IFloat>.Copy() => new FloatValue(Value);
         public FloatValue Copy() => new(Value);

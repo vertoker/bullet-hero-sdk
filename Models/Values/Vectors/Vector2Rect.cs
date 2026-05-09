@@ -2,12 +2,12 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
     public class Vector2Rect : IVector2, ICopyable<Vector2Rect>
     {
+        // TODO add check for Min and Max, must be always Min < Max
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
         
@@ -37,22 +37,8 @@ namespace BHSDK.Models.Values.Vectors
             MaxX = maxX;
             MaxY = maxY;
         }
-        public Vector2Rect(IFloat minX, IFloat minY, IFloat maxX, IFloat maxY)
-        {
-            MinX = minX.Get();
-            MinY = minY.Get();
-            
-            MaxX = maxX.Get();
-            MaxY = maxY.Get();
-        }
 
         public VectorType GetModelType() => VectorType.RandomRect;
-        public Vector2 Get()
-        {
-            var x = Random.Range(MinX, MaxX);
-            var y = Random.Range(MinY, MaxY);
-            return new Vector2(x, y);
-        }
 
         IVector2 ICopyable<IVector2>.Copy() => new Vector2Rect(MinX, MinY, MaxX, MaxY);
         public Vector2Rect Copy() => new(MinX, MinY, MaxX, MaxY);

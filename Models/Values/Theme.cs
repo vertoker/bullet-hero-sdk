@@ -2,20 +2,21 @@
 using System.Linq;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
     public class Theme : ITheme, ICopyable<Theme>
     {
-        public const int Count = 64;
-        
         public Version GetVersion() => new(1, 0);
         
+        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
         
+        [RuleNotNull, RuleCollectionCount(ValueRules.ThemeCount)]
         [JsonProperty(Names.Matrix)]
         public ColorValue[] Matrix { get; set; }
         
@@ -38,8 +39,8 @@ namespace BHSDK.Models.Values
         public Theme()
         {
             Name = string.Empty;
-            Matrix = new ColorValue[Count];
-            Array.Fill(Matrix, new ColorValue(Color.white));
+            Matrix = new ColorValue[ValueRules.ThemeCount];
+            Array.Fill(Matrix, ColorValue.white);
         }
         public Theme(string name, ColorValue[] matrix)
         {

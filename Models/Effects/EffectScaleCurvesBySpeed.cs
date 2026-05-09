@@ -6,7 +6,6 @@ using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -25,15 +24,11 @@ namespace BHSDK.Models.Effects
         
         public EffectScaleCurvesBySpeed()
         {
-            CurveX = new CurveValue(EffectStatic.GetDefaultCurve());
-            CurveY = new CurveValue(EffectStatic.GetDefaultCurve());
-            SpeedRange = new Vector2Value(EffectStatic.Scale_BySpeedRangeDefault);
-        }
-        public EffectScaleCurvesBySpeed(AnimationCurve curveX, AnimationCurve curveY, Vector2 speedRange)
-        {
-            CurveX = new CurveValue(curveX);
-            CurveY = new CurveValue(curveY);
-            SpeedRange = new Vector2Value(speedRange);
+            CurveX = EffectStatic.GetCurve_Default();
+            CurveY = EffectStatic.GetCurve_Default();
+            SpeedRange = new Vector2Value(
+                EffectStatic.Scale_BySpeedRange_X_Default,
+                EffectStatic.Scale_BySpeedRange_Y_Default);
         }
         public EffectScaleCurvesBySpeed(CurveValue curveX, CurveValue curveY, IVector2 speedRange)
         {

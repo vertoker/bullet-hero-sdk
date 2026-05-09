@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -21,13 +20,12 @@ namespace BHSDK.Models.Effects
 
         public EffectScaleRandomPerComponent()
         {
-            ScaleA = new Vector2Value(EffectStatic.Scale_ADefault);
-            ScaleB = new Vector2Value(EffectStatic.Scale_BDefault);
-        }
-        public EffectScaleRandomPerComponent(Vector2 scaleA, Vector2 scaleB)
-        {
-            ScaleA = new Vector2Value(scaleA);
-            ScaleB = new Vector2Value(scaleB);
+            ScaleA = new Vector2Value(
+                EffectStatic.Scale_A_X_Default, 
+                EffectStatic.Scale_A_Y_Default);
+            ScaleB = new Vector2Value(
+                EffectStatic.Scale_B_X_Default, 
+                EffectStatic.Scale_B_Y_Default);
         }
         public EffectScaleRandomPerComponent(IVector2 scaleA, IVector2 scaleB)
         {

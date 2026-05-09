@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
@@ -31,12 +30,6 @@ namespace BHSDK.Models.Values
         }
 
         public IntType GetModelType() => IntType.RandomMinMaxStep;
-        public int Get()
-        {
-            var value = Random.Range(Min, Max);
-            value = Mathf.Clamp(Mathf.RoundToInt(value / (float)Step) * Step, Min, Max);
-            return value;
-        }
 
         IInt ICopyable<IInt>.Copy() => new IntMinMaxStep(Min, Max, Step);
         public IntMinMaxStep Copy() => new(Min, Max, Step);

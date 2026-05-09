@@ -1,35 +1,44 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
     public class ColorMinMax : IColor, ICopyable<ColorMinMax>
     {
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinR)]
         public float MinR { get; set; }
         
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinG)]
         public float MinG { get; set; }
         
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinB)]
         public float MinB { get; set; }
         
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinA)]
         public float MinA { get; set; }
         
         
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxR)]
         public float MaxR { get; set; }
         
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxG)]
         public float MaxG { get; set; }
         
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxB)]
         public float MaxB { get; set; }
         
+        [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxA)]
         public float MaxA { get; set; }
 
@@ -56,29 +65,9 @@ namespace BHSDK.Models.Values
             MaxB = maxB;
             MaxA = maxA;
         }
-        public ColorMinMax(IFloat minR, IFloat minG, IFloat minB, IFloat minA, 
-            IFloat maxR, IFloat maxG, IFloat maxB, IFloat maxA)
-        {
-            MinR = minR.Get();
-            MinG = minG.Get();
-            MinB = minB.Get();
-            MinA = minA.Get();
-            MaxR = maxR.Get();
-            MaxG = maxG.Get();
-            MaxB = maxB.Get();
-            MaxA = maxA.Get();
-        }
 
         public ColorType GetModelType() => ColorType.RandomMinMax;
-        public Color Get()
-        {
-            var r = Random.Range(MinR, MaxR);
-            var g = Random.Range(MinG, MaxG);
-            var b = Random.Range(MinB, MaxB);
-            var a = Random.Range(MinA, MaxA);
-            return new Color(r, g, b, a);
-        }
-
+        
         IColor ICopyable<IColor>.Copy() => new ColorMinMax(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
         public ColorMinMax Copy() => new(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
     }

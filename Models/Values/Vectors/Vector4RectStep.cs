@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
@@ -66,37 +65,8 @@ namespace BHSDK.Models.Values.Vectors
             
             Step = step;
         }
-        public Vector4RectStep(IFloat minX, IFloat minY, IFloat minZ, IFloat minW, 
-            IFloat maxX, IFloat maxY, IFloat maxZ, IFloat maxW, IFloat step)
-        {
-            MinX = minX.Get();
-            MinY = minY.Get();
-            MinZ = minZ.Get();
-            MinW = minW.Get();
-            
-            MaxX = maxX.Get();
-            MaxY = maxY.Get();
-            MaxZ = maxZ.Get();
-            MaxW = maxW.Get();
-            
-            Step = step.Get();
-        }
 
         public VectorType GetModelType() => VectorType.RandomRectStep;
-        public Vector4 Get()
-        {
-            var x = Random.Range(MinX, MaxX);
-            var y = Random.Range(MinY, MaxY);
-            var z = Random.Range(MinZ, MaxZ);
-            var w = Random.Range(MinW, MaxW);
-            if (Step == 0f) return new Vector4(x, y, z, w);
-            
-            x = Mathf.RoundToInt(x / Step) * Step;
-            y = Mathf.RoundToInt(y / Step) * Step;
-            z = Mathf.RoundToInt(z / Step) * Step;
-            w = Mathf.RoundToInt(w / Step) * Step;
-            return new Vector4(x, y, z, w);
-        }
 
         IVector4 ICopyable<IVector4>.Copy() => new Vector4RectStep(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW, Step);
         public Vector4RectStep Copy() => new(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW, Step);

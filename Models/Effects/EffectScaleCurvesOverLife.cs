@@ -4,7 +4,6 @@ using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -20,13 +19,8 @@ namespace BHSDK.Models.Effects
         
         public EffectScaleCurvesOverLife()
         {
-            CurveX = new CurveValue(EffectStatic.GetDefaultCurve());
-            CurveY = new CurveValue(EffectStatic.GetDefaultCurve());
-        }
-        public EffectScaleCurvesOverLife(AnimationCurve curveX, AnimationCurve curveY)
-        {
-            CurveX = new CurveValue(curveX);
-            CurveY = new CurveValue(curveY);
+            CurveX = EffectStatic.GetCurve_Default();
+            CurveY = EffectStatic.GetCurve_Default();
         }
         public EffectScaleCurvesOverLife(CurveValue curveX, CurveValue curveY)
         {

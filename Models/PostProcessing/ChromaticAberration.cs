@@ -1,11 +1,15 @@
 ﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Keyframes;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
     public class ChromaticAberration : Keyframe
     {
+        [RuleInRange(PostProcessingRules.ChromaticAberration.IntensityMin,
+            PostProcessingRules.ChromaticAberration.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
 

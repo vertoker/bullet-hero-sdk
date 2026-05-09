@@ -20,7 +20,6 @@ namespace BHSDK.Models.Values
         }
 
         public IntType GetModelType() => IntType.Value;
-        public int Get() => Value;
         
         IInt ICopyable<IInt>.Copy() => new IntValue(Value);
         public IntValue Copy() => new(Value);

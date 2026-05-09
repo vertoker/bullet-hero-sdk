@@ -2,8 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace BHSDK.Models.Values.Vectors
 {
@@ -30,27 +28,9 @@ namespace BHSDK.Models.Values.Vectors
             Y = y;
             Radius = radius;
         }
-        public Vector2Circle(IFloat x, IFloat y, IFloat radius)
-        {
-            X = x.Get();
-            Y = y.Get();
-            Radius = radius.Get();
-        }
 
         public VectorType GetModelType() => VectorType.RandomCircle;
-        public Vector2 Get()
-        {
-            // https://www.youtube.com/watch?v=4y_nmpv-9lI
-            // Use distribution through Sqrt, because it uses one number.
-            // Not optimal, but random predicted
-            var distance = Mathf.Sqrt(Random.value);
-            var angle = Random.Range(0f, 2f * Mathf.PI);
-
-            var x = distance * Mathf.Cos(angle) * Radius + X;
-            var y = distance * Mathf.Sin(angle) * Radius + Y;
-            return new Vector2(x, y);
-        }
-
+        
         IVector2 ICopyable<IVector2>.Copy() => new Vector2Circle(X, Y, Radius);
         public Vector2Circle Copy() => new(X, Y, Radius);
     }

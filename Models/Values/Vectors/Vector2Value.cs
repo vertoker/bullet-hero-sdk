@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
@@ -24,19 +23,8 @@ namespace BHSDK.Models.Values.Vectors
             X = x;
             Y = y;
         }
-        public Vector2Value(IFloat x, IFloat y)
-        {
-            X = x.Get();
-            Y = y.Get();
-        }
-        public Vector2Value(Vector2 vector)
-        {
-            X = vector.x;
-            Y = vector.y;
-        }
 
         public VectorType GetModelType() => VectorType.Value;
-        public Vector2 Get() => new(X, Y);
         
         IVector2 ICopyable<IVector2>.Copy() => new Vector2Value(X, Y);
         public Vector2Value Copy() => new(X, Y);

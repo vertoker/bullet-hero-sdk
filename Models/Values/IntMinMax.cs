@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
@@ -26,7 +25,6 @@ namespace BHSDK.Models.Values
         }
 
         public IntType GetModelType() => IntType.RandomMinMax;
-        public int Get() => Random.Range(Min, Max);
         
         IInt ICopyable<IInt>.Copy() => new IntMinMax(Min, Max);
         public IntMinMax Copy() => new(Min, Max);

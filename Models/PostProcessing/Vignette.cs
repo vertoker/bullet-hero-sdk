@@ -3,21 +3,30 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
     public class Vignette : Keyframe
     {
+        [RuleNotNull] // TODO add extra part for checking HDR part
         [JsonProperty(Names.Color)]
         public IColor ColorHDR { get; set; }
         
+        [RuleNotNull, RuleIVector2InRange(PostProcessingRules.Vignette.CenterMin,
+             PostProcessingRules.Vignette.CenterMax)]
         [JsonProperty(Names.Center)]
         public IVector2 Center { get; set; }
         
+        [RuleInRange(PostProcessingRules.Vignette.IntensityMin,
+             PostProcessingRules.Vignette.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
         
+        [RuleInRange(PostProcessingRules.Vignette.SmoothnessMin,
+            PostProcessingRules.Vignette.SmoothnessMax)]
         [JsonProperty(Names.Smoothness)]
         public float Smoothness { get; set; }
         
@@ -26,7 +35,7 @@ namespace BHSDK.Models.PostProcessing
 
         public Vignette()
         {
-            ColorHDR = new ColorValue(UnityEngine.Color.black);
+            ColorHDR = ColorValue.black;
             Center = new Vector2Value(0.5f, 0.5f);
             Intensity = 0.3f;
             Smoothness = 0.5f;

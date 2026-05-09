@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum
+﻿namespace BHSDK.Validations
 {
     public enum LevelErrorType : byte
     {

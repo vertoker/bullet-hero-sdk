@@ -2,6 +2,8 @@
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
@@ -10,12 +12,17 @@ namespace BHSDK.Models.PostProcessing
     {
         // Threshold - 0 (always, not a parameter)
         
+        [RuleInRange(PostProcessingRules.Bloom.IntensityMin,
+           PostProcessingRules.Bloom.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
         
+        [RuleInRange(PostProcessingRules.Bloom.ScatterMin,
+            PostProcessingRules.Bloom.ScatterMax)]
         [JsonProperty(Names.Scatter)]
         public float Scatter { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
         
@@ -25,7 +32,7 @@ namespace BHSDK.Models.PostProcessing
         {
             Intensity = 0.5f;
             Scatter = 0.5f;
-            Color = new ColorValue(UnityEngine.Color.red);
+            Color = ColorValue.red;
         }
         public Bloom(int frame, EaseType ease, 
             float intensity, float scatter, IColor color)

@@ -4,37 +4,50 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Objects;
 using BHSDK.Models.Resources;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
     public class GameLevel : IObjectScope
     {
+        [RuleNotNull]
         [JsonProperty(Names.Events)]
         public GameEvents Events { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.CameraEvents)]
         public CameraEvents CameraEvents { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.PostProcessingEvents)]
         public PostProcessingEvents PostProcessingEvents { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.PlayerEvents)]
         public PlayerEvents PlayerEvents { get; set; }
         
-        
+        // TODO add more contextual checks
+        [RuleNotNull]
+        [RuleCollectionUnique(nameof(Object.ObjectId))]
         [JsonProperty(Names.Objects)]
         public List<Object> Objects { get; set; }
         
+        // TODO add more contextual checks
+        [RuleNotNull]
         [JsonProperty(Names.ParentObjects)]
         public List<PrefabObject> PrefabObjects { get; set; }
         
         
-        [JsonProperty(Names.Prefabs)]
-        public List<Prefab> Prefabs { get; set; }
-        
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxThemes)]
         [JsonProperty(Names.Themes)]
         public List<Theme> Themes { get; set; }
+        
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPrefabs)]
+        [RuleCollectionUnique(nameof(PrefabObject.PrefabGuid))]
+        [JsonProperty(Names.Prefabs)]
+        public List<Prefab> Prefabs { get; set; }
         
         public GameLevel()
         {

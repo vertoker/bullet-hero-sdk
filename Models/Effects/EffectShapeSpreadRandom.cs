@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -15,23 +14,10 @@ namespace BHSDK.Models.Effects
         public IFloat Spread { get; set; }
         
         public EffectShapeSpreadType GetModelType() => EffectShapeSpreadType.Random;
-        public float GetSpread(float time)
-        {
-            var random = Random.value;
-            var spread = Spread.Get();
-            if (spread == 0) return random;
-            
-            random = Mathf.RoundToInt(random / spread) * spread;
-            return random;
-        }
         
         public EffectShapeSpreadRandom()
         {
-            Spread = new FloatValue(EffectStatic.ShapeSpread_SpreadDefault);
-        }
-        public EffectShapeSpreadRandom(float spread)
-        {
-            Spread = new FloatValue(spread);
+            Spread = new FloatValue(EffectStatic.ShapeSpread_Spread_Default);
         }
         public EffectShapeSpreadRandom(IFloat spread)
         {

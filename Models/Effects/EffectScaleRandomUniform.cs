@@ -2,11 +2,9 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -22,13 +20,12 @@ namespace BHSDK.Models.Effects
 
         public EffectScaleRandomUniform()
         {
-            ScaleA = new Vector2Value(EffectStatic.Scale_ADefault);
-            ScaleB = new Vector2Value(EffectStatic.Scale_BDefault);
-        }
-        public EffectScaleRandomUniform(Vector2 scaleA, Vector2 scaleB)
-        {
-            ScaleA = new Vector2Value(scaleA);
-            ScaleB = new Vector2Value(scaleB);
+            ScaleA = new Vector2Value(
+                EffectStatic.Scale_A_X_Default,
+                EffectStatic.Scale_A_Y_Default);
+            ScaleB = new Vector2Value(
+                EffectStatic.Scale_B_X_Default,
+                EffectStatic.Scale_B_Y_Default);
         }
         public EffectScaleRandomUniform(IVector2 scaleA, IVector2 scaleB)
         {

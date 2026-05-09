@@ -39,9 +39,9 @@ namespace BHSDK.Models.Objects
             SublingIndex = 0;
         }
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot,
+            int startFrame, int endFrame, List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot,
             bool collider, int colliderId, List<Clr> clr, int textureResourceId, int sublingIndex)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
         {
             Collider = collider;
             ColliderId = colliderId;

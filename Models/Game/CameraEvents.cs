@@ -1,41 +1,54 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Keyframes;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
     public class CameraEvents
     {
-        // Camera - is a unique instance. All new instances by default inherited from camera.
+        // Camera - is a unique instance. It exists all level lifetime and any Object can be child of camera. 
         // Camera has instanceId and this is always -1 (because 0 - is a fallback).
         // Camera GO != camera info for parenting, this info just duplicate from camera.transform 
         
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraPositions)]
+        [RuleCollectionSorted(nameof(Pos.Frame))]
+        [RuleCollectionUnique(nameof(Pos.Frame))]
         [JsonProperty(Names.Position)]
-        public List<Pos> Pos { get; set; }
+        public List<Pos> Positions { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraRotations)]
+        [RuleCollectionSorted(nameof(Rot.Frame))]
+        [RuleCollectionUnique(nameof(Rot.Frame))]
         [JsonProperty(Names.Rotation)]
-        public List<Rot> Rot { get; set; }
+        public List<Rot> Rotations { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraZooms)]
+        [RuleCollectionSorted(nameof(Zoom.Frame))]
+        [RuleCollectionUnique(nameof(Zoom.Frame))]
         [JsonProperty(Names.Zoom)]
-        public List<Zoom> Zoom { get; set; }
+        public List<Zoom> Zooms { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraShakes)]
+        [RuleCollectionSorted(nameof(Shake.Frame))]
+        [RuleCollectionUnique(nameof(Shake.Frame))]
         [JsonProperty(Names.Shake)]
-        public List<Shake> Shake { get; set; }
+        public List<Shake> Shakes { get; set; }
 
         public CameraEvents()
         {
-            Pos = new List<Pos>();
-            Rot = new List<Rot>();
-            Zoom = new List<Zoom>();
-            Shake = new List<Shake>();
+            Positions = new List<Pos>();
+            Rotations = new List<Rot>();
+            Zooms = new List<Zoom>();
+            Shakes = new List<Shake>();
         }
-        public CameraEvents(List<Pos> pos, List<Rot> rot, 
-            List<Zoom> zoom, List<Shake> shake)
+        public CameraEvents(List<Pos> positions, List<Rot> rotations, List<Zoom> zooms, List<Shake> shakes)
         {
-            Pos = pos;
-            Rot = rot;
-            Zoom = zoom;
-            Shake = shake;
+            Positions = positions;
+            Rotations = rotations;
+            Zooms = zooms;
+            Shakes = shakes;
         }
     }
 }

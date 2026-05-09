@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -18,11 +17,11 @@ namespace BHSDK.Models.Effects
 
         public EffectColorValue()
         {
-            Color = new ColorValue(EffectStatic.Color_ADefault);
-        }
-        public EffectColorValue(Color color)
-        {
-            Color = new ColorValue(color);
+            Color = new ColorValue(
+                EffectStatic.Color_A_R_Default,
+                EffectStatic.Color_A_G_Default,
+                EffectStatic.Color_A_B_Default,
+                EffectStatic.Color_A_A_Default);
         }
         public EffectColorValue(IColor color)
         {

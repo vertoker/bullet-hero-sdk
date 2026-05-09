@@ -20,8 +20,8 @@ namespace BHSDK.Models.Effects
 
         public EffectAngleRandomUniform()
         {
-            AngleA = new FloatValue(EffectStatic.Angle_ADefault);
-            AngleB = new FloatValue(EffectStatic.Angle_BDefault);
+            AngleA = new FloatValue(EffectStatic.Angle_A_Default);
+            AngleB = new FloatValue(EffectStatic.Angle_B_Default);
         }
         public EffectAngleRandomUniform(float angleA, float angleB)
         {

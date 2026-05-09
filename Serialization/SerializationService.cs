@@ -28,7 +28,6 @@ namespace BHSDK.Serialization
                 Formatting = serializationSettings.Formatting,
                 TypeNameHandling = serializationSettings.TypeNameHandling,
                 ContractResolver = contractResolver,
-                Error = SerializationUtils.SerializationErrorHandling,
             };
             var innerSerializer = JsonSerializer.CreateDefault(settingsDefault);
             
@@ -38,7 +37,6 @@ namespace BHSDK.Serialization
                 TypeNameHandling = serializationSettings.TypeNameHandling,
                 ContractResolver = contractResolver,
                 Converters = GetConverters(compatibilityService, innerSerializer),
-                Error = SerializationUtils.SerializationErrorHandling,
             };
             Serializer = JsonSerializer.Create(settings);
             CompatibilityService = compatibilityService;

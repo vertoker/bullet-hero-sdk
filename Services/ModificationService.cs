@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace BHSDK.Services
@@ -30,7 +29,6 @@ namespace BHSDK.Services
             _propertyMaps.Remove(type);
         }
         
-        [CanBeNull]
         public object GetValue(object obj, string path)
         {
             if (obj == null) return null;

@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -16,11 +15,9 @@ namespace BHSDK.Models.Effects
 
         public EffectShapeRectangle()
         {
-            Size = new Vector2Value(EffectStatic.Shape_BoxSizeDefault);
-        }
-        public EffectShapeRectangle(Vector2 size)
-        {
-            Size = new Vector2Value(size);
+            Size = new Vector2Value(
+                EffectStatic.Shape_BoxSize_X_Default,
+                EffectStatic.Shape_BoxSize_Y_Default);
         }
         public EffectShapeRectangle(IVector2 size)
         {

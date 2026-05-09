@@ -1,29 +1,31 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
     public class StringLanguage : ICopyable<StringLanguage>
     {
         [JsonProperty(Names.Language)]
-        public SystemLanguage Language { get; set; }
+        public string LanguageCode { get; set; }
         
+        [RuleNotNull, RuleStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.ValueShort)]
         public string Value { get; set; }
 
         public StringLanguage()
         {
-            Language = SystemLanguage.English;
+            LanguageCode = "en";
             Value = string.Empty;
         }
-        public StringLanguage(SystemLanguage language, string value)
+        public StringLanguage(string languageCode, string value)
         {
-            Language = language;
+            LanguageCode = languageCode;
             Value = value;
         }
 
-        public StringLanguage Copy() => new(Language, Value);
+        public StringLanguage Copy() => new(LanguageCode, Value);
     }
 }

@@ -63,20 +63,20 @@ namespace BHSDK.Models.Objects
             Clr = new List<Clr>();
             FontSizes = new List<FloatKey>();
             
-            Direction = TextStatic.DirectionDefault;
-            WordWrap = TextStatic.WordWrapDefault;
-            HorizontalAlignment = TextStatic.HorizontalAlignmentDefault;
-            VerticalAlignment = TextStatic.VerticalAlignmentDefault;
-            OverEdge = TextStatic.OverEdgeDefault;
-            UnderEdge = TextStatic.UnderEdgeDefault;
-            LeadingDistribution = TextStatic.LeadingDistributionDefault;
+            Direction = TextStatic.Direction_Default;
+            WordWrap = TextStatic.WordWrap_Default;
+            HorizontalAlignment = TextStatic.HorizontalAlignment_Default;
+            VerticalAlignment = TextStatic.VerticalAlignment_Default;
+            OverEdge = TextStatic.OverEdge_Default;
+            UnderEdge = TextStatic.UnderEdge_Default;
+            LeadingDistribution = TextStatic.LeadingDistribution_Default;
         }
         public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
-            List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, IString text, int fontResourceId,
+            List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot, IString text, int fontResourceId,
             List<Sca> sizes, List<Clr> clr, List<FloatKey> fontSizes, TextObjectDirection direction, bool wordWrap, 
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment, 
             TextObjectOverEdge overEdge, TextObjectUnderEdge underEdge, TextObjectLeadingDistribution leadingDistribution)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
         {
             Text = text;
             FontResourceId = fontResourceId;

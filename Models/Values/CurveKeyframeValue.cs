@@ -1,7 +1,6 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values
 {
@@ -34,19 +33,6 @@ namespace BHSDK.Models.Values
         [JsonProperty(Names.OutWeight)]
         public float OutWeight { get; set; }
         
-        public Keyframe Get()
-        {
-            var keyframe = new Keyframe(Time, Value, 
-                InTangent, OutTangent, InWeight, OutWeight)
-            {
-                weightedMode = (WeightedMode)WeightedMode,
-#pragma warning disable CS0618 // Type or member is obsolete
-                tangentMode = (int)TangentMode,
-#pragma warning restore CS0618 // Type or member is obsolete
-            };
-            return keyframe;
-        }
-
         public CurveKeyframeValue()
         {
             Time = 0f;
@@ -93,17 +79,6 @@ namespace BHSDK.Models.Values
             OutTangent = outTangent;
             InWeight = inWeight;
             OutWeight = outWeight;
-        }
-        public CurveKeyframeValue(Keyframe keyframe)
-        {
-            Time = keyframe.time;
-            Value = keyframe.value;
-            WeightedMode = (CurveWeightedMode)keyframe.weightedMode;
-            TangentMode = CurveTangentMode.Free;
-            InTangent = keyframe.inTangent;
-            OutTangent = keyframe.outTangent;
-            InWeight = keyframe.inWeight;
-            OutWeight = keyframe.outWeight;
         }
 
         public CurveKeyframeValue Copy() => new(Time, Value,

@@ -2,18 +2,19 @@
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
-using UnityEngine;
 using Keyframe = BHSDK.Models.Keyframes.Keyframe;
-using Keyframes_Keyframe = BHSDK.Models.Keyframes.Keyframe;
 
 namespace BHSDK.Models.PostProcessing
 {
-    public class ShadowsMidtonesHighlights : Keyframes_Keyframe
+    public class ShadowsMidtonesHighlights : Keyframe
     {
         [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
         
+        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.ShadowColor)]
         public IColor ShadowsColor { get; set; }
         
@@ -21,6 +22,7 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Midtone)]
         public bool Midtones { get; set; }
         
+        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.MidtoneColor)]
         public IColor MidtonesColor { get; set; }
         
@@ -28,26 +30,31 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Highlight)]
         public bool Highlights { get; set; }
         
+        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.HighlightColor)]
         public IColor HighlightsColor { get; set; }
         
         
         // TODO graph like in Post Processing menu
         
+        [RuleNotNull, RuleIVector2InRange(PostProcessingRules.ShadowsMidtonesHighlights.ShadowLimitMin,
+             PostProcessingRules.ShadowsMidtonesHighlights.ShadowLimitMax)]
         [JsonProperty(Names.ShadowLimit)]
         public IVector2 ShadowLimits { get; set; }
         
+        [RuleNotNull, RuleIVector2InRange(PostProcessingRules.ShadowsMidtonesHighlights.HighlightLimitMin,
+             PostProcessingRules.ShadowsMidtonesHighlights.HighlightLimitMax)]
         [JsonProperty(Names.HighlightLimit)]
         public IVector2 HighlightLimits { get; set; }
 
         public ShadowsMidtonesHighlights()
         {
             Shadows = false;
-            ShadowsColor = new ColorValue(Color.white);
+            ShadowsColor = ColorValue.white;
             Midtones = false;
-            MidtonesColor = new ColorValue(Color.white);
+            MidtonesColor = ColorValue.white;
             Highlights = false;
-            HighlightsColor = new ColorValue(Color.white);
+            HighlightsColor = ColorValue.white;
             
             ShadowLimits = new Vector2Value(0f, 0.3f);
             HighlightLimits = new Vector2Value(0.55f, 1f);

@@ -4,7 +4,6 @@ using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -17,11 +16,7 @@ namespace BHSDK.Models.Effects
 
         public EffectColorGradientOverLife()
         {
-            Gradient = new GradientValue(EffectStatic.GetDefaultGradient());
-        }
-        public EffectColorGradientOverLife(Gradient gradient)
-        {
-            Gradient = new GradientValue(gradient);
+            Gradient = EffectStatic.GetGradient_Default();
         }
         public EffectColorGradientOverLife(GradientValue gradient)
         {

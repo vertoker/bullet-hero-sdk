@@ -45,9 +45,9 @@ namespace BHSDK.Models.Objects
             EffectColor = new EffectColorValue();
         }
         public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
-            List<Pos> pos, List<Rot> rot, List<Sca> sca, int layer, Alignment pivot, EffectObjectCore core,
+            List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot, EffectObjectCore core,
             EffectObjectForces forces, IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor) 
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, pos, rot, sca, layer, pivot)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
         {
             Core = core;
             Forces = forces;

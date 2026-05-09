@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
@@ -58,29 +57,8 @@ namespace BHSDK.Models.Values.Vectors
             MaxZ = maxZ;
             MaxW = maxW;
         }
-        public Vector4Rect(IFloat minX, IFloat minY, IFloat minZ, IFloat minW, 
-            IFloat maxX, IFloat maxY, IFloat maxZ, IFloat maxW)
-        {
-            MinX = minX.Get();
-            MinY = minY.Get();
-            MinZ = minZ.Get();
-            MinW = minW.Get();
-            
-            MaxX = maxX.Get();
-            MaxY = maxY.Get();
-            MaxZ = maxZ.Get();
-            MaxW = maxW.Get();
-        }
 
         public VectorType GetModelType() => VectorType.RandomRect;
-        public Vector4 Get()
-        {
-            var x = Random.Range(MinX, MaxX);
-            var y = Random.Range(MinY, MaxY);
-            var z = Random.Range(MinZ, MaxZ);
-            var w = Random.Range(MinW, MaxW);
-            return new Vector4(x, y, z, w);
-        }
 
         IVector4 ICopyable<IVector4>.Copy() => new Vector4Rect(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW);
         public Vector4Rect Copy() => new(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW);

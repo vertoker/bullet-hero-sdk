@@ -4,7 +4,6 @@ using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -17,11 +16,7 @@ namespace BHSDK.Models.Effects
         
         public EffectAngleCurvesOverLife()
         {
-            Curve = new CurveValue(EffectStatic.GetDefaultCurve());
-        }
-        public EffectAngleCurvesOverLife(AnimationCurve curve)
-        {
-            Curve = new CurveValue(curve);
+            Curve = EffectStatic.GetCurve_Default();
         }
         public EffectAngleCurvesOverLife(CurveValue curve)
         {

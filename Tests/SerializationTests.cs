@@ -122,31 +122,31 @@ namespace BHSDK.Tests
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
             level.Game.Events.Themes.Add(new ThemeKeyframe());
-            level.Game.CameraEvents.Pos.Add(new Pos());
-            level.Game.CameraEvents.Rot.Add(new Rot());
-            level.Game.CameraEvents.Shake.Add(new Shake());
-            level.Game.CameraEvents.Zoom.Add(new Zoom());
+            level.Game.CameraEvents.Positions.Add(new Pos());
+            level.Game.CameraEvents.Rotations.Add(new Rot());
+            level.Game.CameraEvents.Shakes.Add(new Shake());
+            level.Game.CameraEvents.Zooms.Add(new Zoom());
 
-            level.Game.PostProcessingEvents.Bloom.Add(new Bloom());
-            level.Game.PostProcessingEvents.Chroma.Add(new ChromaticAberration());
-            level.Game.PostProcessingEvents.Vignette.Add(new Vignette());
-            level.Game.PostProcessingEvents.Lens.Add(new LensDistortion());
-            level.Game.PostProcessingEvents.Grain.Add(new FilmGrain());
-            level.Game.PostProcessingEvents.MotionBlur.Add(new MotionBlur());
-            level.Game.PostProcessingEvents.ColorCurves.Add(new ColorCurves());
-            level.Game.PostProcessingEvents.LiftGammaGain.Add(new LiftGammaGain());
-            level.Game.PostProcessingEvents.ShadowsMidtonesHighlights.Add(new ShadowsMidtonesHighlights());
-            level.Game.PostProcessingEvents.WhiteBalance.Add(new WhiteBalance());
-            level.Game.PostProcessingEvents.AnalogGlitch.Add(new AnalogGlitch());
-            level.Game.PostProcessingEvents.DigitalGlitch.Add(new DigitalGlitch());
+            level.Game.PostProcessingEvents.Blooms.Add(new Bloom());
+            level.Game.PostProcessingEvents.Chromas.Add(new ChromaticAberration());
+            level.Game.PostProcessingEvents.Vignettes.Add(new Vignette());
+            level.Game.PostProcessingEvents.Lenses.Add(new LensDistortion());
+            level.Game.PostProcessingEvents.Grains.Add(new FilmGrain());
+            level.Game.PostProcessingEvents.MotionBlurs.Add(new MotionBlur());
+            level.Game.PostProcessingEvents.ColorCurveses.Add(new ColorCurves());
+            level.Game.PostProcessingEvents.LiftGammaGains.Add(new LiftGammaGain());
+            level.Game.PostProcessingEvents.ShadowsMidtonesHighlightses.Add(new ShadowsMidtonesHighlights());
+            level.Game.PostProcessingEvents.WhiteBalances.Add(new WhiteBalance());
+            level.Game.PostProcessingEvents.AnalogGlitches.Add(new AnalogGlitch());
+            level.Game.PostProcessingEvents.DigitalGlitches.Add(new DigitalGlitch());
 
             level.Game.PlayerEvents.Visibles.Add(new BoolKey());
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());
 
             var textureObject = new TextureObject();
-            textureObject.Pos.Add(new Pos());
-            textureObject.Rot.Add(new Rot());
-            textureObject.Sca.Add(new Sca());
+            textureObject.Positions.Add(new Pos());
+            textureObject.Rotations.Add(new Rot());
+            textureObject.Scales.Add(new Sca());
             textureObject.Clr.Add(new Clr());
             level.Game.Objects.Add(textureObject);
 
@@ -256,9 +256,9 @@ namespace BHSDK.Tests
             {
                 Matrix =
                 {
-                    [1] = new ColorValue(Color.red),
-                    [2] = new ColorValue(Color.green),
-                    [3] = new ColorValue(Color.blue)
+                    [1] = ColorValue.red,
+                    [2] = ColorValue.green,
+                    [3] = ColorValue.blue,
                 }
             };
             return theme;

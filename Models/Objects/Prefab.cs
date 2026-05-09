@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
@@ -10,12 +11,18 @@ namespace BHSDK.Models.Objects
     {
         public Version GetVersion() => new(1, 0);
         
+        [RuleGuidNotEmpty]
         [JsonProperty(Names.PrefabGuid)]
         public Guid PrefabGuid { get; set; }
         
+        // TODO add more contextual checks
+        [RuleNotNull]
+        [RuleCollectionUnique(nameof(Object.ObjectId))]
         [JsonProperty(Names.Objects)]
         public List<Object> Objects { get; set; }
         
+        // TODO add more contextual checks
+        [RuleNotNull]
         [JsonProperty(Names.ParentObjects)]
         public List<PrefabObject> PrefabObjects { get; set; }
 

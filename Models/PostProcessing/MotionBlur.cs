@@ -1,5 +1,7 @@
 ﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Keyframes;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
@@ -8,6 +10,8 @@ namespace BHSDK.Models.PostProcessing
     {
         // Quality (client settings variable, he set it himself)
         
+        [RuleInRange(PostProcessingRules.MotionBlur.IntensityMin,
+            PostProcessingRules.MotionBlur.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
         

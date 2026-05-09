@@ -1,21 +1,26 @@
 ﻿using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Events
 {
     public class Checkpoint : IFrame
     {
+        [RuleMin(FrameRules.MinFrame)]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         
+        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
         
         [JsonProperty(Names.ActiveShort)]
         public bool Active { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
 
@@ -24,7 +29,7 @@ namespace BHSDK.Models.Events
             Name = string.Empty;
             Active = true;
             Frame = 0;
-            Color = new ColorValue(UnityEngine.Color.white);
+            Color = ColorValue.white;
         }
         public Checkpoint(string name, bool active, int frame, IColor color)
         {

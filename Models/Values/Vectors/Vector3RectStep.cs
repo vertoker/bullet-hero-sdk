@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Values.Vectors
 {
@@ -55,32 +54,8 @@ namespace BHSDK.Models.Values.Vectors
             
             Step = step;
         }
-        public Vector3RectStep(IFloat minX, IFloat minY, IFloat minZ, IFloat maxX, IFloat maxY, IFloat maxZ, IFloat step)
-        {
-            MinX = minX.Get();
-            MinY = minY.Get();
-            MinZ = minZ.Get();
-            
-            MaxX = maxX.Get();
-            MaxY = maxY.Get();
-            MaxZ = maxZ.Get();
-            
-            Step = step.Get();
-        }
 
         public VectorType GetModelType() => VectorType.RandomRectStep;
-        public Vector3 Get()
-        {
-            var x = Random.Range(MinX, MaxX);
-            var y = Random.Range(MinY, MaxY);
-            var z = Random.Range(MinZ, MaxZ);
-            if (Step == 0f) return new Vector3(x, y, z);
-            
-            x = Mathf.RoundToInt(x / Step) * Step;
-            y = Mathf.RoundToInt(y / Step) * Step;
-            z = Mathf.RoundToInt(z / Step) * Step;
-            return new Vector3(x, y, z);
-        }
 
         IVector3 ICopyable<IVector3>.Copy() => new Vector3RectStep(MinX, MinY, MinZ, MaxX, MaxY, MaxZ, Step);
         public Vector3RectStep Copy() => new(MinX, MinY, MinZ, MaxX, MaxY, MaxZ, Step);

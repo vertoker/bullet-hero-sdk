@@ -5,7 +5,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace BHSDK.Models.Effects
 {
@@ -27,17 +26,10 @@ namespace BHSDK.Models.Effects
 
         public EffectShapeCircle()
         {
-            Radius = new FloatValue(EffectStatic.Shape_CircleRadiusDefault);
-            Thickness = new FloatValue(EffectStatic.Shape_CircleThicknessDefault);
-            Arc = new FloatValue(EffectStatic.Shape_ArcDefault);
+            Radius = new FloatValue(EffectStatic.Shape_CircleRadius_Default);
+            Thickness = new FloatValue(EffectStatic.Shape_CircleThickness_Default);
+            Arc = new FloatValue(EffectStatic.Shape_Arc_Default);
             Spread = new EffectShapeSpreadRandom();
-        }
-        public EffectShapeCircle(float radius, float thickness, float arc, IEffectShapeSpread spread)
-        {
-            Radius = new FloatValue(radius);
-            Thickness = new FloatValue(thickness);
-            Arc = new FloatValue(arc);
-            Spread = spread;
         }
         public EffectShapeCircle(IFloat radius, IFloat thickness, IFloat arc, IEffectShapeSpread spread)
         {
