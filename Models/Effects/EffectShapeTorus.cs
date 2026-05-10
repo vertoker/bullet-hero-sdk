@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectShapeTorus : IEffectShape, ICopyable<EffectShapeTorus>
     {
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.TorusRadiusMinor_Min)]

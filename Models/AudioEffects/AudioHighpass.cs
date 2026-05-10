@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
+    [RuleContainer]
     public class AudioHighpass : AudioEffect
     {
         [RuleInRange(AudioRules.Highpass.CutoffFreq_Min, AudioRules.Highpass.CutoffFreq_Max)]

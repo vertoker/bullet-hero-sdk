@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
+    [RuleContainer]
     public class CameraEvents
     {
         // Camera - is a unique instance. It exists all level lifetime and any Object can be child of camera. 

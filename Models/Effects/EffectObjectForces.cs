@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectObjectForces : IUpdatable<EffectObjectForces>
     {
         [RuleNotNull]

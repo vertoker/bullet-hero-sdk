@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
+    [RuleContainer]
     public class GameLevel : IObjectScope
     {
         [RuleNotNull]
@@ -27,6 +28,7 @@ namespace BHSDK.Models.Game
         [RuleNotNull]
         [JsonProperty(Names.PlayerEvents)]
         public PlayerEvents PlayerEvents { get; set; }
+        
         
         // TODO add more contextual checks
         [RuleNotNull]

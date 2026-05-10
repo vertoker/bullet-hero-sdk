@@ -37,13 +37,13 @@ namespace BHSDK.Tests
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            // Debug.Log($"Effect - <color=green>{json}</color>");
+            Cat.Meow($"Effect - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
             data = serializationService.Serializer.Deserialize<EffectData>(reader);
         }
 
-        private static EffectObject CreateTestEffect()
+        public static EffectObject CreateTestEffect()
         {
             var effect = new EffectObject
             {
@@ -101,13 +101,13 @@ namespace BHSDK.Tests
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            // Debug.Log($"Level - <color=green>{json}</color>");
+            Cat.Meow($"Level - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
             data = serializationService.Serializer.Deserialize<LevelData>(reader);
         }
         
-        private static Level CreateTestLevel()
+        public static Level CreateTestLevel()
         {
             var level = new Level();
 
@@ -141,24 +141,45 @@ namespace BHSDK.Tests
             level.Game.PlayerEvents.Visibles.Add(new BoolKey());
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());
 
-            var textureObject = new TextureObject();
+            var textureObject = new TextureObject()
+            {
+                ObjectId = 1,
+            };
             textureObject.Positions.Add(new Pos());
             textureObject.Rotations.Add(new Rot());
             textureObject.Scales.Add(new Sca());
             textureObject.Clr.Add(new Clr());
             level.Game.Objects.Add(textureObject);
 
-            var textObject = new TextObject();
+            var textObject = new TextObject()
+            {
+                ObjectId = 2,
+            };
             textObject.Clr.Add(new Clr());
             level.Game.Objects.Add(textObject);
 
-            var effectObject = new EffectObject();
+            var effectObject = new EffectObject()
+            {
+                ObjectId = 3,
+            };
             level.Game.Objects.Add(effectObject);
 
-            var prefab = new Prefab();
-            prefab.Objects.Add(new TextureObject());
-            prefab.Objects.Add(new TextObject());
-            prefab.Objects.Add(new EffectObject());
+            var prefab = new Prefab()
+            {
+                PrefabGuid = Guid.NewGuid(),
+            };
+            prefab.Objects.Add(new TextureObject()
+            {
+                ObjectId = 1,
+            });
+            prefab.Objects.Add(new TextObject()
+            {
+                ObjectId = 2,
+            });
+            prefab.Objects.Add(new EffectObject()
+            {
+                ObjectId = 3,
+            });
             level.Game.Prefabs.Add(prefab);
             
             var prefabObject = new PrefabObject { PrefabGuid = Guid.NewGuid() };
@@ -180,7 +201,7 @@ namespace BHSDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(1, "cool song", "vertoker", 0, 1000, 0f,
+            var track = new LevelTrack(1, "cool song", "vertoker", 0, 10, 0f,
                 0, trackEffects);
             level.Audio.Tracks.Add(track);
 
@@ -200,13 +221,13 @@ namespace BHSDK.Tests
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            // Debug.Log($"Prefab - <color=green>{json}</color>");
+            Cat.Meow($"Prefab - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
             data = serializationService.Serializer.Deserialize<PrefabData>(reader);
         }
 
-        private static Prefab CreateTestPrefab()
+        public static Prefab CreateTestPrefab()
         {
             var prefab = new Prefab();
             prefab.Objects.Add(new TextureObject());
@@ -242,13 +263,13 @@ namespace BHSDK.Tests
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            // Debug.Log($"Theme - <color=green>{json}</color>");
+            Cat.Meow($"Theme - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
             data = serializationService.Serializer.Deserialize<ThemeData>(reader);
         }
 
-        private static Theme CreateTestTheme()
+        public static Theme CreateTestTheme()
         {
             var theme = new Theme
             {
@@ -275,13 +296,13 @@ namespace BHSDK.Tests
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            // Debug.Log($"PlayerSettings - <color=green>{json}</color>");
+            Cat.Meow($"PlayerSettings - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
             data = serializationService.Serializer.Deserialize<PlayerSettingsData>(reader);
         }
 
-        private PlayerSettings CreateTestPlayerSettings()
+        public PlayerSettings CreateTestPlayerSettings()
         {
             var settings = new PlayerSettings();
             return settings;
@@ -300,13 +321,13 @@ namespace BHSDK.Tests
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            // Debug.Log($"EditorSettings - <color=green>{json}</color>");
+            Cat.Meow($"EditorSettings - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
             data = serializationService.Serializer.Deserialize<EditorSettingsData>(reader);
         }
 
-        private EditorSettings CreateTestEditorSettings()
+        public EditorSettings CreateTestEditorSettings()
         {
             var settings = new EditorSettings();
             return settings;

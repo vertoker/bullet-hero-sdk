@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
+    [RuleContainer]
     public class BoolKey : IFrame, ICopyable<BoolKey>
     {
         [RuleLevelFrame]

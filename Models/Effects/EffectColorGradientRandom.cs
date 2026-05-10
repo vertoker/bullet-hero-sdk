@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectColorGradientRandom : IEffectColor, ICopyable<EffectColorGradientRandom>
     {
         [RuleNotNull]

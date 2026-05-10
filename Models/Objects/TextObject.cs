@@ -6,15 +6,19 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
+    [RuleContainer]
     public class TextObject : Object, IUpdatable<TextObject>
     {
         public override ObjectType GetModelType() => ObjectType.Text;
         
+        [RuleNotNull, RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Text)]
         public IString Text { get; set; }
         
@@ -24,12 +28,15 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.FontResourceId)]
         public int FontResourceId { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Size)]
         public List<Sca> Sizes { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Color)]
         public List<Clr> Clr { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
         
@@ -63,13 +70,13 @@ namespace BHSDK.Models.Objects
             Clr = new List<Clr>();
             FontSizes = new List<FloatKey>();
             
-            Direction = TextStatic.Direction_Default;
-            WordWrap = TextStatic.WordWrap_Default;
-            HorizontalAlignment = TextStatic.HorizontalAlignment_Default;
-            VerticalAlignment = TextStatic.VerticalAlignment_Default;
-            OverEdge = TextStatic.OverEdge_Default;
-            UnderEdge = TextStatic.UnderEdge_Default;
-            LeadingDistribution = TextStatic.LeadingDistribution_Default;
+            Direction = TextRules.Direction_Default;
+            WordWrap = TextRules.WordWrap_Default;
+            HorizontalAlignment = TextRules.HorizontalAlignment_Default;
+            VerticalAlignment = TextRules.VerticalAlignment_Default;
+            OverEdge = TextRules.OverEdge_Default;
+            UnderEdge = TextRules.UnderEdge_Default;
+            LeadingDistribution = TextRules.LeadingDistribution_Default;
         }
         public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
             List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot, IString text, int fontResourceId,

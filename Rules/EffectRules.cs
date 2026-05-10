@@ -72,7 +72,7 @@ namespace BHSDK.Rules
             public const float CircleRadius_Default = 1f;
             
             public const float Arc_Min = 0f;
-            public const float Arc_Max = MathStatic.PI2;
+            public const float Arc_Max = MathUtils.PI2;
             public const float Arc_Default = Arc_Max;
             
             public const float CircleThickness_Min = 0f;

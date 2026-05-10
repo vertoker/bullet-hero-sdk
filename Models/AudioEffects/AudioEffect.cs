@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
+    [RuleContainer]
     public class AudioEffect
     {
         [RuleInRange(AudioRules.MixLevel_Disabled, AudioRules.MixLevel_Enabled)]

@@ -19,6 +19,7 @@ namespace BHSDK.Tests
             var result = cryptography.Decrypt(cryptedText, password);
             
             Assert.AreEqual(text, result);
+            Cat.Meow($"{result} - {cryptedText}");
         }
     }
 }

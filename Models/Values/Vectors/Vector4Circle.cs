@@ -1,10 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values.Vectors
 {
+    [RuleContainer]
     public class Vector4Circle : IVector4, ICopyable<Vector4Circle>
     {
         [JsonProperty(Names.CoordX)]
@@ -19,6 +21,7 @@ namespace BHSDK.Models.Values.Vectors
         [JsonProperty(Names.CoordW)]
         public float W { get; set; }
         
+        [RuleMin(0f)]
         [JsonProperty(Names.Radius)]
         public float Radius { get; set; }
         

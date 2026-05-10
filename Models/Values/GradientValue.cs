@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class GradientValue : ICopyable<GradientValue>
     {
         public const int MaxCount = 4;

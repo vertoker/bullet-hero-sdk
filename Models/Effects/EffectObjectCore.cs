@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectObjectCore : IUpdatable<EffectObjectCore>
     {
         [JsonProperty(Names.Loop)]

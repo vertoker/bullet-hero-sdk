@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
+    [RuleContainer]
     public class AudioNormalize : AudioEffect
     {
         [RuleInRange(AudioRules.Normalize.FadeInTime_Min, AudioRules.Normalize.FadeInTime_Max)]

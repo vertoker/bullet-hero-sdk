@@ -4,10 +4,12 @@ using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
+    [RuleContainer]
     public class TextureObject : Object, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.Texture;

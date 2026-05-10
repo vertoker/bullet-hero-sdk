@@ -1,10 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values.Vectors
 {
+    [RuleContainer]
     public class Vector3RectStep : IVector3, ICopyable<Vector3RectStep>
     {
         [JsonProperty(Names.MinX)]
@@ -16,7 +18,6 @@ namespace BHSDK.Models.Values.Vectors
         [JsonProperty(Names.MinZ)]
         public float MinZ { get; set; }
         
-        
         [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }
         
@@ -26,7 +27,7 @@ namespace BHSDK.Models.Values.Vectors
         [JsonProperty(Names.MaxZ)]
         public float MaxZ { get; set; }
         
-        
+        [RuleMin(0f)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }
 

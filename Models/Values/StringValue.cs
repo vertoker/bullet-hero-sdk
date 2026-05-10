@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class StringValue : IString, ICopyable<StringValue>
     {
         [RuleNotNull, RuleStringMax(ValueRules.MaxGameString)]

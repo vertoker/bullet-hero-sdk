@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class Theme : ITheme, ICopyable<Theme>
     {
         public Version GetVersion() => new(1, 0);

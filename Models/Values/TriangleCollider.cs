@@ -1,17 +1,22 @@
 ﻿using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class TriangleCollider
     {
+        [RuleNotNull]
         [JsonProperty(Names.Point1)]
         public Vector2Value Point1 { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Point2)]
         public Vector2Value Point2 { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Point3)]
         public Vector2Value Point3 { get; set; }
         

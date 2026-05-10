@@ -2,6 +2,7 @@
 using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
@@ -16,6 +17,7 @@ namespace BHSDK.Models.Objects
     // 3. Modification works only for prefab scope where it's located.
     // No deep inheritance of changes
 
+    [RuleContainer]
     public class Modification
     {
         [JsonProperty(Names.ObjectId)]

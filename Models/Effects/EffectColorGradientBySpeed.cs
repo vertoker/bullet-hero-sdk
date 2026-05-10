@@ -5,11 +5,13 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectColorGradientBySpeed : IEffectColor, ICopyable<EffectColorGradientBySpeed>
     {
         [JsonProperty(Names.Gradient)]

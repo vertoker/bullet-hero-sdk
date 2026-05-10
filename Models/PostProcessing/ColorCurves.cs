@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class ColorCurves : Keyframe
     {
         [RuleInRange(PostProcessingRules.ColorCurves.HueVsHueMin,

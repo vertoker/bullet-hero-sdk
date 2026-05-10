@@ -1,12 +1,15 @@
 ﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class GradientColorKeyValue : ICopyable<GradientColorKeyValue>
     {
         // TODO maybe replace FloatValue to IFloat (color too) (in editor step)
         
+        [RuleNotNull]
         [JsonProperty(Names.Color)]
         public ColorValue ColorHDR { get; set; }
         

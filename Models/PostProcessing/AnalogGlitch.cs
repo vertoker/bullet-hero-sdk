@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class AnalogGlitch : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         [RuleInRange(PostProcessingRules.AnalogGlitch.ScanLineJitterMin,

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
+    [RuleContainer]
     public class AudioReverb : AudioEffect
     {
         [RuleInRange(AudioRules.Reverb.DryLevel_Min, AudioRules.Reverb.DryLevel_Max)]

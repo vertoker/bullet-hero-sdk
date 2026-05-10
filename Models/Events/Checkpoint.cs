@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Events
 {
+    [RuleContainer]
     public class Checkpoint : IFrame
     {
         [RuleLevelFrame]

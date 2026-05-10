@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
+    [RuleContainer]
     public class Pos : Keyframe, ICopyable<Pos>
     {
         [RuleNotNull, RuleIVector2InRange(ValueRules.MinCoord, ValueRules.MaxCoord)]

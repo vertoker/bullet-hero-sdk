@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectShapeSpreadPingPong : IEffectShapeSpread, ICopyable<EffectShapeSpreadPingPong>
     {
         [RuleNotNull]

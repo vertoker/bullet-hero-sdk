@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Settings
 {
+    [RuleContainer]
     public class LevelSettings
     {
         [RuleMin(FrameRules.MinFramerate)]

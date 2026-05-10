@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
 {
+    [RuleContainer]
     public class LevelTrack
     {
         public const int MaxSourcesCount = 4;

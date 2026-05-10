@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Enum.Resources;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Resources
 {
+    [RuleContainer]
     public abstract class Resource
     {
         public const int MaxSourcesCount = 4;
@@ -24,6 +26,7 @@ namespace BHSDK.Models.Resources
         // (in real code don't used resourceId, it uses typed id like textureResourceId and textureResourceIndex)
         // Count of game-defined resources (textures etc.) can be changed with Level version, this validates by validators
         
+        [RuleNotNull, RuleCollectionMaxCount(MaxSourcesCount)]
         [JsonProperty(Names.Src)]
         public List<ResourceKey> Sources { get; set; }
         

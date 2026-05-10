@@ -1,10 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class IntMinMaxStep : IInt, ICopyable<IntMinMaxStep>
     {
         [JsonProperty(Names.Min)]
@@ -13,6 +15,7 @@ namespace BHSDK.Models.Values
         [JsonProperty(Names.Max)]
         public int Max { get; set; }
         
+        [RuleMin(0)]
         [JsonProperty(Names.Step)]
         public int Step { get; set; }
 

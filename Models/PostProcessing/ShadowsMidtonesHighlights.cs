@@ -9,6 +9,7 @@ using Keyframe = BHSDK.Models.Keyframes.Keyframe;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class ShadowsMidtonesHighlights : Keyframe
     {
         [JsonProperty(Names.Shadow)]

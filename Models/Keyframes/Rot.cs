@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
+    [RuleContainer]
     public class Rot : Keyframe, ICopyable<Rot>
     {
         [RuleNotNull, RuleIFloatInRange(ValueRules.MinCoord, ValueRules.MaxCoord)]

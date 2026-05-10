@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectShapeRectangle : IEffectShape, ICopyable<EffectShapeRectangle>
     {
         [RuleNotNull, RuleIVector2Min(EffectRules.Shape.BoxSize_Min)]

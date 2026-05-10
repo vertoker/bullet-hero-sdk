@@ -1,9 +1,11 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class CurveKeyframeValue : ICopyable<CurveKeyframeValue>
     {
         // TODO maybe replace FloatValue to IFloat (in editor step)

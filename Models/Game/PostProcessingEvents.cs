@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
+    [RuleContainer]
     public class PostProcessingEvents
     {
         // General

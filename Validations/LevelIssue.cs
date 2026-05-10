@@ -1,53 +1,70 @@
 ﻿using System;
-using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 
 namespace BHSDK.Validations
 {
     public readonly struct LevelIssue
     {
-        public readonly LevelIssueGroup Group;
-        public readonly LevelErrorType ErrorType;
-        public readonly object Context;
-        public readonly PropertyInfo Property;
+        public readonly BaseRuleAttribute Rule;
+        public readonly object Root;
+        public readonly List<LevelPath> Trace;
 
-        public LevelIssue(LevelIssueGroup group, LevelErrorType errorType,
-            object context = null, PropertyInfo property = null)
+        public LevelIssue(BaseRuleAttribute rule, object root, List<LevelPath> trace)
         {
-            Group = group;
-            ErrorType = errorType;
-            Context = context;
-            Property = property;
+            Rule = rule;
+            Root = root;
+            Trace = trace;
+        }
+
+        public object GetValue()
+        {
+            var result = Root;
+            foreach (var path in Trace)
+            {
+                result = path.Property.GetValue(result);
+                if (path.HasIndex)
+                {
+                    if (result is IList list)
+                        result = list[path.Index];
+                    else if (result.GetType().IsArray)
+                        result = ((Array)result).GetValue(path.Index);
+                }
+            }
+            return result;
         }
         
-        public Type TypeIdentifier => Context?.GetType() ?? typeof(object);
-        public bool IsOk() => ErrorType == LevelErrorType.Ok;
-
-        public static LevelIssue Ok()
-            => new(LevelIssueGroup.None, LevelErrorType.Ok);
-        public static LevelIssue Ok(object context)
-            => new(LevelIssueGroup.None, LevelErrorType.Ok, context);
-        public static LevelIssue Ok(object context, string propertyName)
-            => new(LevelIssueGroup.None, LevelErrorType.Ok, context, context.GetType().GetProperty(propertyName));
-        
-        public static LevelIssue Error(LevelErrorType errorType)
-            => new(LevelIssueGroup.Error, errorType);
-        public static LevelIssue Error(LevelErrorType errorType, object context)
-            => new(LevelIssueGroup.Error, errorType, context);
-        public static LevelIssue Error(LevelErrorType errorType, object context, string propertyName)
-            => new(LevelIssueGroup.Error, errorType, context, context.GetType().GetProperty(propertyName));
-        
-        public static LevelIssue Warning(LevelErrorType errorType)
-            => new(LevelIssueGroup.Warning, errorType);
-        public static LevelIssue Warning(LevelErrorType errorType, object context)
-            => new(LevelIssueGroup.Warning, errorType, context);
-        public static LevelIssue Warning(LevelErrorType errorType, object context, string propertyName)
-            => new(LevelIssueGroup.Warning, errorType, context, context.GetType().GetProperty(propertyName));
-        
-        public static LevelIssue Advice(LevelErrorType errorType)
-            => new(LevelIssueGroup.Advice, errorType);
-        public static LevelIssue Advice(LevelErrorType errorType, object context)
-            => new(LevelIssueGroup.Advice, errorType, context);
-        public static LevelIssue Advice(LevelErrorType errorType, object context, string propertyName)
-            => new(LevelIssueGroup.Advice, errorType, context, context.GetType().GetProperty(propertyName));
+        public string GetPath()
+        {
+            if (Trace.Count == 0) return string.Empty;
+            var builder = new StringBuilder();
+            BuildTrace(builder);
+            return builder.ToString();
+        }
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append("Issue, Rule:");
+            builder.Append(Rule.GetType().Name);
+            builder.Append(", Root:");
+            builder.Append(Root);
+            builder.Append(", Trace:");
+            BuildTrace(builder);
+            return builder.ToString();
+        }
+        private void BuildTrace(StringBuilder builder)
+        {
+            if (Trace.Count == 0) return;
+            for (var i = 0; i < Trace.Count - 1; i++)
+            {
+                var path = Trace[i];
+                path.Append(builder);
+                builder.Append('.');
+            }
+            Trace[^1].Append(builder);
+        }
     }
 }

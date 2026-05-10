@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectAngleValue : IEffectAngle, ICopyable<EffectAngleValue>
     {
         [RuleNotNull]

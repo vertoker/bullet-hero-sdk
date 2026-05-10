@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
 {
+    [RuleContainer]
     public class AudioLevel
     {
         // because master channels created only in Unity

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.NoGame
 {
+    [RuleContainer]
     public class LevelMeta
     {
         [RuleNotNull, RuleIStringMax(ValueRules.MaxGameString)]

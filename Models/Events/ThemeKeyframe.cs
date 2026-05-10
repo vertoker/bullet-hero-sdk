@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Events
 {
+    [RuleContainer]
     public class ThemeKeyframe : Keyframe
     {
         [RuleThemeIndex]

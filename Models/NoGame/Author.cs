@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.NoGame
 {
+    [RuleContainer]
     public class Author
     {
         [RuleNotNull, RuleIStringMax(ValueRules.MaxGameString)]

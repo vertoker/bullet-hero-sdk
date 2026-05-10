@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
+    [RuleContainer]
     public class Clr : Keyframe, ICopyable<Clr>
     {
         [RuleNotNull]

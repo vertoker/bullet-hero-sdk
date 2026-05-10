@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
+    [RuleContainer]
     public class FloatKey : Keyframe, ICopyable<FloatKey>
     {
         [RuleNotNull]

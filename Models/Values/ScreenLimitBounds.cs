@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class ScreenLimitBounds : IScreenLimit, ICopyable<ScreenLimitBounds>
     {
         [RuleNotNull]
@@ -32,7 +33,7 @@ namespace BHSDK.Models.Values
         {
             var minAspect = MinAspect.GetAspect();
             var maxAspect = MaxAspect.GetAspect();
-            return MathStatic.Clamp(currentAspect, minAspect, maxAspect);
+            return MathUtils.Clamp(currentAspect, minAspect, maxAspect);
         }
 
         public ScreenLimitBounds()

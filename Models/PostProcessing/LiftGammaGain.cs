@@ -7,6 +7,7 @@ using Keyframe = BHSDK.Models.Keyframes.Keyframe;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class LiftGammaGain : Keyframe
     {
         [JsonProperty(Names.Lift)]

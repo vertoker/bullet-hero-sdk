@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.CompilerServices;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
@@ -10,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class ColorValue : IColor, ICopyable<ColorValue>
     {
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]

@@ -6,24 +6,24 @@ using BHSDK.Utils;
 namespace BHSDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleLevelFrame : BaseRuleAttribute
+    public class RuleThemeIndexAttribute : BaseRuleAttribute
     {
         protected override bool IsValidTypeInternal(object value) => value is int;
 
         protected override bool IsValidInternal(object value, Level context)
-            => value is int frame and >= FrameRules.MinFrameLength && frame < context.Settings.FrameLength;
+            => value is int themeIndex and >= 0 && themeIndex < context.Game.Themes.Count;
 
         protected override void FixInternal(object target, PropertyInfo property, Level context)
         {
-            if (context.Settings.FrameLength < FrameRules.MinFrameLength) return;
+            if (context.Game.Themes.Count == 0) return;
             
             var value = property.GetValue(target);
-            if (value is not int frame) return;
+            if (value is not int themeIndex) return;
 
-            if (frame < FrameRules.MinFrame || frame >= context.Settings.FrameLength)
+            if (themeIndex < 0 || themeIndex >= context.Game.Themes.Count)
             {
-                frame = MathStatic.Clamp(frame, FrameRules.MinFrame, context.Settings.FrameLength);
-                property.SetValue(target, frame);
+                themeIndex = MathUtils.Clamp(themeIndex, 0, context.Game.Themes.Count);
+                property.SetValue(target, themeIndex);
             }
         }
     }

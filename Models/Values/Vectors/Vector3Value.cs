@@ -1,10 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values.Vectors
 {
+    [RuleContainer]
     public class Vector3Value : IVector3, ICopyable<Vector3Value>
     {
         [JsonProperty(Names.CoordX)]

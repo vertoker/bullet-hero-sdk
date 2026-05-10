@@ -35,9 +35,9 @@ namespace BHSDK.Tests
             Assert.AreEqual(instanceMetadata.GetValue(model1, "prop6"), null); // not existed parameter
             
             // Exceptions
-            try { instanceMetadata.GetValue(model1, "prop1."); } // inappropriate ending
+            try { Cat.Meow($"{instanceMetadata.GetValue(model1, "prop1.")}"); } // inappropriate ending
             catch (Exception e) { Assert.AreEqual(e.GetType(), typeof(ArgumentException)); }
-            try { instanceMetadata.GetValue(model1, ".prop1"); } // inappropriate beginning
+            try { Cat.Meow($"{instanceMetadata.GetValue(model1, ".prop1")}"); } // inappropriate beginning
             catch (Exception e) { Assert.AreEqual(e.GetType(), typeof(ArgumentException)); }
         }
 

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class ColorMinMax : IColor, ICopyable<ColorMinMax>
     {
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]

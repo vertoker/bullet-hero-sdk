@@ -7,10 +7,12 @@ using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
+    [RuleContainer]
     public class EffectObject : Object, IEffect, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.Effect;

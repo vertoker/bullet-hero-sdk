@@ -1,7 +1,9 @@
 {
     "name": "BulletHeroSDK",
     "rootNamespace": "BHSDK",
-    "references": [],
+    "references": [
+        "GUID:6acb6cdb79384d57a2041471718f1534"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

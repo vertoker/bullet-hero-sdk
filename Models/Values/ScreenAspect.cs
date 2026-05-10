@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class ScreenAspect : ICopyable<ScreenAspect>
     {
         [RuleMin(1)]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using BHSDK.Models;
+using BHSDK.Validations;
 
 namespace BHSDK.Rules.Attributes
 {
@@ -13,6 +14,7 @@ namespace BHSDK.Rules.Attributes
         protected abstract bool IsValidInternal(object value, Level context);
         protected abstract void FixInternal(object target, PropertyInfo property, Level context);
 
+        public virtual RuleGroup Group => RuleGroup.Error;
         public virtual bool HasIsValid => true;
         public virtual bool HasFix => true;
 

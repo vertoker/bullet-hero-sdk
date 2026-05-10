@@ -1,9 +1,11 @@
 ﻿using System;
 using BHSDK.Models.Enum.Resources;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Resources
 {
+    [RuleContainer]
     public class ResourceKey
     {
         // URI - Universal Resource Identifier, either for paths, urls or keys
@@ -11,6 +13,7 @@ namespace BHSDK.Models.Resources
         [JsonProperty(Names.UriType)]
         public ResourceUriType UriType { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Uri)]
         public string Uri { get; set; }
         

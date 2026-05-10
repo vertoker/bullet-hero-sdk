@@ -2,9 +2,9 @@
 
 // ReSharper disable InconsistentNaming
 
-namespace BHSDK.Utils
+namespace BHSDK.Rules
 {
-    public static class TextStatic
+    public static class TextRules
     {
         public const float Size_X_Fallback = 1f;
         public const float Size_Y_Fallback = 1f;

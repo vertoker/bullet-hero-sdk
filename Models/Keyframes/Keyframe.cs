@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
+    [RuleContainer]
     public abstract class Keyframe : IFrame
     {
         [RuleLevelFrame]

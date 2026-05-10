@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class Alignment : ICopyable<Alignment>
     {
         [RuleNotNull, RuleIVector2InRange(ValueRules.MinSca, ValueRules.MaxSca)]

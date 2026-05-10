@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectScaleCurvesBySpeed : IEffectScale, ICopyable<EffectScaleCurvesBySpeed>
     {
         [RuleNotNull]

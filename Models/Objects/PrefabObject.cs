@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
+    [RuleContainer]
     public class PrefabObject
     {
         // In build process, this PrefabObject converted to Object
@@ -11,6 +13,7 @@ namespace BHSDK.Models.Objects
         // 2. It uses fields and reflection in modifications for finding and replace value in runtime model
         // 3. Play it
         
+        [RuleGuidNotEmpty]
         [JsonProperty(Names.PrefabGuid)]
         public Guid PrefabGuid { get; set; } // reference to all level Prefabs list
         

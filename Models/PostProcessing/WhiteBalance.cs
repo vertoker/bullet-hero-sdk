@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class WhiteBalance : Keyframe
     {
         [RuleInRange(PostProcessingRules.WhiteBalance.TemperatureMin,

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class ScreenLimitFixed : IScreenLimit, ICopyable<ScreenLimitFixed>
     {
         [RuleNotNull]
@@ -14,7 +15,7 @@ namespace BHSDK.Models.Values
         public ScreenAspect Aspect { get; set; }
         
         public ScreenLimitType GetModelType() => ScreenLimitType.Fixed;
-        public bool IsValid(float currentAspect) => MathStatic.Approximately(Aspect.GetAspect(), currentAspect);
+        public bool IsValid(float currentAspect) => MathUtils.Approximately(Aspect.GetAspect(), currentAspect);
         public float GetValid(float currentAspect) => Aspect.GetAspect();
 
         public ScreenLimitFixed()

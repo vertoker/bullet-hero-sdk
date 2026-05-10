@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class StringLocalized : IString, ICopyable<StringLocalized>
     {
         [RuleNotNull, RuleCollectionUnique(nameof(StringLanguage.LanguageCode))]

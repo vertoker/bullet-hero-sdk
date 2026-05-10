@@ -2,9 +2,11 @@
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules.Attributes;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class ScreenLimitNone : IScreenLimit, ICopyable<ScreenLimitNone>
     {
         public ScreenLimitType GetModelType() => ScreenLimitType.None;

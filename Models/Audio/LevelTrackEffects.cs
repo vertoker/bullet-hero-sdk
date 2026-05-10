@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
 {
+    [RuleContainer]
     public class LevelTrackEffects
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAudioVolumes)]

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class MotionBlur : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Quality (client settings variable, he set it himself)

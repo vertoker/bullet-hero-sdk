@@ -1,10 +1,12 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values.Vectors
 {
+    [RuleContainer]
     public class Vector2Rect : IVector2, ICopyable<Vector2Rect>
     {
         // TODO add check for Min and Max, must be always Min < Max
@@ -13,7 +15,6 @@ namespace BHSDK.Models.Values.Vectors
         
         [JsonProperty(Names.MinY)]
         public float MinY { get; set; }
-        
         
         [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }

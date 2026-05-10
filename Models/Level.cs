@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models
 {
+    [RuleContainer]
     public class Level : ILevel
     {
         public Version GetVersion() => new(1, 0);

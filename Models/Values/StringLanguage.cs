@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class StringLanguage : ICopyable<StringLanguage>
     {
         [JsonProperty(Names.Language)]

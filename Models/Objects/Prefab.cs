@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
+    [RuleContainer]
     public class Prefab : IObjectScope, IPrefab
     {
         public Version GetVersion() => new(1, 0);

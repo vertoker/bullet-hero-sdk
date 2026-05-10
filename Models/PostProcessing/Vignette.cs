@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class Vignette : Keyframe
     {
         [RuleNotNull] // TODO add extra part for checking HDR part

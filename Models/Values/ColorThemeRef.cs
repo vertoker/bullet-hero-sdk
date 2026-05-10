@@ -1,29 +1,31 @@
 ﻿using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class ColorThemeRef : IColor, ICopyable<ColorThemeRef>
     {
-        [RuleThemeIndex]
+        [RuleInRange(0, ValueRules.ThemeCount - 1)]
         [JsonProperty(Names.ThemeIndex)]
-        public int ThemeIndex { get; set; }
+        public int ThemeColorIndex { get; set; }
         
         public ColorType GetModelType() => ColorType.ThemeRef;
 
         public ColorThemeRef()
         {
-            ThemeIndex = 0;
+            ThemeColorIndex = 0;
         }
-        public ColorThemeRef(int themeIndex)
+        public ColorThemeRef(int themeColorIndex)
         {
-            ThemeIndex = themeIndex;
+            ThemeColorIndex = themeColorIndex;
         }
         
-        IColor ICopyable<IColor>.Copy() => new ColorThemeRef(ThemeIndex);
-        public ColorThemeRef Copy() => new(ThemeIndex);
+        IColor ICopyable<IColor>.Copy() => new ColorThemeRef(ThemeColorIndex);
+        public ColorThemeRef Copy() => new(ThemeColorIndex);
     }
 }

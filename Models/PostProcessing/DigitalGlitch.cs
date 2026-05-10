@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class DigitalGlitch : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         [RuleInRange(PostProcessingRules.DigitalGlitch.IntensityMin,

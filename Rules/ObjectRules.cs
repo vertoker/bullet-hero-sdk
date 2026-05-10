@@ -1,6 +1,6 @@
-﻿namespace BHSDK.Utils
+﻿namespace BHSDK.Rules
 {
-    public static class ObjectStatic
+    public static class ObjectRules
     {
         public const int UndefinedId = 0;
         public const int UndefinedFrameIndex = int.MinValue;

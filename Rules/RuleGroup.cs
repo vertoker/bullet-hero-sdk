@@ -1,6 +1,6 @@
-﻿namespace BHSDK.Validations
+﻿namespace BHSDK.Rules
 {
-    public enum LevelIssueGroup : byte
+    public enum RuleGroup : byte
     {
         /// <summary>Can't summary this issue</summary>
         None = 0,

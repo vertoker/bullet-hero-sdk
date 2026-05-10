@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
+    [RuleContainer]
     public class AudioDistortion : AudioEffect
     {
         [RuleInRange(AudioRules.Distortion.Level_Min, AudioRules.Distortion.Level_Max)]

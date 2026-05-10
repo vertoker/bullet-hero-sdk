@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class Bloom : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Threshold - 0 (always, not a parameter)

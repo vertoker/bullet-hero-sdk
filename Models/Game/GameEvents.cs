@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
+    [RuleContainer]
     public class GameEvents
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxMarkerEvents)]

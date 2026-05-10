@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
+    [RuleContainer]
     public class AudioEcho : AudioEffect
     {
         [RuleInRange(AudioRules.Echo.Delay_Min, AudioRules.Echo.Delay_Max)]

@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
+    [RuleContainer]
     public class Object : IUpdatable<Object>
     {
         public virtual ObjectType GetModelType() => ObjectType.Object;

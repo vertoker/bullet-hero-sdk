@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.PostProcessing
 {
+    [RuleContainer]
     public class LensDistortion : Keyframe
     {
         [RuleInRange(PostProcessingRules.LensDistortion.IntensityMin,

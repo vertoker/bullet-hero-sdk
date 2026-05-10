@@ -1,8 +1,10 @@
 ﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class GradientAlphaKeyValue : ICopyable<GradientAlphaKeyValue>
     {
         [JsonProperty(Names.AlphaShort)]

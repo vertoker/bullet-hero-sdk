@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
+    [RuleContainer]
     public class CurveValue : ICopyable<CurveValue>
     {
         public const int MaxCount = 4;

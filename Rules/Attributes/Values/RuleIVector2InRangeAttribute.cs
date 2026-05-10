@@ -91,8 +91,8 @@ namespace BHSDK.Rules.Attributes
                 case VectorType.Value:
                 {
                     var valueVec = (Vector2Value)value;
-                    if (valueVec.X < MinX || valueVec.X > MaxX) valueVec.X = MathStatic.Clamp(valueVec.X, MinX, MaxX);
-                    if (valueVec.Y < MinY || valueVec.Y > MaxY) valueVec.Y = MathStatic.Clamp(valueVec.Y, MinY, MaxY);
+                    if (valueVec.X < MinX || valueVec.X > MaxX) valueVec.X = MathUtils.Clamp(valueVec.X, MinX, MaxX);
+                    if (valueVec.Y < MinY || valueVec.Y > MaxY) valueVec.Y = MathUtils.Clamp(valueVec.Y, MinY, MaxY);
                     break;
                 }
                 case VectorType.RandomRect:

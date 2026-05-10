@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
+    [RuleContainer]
     public class EffectShapeCircle : IEffectShape, ICopyable<EffectShapeCircle>
     {
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.CircleRadius_Min)]
