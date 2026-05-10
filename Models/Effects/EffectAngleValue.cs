@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,6 +12,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectAngleValue : IEffectAngle, ICopyable<EffectAngleValue>
     {
+        [RuleNotNull]
         [JsonProperty(Names.Angle)]
         public IFloat Angle { get; set; }
         
@@ -17,7 +20,7 @@ namespace BHSDK.Models.Effects
 
         public EffectAngleValue()
         {
-            Angle = new FloatValue(EffectStatic.Angle_A_Default);
+            Angle = new FloatValue(EffectRules.Angle.A_Default);
         }
         public EffectAngleValue(float angle)
         {

@@ -19,7 +19,6 @@ namespace BHSDK.Tests
             var result = cryptography.Decrypt(cryptedText, password);
             
             Assert.AreEqual(text, result);
-            Debug.Log($"{result} - {cryptedText}");
         }
     }
 }

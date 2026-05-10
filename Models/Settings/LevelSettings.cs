@@ -12,7 +12,7 @@ namespace BHSDK.Models.Settings
         [JsonProperty(Names.Fps)]
         public int Framerate { get; set; }
         
-        [RuleMin(FrameRules.MinFrame)]
+        [RuleMin(FrameRules.MinFrameLength)]
         [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
         

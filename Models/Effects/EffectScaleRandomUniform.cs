@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,9 +12,11 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleRandomUniform : IEffectScale, ICopyable<EffectScaleRandomUniform>
     {
+        [RuleNotNull]
         [JsonProperty(Names.ScaleX)]
         public IVector2 ScaleA { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.ScaleY)]
         public IVector2 ScaleB { get; set; }
 
@@ -21,11 +25,11 @@ namespace BHSDK.Models.Effects
         public EffectScaleRandomUniform()
         {
             ScaleA = new Vector2Value(
-                EffectStatic.Scale_A_X_Default,
-                EffectStatic.Scale_A_Y_Default);
+                EffectRules.Scale.A_X_Default, 
+                EffectRules.Scale.A_Y_Default);
             ScaleB = new Vector2Value(
-                EffectStatic.Scale_B_X_Default,
-                EffectStatic.Scale_B_Y_Default);
+                EffectRules.Scale.B_X_Default, 
+                EffectRules.Scale.B_Y_Default);
         }
         public EffectScaleRandomUniform(IVector2 scaleA, IVector2 scaleB)
         {

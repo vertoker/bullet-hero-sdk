@@ -5,7 +5,7 @@ using BHSDK.Models;
 namespace BHSDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleGuidNotEmpty : BaseRuleAttribute
+    public class RuleGuidNotEmptyAttribute : BaseRuleAttribute
     {
         protected override bool IsValidTypeInternal(object value) => value is Guid;
         

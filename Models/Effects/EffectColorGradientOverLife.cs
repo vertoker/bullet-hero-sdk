@@ -2,6 +2,8 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -9,6 +11,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorGradientOverLife : IEffectColor, ICopyable<EffectColorGradientOverLife>
     {
+        [RuleNotNull]
         [JsonProperty(Names.Gradient)]
         public GradientValue Gradient { get; set; }
         
@@ -16,7 +19,7 @@ namespace BHSDK.Models.Effects
 
         public EffectColorGradientOverLife()
         {
-            Gradient = EffectStatic.GetGradient_Default();
+            Gradient = EffectRules.GetGradient_Default();
         }
         public EffectColorGradientOverLife(GradientValue gradient)
         {

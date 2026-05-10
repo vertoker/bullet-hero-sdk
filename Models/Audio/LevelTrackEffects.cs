@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.AudioEffects;
 using BHSDK.Models.Keyframes;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -8,55 +10,72 @@ namespace BHSDK.Models.Audio
 {
     public class LevelTrackEffects
     {
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAudioVolumes)]
+        [RuleCollectionSorted(nameof(FloatKey.Frame))]
+        [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.Volume)]
-        public List<FloatKey> Volume { get; set; }
+        public List<FloatKey> Volumes { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAudioStereoPans)]
+        [RuleCollectionSorted(nameof(FloatKey.Frame))]
+        [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.StereoPan)]
-        public List<FloatKey> StereoPan { get; set; }
+        public List<FloatKey> StereoPans { get; set; }
         
         // TODO add Inverse, play track in reverse
         
         [JsonProperty(Names.Active)]
         public bool Active { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Lowpass)]
         public AudioLowpass Lowpass { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Highpass)]
         public AudioHighpass Highpass { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Echo)]
         public AudioEcho Echo { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Reverb)]
         public AudioReverb Reverb { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Chorus)]
         public AudioChorus Chorus { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.PitchShifter)]
         public AudioPitchShifter PitchShifter { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Distortion)]
         public AudioDistortion Distortion { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Flange)]
         public AudioFlange Flange { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Compressor)]
         public AudioCompressor Compressor { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Normalize)]
         public AudioNormalize Normalize { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.ParamEQ)]
         public AudioParamEQ ParamEQ { get; set; }
 
         public LevelTrackEffects()
         {
-            Volume = new List<FloatKey>();
-            StereoPan = new List<FloatKey>();
-            Active = AudioStatic.ActiveDefault;
+            Volumes = new List<FloatKey>();
+            StereoPans = new List<FloatKey>();
+            Active = AudioRules.ActiveDefault;
             
             Lowpass = new AudioLowpass();
             Highpass = new AudioHighpass();
@@ -71,13 +90,13 @@ namespace BHSDK.Models.Audio
             ParamEQ = new AudioParamEQ();
         }
 
-        public LevelTrackEffects(List<FloatKey> volume, List<FloatKey> stereoPan, bool active, 
+        public LevelTrackEffects(List<FloatKey> volumes, List<FloatKey> stereoPans, bool active, 
             AudioLowpass lowpass, AudioHighpass highpass, AudioEcho echo, AudioReverb reverb, 
             AudioChorus chorus, AudioPitchShifter pitchShifter, AudioDistortion distortion, 
             AudioFlange flange, AudioCompressor compressor, AudioNormalize normalize, AudioParamEQ paramEQ)
         {
-            Volume = volume;
-            StereoPan = stereoPan;
+            Volumes = volumes;
+            StereoPans = stereoPans;
             Active = active;
             
             Lowpass = lowpass;

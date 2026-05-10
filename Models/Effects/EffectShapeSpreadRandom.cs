@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,6 +12,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeSpreadRandom : IEffectShapeSpread, ICopyable<EffectShapeSpreadRandom>
     {
+        [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }
         
@@ -17,7 +20,7 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeSpreadRandom()
         {
-            Spread = new FloatValue(EffectStatic.ShapeSpread_Spread_Default);
+            Spread = new FloatValue(EffectRules.ShapeSpread.Spread_Default);
         }
         public EffectShapeSpreadRandom(IFloat spread)
         {

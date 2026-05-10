@@ -6,6 +6,7 @@ namespace BHSDK.Rules
     public static class FrameRules
     {
         public const int MinFrame = 0;
+        public const int MinFrameLength = 1;
         public const float MinTime = 0f;
         public const int MinFramerate = 1;
         

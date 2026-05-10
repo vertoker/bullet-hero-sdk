@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,9 +12,11 @@ namespace BHSDK.Models.Effects
 {
     public class EffectAngleRandomUniform : IEffectAngle, ICopyable<EffectAngleRandomUniform>
     {
+        [RuleNotNull]
         [JsonProperty(Names.AngleA)]
         public IFloat AngleA { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.AngleB)]
         public IFloat AngleB { get; set; }
 
@@ -20,8 +24,8 @@ namespace BHSDK.Models.Effects
 
         public EffectAngleRandomUniform()
         {
-            AngleA = new FloatValue(EffectStatic.Angle_A_Default);
-            AngleB = new FloatValue(EffectStatic.Angle_B_Default);
+            AngleA = new FloatValue(EffectRules.Angle.A_Default);
+            AngleB = new FloatValue(EffectRules.Angle.B_Default);
         }
         public EffectAngleRandomUniform(float angleA, float angleB)
         {

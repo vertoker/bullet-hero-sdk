@@ -9,19 +9,14 @@ using BHSDK.Utils;
 namespace BHSDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleIFloatInRange : BaseRuleAttribute
+    public class RuleIFloatMinAttribute : BaseRuleAttribute
     {
         // always include
         public float Min { get; set; }
-        public float Max { get; set; }
         
-        public float Diff => Max - Min;
-        public float HalfDiff => (Max - Min) / 2f;
-
-        public RuleIFloatInRange(float min, float max)
+        public RuleIFloatMinAttribute(float min)
         {
             Min = min;
-            Max = max;
         }
 
         protected override bool IsValidTypeInternal(object value) => value is IFloat;
@@ -35,19 +30,19 @@ namespace BHSDK.Rules.Attributes
                 case FloatType.Value:
                 {
                     var floatValue = (FloatValue)value;
-                    if (floatValue.Value < Min || floatValue.Value > Max) return false;
+                    if (floatValue.Value < Min) return false;
                     return true;
                 }
                 case FloatType.RandomMinMax:
                 {
                     var floatRandomMinMax = (FloatMinMax)value;
-                    if (floatRandomMinMax.Min < Min || floatRandomMinMax.Max > Max) return false;
+                    if (floatRandomMinMax.Min < Min) return false;
                     return true;
                 }
                 case FloatType.RandomMinMaxStep:
                 {
                     var floatRandomMinMaxStep = (FloatMinMaxStep)value;
-                    if (floatRandomMinMaxStep.Min < Min || floatRandomMinMaxStep.Max > Max) return false;
+                    if (floatRandomMinMaxStep.Min < Min) return false;
                     return true;
                 }
                 default: throw new ArgumentOutOfRangeException();
@@ -64,22 +59,20 @@ namespace BHSDK.Rules.Attributes
                 case FloatType.Value:
                 {
                     var floatValue = (FloatValue)value;
-                    if (floatValue.Value < Min || floatValue.Value > Max)
-                        floatValue.Value = MathStatic.Clamp(floatValue.Value, Min, Max);
+                    if (floatValue.Value < Min)
+                        floatValue.Value = MathStatic.Max(floatValue.Value, Min);
                     break;
                 }
                 case FloatType.RandomMinMax:
                 {
                     var floatRandomMinMax = (FloatMinMax)value;
                     if (floatRandomMinMax.Min < Min) floatRandomMinMax.Min = Min;
-                    if (floatRandomMinMax.Max > Max) floatRandomMinMax.Max = Max;
                     break;
                 }
                 case FloatType.RandomMinMaxStep:
                 {
                     var floatRandomMinMaxStep = (FloatMinMaxStep)value;
                     if (floatRandomMinMaxStep.Min < Min) floatRandomMinMaxStep.Min = Min;
-                    if (floatRandomMinMaxStep.Max > Max) floatRandomMinMaxStep.Max = Max;
                     break;
                 }
                 default: throw new ArgumentOutOfRangeException();

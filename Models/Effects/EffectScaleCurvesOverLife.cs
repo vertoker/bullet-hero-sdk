@@ -2,6 +2,8 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -9,9 +11,11 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleCurvesOverLife : IEffectScale, ICopyable<EffectScaleCurvesOverLife>
     {
+        [RuleNotNull]
         [JsonProperty(Names.CurveX)]
         public CurveValue CurveX { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.CurveY)]
         public CurveValue CurveY { get; set; }
         
@@ -19,8 +23,8 @@ namespace BHSDK.Models.Effects
         
         public EffectScaleCurvesOverLife()
         {
-            CurveX = EffectStatic.GetCurve_Default();
-            CurveY = EffectStatic.GetCurve_Default();
+            CurveX = EffectRules.GetCurve_Default();
+            CurveY = EffectRules.GetCurve_Default();
         }
         public EffectScaleCurvesOverLife(CurveValue curveX, CurveValue curveY)
         {

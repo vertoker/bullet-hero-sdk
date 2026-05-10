@@ -2,6 +2,7 @@
 using System.Linq;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
@@ -10,9 +11,11 @@ namespace BHSDK.Models.Values
     {
         public const int MaxCount = 4;
         
+        [RuleNotNull, RuleCollectionMaxCount(MaxCount)]
         [JsonProperty(Names.ColorKeys)]
         public List<GradientColorKeyValue> ColorKeys { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(MaxCount)]
         [JsonProperty(Names.AlphaKeys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
         

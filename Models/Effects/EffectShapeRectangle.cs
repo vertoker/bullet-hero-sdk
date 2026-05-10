@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,14 +12,15 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeRectangle : IEffectShape, ICopyable<EffectShapeRectangle>
     {
+        [RuleNotNull, RuleIVector2Min(EffectRules.Shape.BoxSize_Min)]
         [JsonProperty(Names.Size)]
         public IVector2 Size { get; set; }
 
         public EffectShapeRectangle()
         {
             Size = new Vector2Value(
-                EffectStatic.Shape_BoxSize_X_Default,
-                EffectStatic.Shape_BoxSize_Y_Default);
+                EffectRules.Shape.BoxSize_X_Default,
+                EffectRules.Shape.BoxSize_Y_Default);
         }
         public EffectShapeRectangle(IVector2 size)
         {

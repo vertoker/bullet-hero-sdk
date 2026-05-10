@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Resources;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
@@ -13,14 +15,17 @@ namespace BHSDK.Models.Audio
         // 1, 2, 3... - user-defined audio
         // negative space is banned for consistency
         
+        [RuleMin(1)]
         [JsonProperty(Names.AudioId)]
         public int AudioId { get; set; }
         
         public const int UndefinedAudioId = 0;
         
+        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Title)]
         public string Title { get; set; }
         
+        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Author)]
         public string Author { get; set; }
         
@@ -31,9 +36,11 @@ namespace BHSDK.Models.Audio
         // "Youtube Music", "https://music.youtube.com/channel/{0}"
         // "Newgrounds", "https://{0}.newgrounds.com/"
         
+        [RuleLevelFrame]
         [JsonProperty(Names.StartFrameShort)]
         public int StartFrame { get; set; }
         
+        [RuleLevelFrame]
         [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
         
@@ -46,6 +53,7 @@ namespace BHSDK.Models.Audio
         [JsonProperty(Names.AudioResourceId)]
         public int AudioResourceId { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Effects)]
         public LevelTrackEffects Effects { get; set; }
         

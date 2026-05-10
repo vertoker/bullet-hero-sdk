@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,9 +12,11 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorRandomUniform : IEffectColor, ICopyable<EffectColorRandomUniform>
     {
+        [RuleNotNull]
         [JsonProperty(Names.ColorA)]
         public IColor ColorA { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.ColorB)]
         public IColor ColorB { get; set; }
         
@@ -21,15 +25,15 @@ namespace BHSDK.Models.Effects
         public EffectColorRandomUniform()
         {
             ColorA = new ColorValue(
-                EffectStatic.Color_A_R_Default,
-                EffectStatic.Color_A_G_Default,
-                EffectStatic.Color_A_B_Default,
-                EffectStatic.Color_A_A_Default);
+                EffectRules.Color.A_R_Default,
+                EffectRules.Color.A_G_Default,
+                EffectRules.Color.A_B_Default,
+                EffectRules.Color.A_A_Default);
             ColorB = new ColorValue(
-                EffectStatic.Color_B_R_Default,
-                EffectStatic.Color_B_G_Default,
-                EffectStatic.Color_B_B_Default,
-                EffectStatic.Color_B_A_Default);
+                EffectRules.Color.B_R_Default,
+                EffectRules.Color.B_G_Default,
+                EffectRules.Color.B_B_Default,
+                EffectRules.Color.B_A_Default);
         }
         public EffectColorRandomUniform(IColor colorA, IColor colorB)
         {

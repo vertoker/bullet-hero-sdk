@@ -9,7 +9,7 @@ namespace BHSDK.Models.Events
 {
     public class Marker : IFrame
     {
-        [RuleMin(FrameRules.MinFrame)]
+        [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         

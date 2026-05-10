@@ -4,6 +4,8 @@ using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -11,12 +13,15 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleCurvesBySpeed : IEffectScale, ICopyable<EffectScaleCurvesBySpeed>
     {
+        [RuleNotNull]
         [JsonProperty(Names.CurveX)]
         public CurveValue CurveX { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.CurveY)]
         public CurveValue CurveY { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.SpeedRange)]
         public IVector2 SpeedRange { get; set; }
 
@@ -24,11 +29,11 @@ namespace BHSDK.Models.Effects
         
         public EffectScaleCurvesBySpeed()
         {
-            CurveX = EffectStatic.GetCurve_Default();
-            CurveY = EffectStatic.GetCurve_Default();
+            CurveX = EffectRules.GetCurve_Default();
+            CurveY = EffectRules.GetCurve_Default();
             SpeedRange = new Vector2Value(
-                EffectStatic.Scale_BySpeedRange_X_Default,
-                EffectStatic.Scale_BySpeedRange_Y_Default);
+                EffectRules.Scale.BySpeedRange_X_Default,
+                EffectRules.Scale.BySpeedRange_Y_Default);
         }
         public EffectScaleCurvesBySpeed(CurveValue curveX, CurveValue curveY, IVector2 speedRange)
         {

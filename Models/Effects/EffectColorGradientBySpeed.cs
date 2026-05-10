@@ -4,6 +4,7 @@ using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -21,10 +22,10 @@ namespace BHSDK.Models.Effects
 
         public EffectColorGradientBySpeed()
         {
-            Gradient = EffectStatic.GetGradient_Default();
+            Gradient = EffectRules.GetGradient_Default();
             SpeedRange = new Vector2Value(
-                EffectStatic.Color_BySpeedRange_X_Default,
-                EffectStatic.Color_BySpeedRange_Y_Default);
+                EffectRules.Color.BySpeedRange_X_Default,
+                EffectRules.Color.BySpeedRange_Y_Default);
         }
         public EffectColorGradientBySpeed(GradientValue gradient, IVector2 speedRange)
         {

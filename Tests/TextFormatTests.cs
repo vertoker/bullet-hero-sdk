@@ -14,7 +14,7 @@ namespace BHSDK.Tests
             service.AddVariable("username", () => Metadata.Author.Vertoker);
             
             Assert.AreEqual(service.Process("{username}"), Metadata.Author.Vertoker);
-            Debug.Log(service.Process("Hello <color=green>{username}</color>!"));
+            // Debug.Log(service.Process("Hello <color=green>{username}</color>!"));
         }
     }
 }

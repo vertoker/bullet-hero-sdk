@@ -2,6 +2,8 @@
 using System.Linq;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
@@ -10,6 +12,7 @@ namespace BHSDK.Models.Values
     {
         public const int MaxCount = 4;
         
+        [RuleNotNull, RuleCollectionMaxCount(MaxCount)]
         [JsonProperty(Names.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
         

@@ -1,28 +1,34 @@
-﻿using BHSDK.Utils;
+﻿using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
     public class AudioFlange : AudioEffect
     {
+        [RuleInRange(AudioRules.Flange.DryMix_Min, AudioRules.Flange.DryMix_Max)]
         [JsonProperty(Names.DryMix)]
         public float DryMix { get; set; }
         
+        [RuleInRange(AudioRules.Flange.WetMix_Min, AudioRules.Flange.WetMix_Max)]
         [JsonProperty(Names.WetMix)]
         public float WetMix { get; set; }
         
+        [RuleInRange(AudioRules.Flange.Depth_Min, AudioRules.Flange.Depth_Max)]
         [JsonProperty(Names.Depth)]
         public float Depth { get; set; }
         
+        [RuleInRange(AudioRules.Flange.Rate_Min, AudioRules.Flange.Rate_Max)]
         [JsonProperty(Names.Rate)]
         public float Rate { get; set; }
 
         public AudioFlange()
         {
-            DryMix = AudioStatic.Flange_DryMixDefault;
-            WetMix = AudioStatic.Flange_WetMixDefault;
-            Depth = AudioStatic.Flange_DepthDefault;
-            Rate = AudioStatic.Flange_RateDefault;
+            DryMix = AudioRules.Flange.DryMix_Default;
+            WetMix = AudioRules.Flange.WetMix_Default;
+            Depth = AudioRules.Flange.Depth_Default;
+            Rate = AudioRules.Flange.Rate_Default;
         }
         public AudioFlange(float mixLevel, float dryMix, float wetMix,
             float depth, float rate) : base(mixLevel)

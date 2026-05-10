@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,6 +12,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectColorValue : IEffectColor, ICopyable<EffectColorValue>
     {
+        [RuleNotNull]
         [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
         
@@ -18,10 +21,10 @@ namespace BHSDK.Models.Effects
         public EffectColorValue()
         {
             Color = new ColorValue(
-                EffectStatic.Color_A_R_Default,
-                EffectStatic.Color_A_G_Default,
-                EffectStatic.Color_A_B_Default,
-                EffectStatic.Color_A_A_Default);
+                EffectRules.Color.A_R_Default,
+                EffectRules.Color.A_G_Default,
+                EffectRules.Color.A_B_Default,
+                EffectRules.Color.A_A_Default);
         }
         public EffectColorValue(IColor color)
         {

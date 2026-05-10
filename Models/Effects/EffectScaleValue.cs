@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values.Vectors;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,6 +12,7 @@ namespace BHSDK.Models.Effects
 {
     public class EffectScaleValue : IEffectScale, ICopyable<EffectScaleValue>
     {
+        [RuleNotNull]
         [JsonProperty(Names.Scale)]
         public IVector2 Scale { get; set; }
         
@@ -18,8 +21,8 @@ namespace BHSDK.Models.Effects
         public EffectScaleValue()
         {
             Scale = new Vector2Value(
-                EffectStatic.Scale_A_X_Default,
-                EffectStatic.Scale_A_Y_Default);
+                EffectRules.Scale.A_X_Default, 
+                EffectRules.Scale.A_Y_Default);
         }
         public EffectScaleValue(IVector2 scale)
         {

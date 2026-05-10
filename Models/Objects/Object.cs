@@ -44,11 +44,11 @@ namespace BHSDK.Models.Objects
         public bool Visible { get; set; }
         
         
-        [RuleMin(FrameRules.MinFrame)]
+        [RuleLevelFrame]
         [JsonProperty(Names.StartFrameShort)]
         public int StartFrame { get; set; }
         
-        [RuleMin(FrameRules.MinFrame)]
+        [RuleLevelFrame]
         [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
         

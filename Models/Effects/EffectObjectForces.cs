@@ -2,72 +2,84 @@
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Models.Values.Vectors;
-using BHSDK.Utils;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Effects
 {
     public class EffectObjectForces : IUpdatable<EffectObjectForces>
     {
+        [RuleNotNull]
         [JsonProperty(Names.GravityMin)]
         public IFloat StartGravityMin { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.GravityMax)]
         public IFloat StartGravityMax { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.VelocityMin)]
         public IVector2 StartVelocityMin { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.VelocityMax)]
         public IVector2 StartVelocityMax { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.AngularVelocityMin)]
         public IFloat StartAngularVelocityMin { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.AngularVelocityMax)]
         public IFloat StartAngularVelocityMax { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.LinearVelocity)]
         public IVector2 LinearVelocity { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.OrbitalVelocity)]
         public IVector3 OrbitalVelocity { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.OrbitalCenterOffset)]
         public IVector3 OrbitalCenterOffset { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.VelocitySpeed)]
         public IFloat VelocitySpeed { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.LinearForce)]
         public IVector2 LinearForce { get; set; }
 
         public EffectObjectForces()
         {
-            StartGravityMin = new FloatValue(EffectStatic.Forces_StartGravityMin_Default);
-            StartGravityMax = new FloatValue(EffectStatic.Forces_StartGravityMax_Default);
+            StartGravityMin = new FloatValue(EffectRules.Forces.StartGravityMin_Default);
+            StartGravityMax = new FloatValue(EffectRules.Forces.StartGravityMax_Default);
             StartVelocityMin = new Vector2Value(
-                EffectStatic.Forces_StartVelocityMin_X_Default,
-                EffectStatic.Forces_StartVelocityMin_Y_Default);
+                EffectRules.Forces.StartVelocityMin_X_Default,
+                EffectRules.Forces.StartVelocityMin_Y_Default);
             StartVelocityMax = new Vector2Value(
-                EffectStatic.Forces_StartVelocityMax_X_Default,
-                EffectStatic.Forces_StartVelocityMax_Y_Default);
-            StartAngularVelocityMin = new FloatValue(EffectStatic.Forces_StartAngularVelocityMin_Default);
-            StartAngularVelocityMax = new FloatValue(EffectStatic.Forces_StartAngularVelocityMax_Default);
-            LinearVelocity = new Vector2Value(EffectStatic.Forces_LinearVelocity_X_Default,
-                EffectStatic.Forces_LinearVelocity_Y_Default);
+                EffectRules.Forces.StartVelocityMax_X_Default,
+                EffectRules.Forces.StartVelocityMax_Y_Default);
+            StartAngularVelocityMin = new FloatValue(EffectRules.Forces.StartAngularVelocityMin_Default);
+            StartAngularVelocityMax = new FloatValue(EffectRules.Forces.StartAngularVelocityMax_Default);
+            LinearVelocity = new Vector2Value(EffectRules.Forces.LinearVelocity_X_Default,
+                EffectRules.Forces.LinearVelocity_Y_Default);
             OrbitalVelocity = new Vector3Value(
-                EffectStatic.Forces_OrbitalVelocity_X_Default,
-                EffectStatic.Forces_OrbitalVelocity_Y_Default,
-                EffectStatic.Forces_OrbitalVelocity_Z_Default);
+                EffectRules.Forces.OrbitalVelocity_X_Default,
+                EffectRules.Forces.OrbitalVelocity_Y_Default,
+                EffectRules.Forces.OrbitalVelocity_Z_Default);
             OrbitalCenterOffset = new Vector3Value(
-                EffectStatic.Forces_OrbitalCenterOffset_X_Default,
-                EffectStatic.Forces_OrbitalCenterOffset_Y_Default,
-                EffectStatic.Forces_OrbitalCenterOffset_Z_Default);
-            VelocitySpeed = new FloatValue(EffectStatic.Forces_VelocitySpeed_Default);
+                EffectRules.Forces.OrbitalCenterOffset_X_Default,
+                EffectRules.Forces.OrbitalCenterOffset_Y_Default,
+                EffectRules.Forces.OrbitalCenterOffset_Z_Default);
+            VelocitySpeed = new FloatValue(EffectRules.Forces.VelocitySpeed_Default);
             LinearForce = new Vector2Value(
-                EffectStatic.Forces_LinearForce_X_Default,
-                EffectStatic.Forces_LinearForce_Y_Default);
+                EffectRules.Forces.LinearForce_X_Default,
+                EffectRules.Forces.LinearForce_Y_Default);
         }
         public EffectObjectForces(IFloat startGravityMin, IFloat startGravityMax, 
             IVector2 startVelocityMin, IVector2 startVelocityMax, 

@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,18 +12,23 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeCone : IEffectShape, ICopyable<EffectShapeCone>
     {
+        [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeTopRadius_Min)]
         [JsonProperty(Names.TopRadius)]
         public IFloat TopRadius { get; set; }
         
+        [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeBaseRadius_Min)]
         [JsonProperty(Names.BaseRadius)]
         public IFloat BaseRadius { get; set; }
         
+        [RuleNotNull, RuleIFloatInRange(EffectRules.Shape.Arc_Min, EffectRules.Shape.Arc_Max)]
         [JsonProperty(Names.Arc)]
         public IFloat Arc { get; set; }
         
+        [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeHeight_Min)]
         [JsonProperty(Names.Height)]
         public IFloat Height { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IEffectShapeSpread Spread { get; set; }
         
@@ -29,10 +36,10 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeCone()
         {
-            TopRadius = new FloatValue(EffectStatic.Shape_ConeTopRadius_Default);
-            BaseRadius = new FloatValue(EffectStatic.Shape_ConeBaseRadius_Default);
-            Arc = new FloatValue(EffectStatic.Shape_Arc_Default);
-            Height = new FloatValue(EffectStatic.Shape_ConeHeight_Default);
+            TopRadius = new FloatValue(EffectRules.Shape.ConeTopRadius_Default);
+            BaseRadius = new FloatValue(EffectRules.Shape.ConeBaseRadius_Default);
+            Arc = new FloatValue(EffectRules.Shape.Arc_Default);
+            Height = new FloatValue(EffectRules.Shape.ConeHeight_Default);
             Spread = new EffectShapeSpreadRandom();
         }
         public EffectShapeCone(IFloat topRadius, IFloat baseRadius, IFloat arc, IFloat height, IEffectShapeSpread spread)

@@ -9,16 +9,16 @@ using BHSDK.Utils;
 namespace BHSDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleIVector4InRange : BaseRuleAttribute
+    public class RuleIVector4InRangeAttribute : BaseRuleAttribute
     {
         // always include
         public float MinX { get; set; }
         public float MaxX { get; set; }
         public float MinY { get; set; }
-        public float MinW { get; set; }
         public float MaxY { get; set; }
         public float MinZ { get; set; }
         public float MaxZ { get; set; }
+        public float MinW { get; set; }
         public float MaxW { get; set; }
         
         public float DiffX => MaxX - MinX;
@@ -30,7 +30,7 @@ namespace BHSDK.Rules.Attributes
         public float HalfDiffZ => (MaxZ - MinZ) / 2f;
         public float HalfDiffW => (MaxW - MinW) / 2f;
 
-        public RuleIVector4InRange(float min, float max)
+        public RuleIVector4InRangeAttribute(float min, float max)
         {
             MinX = min;
             MaxX = max;
@@ -39,9 +39,9 @@ namespace BHSDK.Rules.Attributes
             MinZ = min;
             MaxZ = max;
             MinW = min;
-            MaxW = min;
+            MaxW = max;
         }
-        public RuleIVector4InRange(float minX, float maxX, float minY, float maxY,
+        public RuleIVector4InRangeAttribute(float minX, float maxX, float minY, float maxY,
             float minZ, float maxZ, float minW, float maxW)
         {
             MinX = minX;

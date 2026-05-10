@@ -7,7 +7,7 @@ namespace BHSDK.Models.Keyframes
 {
     public class BoolKey : IFrame, ICopyable<BoolKey>
     {
-        [RuleMin(FrameRules.MinFrame)]
+        [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         

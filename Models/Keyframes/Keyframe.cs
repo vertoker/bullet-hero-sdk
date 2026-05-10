@@ -8,7 +8,7 @@ namespace BHSDK.Models.Keyframes
 {
     public abstract class Keyframe : IFrame
     {
-        [RuleMin(FrameRules.MinFrame)]
+        [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         

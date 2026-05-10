@@ -9,7 +9,7 @@ namespace BHSDK.Models.Events
 {
     public class Checkpoint : IFrame
     {
-        [RuleMin(FrameRules.MinFrame)]
+        [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
         

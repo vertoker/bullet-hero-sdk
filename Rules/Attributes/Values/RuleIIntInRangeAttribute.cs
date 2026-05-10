@@ -9,7 +9,7 @@ using BHSDK.Utils;
 namespace BHSDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleIIntInRange : BaseRuleAttribute
+    public class RuleIIntInRangeAttribute : BaseRuleAttribute
     {
         // always include
         public int Min { get; set; }
@@ -18,7 +18,7 @@ namespace BHSDK.Rules.Attributes
         public int Diff => Max - Min;
         public int HalfDiff => (Max - Min) / 2;
 
-        public RuleIIntInRange(int min, int max)
+        public RuleIIntInRangeAttribute(int min, int max)
         {
             Min = min;
             Max = max;

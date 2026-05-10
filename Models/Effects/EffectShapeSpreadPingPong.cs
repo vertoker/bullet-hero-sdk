@@ -3,6 +3,8 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
+using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
 
@@ -10,9 +12,11 @@ namespace BHSDK.Models.Effects
 {
     public class EffectShapeSpreadPingPong : IEffectShapeSpread, ICopyable<EffectShapeSpreadPingPong>
     {
+        [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }
         
+        [RuleNotNull]
         [JsonProperty(Names.Speed)]
         public IFloat Speed { get; set; }
 
@@ -20,8 +24,8 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeSpreadPingPong()
         {
-            Spread = new FloatValue(EffectStatic.ShapeSpread_Spread_Default);
-            Speed = new FloatValue(EffectStatic.ShapeSpread_Speed_Default);
+            Spread = new FloatValue(EffectRules.ShapeSpread.Spread_Default);
+            Speed = new FloatValue(EffectRules.ShapeSpread.Speed_Default);
         }
         public EffectShapeSpreadPingPong(float spread, float speed)
         {

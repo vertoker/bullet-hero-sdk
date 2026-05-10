@@ -2,12 +2,14 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Keyframes
 {
     public class FloatKey : Keyframe, ICopyable<FloatKey>
     {
+        [RuleNotNull]
         [JsonProperty(Names.Float)]
         public IFloat Value { get; set; }
 
