@@ -11,7 +11,7 @@ namespace BHSDK.Models.Keyframes
     [RuleContainer]
     public class Rot : Keyframe, ICopyable<Rot>
     {
-        [RuleNotNull, RuleIFloatInRange(ValueRules.MinCoord, ValueRules.MaxCoord)]
+        [RuleNotNull(typeof(FloatValue)), RuleIFloatInRange(ValueRules.MinCoord, ValueRules.MaxCoord)]
         [JsonProperty(Names.Angle)]
         public IFloat Angle { get; set; }
 

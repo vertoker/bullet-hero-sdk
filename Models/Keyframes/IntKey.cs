@@ -10,7 +10,7 @@ namespace BHSDK.Models.Keyframes
     [RuleContainer]
     public class IntKey : Keyframe, ICopyable<IntKey>
     {
-        [RuleNotNull]
+        [RuleNotNull(typeof(IntValue))]
         [JsonProperty(Names.Int)]
         public IInt Value { get; set; }
 

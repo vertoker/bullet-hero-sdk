@@ -3,7 +3,7 @@ using System.Reflection;
 using BHSDK.Models;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values.Vectors;
+using BHSDK.Models.Values;
 using BHSDK.Utils;
 
 namespace BHSDK.Rules.Attributes

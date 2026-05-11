@@ -22,7 +22,7 @@ namespace BHSDK.Rules.Attributes
 
             if (frame < FrameRules.MinFrame || frame >= context.Settings.FrameLength)
             {
-                frame = MathUtils.Clamp(frame, FrameRules.MinFrame, context.Settings.FrameLength);
+                frame = MathUtils.Clamp(frame, FrameRules.MinFrame, context.Settings.FrameLength - 1);
                 property.SetValue(target, frame);
             }
         }

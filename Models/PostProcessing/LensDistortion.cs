@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
@@ -17,12 +16,12 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
         
-        [RuleNotNull, RuleIVector2InRange(PostProcessingRules.LensDistortion.MultiplierMin,
+        [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(PostProcessingRules.LensDistortion.MultiplierMin,
              PostProcessingRules.LensDistortion.MultiplierMax)]
         [JsonProperty(Names.Multiplier)]
         public IVector2 Multiplier { get; set; }
         
-        [RuleNotNull, RuleIVector2InRange(PostProcessingRules.LensDistortion.CenterMin,
+        [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(PostProcessingRules.LensDistortion.CenterMin,
              PostProcessingRules.LensDistortion.CenterMax)]
         [JsonProperty(Names.Center)]
         public IVector2 Center { get; set; }

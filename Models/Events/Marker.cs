@@ -22,7 +22,7 @@ namespace BHSDK.Models.Events
         [JsonProperty(Names.Description)]
         public string Description { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
 

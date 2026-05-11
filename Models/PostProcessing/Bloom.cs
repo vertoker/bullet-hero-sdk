@@ -23,7 +23,7 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Scatter)]
         public float Scatter { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
         

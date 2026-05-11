@@ -7,14 +7,35 @@ namespace BHSDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleNotNullAttribute : BaseRuleAttribute
     {
+        public Type DefaultConstructType { get; set; }
+
+        public RuleNotNullAttribute()
+        {
+            
+        }
+        public RuleNotNullAttribute(Type defaultConstructType)
+        {
+            DefaultConstructType = defaultConstructType;
+        }
+
         protected override bool IsValidInternal(object value, Level context)
         {
             return value != null;
         }
         protected override void FixInternal(object target, PropertyInfo property, Level context)
         {
-            var value = Activator.CreateInstance(property.PropertyType);
-            property.SetValue(target, value);
+            var valueType = DefaultConstructType ?? property.PropertyType;
+            var value = CreateDefaultValue(valueType);
+            if (value != null) property.SetValue(target, value);
+        }
+        
+        private static object CreateDefaultValue(Type type)
+        {
+            // struct
+            if (type.IsValueType) return Activator.CreateInstance(type);
+            
+            // class
+            return type.GetConstructor(Type.EmptyTypes)?.Invoke(null);
         }
     }
 }

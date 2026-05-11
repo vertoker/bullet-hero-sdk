@@ -3,7 +3,6 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;

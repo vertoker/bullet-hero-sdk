@@ -4,7 +4,7 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Values.Vectors
+namespace BHSDK.Models.Values
 {
     [RuleContainer]
     public class Vector3Rect : IVector3, ICopyable<Vector3Rect>

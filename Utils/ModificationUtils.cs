@@ -4,7 +4,6 @@ using System.Reflection;
 using BHSDK.Models.Effects;
 using BHSDK.Models.Objects;
 using BHSDK.Models.Values;
-using BHSDK.Models.Values.Vectors;
 using Newtonsoft.Json;
 using Object = BHSDK.Models.Objects.Object;
 

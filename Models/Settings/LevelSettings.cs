@@ -17,7 +17,7 @@ namespace BHSDK.Models.Settings
         [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull(typeof(ScreenLimitFixed))]
         [JsonProperty(Names.ScreenLimit)]
         public IScreenLimit ScreenLimit { get; set; }
         // limitations for screen will be chosen by mappers

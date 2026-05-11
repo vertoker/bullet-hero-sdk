@@ -9,7 +9,7 @@ namespace BHSDK.Models.NoGame
     [RuleContainer]
     public class Author
     {
-        [RuleNotNull, RuleIStringMax(ValueRules.MaxGameString)]
+        [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Name)]
         public IString Name { get; set; }
         

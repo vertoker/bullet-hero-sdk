@@ -1,5 +1,4 @@
 ﻿using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 

@@ -11,7 +11,7 @@ namespace BHSDK.Models.Keyframes
     [RuleContainer]
     public class Zoom : Keyframe, ICopyable<Zoom>
     {
-        [RuleNotNull, RuleIFloatInRange(ValueRules.MinZoom, ValueRules.MaxZoom)]
+        [RuleNotNull(typeof(FloatValue)), RuleIFloatInRange(ValueRules.MinZoom, ValueRules.MaxZoom)]
         [JsonProperty(Names.Size)]
         public IFloat Size { get; set; }
 

@@ -23,9 +23,11 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
 
+        [RuleNotNull]
         [JsonProperty(Names.PathShort)]
         public string Path { get; set; }
 
+        [RuleNotNull]
         [JsonProperty(Names.ValueShort)]
         public object Value { get; set; }
 

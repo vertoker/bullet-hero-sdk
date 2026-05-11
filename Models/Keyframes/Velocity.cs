@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -12,7 +11,7 @@ namespace BHSDK.Models.Keyframes
     [RuleContainer]
     public class Velocity : Keyframe, ICopyable<Velocity>
     {
-        [RuleNotNull]
+        [RuleNotNull(typeof(Vector2Value))]
         [JsonProperty(Names.Vector2)]
         public IVector2 Vector2 { get; set; }
 

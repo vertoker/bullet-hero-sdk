@@ -4,6 +4,7 @@ using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -20,6 +21,7 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.ColliderId)]
         public int ColliderId { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectColors)]
         [JsonProperty(Names.Color)]
         public List<Clr> Clr { get; set; }
         

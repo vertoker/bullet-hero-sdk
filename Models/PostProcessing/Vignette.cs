@@ -2,7 +2,6 @@
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
@@ -12,11 +11,11 @@ namespace BHSDK.Models.PostProcessing
     [RuleContainer]
     public class Vignette : Keyframe
     {
-        [RuleNotNull] // TODO add extra part for checking HDR part
+        [RuleNotNull(typeof(ColorValue))] // TODO add extra part for checking HDR part
         [JsonProperty(Names.Color)]
         public IColor ColorHDR { get; set; }
         
-        [RuleNotNull, RuleIVector2InRange(PostProcessingRules.Vignette.CenterMin,
+        [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(PostProcessingRules.Vignette.CenterMin,
              PostProcessingRules.Vignette.CenterMax)]
         [JsonProperty(Names.Center)]
         public IVector2 Center { get; set; }

@@ -9,14 +9,9 @@ namespace BHSDK.Utils
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
         }
-
-        public static Type GetListGenericParameter(this Type type)
-        {
-            return type.GetGenericArguments()[0];
-        }
         public static Type GetListGenericParameterOrDefault(this Type type)
         {
-            return type.IsList() ? type.GetListGenericParameter() : null;
+            return type.IsList() ? type.GetGenericArguments()[0] : null;
         }
     }
 }

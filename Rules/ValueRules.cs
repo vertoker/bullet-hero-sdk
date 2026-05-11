@@ -17,6 +17,7 @@
         public const int MaxObjectPositions = 32;
         public const int MaxObjectRotations = 32;
         public const int MaxObjectScales = 32;
+        public const int MaxObjectColors = 32;
         
         public const int MaxAudioVolumes = 32;
         public const int MaxAudioStereoPans = 32;

@@ -1,7 +1,6 @@
 ﻿using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
@@ -15,7 +14,7 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
         
-        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.ShadowColor)]
         public IColor ShadowsColor { get; set; }
         
@@ -23,7 +22,7 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Midtone)]
         public bool Midtones { get; set; }
         
-        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.MidtoneColor)]
         public IColor MidtonesColor { get; set; }
         
@@ -31,7 +30,7 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Highlight)]
         public bool Highlights { get; set; }
         
-        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.HighlightColor)]
         public IColor HighlightsColor { get; set; }
         

@@ -1,6 +1,5 @@
 ﻿using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
@@ -10,7 +9,7 @@ namespace BHSDK.Models.Values
     [RuleContainer]
     public class Alignment : ICopyable<Alignment>
     {
-        [RuleNotNull, RuleIVector2InRange(ValueRules.MinSca, ValueRules.MaxSca)]
+        [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinSca, ValueRules.MaxSca)]
         [JsonProperty(Names.ValueShort)]
         public IVector2 Value { get; set; }
 

@@ -18,7 +18,7 @@ namespace BHSDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.Text;
         
-        [RuleNotNull, RuleIStringMax(ValueRules.MaxGameString)]
+        [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Text)]
         public IString Text { get; set; }
         

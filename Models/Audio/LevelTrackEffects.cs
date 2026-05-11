@@ -28,6 +28,8 @@ namespace BHSDK.Models.Audio
         [JsonProperty(Names.Active)]
         public bool Active { get; set; }
         
+        // TODO replace float to IFloat
+        
         [RuleNotNull]
         [JsonProperty(Names.Lowpass)]
         public AudioLowpass Lowpass { get; set; }

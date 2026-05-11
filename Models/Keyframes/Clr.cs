@@ -10,7 +10,7 @@ namespace BHSDK.Models.Keyframes
     [RuleContainer]
     public class Clr : Keyframe, ICopyable<Clr>
     {
-        [RuleNotNull]
+        [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.Color)]
         public IColor Value { get; set; }
 

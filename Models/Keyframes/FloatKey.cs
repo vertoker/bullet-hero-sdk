@@ -10,7 +10,7 @@ namespace BHSDK.Models.Keyframes
     [RuleContainer]
     public class FloatKey : Keyframe, ICopyable<FloatKey>
     {
-        [RuleNotNull]
+        [RuleNotNull(typeof(FloatValue))]
         [JsonProperty(Names.Float)]
         public IFloat Value { get; set; }
 

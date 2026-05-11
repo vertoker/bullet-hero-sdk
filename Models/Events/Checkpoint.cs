@@ -21,7 +21,7 @@ namespace BHSDK.Models.Events
         [JsonProperty(Names.ActiveShort)]
         public bool Active { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.Color)]
         public IColor Color { get; set; }
 

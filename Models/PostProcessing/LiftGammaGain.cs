@@ -13,21 +13,21 @@ namespace BHSDK.Models.PostProcessing
         [JsonProperty(Names.Lift)]
         public bool Lift { get; set; }
         
-        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.LiftColor)]
         public IColor LiftColor { get; set; }
         
         [JsonProperty(Names.Gamma)]
         public bool Gamma { get; set; }
         
-        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.GammaColor)]
         public IColor GammaColor { get; set; }
         
         [JsonProperty(Names.Gain)]
         public bool Gain { get; set; }
         
-        [RuleNotNull] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.GainColor)]
         public IColor GainColor { get; set; }
 

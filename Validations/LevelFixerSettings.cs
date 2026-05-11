@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Fixers
+﻿namespace BHSDK.Validations
 {
     public class LevelFixerSettings
     {

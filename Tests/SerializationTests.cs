@@ -15,7 +15,6 @@ using BHSDK.Models.Resources;
 using BHSDK.Models.SaveData;
 using BHSDK.Models.Settings;
 using BHSDK.Models.Values;
-using BHSDK.Models.Values.Vectors;
 using BHSDK.Serialization;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -202,6 +201,86 @@ namespace BHSDK.Tests
 
             var trackEffects = new LevelTrackEffects();
             var track = new LevelTrack(1, "cool song", "vertoker", 0, 10, 0f,
+                0, trackEffects);
+            level.Audio.Tracks.Add(track);
+
+            return level;
+        }
+        
+        public static Level CreateInvalidTestLevel()
+        {
+            var level = new Level();
+
+            level.Settings.Framerate = -15;
+            level.Settings.ScreenLimit = null;
+            
+            level.Meta.Authors.Add(new Author());
+            
+            level.Game.Events.Backgrounds.Add(new Clr());
+            level.Game.Events.Checkpoints.Add(new Checkpoint());
+            level.Game.Events.Markers.Add(new Marker());
+            level.Game.Events.Themes.Add(new ThemeKeyframe());
+            level.Game.CameraEvents.Positions.Add(new Pos());
+            level.Game.CameraEvents.Rotations.Add(new Rot());
+            level.Game.CameraEvents.Shakes.Add(new Shake());
+            level.Game.CameraEvents.Zooms.Add(new Zoom());
+
+            level.Game.PostProcessingEvents.Blooms.Add(new Bloom());
+            level.Game.PostProcessingEvents.Chromas.Add(new ChromaticAberration());
+            level.Game.PostProcessingEvents.Vignettes.Add(new Vignette());
+            level.Game.PostProcessingEvents.Lenses.Add(new LensDistortion());
+            level.Game.PostProcessingEvents.Grains.Add(new FilmGrain());
+            level.Game.PostProcessingEvents.MotionBlurs.Add(new MotionBlur());
+            level.Game.PostProcessingEvents.ColorCurveses.Add(new ColorCurves());
+            level.Game.PostProcessingEvents.LiftGammaGains.Add(new LiftGammaGain());
+            level.Game.PostProcessingEvents.ShadowsMidtonesHighlightses.Add(new ShadowsMidtonesHighlights());
+            level.Game.PostProcessingEvents.WhiteBalances.Add(new WhiteBalance());
+            level.Game.PostProcessingEvents.AnalogGlitches.Add(new AnalogGlitch());
+            level.Game.PostProcessingEvents.DigitalGlitches.Add(new DigitalGlitch());
+
+            level.Game.PlayerEvents.Visibles.Add(new BoolKey());
+            level.Game.PlayerEvents.Collisions.Add(new BoolKey());
+
+            var textureObject = new TextureObject();
+            textureObject.Positions.Add(new Pos());
+            textureObject.Rotations.Add(new Rot());
+            textureObject.Scales.Add(new Sca());
+            textureObject.Clr.Add(new Clr());
+            level.Game.Objects.Add(textureObject);
+
+            var textObject = new TextObject();
+            textObject.Clr.Add(new Clr());
+            level.Game.Objects.Add(textObject);
+
+            var effectObject = new EffectObject();
+            level.Game.Objects.Add(effectObject);
+
+            var prefab = new Prefab();
+            prefab.Objects.Add(new TextureObject());
+            prefab.Objects.Add(new TextObject());
+            prefab.Objects.Add(new EffectObject());
+            level.Game.Prefabs.Add(prefab);
+            
+            var prefabObject = new PrefabObject();
+            level.Game.PrefabObjects.Add(prefabObject);
+            
+            level.Game.Themes.Add(new Theme());
+            
+            level.Resources.Textures.Add(new TextureResource(0, new List<ResourceKey>
+            {
+                new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png")
+            }));
+            level.Resources.Fonts.Add(new FontResource(0, new List<ResourceKey>
+            {
+                new(ResourceUriType.DirectUrl, "https://github.com/google/fonts/raw/refs/heads/main/ofl/dekko/Dekko-Regular.ttf"),
+            }));
+            level.Resources.Audios.Add(new AudioResource(0, new List<ResourceKey>
+            {
+                new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
+            }));
+
+            var trackEffects = new LevelTrackEffects();
+            var track = new LevelTrack(1, "cool song", "vertoker", 0, 1000, 0f,
                 0, trackEffects);
             level.Audio.Tracks.Add(track);
 
