@@ -30,6 +30,7 @@ namespace BHSDK.Models.Values
             Height = height;
         }
 
+        public object Clone() => Copy();
         public ScreenAspect Copy() => new(Width, Height);
     }
 }

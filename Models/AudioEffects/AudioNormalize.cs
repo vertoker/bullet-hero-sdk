@@ -1,4 +1,5 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioNormalize : AudioEffect
+    public class AudioNormalize : AudioEffect, ICopyable<AudioNormalize>
     {
         [RuleInRange(AudioRules.Normalize.FadeInTime_Min, AudioRules.Normalize.FadeInTime_Max)]
         [JsonProperty(Names.FadeInTime)]
@@ -33,5 +34,8 @@ namespace BHSDK.Models.AudioEffects
             LowestVolume = lowestVolume;
             MaximumAmp = maximumAmp;
         }
+
+        public new object Clone() => Copy();
+        public new AudioNormalize Copy() => new(MixLevel, FadeInTime, LowestVolume, MaximumAmp);
     }
 }

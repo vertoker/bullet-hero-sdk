@@ -29,6 +29,7 @@ namespace BHSDK.Models.Keyframes
             Force = force;
         }
 
+        public object Clone() => Copy();
         public VelocityPoint Copy() => new(Center.Copy(), Force, Frame, Ease);
     }
 }

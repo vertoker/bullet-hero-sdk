@@ -7,6 +7,9 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
+// ReSharper disable InconsistentNaming
+// ReSharper disable ArrangeAccessorOwnerBody
+
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
@@ -45,6 +48,7 @@ namespace BHSDK.Models.Values
 
         public ColorType GetModelType() => ColorType.Value;
 
+        public object Clone() => Copy();
         IColor ICopyable<IColor>.Copy() => new ColorValue(R, G, B, A);
         public ColorValue Copy() => new(R, G, B, A);
         

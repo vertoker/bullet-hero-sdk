@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.AudioEffects;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -9,7 +10,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Audio
 {
     [RuleContainer]
-    public class LevelTrackEffects
+    public class LevelTrackEffects : ICopyable<LevelTrackEffects>
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAudioVolumes)]
         [RuleCollectionSorted(nameof(FloatKey.Frame))]
@@ -114,5 +115,11 @@ namespace BHSDK.Models.Audio
             Normalize = normalize;
             ParamEQ = paramEQ;
         }
+
+        public object Clone() => Copy();
+        public LevelTrackEffects Copy() => new(Volumes.CopyList(), StereoPans.CopyList(), Active,
+            Lowpass.Copy(), Highpass.Copy(), Echo.Copy(), Reverb.Copy(),
+            Chorus.Copy(), PitchShifter.Copy(), Distortion.Copy(),
+            Flange.Copy(), Compressor.Copy(), Normalize.Copy(), ParamEQ.Copy());
     }
 }

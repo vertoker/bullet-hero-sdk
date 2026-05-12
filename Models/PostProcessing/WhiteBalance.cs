@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class WhiteBalance : Keyframe
+    public class WhiteBalance : Keyframe, ICopyable<WhiteBalance>
     {
         [RuleInRange(PostProcessingRules.WhiteBalance.TemperatureMin,
             PostProcessingRules.WhiteBalance.TemperatureMax)]
@@ -30,5 +31,8 @@ namespace BHSDK.Models.PostProcessing
             Temperature = temperature;
             Tint = tint;
         }
+
+        public object Clone() => Copy();
+        public WhiteBalance Copy() => new(Temperature, Tint, Frame, Ease);
     }
 }

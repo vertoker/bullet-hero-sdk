@@ -24,6 +24,7 @@ namespace BHSDK.Models.Keyframes
             Vector2 = vector2;
         }
 
+        public object Clone() => Copy();
         public Velocity Copy() => new(Vector2.Copy(), Frame, Ease);
     }
 }

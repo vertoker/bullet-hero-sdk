@@ -24,6 +24,7 @@ namespace BHSDK.Models.Values
             Time = time;
         }
 
+        public object Clone() => Copy();
         public GradientAlphaKeyValue Copy() => new(Alpha, Time);
     }
 }

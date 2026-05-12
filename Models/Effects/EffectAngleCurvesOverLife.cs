@@ -27,6 +27,7 @@ namespace BHSDK.Models.Effects
             Curve = curve;
         }
 
+        public object Clone() => Copy();
         IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleCurvesOverLife(Curve.Copy());
         public EffectAngleCurvesOverLife Copy() => new(Curve.Copy());
     }

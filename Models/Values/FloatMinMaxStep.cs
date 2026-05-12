@@ -34,6 +34,7 @@ namespace BHSDK.Models.Values
 
         public FloatType GetModelType() => FloatType.RandomMinMaxStep;
 
+        public object Clone() => Copy();
         IFloat ICopyable<IFloat>.Copy() => new FloatMinMaxStep(Min, Max, Step);
         public FloatMinMaxStep Copy() => new(Min, Max, Step);
     }

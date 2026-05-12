@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class CameraEvents
+    public class CameraEvents : ICopyable<CameraEvents>
     {
         // Camera - is a unique instance. It exists all level lifetime and any Object can be child of camera. 
         // Camera has instanceId and this is always -1 (because 0 - is a fallback).
@@ -51,5 +53,8 @@ namespace BHSDK.Models.Game
             Zooms = zooms;
             Shakes = shakes;
         }
+
+        public object Clone() => Copy();
+        public CameraEvents Copy() => new(Positions.CopyList(), Rotations.CopyList(), Zooms.CopyList(), Shakes.CopyList());
     }
 }

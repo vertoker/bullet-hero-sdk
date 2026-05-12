@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class TextObject : Object, IUpdatable<TextObject>
+    public class TextObject : Object, ICopyable<TextObject>, IUpdatable<TextObject>
     {
         public override ObjectType GetModelType() => ObjectType.Text;
         
@@ -28,15 +28,21 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.FontResourceId)]
         public int FontResourceId { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
+        [RuleCollectionSorted(nameof(Sca.Frame))]
+        [RuleCollectionUnique(nameof(Sca.Frame))]
         [JsonProperty(Names.Size)]
         public List<Sca> Sizes { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
+        [RuleCollectionSorted(nameof(Clr.Frame))]
+        [RuleCollectionUnique(nameof(Clr.Frame))]
         [JsonProperty(Names.Color)]
-        public List<Clr> Clr { get; set; }
+        public List<Clr> Colors { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
+        [RuleCollectionSorted(nameof(FloatKey.Frame))]
+        [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
         
@@ -67,7 +73,7 @@ namespace BHSDK.Models.Objects
             Text = new StringValue(string.Empty);
             FontResourceId = 0;
             Sizes = new List<Sca>();
-            Clr = new List<Clr>();
+            Colors = new List<Clr>();
             FontSizes = new List<FloatKey>();
             
             Direction = TextRules.Direction_Default;
@@ -80,7 +86,7 @@ namespace BHSDK.Models.Objects
         }
         public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
             List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot, IString text, int fontResourceId,
-            List<Sca> sizes, List<Clr> clr, List<FloatKey> fontSizes, TextObjectDirection direction, bool wordWrap, 
+            List<Sca> sizes, List<Clr> colors, List<FloatKey> fontSizes, TextObjectDirection direction, bool wordWrap, 
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment, 
             TextObjectOverEdge overEdge, TextObjectUnderEdge underEdge, TextObjectLeadingDistribution leadingDistribution)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
@@ -88,7 +94,7 @@ namespace BHSDK.Models.Objects
             Text = text;
             FontResourceId = fontResourceId;
             Sizes = sizes;
-            Clr = clr;
+            Colors = colors;
             FontSizes = fontSizes;
             
             Direction = direction;
@@ -99,6 +105,15 @@ namespace BHSDK.Models.Objects
             UnderEdge = underEdge;
             LeadingDistribution = leadingDistribution;
         }
+        
+        public override object Clone() => CopyImpl();
+        public override Object Copy() => CopyImpl();
+        TextObject ICopyable<TextObject>.Copy() => CopyImpl();
+        
+        private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy(),
+            Text.Copy(), FontResourceId, Sizes.CopyList(), Colors.CopyList(), FontSizes.CopyList(),
+            Direction, WordWrap, HorizontalAlignment, VerticalAlignment, OverEdge, UnderEdge, LeadingDistribution);
 
         public void Update(TextObject src)
         {
@@ -107,7 +122,7 @@ namespace BHSDK.Models.Objects
             Text = src.Text;
             FontResourceId = src.FontResourceId;
             Sizes = src.Sizes.Select(sca => sca.Copy()).ToList();
-            Clr = src.Clr.Select(sca => sca.Copy()).ToList();
+            Colors = src.Colors.Select(sca => sca.Copy()).ToList();
             FontSizes = src.FontSizes.Select(floatKey => floatKey.Copy()).ToList();
             
             Direction = src.Direction;

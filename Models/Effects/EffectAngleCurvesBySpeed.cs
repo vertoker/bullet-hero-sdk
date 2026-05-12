@@ -36,6 +36,7 @@ namespace BHSDK.Models.Effects
             SpeedRange = speedRange;
         }
 
+        public object Clone() => Copy();
         IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleCurvesBySpeed(Curve.Copy(), SpeedRange.Copy());
         public EffectAngleCurvesBySpeed Copy() => new(Curve.Copy(), SpeedRange.Copy());
     }

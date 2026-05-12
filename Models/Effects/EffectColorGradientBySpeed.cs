@@ -34,6 +34,7 @@ namespace BHSDK.Models.Effects
             SpeedRange = speedRange;
         }
 
+        public object Clone() => Copy();
         IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorGradientBySpeed(Gradient.Copy(), SpeedRange.Copy());
         public EffectColorGradientBySpeed Copy() => new(Gradient.Copy(), SpeedRange.Copy());
     }

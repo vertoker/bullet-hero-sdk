@@ -52,6 +52,7 @@ namespace BHSDK.Models.Effects
             Spread = spread;
         }
 
+        public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeCone(TopRadius.Copy(), BaseRadius.Copy(), Arc.Copy(), Height.Copy(), Spread.Copy());
         public EffectShapeCone Copy() => new(TopRadius.Copy(), BaseRadius.Copy(), Arc.Copy(), Height.Copy(), Spread.Copy());
     }

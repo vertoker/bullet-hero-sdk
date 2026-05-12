@@ -25,6 +25,7 @@ namespace BHSDK.Models.Values
             ThemeColorIndex = themeColorIndex;
         }
         
+        public object Clone() => Copy();
         IColor ICopyable<IColor>.Copy() => new ColorThemeRef(ThemeColorIndex);
         public ColorThemeRef Copy() => new(ThemeColorIndex);
     }

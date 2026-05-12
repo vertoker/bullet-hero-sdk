@@ -43,6 +43,7 @@ namespace BHSDK.Models.Values
 
         public VectorType GetModelType() => VectorType.Value;
         
+        public object Clone() => Copy();
         IVector3 ICopyable<IVector3>.Copy() => new Vector3Value(X, Y, Z);
         public Vector3Value Copy() => new(X, Y, Z);
     }

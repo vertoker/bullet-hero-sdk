@@ -83,6 +83,7 @@ namespace BHSDK.Models.Values
             OutWeight = outWeight;
         }
 
+        public object Clone() => Copy();
         public CurveKeyframeValue Copy() => new(Time, Value,
             WeightedMode, TangentMode, InTangent, OutTangent, InWeight, OutWeight);
     }

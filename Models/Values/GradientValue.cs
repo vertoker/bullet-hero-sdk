@@ -42,6 +42,7 @@ namespace BHSDK.Models.Values
             ColorSpace = colorSpace;
         }
 
+        public object Clone() => Copy();
         public GradientValue Copy() => new(ColorKeys.Select(color => color.Copy()).ToList(),
             AlphaKeys.Select(alpha => alpha.Copy()).ToList(), Mode, ColorSpace);
     }

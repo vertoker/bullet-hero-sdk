@@ -44,6 +44,7 @@ namespace BHSDK.Models.Effects
             Spread = spread;
         }
 
+        public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeLine(Start.Copy(), End.Copy(), Spread.Copy());
         public EffectShapeLine Copy() => new(Start.Copy(), End.Copy(), Spread.Copy());
     }

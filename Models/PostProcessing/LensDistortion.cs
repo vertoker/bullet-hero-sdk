@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
@@ -9,7 +10,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LensDistortion : Keyframe
+    public class LensDistortion : Keyframe, ICopyable<LensDistortion>
     {
         [RuleInRange(PostProcessingRules.LensDistortion.IntensityMin,
             PostProcessingRules.LensDistortion.IntensityMax)]
@@ -46,5 +47,8 @@ namespace BHSDK.Models.PostProcessing
             Center = center;
             Scale = scale;
         }
+
+        public object Clone() => Copy();
+        public LensDistortion Copy() => new(Intensity, Multiplier.Copy(), Center.Copy(), Scale, Frame, Ease);
     }
 }

@@ -34,6 +34,7 @@ namespace BHSDK.Models.Values
 
         public IntType GetModelType() => IntType.RandomMinMaxStep;
 
+        public object Clone() => Copy();
         IInt ICopyable<IInt>.Copy() => new IntMinMaxStep(Min, Max, Step);
         public IntMinMaxStep Copy() => new(Min, Max, Step);
     }

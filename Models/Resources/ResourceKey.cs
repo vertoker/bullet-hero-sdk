@@ -1,12 +1,13 @@
 ﻿using System;
 using BHSDK.Models.Enum.Resources;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Resources
 {
     [RuleContainer]
-    public class ResourceKey
+    public class ResourceKey : ICopyable<ResourceKey>
     {
         // URI - Universal Resource Identifier, either for paths, urls or keys
         
@@ -27,5 +28,8 @@ namespace BHSDK.Models.Resources
             UriType = uriType;
             Uri = uri;
         }
+
+        public object Clone() => Copy();
+        public ResourceKey Copy() => new(UriType, Uri);
     }
 }

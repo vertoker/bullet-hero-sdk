@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class CompositeCollider
+    public class CompositeCollider : ICopyable<CompositeCollider>
     {
         public const int MaxCount = 64;
         
@@ -31,5 +33,8 @@ namespace BHSDK.Models.Values
             ColliderId = colliderId;
             Triangles = triangles;
         }
+
+        public object Clone() => Copy();
+        public CompositeCollider Copy() => new(ColliderId, Triangles.CopyList());
     }
 }

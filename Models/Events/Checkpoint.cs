@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Events
 {
     [RuleContainer]
-    public class Checkpoint : IFrame
+    public class Checkpoint : IFrame, ICopyable<Checkpoint>
     {
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
@@ -41,5 +41,8 @@ namespace BHSDK.Models.Events
             Active = active;
             Color = color;
         }
+
+        public object Clone() => Copy();
+        public Checkpoint Copy() => new(Name, Active, Color.Copy(), Frame);
     }
 }

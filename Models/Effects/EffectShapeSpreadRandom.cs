@@ -28,6 +28,7 @@ namespace BHSDK.Models.Effects
             Spread = spread;
         }
         
+        public object Clone() => Copy();
         IEffectShapeSpread ICopyable<IEffectShapeSpread>.Copy() => new EffectShapeSpreadRandom(Spread.Copy());
         public EffectShapeSpreadRandom Copy() => new(Spread.Copy());
     }

@@ -4,6 +4,7 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
@@ -49,6 +50,7 @@ namespace BHSDK.Models.Values
             Matrix = matrix;
         }
 
-        public Theme Copy() => new(Name, Matrix.Select(color => color.Copy()).ToArray());
+        public object Clone() => Copy();
+        public Theme Copy() => new(Name, Matrix.CopyArray());
     }
 }

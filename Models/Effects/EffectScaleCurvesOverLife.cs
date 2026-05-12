@@ -33,6 +33,7 @@ namespace BHSDK.Models.Effects
             CurveY = curveY;
         }
 
+        public object Clone() => Copy();
         IEffectScale ICopyable<IEffectScale>.Copy() => new EffectScaleCurvesOverLife(CurveX.Copy(), CurveY.Copy());
         public EffectScaleCurvesOverLife Copy() => new(CurveX.Copy(), CurveY.Copy());
     }

@@ -8,12 +8,13 @@ using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class EffectObject : Object, IEffect, IUpdatable<EffectObject>
+    public class EffectObject : Object, IEffect, ICopyable<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.Effect;
 
@@ -65,6 +66,14 @@ namespace BHSDK.Models.Objects
             EffectColor = effectColor;
         }
 
+        public override object Clone() => CopyImpl();
+        public override Object Copy() => CopyImpl();
+        EffectObject ICopyable<EffectObject>.Copy() => CopyImpl();
+        
+        private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy(), Core.Copy(), Forces.Copy(),
+            EffectShape.Copy(), EffectAngle.Copy(), EffectScale.Copy(), EffectColor.Copy());
+        
         public void Update(EffectObject src)
         {
             base.Update(this);

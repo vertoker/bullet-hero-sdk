@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
@@ -9,7 +10,7 @@ using Keyframe = BHSDK.Models.Keyframes.Keyframe;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ShadowsMidtonesHighlights : Keyframe
+    public class ShadowsMidtonesHighlights : Keyframe, ICopyable<ShadowsMidtonesHighlights>
     {
         [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
@@ -75,5 +76,9 @@ namespace BHSDK.Models.PostProcessing
             ShadowLimits = shadowLimits;
             HighlightLimits = highlightLimits;
         }
+
+        public object Clone() => Copy();
+        public ShadowsMidtonesHighlights Copy() => new(Shadows, ShadowsColor.Copy(), Midtones, MidtonesColor.Copy(),
+            Highlights, HighlightsColor.Copy(), ShadowLimits.Copy(), HighlightLimits.Copy(), Frame, Ease);
     }
 }

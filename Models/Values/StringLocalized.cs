@@ -26,6 +26,7 @@ namespace BHSDK.Models.Values
 
         public StringType GetModelType() => StringType.Localized;
 
+        public object Clone() => Copy();
         IString ICopyable<IString>.Copy() => new StringLocalized(Strings.Select(s => s.Copy()).ToList());
         public StringLocalized Copy() => new(Strings.Select(s => s.Copy()).ToList());
     }

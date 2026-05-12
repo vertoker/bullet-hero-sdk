@@ -39,6 +39,7 @@ namespace BHSDK.Models.Effects
             Speed = speed;
         }
 
+        public object Clone() => Copy();
         IEffectShapeSpread ICopyable<IEffectShapeSpread>.Copy() => new EffectShapeSpreadPingPong(Spread.Copy(), Speed.Copy());
         public EffectShapeSpreadPingPong Copy() => new(Spread.Copy(), Speed.Copy());
     }

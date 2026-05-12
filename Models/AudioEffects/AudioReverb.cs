@@ -1,11 +1,12 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioReverb : AudioEffect
+    public class AudioReverb : AudioEffect, ICopyable<AudioReverb>
     {
         [RuleInRange(AudioRules.Reverb.DryLevel_Min, AudioRules.Reverb.DryLevel_Max)]
         [JsonProperty(Names.DryLevel)]
@@ -100,5 +101,10 @@ namespace BHSDK.Models.AudioEffects
             HFReference = hfReference;
             LFReference = lfReference;
         }
+
+        public new object Clone() => Copy();
+        public new AudioReverb Copy() => new(MixLevel, DryLevel, Room, RoomHF, RoomLF,
+            DecayTime, DecayHFRatio, Reflections, ReflectDelay, Reverb,
+            ReverbDelay, Diffusion, Density, HFReference, LFReference);
     }
 }

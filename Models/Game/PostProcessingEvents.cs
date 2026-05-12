@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class PostProcessingEvents
+    public class PostProcessingEvents : ICopyable<PostProcessingEvents>
     {
         // General
         
@@ -130,5 +132,11 @@ namespace BHSDK.Models.Game
             AnalogGlitches = analogGlitches;
             DigitalGlitches = digitalGlitches;
         }
+
+        public object Clone() => Copy();
+        public PostProcessingEvents Copy() => new(Blooms.CopyList(), Chromas.CopyList(), Vignettes.CopyList(),
+            Lenses.CopyList(), Grains.CopyList(), MotionBlurs.CopyList(), ColorCurveses.CopyList(),
+            LiftGammaGains.CopyList(), ShadowsMidtonesHighlightses.CopyList(), WhiteBalances.CopyList(),
+            AnalogGlitches.CopyList(), DigitalGlitches.CopyList());
     }
 }

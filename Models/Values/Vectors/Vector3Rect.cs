@@ -50,6 +50,7 @@ namespace BHSDK.Models.Values
 
         public VectorType GetModelType() => VectorType.RandomRect;
 
+        public object Clone() => Copy();
         IVector3 ICopyable<IVector3>.Copy() => new Vector3Rect(MinX, MinY, MinZ, MaxX, MaxY, MaxZ);
         public Vector3Rect Copy() => new(MinX, MinY, MinZ, MaxX, MaxY, MaxZ);
     }

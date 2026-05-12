@@ -30,6 +30,7 @@ namespace BHSDK.Models.Effects
             Scale = scale;
         }
 
+        public object Clone() => Copy();
         IEffectScale ICopyable<IEffectScale>.Copy() => new EffectScaleValue(Scale.Copy());
         public EffectScaleValue Copy() => new(Scale.Copy());
     }

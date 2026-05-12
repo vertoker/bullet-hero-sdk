@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class MotionBlur : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class MotionBlur : Keyframe, ICopyable<MotionBlur> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Quality (client settings variable, he set it himself)
         
@@ -27,5 +28,8 @@ namespace BHSDK.Models.PostProcessing
         {
             Intensity = intensity;
         }
+
+        public object Clone() => Copy();
+        public MotionBlur Copy() => new(Intensity, Frame, Ease);
     }
 }

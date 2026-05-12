@@ -1,4 +1,5 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioFlange : AudioEffect
+    public class AudioFlange : AudioEffect, ICopyable<AudioFlange>
     {
         [RuleInRange(AudioRules.Flange.DryMix_Min, AudioRules.Flange.DryMix_Max)]
         [JsonProperty(Names.DryMix)]
@@ -39,5 +40,8 @@ namespace BHSDK.Models.AudioEffects
             Depth = depth;
             Rate = rate;
         }
+
+        public new object Clone() => Copy();
+        public new AudioFlange Copy() => new(MixLevel, DryMix, WetMix, Depth, Rate);
     }
 }

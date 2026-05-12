@@ -1,11 +1,12 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioEcho : AudioEffect
+    public class AudioEcho : AudioEffect, ICopyable<AudioEcho>
     {
         [RuleInRange(AudioRules.Echo.Delay_Min, AudioRules.Echo.Delay_Max)]
         [JsonProperty(Names.Delay)]
@@ -44,5 +45,8 @@ namespace BHSDK.Models.AudioEffects
             DryMix = dryMix;
             WetMix = wetMix;
         }
+
+        public new object Clone() => Copy();
+        public new AudioEcho Copy() => new(MixLevel, Delay, Decay, MaxChannels, DryMix, WetMix);
     }
 }

@@ -39,6 +39,7 @@ namespace BHSDK.Models.Values
 
         public VectorType GetModelType() => VectorType.RandomCircle;
 
+        public object Clone() => Copy();
         IVector3 ICopyable<IVector3>.Copy() => new Vector3Circle(X, Y, Z, Radius);
         public Vector3Circle Copy() => new(X, Y, Z, Radius);
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
@@ -18,7 +19,7 @@ namespace BHSDK.Models.Objects
     // No deep inheritance of changes
 
     [RuleContainer]
-    public class Modification
+    public class Modification : ICopyable<Modification>
     {
         [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
@@ -42,6 +43,17 @@ namespace BHSDK.Models.Objects
             ObjectId = objectId;
             Path = path;
             Value = value;
+        }
+
+        public object Clone() => Copy();
+        public Modification Copy() => new(ObjectId, Path, CopyValue());
+
+        public object CopyValue()
+        {
+            if (Value == null) return null;
+            if (Value.GetType().IsValueType) return Value;
+            if (Value is ICloneable cloneable) return cloneable.Clone();
+            return Value;
         }
     }
 }

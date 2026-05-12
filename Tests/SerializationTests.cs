@@ -154,7 +154,7 @@ namespace BHSDK.Tests
             {
                 ObjectId = 2,
             };
-            textObject.Clr.Add(new Clr());
+            textObject.Colors.Add(new Clr());
             level.Game.Objects.Add(textObject);
 
             var effectObject = new EffectObject()
@@ -249,7 +249,7 @@ namespace BHSDK.Tests
             level.Game.Objects.Add(textureObject);
 
             var textObject = new TextObject();
-            textObject.Clr.Add(new Clr());
+            textObject.Colors.Add(new Clr());
             level.Game.Objects.Add(textObject);
 
             var effectObject = new EffectObject();

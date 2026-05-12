@@ -10,6 +10,7 @@ namespace BHSDK.Models.Effects
     {
         public EffectShapeSpreadType GetModelType() => EffectShapeSpreadType.Sine;
         
+        public object Clone() => Copy();
         IEffectShapeSpread ICopyable<IEffectShapeSpread>.Copy() => new EffectShapeSpreadSine();
         public EffectShapeSpreadSine Copy() => new();
     }

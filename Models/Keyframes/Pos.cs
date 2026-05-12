@@ -30,6 +30,7 @@ namespace BHSDK.Models.Keyframes
             Anchor = anchor;
         }
 
+        public object Clone() => Copy();
         public Pos Copy() => new(Vector2.Copy(), Anchor.Copy(), Frame, Ease);
     }
 }

@@ -28,6 +28,7 @@ namespace BHSDK.Models.Values
 
         public FloatType GetModelType() => FloatType.RandomMinMax;
         
+        public object Clone() => Copy();
         IFloat ICopyable<IFloat>.Copy() => new FloatMinMax(Min, Max);
         public FloatMinMax Copy() => new(Min, Max);
     }

@@ -69,6 +69,7 @@ namespace BHSDK.Models.Values
 
         public VectorType GetModelType() => VectorType.RandomRectStep;
 
+        public object Clone() => Copy();
         IVector4 ICopyable<IVector4>.Copy() => new Vector4RectStep(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW, Step);
         public Vector4RectStep Copy() => new(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW, Step);
     }

@@ -1,11 +1,12 @@
-﻿using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class TriangleCollider
+    public class TriangleCollider : ICopyable<TriangleCollider>
     {
         [RuleNotNull]
         [JsonProperty(Names.Point1)]
@@ -37,5 +38,8 @@ namespace BHSDK.Models.Values
             Point2 = point2;
             Point3 = point3;
         }
+
+        public object Clone() => Copy();
+        public TriangleCollider Copy() => new(Point1.Copy(), Point2.Copy(), Point3.Copy());
     }
 }

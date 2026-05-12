@@ -1,4 +1,5 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioParamEQ : AudioEffect
+    public class AudioParamEQ : AudioEffect, ICopyable<AudioParamEQ>
     {
         [RuleInRange(AudioRules.ParamEQ.CenterFreq_Min, AudioRules.ParamEQ.CenterFreq_Max)]
         [JsonProperty(Names.CenterFreq)]
@@ -33,5 +34,8 @@ namespace BHSDK.Models.AudioEffects
             OctaveRange = octaveRange;
             FrequencyGain = frequencyGain;
         }
+
+        public new object Clone() => Copy();
+        public new AudioParamEQ Copy() => new(MixLevel, CenterFreq, OctaveRange, FrequencyGain);
     }
 }

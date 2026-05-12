@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Events;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class GameEvents
+    public class GameEvents : ICopyable<GameEvents>
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxMarkerEvents)]
         [RuleCollectionSorted(nameof(Marker.Frame))]
@@ -48,5 +50,8 @@ namespace BHSDK.Models.Game
             Backgrounds = backgrounds;
             Themes = themes;
         }
+
+        public object Clone() => Copy();
+        public GameEvents Copy() => new(Markers.CopyList(), Checkpoints.CopyList(), Backgrounds.CopyList(), Themes.CopyList());
     }
 }

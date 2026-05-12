@@ -24,6 +24,7 @@ namespace BHSDK.Models.Keyframes
             Angle = angle;
         }
 
+        public object Clone() => Copy();
         public Rot Copy() => new(Angle.Copy(), Frame, Ease);
     }
 }

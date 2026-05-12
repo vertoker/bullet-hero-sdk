@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Interfaces.Values;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Settings
 {
     [RuleContainer]
-    public class LevelSettings
+    public class LevelSettings : ICopyable<LevelSettings>
     {
         [RuleMin(FrameRules.MinFramerate)]
         [JsonProperty(Names.Fps)]
@@ -34,5 +35,8 @@ namespace BHSDK.Models.Settings
             FrameLength = frameLength;
             ScreenLimit = screenLimit;
         }
+
+        public object Clone() => Copy();
+        public LevelSettings Copy() => new(Framerate, FrameLength, ScreenLimit.Copy());
     }
 }

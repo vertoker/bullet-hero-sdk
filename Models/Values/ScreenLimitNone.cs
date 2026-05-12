@@ -13,6 +13,7 @@ namespace BHSDK.Models.Values
         public bool IsValid(float currentAspect) => true;
         public float GetValid(float currentAspect) => currentAspect;
         
+        public object Clone() => Copy();
         IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitNone();
         public ScreenLimitNone Copy() => new();
     }

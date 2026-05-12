@@ -1,4 +1,5 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioEffect
+    public class AudioEffect : ICopyable<AudioEffect>
     {
         [RuleInRange(AudioRules.MixLevel_Disabled, AudioRules.MixLevel_Enabled)]
         [JsonProperty(Names.MixLevel)]
@@ -20,5 +21,8 @@ namespace BHSDK.Models.AudioEffects
         {
             MixLevel = mixLevel;
         }
+
+        public object Clone() => Copy();
+        public AudioEffect Copy() => new(MixLevel);
     }
 }

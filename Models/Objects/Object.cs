@@ -6,12 +6,13 @@ using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class Object : IUpdatable<Object>
+    public class Object : ICopyable<Object>, IUpdatable<Object>
     {
         public virtual ObjectType GetModelType() => ObjectType.Object;
         
@@ -53,19 +54,19 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectPositions)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
         [RuleCollectionSorted(nameof(Pos.Frame))]
         [RuleCollectionUnique(nameof(Pos.Frame))]
         [JsonProperty(Names.Position)]
         public List<Pos> Positions { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectRotations)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
         [RuleCollectionSorted(nameof(Rot.Frame))]
         [RuleCollectionUnique(nameof(Rot.Frame))]
         [JsonProperty(Names.Rotation)]
         public List<Rot> Rotations { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectScales)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
         [RuleCollectionSorted(nameof(Sca.Frame))]
         [RuleCollectionUnique(nameof(Sca.Frame))]
         [JsonProperty(Names.Scale)]
@@ -110,6 +111,12 @@ namespace BHSDK.Models.Objects
             Pivot = pivot;
         }
 
+        public virtual object Clone() => CopyImpl();
+        public virtual Object Copy() => CopyImpl();
+        
+        private Object CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy());
+        
         public void Update(Object src)
         {
             ObjectId = src.ObjectId;

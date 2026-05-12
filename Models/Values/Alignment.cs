@@ -52,6 +52,7 @@ namespace BHSDK.Models.Values
             Value = value;
         }
 
+        public object Clone() => Copy();
         public Alignment Copy() => new(Value.Copy());
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
@@ -9,7 +10,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class Vignette : Keyframe
+    public class Vignette : Keyframe, ICopyable<Vignette>
     {
         [RuleNotNull(typeof(ColorValue))] // TODO add extra part for checking HDR part
         [JsonProperty(Names.Color)]
@@ -50,5 +51,8 @@ namespace BHSDK.Models.PostProcessing
             Smoothness = smoothness;
             Rounded = rounded;
         }
+
+        public object Clone() => Copy();
+        public Vignette Copy() => new(ColorHDR.Copy(), Center.Copy(), Intensity, Smoothness, Rounded, Frame, Ease);
     }
 }

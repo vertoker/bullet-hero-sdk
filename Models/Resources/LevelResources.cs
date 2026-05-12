@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Resources
 {
     [RuleContainer]
-    public class LevelResources
+    public class LevelResources : ICopyable<LevelResources>
     {
         [RuleNotNull, RuleCollectionUnique(nameof(TextureResource.TextureResourceId))]
         [JsonProperty(Names.Textures)]
@@ -39,5 +41,8 @@ namespace BHSDK.Models.Resources
             Audios = audios;
             CompositeShapes = compositeShapes;
         }
+
+        public object Clone() => Copy();
+        public LevelResources Copy() => new(Textures.CopyList(), Fonts.CopyList(), Audios.CopyList(), CompositeShapes.CopyList());
     }
 }

@@ -47,6 +47,7 @@ namespace BHSDK.Models.Values
             MaxAspect = maxAspect;
         }
 
+        public object Clone() => Copy();
         IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitBounds(MinAspect.Copy(), MaxAspect.Copy());
         public ScreenLimitBounds Copy() => new(MinAspect.Copy(), MaxAspect.Copy());
     }

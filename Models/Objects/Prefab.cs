@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class Prefab : IObjectScope, IPrefab
+    public class Prefab : IObjectScope, IPrefab, ICopyable<Prefab>
     {
         public Version GetVersion() => new(1, 0);
         
@@ -37,5 +38,8 @@ namespace BHSDK.Models.Objects
             Objects = objects;
             PrefabObjects = prefabObjects;
         }
+
+        public object Clone() => Copy();
+        public Prefab Copy() => new(Objects.CopyList(), PrefabObjects.CopyList());
     }
 }

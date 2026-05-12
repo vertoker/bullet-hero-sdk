@@ -42,6 +42,7 @@ namespace BHSDK.Models.Effects
             ColorB = colorB;
         }
 
+        public object Clone() => Copy();
         IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorRandomUniform(ColorA.Copy(), ColorB.Copy());
         public EffectColorRandomUniform Copy() => new(ColorA.Copy(), ColorB.Copy());
     }

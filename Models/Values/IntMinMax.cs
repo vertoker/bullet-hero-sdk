@@ -28,6 +28,7 @@ namespace BHSDK.Models.Values
 
         public IntType GetModelType() => IntType.RandomMinMax;
         
+        public object Clone() => Copy();
         IInt ICopyable<IInt>.Copy() => new IntMinMax(Min, Max);
         public IntMinMax Copy() => new(Min, Max);
     }

@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
@@ -9,7 +10,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class Bloom : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class Bloom : Keyframe, ICopyable<Bloom> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Threshold - 0 (always, not a parameter)
         
@@ -42,5 +43,8 @@ namespace BHSDK.Models.PostProcessing
             Scatter = scatter;
             Color = color;
         }
+
+        public object Clone() => Copy();
+        public Bloom Copy() => new(Intensity, Scatter, Color.Copy(), Frame, Ease);
     }
 }

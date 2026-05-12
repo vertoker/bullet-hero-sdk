@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ChromaticAberration : Keyframe
+    public class ChromaticAberration : Keyframe, ICopyable<ChromaticAberration>
     {
         [RuleInRange(PostProcessingRules.ChromaticAberration.IntensityMin,
             PostProcessingRules.ChromaticAberration.IntensityMax)]
@@ -23,5 +24,8 @@ namespace BHSDK.Models.PostProcessing
         {
             Intensity = intensity;
         }
+
+        public object Clone() => Copy();
+        public ChromaticAberration Copy() => new(Intensity, Frame, Ease);
     }
 }

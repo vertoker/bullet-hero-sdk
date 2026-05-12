@@ -24,6 +24,7 @@ namespace BHSDK.Models.Keyframes
             Size = size;
         }
 
+        public object Clone() => Copy();
         public Zoom Copy() => new(Size.Copy(), Frame, Ease);
     }
 }

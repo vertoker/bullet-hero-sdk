@@ -32,6 +32,7 @@ namespace BHSDK.Models.Effects
             Color = color;
         }
 
+        public object Clone() => Copy();
         IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorValue(Color.Copy());
         public EffectColorValue Copy() => new(Color.Copy());
     }

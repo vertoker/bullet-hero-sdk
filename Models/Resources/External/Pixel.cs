@@ -4,12 +4,13 @@ using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using BHSDK.Models.Interfaces;
 using BHSDK.Utils;
 
 namespace BHSDK.Models.Resources
 {
     [StructLayout(LayoutKind.Explicit, Size = 4)]
-    public struct Pixel : IEquatable<Pixel>, IFormattable
+    public struct Pixel : IEquatable<Pixel>, IFormattable, ICopyable<Pixel>
     {
         [FieldOffset(0)] public int rgba;
         
@@ -81,6 +82,9 @@ namespace BHSDK.Models.Resources
         }
 
         public readonly override int GetHashCode() => rgba.GetHashCode();
+
+        public object Clone() => Copy();
+        public Pixel Copy() => new(r, g, b, a);
 
         public readonly override bool Equals(object other)
         {

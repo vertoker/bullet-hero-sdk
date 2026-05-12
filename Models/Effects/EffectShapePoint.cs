@@ -12,6 +12,7 @@ namespace BHSDK.Models.Effects
         
         public EffectShapeType GetModelType() => EffectShapeType.Point;
         
+        public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapePoint();
         public EffectShapePoint Copy() => new();
     }

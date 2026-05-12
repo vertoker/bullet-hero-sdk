@@ -28,6 +28,7 @@ namespace BHSDK.Models.Keyframes
             Value = value;
         }
 
+        public object Clone() => Copy();
         public BoolKey Copy() => new(Value, Frame);
     }
 }

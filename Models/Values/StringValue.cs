@@ -25,6 +25,7 @@ namespace BHSDK.Models.Values
 
         public StringType GetModelType() => StringType.Value;
         
+        public object Clone() => Copy();
         IString ICopyable<IString>.Copy() => new StringValue(Value);
         public StringValue Copy() => new(Value);
     }

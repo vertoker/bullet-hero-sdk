@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class AnalogGlitch : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class AnalogGlitch : Keyframe, ICopyable<AnalogGlitch> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         [RuleInRange(PostProcessingRules.AnalogGlitch.ScanLineJitterMin,
             PostProcessingRules.AnalogGlitch.ScanLineJitterMax)]
@@ -44,5 +45,8 @@ namespace BHSDK.Models.PostProcessing
             HorizontalShake = horizontalShake;
             ColorDrift = colorDrift;
         }
+
+        public object Clone() => Copy();
+        public AnalogGlitch Copy() => new(ScanLineJitter, VerticalJump, HorizontalShake, ColorDrift, Frame, Ease);
     }
 }

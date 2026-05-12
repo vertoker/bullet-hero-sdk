@@ -28,6 +28,7 @@ namespace BHSDK.Models.Effects
             Size = size;
         }
 
+        public object Clone() => Copy();
         public EffectShapeType GetModelType() => EffectShapeType.Rectangle;
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeRectangle();
         public EffectShapeRectangle Copy() => new();

@@ -1,11 +1,12 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioPitchShifter : AudioEffect
+    public class AudioPitchShifter : AudioEffect, ICopyable<AudioPitchShifter>
     {
         [RuleInRange(AudioRules.PitchShifter.Pitch_Min, AudioRules.PitchShifter.Pitch_Max)]
         [JsonProperty(Names.Pitch)]
@@ -38,5 +39,8 @@ namespace BHSDK.Models.AudioEffects
             Overlap = overlap;
             MaxChannels = maxChannels;
         }
+
+        public new object Clone() => Copy();
+        public new AudioPitchShifter Copy() => new(MixLevel, Pitch, FFTSize, Overlap, MaxChannels);
     }
 }

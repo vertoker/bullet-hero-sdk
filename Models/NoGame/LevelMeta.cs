@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.NoGame
 {
     [RuleContainer]
-    public class LevelMeta
+    public class LevelMeta : ICopyable<LevelMeta>
     {
         [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Name)]
@@ -49,5 +52,8 @@ namespace BHSDK.Models.NoGame
             Authors = authors;
             ObjectIdCounter = objectIdCounter;
         }
+
+        public object Clone() => Copy();
+        public LevelMeta Copy() => new(LevelName.Copy(), (Version)LevelVersion.Clone(), LevelGuid, Authors.CopyList(), ObjectIdCounter);
     }
 }

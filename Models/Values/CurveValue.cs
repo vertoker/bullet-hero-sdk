@@ -36,6 +36,7 @@ namespace BHSDK.Models.Values
             PostWrapMode = postWrapMode;
         }
         
+        public object Clone() => Copy();
         public CurveValue Copy() => new(KeyFrames.Select(keyframe => keyframe.Copy()).ToList(), PostWrapMode, PreWrapMode);
     }
 }

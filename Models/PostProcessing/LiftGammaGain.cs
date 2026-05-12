@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
@@ -8,7 +9,7 @@ using Keyframe = BHSDK.Models.Keyframes.Keyframe;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LiftGammaGain : Keyframe
+    public class LiftGammaGain : Keyframe, ICopyable<LiftGammaGain>
     {
         [JsonProperty(Names.Lift)]
         public bool Lift { get; set; }
@@ -53,5 +54,8 @@ namespace BHSDK.Models.PostProcessing
             Gain = gain;
             GainColor = gainColor;
         }
+
+        public object Clone() => Copy();
+        public LiftGammaGain Copy() => new(Lift, LiftColor.Copy(), Gamma, GammaColor.Copy(), Gain, GainColor.Copy(), Frame, Ease);
     }
 }

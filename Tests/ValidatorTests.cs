@@ -30,5 +30,14 @@ namespace BHSDK.Tests
             issues = validator.Analyze(level, new LevelAnalyzerSettings());
             Assert.IsEmpty(issues);
         }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestCopyEquals()
+        {
+            var level = SerializationTests.CreateTestLevel();
+            var copyLevel = level.Copy();
+            // TODO check equals
+        }
     }
 }

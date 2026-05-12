@@ -23,6 +23,7 @@ namespace BHSDK.Models.Keyframes
             Value = value;
         }
 
+        public object Clone() => Copy();
         public Clr Copy() => new(Value.Copy(), Frame, Ease);
     }
 }

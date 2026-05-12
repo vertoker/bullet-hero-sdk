@@ -69,6 +69,7 @@ namespace BHSDK.Models.Values
 
         public ColorType GetModelType() => ColorType.RandomMinMax;
         
+        public object Clone() => Copy();
         IColor ICopyable<IColor>.Copy() => new ColorMinMax(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
         public ColorMinMax Copy() => new(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
     }

@@ -6,12 +6,13 @@ using BHSDK.Models.Resources;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class GameLevel : IObjectScope
+    public class GameLevel : IObjectScope, ICopyable<GameLevel>
     {
         [RuleNotNull]
         [JsonProperty(Names.Events)]
@@ -79,5 +80,11 @@ namespace BHSDK.Models.Game
             Prefabs = prefabs;
             Themes = themes;
         }
+
+        public object Clone() => Copy();
+        public GameLevel Copy() => new(Events.Copy(), CameraEvents.Copy(),
+            PostProcessingEvents.Copy(), PlayerEvents.Copy(),
+            Objects.CopyList(), PrefabObjects.CopyList(),
+            Prefabs.CopyList(), Themes.CopyList());
     }
 }

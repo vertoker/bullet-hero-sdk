@@ -27,6 +27,7 @@ namespace BHSDK.Models.Values
             Aspect = aspect;
         }
 
+        public object Clone() => Copy();
         IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitFixed(Aspect.Copy());
         public ScreenLimitFixed Copy() => new(Aspect.Copy());
     }

@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using BHSDK.Models.Events;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Audio
 {
     [RuleContainer]
-    public class AudioLevel
+    public class AudioLevel : ICopyable<AudioLevel>
     {
         // because master channels created only in Unity
         public const int FrameTrackLimit = 16;
@@ -24,5 +26,8 @@ namespace BHSDK.Models.Audio
         {
             Tracks = tracks;
         }
+
+        public object Clone() => Copy();
+        public AudioLevel Copy() => new(Tracks.CopyList());
     }
 }

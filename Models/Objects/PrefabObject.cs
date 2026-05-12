@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class PrefabObject
+    public class PrefabObject : ICopyable<PrefabObject>
     {
         // In build process, this PrefabObject converted to Object
         // 1. Loaded SourcePrefab to runtime model
@@ -35,5 +37,8 @@ namespace BHSDK.Models.Objects
             ObjectIds = objectIds;
             Modifications = modifications;
         }
+
+        public object Clone() => Copy();
+        public PrefabObject Copy() => new(PrefabGuid, ObjectIds.CopyList(), Modifications.CopyList());
     }
 }

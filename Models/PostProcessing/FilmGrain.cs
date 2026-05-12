@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class FilmGrain : Keyframe
+    public class FilmGrain : Keyframe, ICopyable<FilmGrain>
     {
         [JsonProperty(Names.Type)]
         public FilmGrainType Type { get; set; }
@@ -28,5 +29,8 @@ namespace BHSDK.Models.PostProcessing
             Type = type;
             Intensity = intensity;
         }
+
+        public object Clone() => Copy();
+        public FilmGrain Copy() => new(Type, Intensity, Frame, Ease);
     }
 }

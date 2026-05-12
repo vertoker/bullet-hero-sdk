@@ -27,6 +27,7 @@ namespace BHSDK.Models.Values
             Value = value;
         }
 
+        public object Clone() => Copy();
         public StringLanguage Copy() => new(LanguageCode, Value);
     }
 }

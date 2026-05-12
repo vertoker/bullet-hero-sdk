@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class DigitalGlitch : Keyframe // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class DigitalGlitch : Keyframe, ICopyable<DigitalGlitch> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         [RuleInRange(PostProcessingRules.DigitalGlitch.IntensityMin,
             PostProcessingRules.DigitalGlitch.IntensityMax)]
@@ -23,5 +24,8 @@ namespace BHSDK.Models.PostProcessing
         {
             Intensity = intensity;
         }
+
+        public object Clone() => Copy();
+        public DigitalGlitch Copy() => new(Intensity, Frame, Ease);
     }
 }

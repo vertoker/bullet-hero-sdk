@@ -39,6 +39,7 @@ namespace BHSDK.Models.Effects
             AngleB = angleB;
         }
 
+        public object Clone() => Copy();
         IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleRandomPerComponent(AngleA.Copy(), AngleB.Copy());
         public EffectAngleRandomPerComponent Copy() => new(AngleA.Copy(), AngleB.Copy());
     }

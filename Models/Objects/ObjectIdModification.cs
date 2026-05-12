@@ -1,4 +1,5 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class ObjectIdModification
+    public class ObjectIdModification : ICopyable<ObjectIdModification>
     {
         [JsonProperty(Names.PrevObjectId)]
         public int PrevObjectId { get; set; }
@@ -24,5 +25,8 @@ namespace BHSDK.Models.Objects
             PrevObjectId = prevObjectId;
             NextObjectId = nextObjectId;
         }
+
+        public object Clone() => Copy();
+        public ObjectIdModification Copy() => new(PrevObjectId, NextObjectId);
     }
 }

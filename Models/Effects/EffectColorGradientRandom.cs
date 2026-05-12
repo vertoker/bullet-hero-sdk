@@ -27,6 +27,7 @@ namespace BHSDK.Models.Effects
             Gradient = gradient;
         }
 
+        public object Clone() => Copy();
         IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorGradientRandom(Gradient.Copy());
         public EffectColorGradientRandom Copy() => new(Gradient.Copy());
     }

@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class PlayerEvents
+    public class PlayerEvents : ICopyable<PlayerEvents>
     {
         // TODO add in the future with events
         // [JsonProperty(ModelNames.Velocity)]
@@ -45,5 +47,8 @@ namespace BHSDK.Models.Game
             Controls = controls;
             Collisions = collisions;
         }
+
+        public object Clone() => Copy();
+        public PlayerEvents Copy() => new(Visibles.CopyList(), Controls.CopyList(), Collisions.CopyList());
     }
 }

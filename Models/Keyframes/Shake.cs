@@ -44,6 +44,7 @@ namespace BHSDK.Models.Keyframes
             IntensityY = intensityY;
         }
 
+        public object Clone() => Copy();
         public Shake Copy() => new(Intensity, Speed, IntensityX, IntensityY, Frame, Ease);
     }
 }

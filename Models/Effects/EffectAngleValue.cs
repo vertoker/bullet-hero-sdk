@@ -32,6 +32,7 @@ namespace BHSDK.Models.Effects
             Angle = angle;
         }
 
+        public object Clone() => Copy();
         IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleValue(Angle.Copy());
         public EffectAngleValue Copy() => new(Angle.Copy());
     }

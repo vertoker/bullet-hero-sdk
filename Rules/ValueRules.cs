@@ -14,10 +14,7 @@
         public const int MaxCameraZooms = 512;
         public const int MaxCameraShakes = 512;
         
-        public const int MaxObjectPositions = 32;
-        public const int MaxObjectRotations = 32;
-        public const int MaxObjectScales = 32;
-        public const int MaxObjectColors = 32;
+        public const int MaxObjectKeyframes = 32;
         
         public const int ObjectLayerDefault = 0;
         
@@ -32,6 +29,8 @@
         
         public const int MaxEditorName = 512;
         public const int MaxEditorDescription = 4096;
+        public const int MinAuthorOrder = -10000;
+        public const int MaxAuthorOrder = 10000;
         
         public const int ThemeCount = 64;
         public const int MaxThemes = 32;

@@ -1,6 +1,9 @@
-﻿namespace BHSDK.Models.Resources
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Utils;
+
+namespace BHSDK.Models.Resources
 {
-    public class PixelTexture
+    public class PixelTexture : ICopyable<PixelTexture>
     {
         public int Width;
         public int Height;
@@ -18,5 +21,8 @@
             Height = height;
             Pixels = pixels;
         }
+
+        public object Clone() => Copy();
+        public PixelTexture Copy() => new(Width, Height, Pixels.CopyArray());
     }
 }

@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class TextureObject : Object, IUpdatable<TextureObject>
+    public class TextureObject : Object, ICopyable<TextureObject>, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.Texture;
         
@@ -21,7 +23,7 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.ColliderId)]
         public int ColliderId { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectColors)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
         [RuleCollectionSorted(nameof(Clr.Frame))]
         [RuleCollectionUnique(nameof(Clr.Frame))]
         [JsonProperty(Names.Color)]
@@ -50,6 +52,14 @@ namespace BHSDK.Models.Objects
             Colors = colors;
             TextureResourceId = textureResourceId;
         }
+        
+        public override object Clone() => CopyImpl();
+        public override Object Copy() => CopyImpl();
+        TextureObject ICopyable<TextureObject>.Copy() => CopyImpl();
+        
+        private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy(),
+            Collider, ColliderId, Colors.CopyList(), TextureResourceId);
 
         public void Update(TextureObject src)
         {

@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Events
 {
     [RuleContainer]
-    public class ThemeKeyframe : Keyframe
+    public class ThemeKeyframe : Keyframe, ICopyable<ThemeKeyframe>
     {
         [RuleThemeIndex]
         [JsonProperty(Names.ThemeIndex)]
@@ -20,5 +21,8 @@ namespace BHSDK.Models.Events
         {
             ThemeIndex = themeIndex;
         }
+
+        public object Clone() => Copy();
+        public ThemeKeyframe Copy() => new(ThemeIndex, Frame, Ease);
     }
 }

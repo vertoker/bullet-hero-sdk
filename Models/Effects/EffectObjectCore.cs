@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectObjectCore : IUpdatable<EffectObjectCore>
+    public class EffectObjectCore : ICopyable<EffectObjectCore>, IUpdatable<EffectObjectCore>
     {
         [JsonProperty(Names.Loop)]
         public bool Loop { get; set; }
@@ -74,5 +74,9 @@ namespace BHSDK.Models.Effects
             TextureResourceId = src.TextureResourceId;
             ParticlePivot = src.ParticlePivot;
         }
+
+        public object Clone() => Copy();
+        public EffectObjectCore Copy() => new(Loop, ParticleCount, LifetimeBounds.Copy(),
+            HasStopLocalFrame, StopLocalFrame, TextureResourceId, ParticlePivot.Copy());
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Resources;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Audio
 {
     [RuleContainer]
-    public class LevelTrack
+    public class LevelTrack : ICopyable<LevelTrack>
     {
         public const int MaxSourcesCount = 4;
         
@@ -69,8 +70,8 @@ namespace BHSDK.Models.Audio
             AudioResourceId = 0;
             Effects = new LevelTrackEffects();
         }
-        public LevelTrack(int audioId, string title, string author, int startFrame, int endFrame, float offsetLocalTime, 
-            int audioResourceId, LevelTrackEffects effects)
+        public LevelTrack(int audioId, string title, string author, int startFrame, int endFrame,
+            float offsetLocalTime, int audioResourceId, LevelTrackEffects effects)
         {
             AudioId = audioId;
             Title = title;
@@ -81,5 +82,8 @@ namespace BHSDK.Models.Audio
             AudioResourceId = audioResourceId;
             Effects = effects;
         }
+
+        public object Clone() => Copy();
+        public LevelTrack Copy() => new(AudioId, Title, Author, StartFrame, EndFrame, OffsetLocalTime, AudioResourceId, Effects.Copy());
     }
 }

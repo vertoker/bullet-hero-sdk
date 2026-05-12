@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectObjectForces : IUpdatable<EffectObjectForces>
+    public class EffectObjectForces : ICopyable<EffectObjectForces>, IUpdatable<EffectObjectForces>
     {
         [RuleNotNull]
         [JsonProperty(Names.GravityMin)]
@@ -100,10 +100,15 @@ namespace BHSDK.Models.Effects
             LinearForce = linearForce;
         }
 
+        public object Clone() => Copy();
+        public EffectObjectForces Copy() => new(StartGravityMin.Copy(), StartGravityMax.Copy(), StartVelocityMin.Copy(),
+            StartVelocityMax.Copy(), StartAngularVelocityMin.Copy(), StartAngularVelocityMax.Copy(), LinearVelocity.Copy(),
+            OrbitalVelocity.Copy(), OrbitalCenterOffset.Copy(), VelocitySpeed.Copy(), LinearForce.Copy());
+
         public void Update(EffectObjectForces src)
         {
-            StartGravityMax = src.StartGravityMax;
             StartGravityMin = src.StartGravityMin;
+            StartGravityMax = src.StartGravityMax;
             StartVelocityMin = src.StartVelocityMin;
             StartVelocityMax = src.StartVelocityMax;
             StartAngularVelocityMin = src.StartAngularVelocityMin;

@@ -1,4 +1,5 @@
-﻿using BHSDK.Rules;
+﻿using BHSDK.Models.Interfaces;
+using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioCompressor : AudioEffect
+    public class AudioCompressor : AudioEffect, ICopyable<AudioCompressor>
     {
         [RuleInRange(AudioRules.Compressor.Threshold_Min, AudioRules.Compressor.Threshold_Max)]
         [JsonProperty(Names.Threshold)]
@@ -39,5 +40,8 @@ namespace BHSDK.Models.AudioEffects
             Release = release;
             MakeUpGain = makeUpGain;
         }
+
+        public new object Clone() => Copy();
+        public new AudioCompressor Copy() => new(MixLevel, Threshold, Attack, Release, MakeUpGain);
     }
 }

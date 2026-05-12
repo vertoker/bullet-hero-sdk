@@ -1,4 +1,5 @@
 ﻿using BHSDK.Models.Enum;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ColorCurves : Keyframe
+    public class ColorCurves : Keyframe, ICopyable<ColorCurves>
     {
         [RuleInRange(PostProcessingRules.ColorCurves.HueVsHueMin,
             PostProcessingRules.ColorCurves.HueVsHueMax)]
@@ -32,5 +33,8 @@ namespace BHSDK.Models.PostProcessing
             HueVsHue = hueVsHue;
             SatVsSat = satVsSat;
         }
+
+        public object Clone() => Copy();
+        public ColorCurves Copy() => new(HueVsHue, SatVsSat, Frame, Ease);
     }
 }

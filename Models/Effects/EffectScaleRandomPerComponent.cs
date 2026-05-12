@@ -38,6 +38,7 @@ namespace BHSDK.Models.Effects
             ScaleB = scaleB;
         }
 
+        public object Clone() => Copy();
         IEffectScale ICopyable<IEffectScale>.Copy() => new EffectScaleRandomPerComponent(ScaleA.Copy(), ScaleB.Copy());
         public EffectScaleRandomPerComponent Copy() => new(ScaleA.Copy(), ScaleB.Copy());
     }
