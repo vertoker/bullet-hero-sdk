@@ -36,9 +36,8 @@ namespace BHSDK.Models.PostProcessing
             HorizontalShake = 0f;
             ColorDrift = 0f;
         }
-        public AnalogGlitch(int frame, EaseType ease, float scanLineJitter, 
-            float verticalJump, float horizontalShake, float colorDrift) 
-            : base(frame, ease)
+        public AnalogGlitch(float scanLineJitter, float verticalJump, float horizontalShake, float colorDrift,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             ScanLineJitter = scanLineJitter;
             VerticalJump = verticalJump;

@@ -189,6 +189,7 @@
         public const string Loop = "loop";
         public const string Particle = "particle";
         public const string Count = "count";
+        public const string Counter = "counter";
         public const string Lifetime = "lifetime";
         public const string Has = "has";
         public const string Stop = "stop";
@@ -372,6 +373,7 @@
         public const string PrefabGuid = Prefab + _ + Guid;
         public const string AudioId = AudioShort + Id;
         public const string ObjectId = Id;
+        public const string ObjectIdCounter = Id + _ + Counter;
         public const string PrevObjectId = Prev + _ + Id;
         public const string NextObjectId = Next + _ + Id;
         public const string ObjectIds = Ids;

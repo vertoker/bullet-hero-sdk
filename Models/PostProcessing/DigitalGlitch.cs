@@ -18,8 +18,8 @@ namespace BHSDK.Models.PostProcessing
         {
             Intensity = 0.1f;
         }
-        public DigitalGlitch(int frame, EaseType ease, float intensity)
-            : base(frame, ease)
+        public DigitalGlitch(float intensity,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Intensity = intensity;
         }

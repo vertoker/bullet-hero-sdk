@@ -18,12 +18,11 @@ namespace BHSDK.Models.Keyframes
         {
             Value = ColorValue.white;
         }
-        public Clr(int frame, EaseType ease, IColor value)
-            : base(frame, ease)
+        public Clr(IColor value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Value = value;
         }
 
-        public Clr Copy() => new(Frame, Ease, Value.Copy());
+        public Clr Copy() => new(Value.Copy(), Frame, Ease);
     }
 }

@@ -27,15 +27,15 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; }
         
-        [JsonProperty(Names.ParentObjectId)]
-        public int ParentObjectId { get; set; }
-        
         // What certain objectId's meaning
         // - 0 => undefined (for ObjectId) or null (for ParentObjectId), exists as a fallback value
         // - (1 - int.MaxValue) => user-space objects, valid for both ObjectId and ParentObjectId
         // All negative numbers (int.MinValue - -1) reserved for core-space objects
         // - -1 => camera predefined object, exists only in player runtime (for ObjectId - error),
         // can be used as a parent with unique transform (scale applied as a size, similar with RectTransform)
+        
+        [JsonProperty(Names.ParentObjectId)]
+        public int ParentObjectId { get; set; }
         
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]

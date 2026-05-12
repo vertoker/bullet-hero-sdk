@@ -26,9 +26,8 @@ namespace BHSDK.Models.PostProcessing
             HueVsHue = 0.5f;
             SatVsSat = 0.5f;
         }
-        public ColorCurves(int frame, EaseType ease, 
-            float hueVsHue, float satVsSat)
-            : base(frame, ease)
+        public ColorCurves(float hueVsHue, float satVsSat,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             HueVsHue = hueVsHue;
             SatVsSat = satVsSat;

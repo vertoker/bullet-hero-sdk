@@ -28,16 +28,18 @@ namespace BHSDK.Models.Events
 
         public Marker()
         {
+            Frame = 0;
+            
             Name = string.Empty;
             Description = string.Empty;
-            Frame = 0;
             Color = new ColorValue();
         }
-        public Marker(string name, string description, int frame, IColor color)
+        public Marker(string name, string description, IColor color, int frame)
         {
+            Frame = frame;
+            
             Name = name;
             Description = description;
-            Frame = frame;
             Color = color;
         }
     }

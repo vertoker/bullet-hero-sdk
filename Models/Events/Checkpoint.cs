@@ -27,16 +27,18 @@ namespace BHSDK.Models.Events
 
         public Checkpoint()
         {
+            Frame = 0;
+            
             Name = string.Empty;
             Active = true;
-            Frame = 0;
             Color = ColorValue.white;
         }
-        public Checkpoint(string name, bool active, int frame, IColor color)
+        public Checkpoint(string name, bool active, IColor color, int frame)
         {
+            Frame = frame;
+            
             Name = name;
             Active = active;
-            Frame = frame;
             Color = color;
         }
     }

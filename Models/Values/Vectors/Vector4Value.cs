@@ -21,6 +21,9 @@ namespace BHSDK.Models.Values
         [JsonProperty(Names.CoordW)]
         public float W { get; set; }
 
+        public static Vector4Value Zero => new(0.0f, 0.0f, 0.0f, 0.0f);
+        public static Vector4Value One => new(1.0f, 1.0f, 1.0f, 1.0f);
+        
         public Vector4Value()
         {
             X = 0f;

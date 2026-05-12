@@ -22,8 +22,8 @@ namespace BHSDK.Models.PostProcessing
         {
             Intensity = 1f;
         }
-        public MotionBlur(int frame, EaseType ease, float intensity)
-            : base(frame, ease)
+        public MotionBlur(float intensity,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Intensity = intensity;
         }

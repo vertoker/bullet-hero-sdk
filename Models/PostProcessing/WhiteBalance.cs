@@ -24,9 +24,8 @@ namespace BHSDK.Models.PostProcessing
             Temperature = 0f;
             Tint = 0f;
         }
-        public WhiteBalance(int frame, EaseType ease, 
-            float temperature, float tint)
-            : base(frame, ease)
+        public WhiteBalance(float temperature, float tint,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Temperature = temperature;
             Tint = tint;

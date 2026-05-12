@@ -40,11 +40,11 @@ namespace BHSDK.Models.PostProcessing
             Gain = false;
             GainColor = ColorValue.white;
         }
-        public LiftGammaGain(int frame, EaseType ease, 
+        public LiftGammaGain(
             bool lift, IColor liftColor,
             bool gamma, IColor gammaColor,
-            bool gain, IColor gainColor)
-            : base(frame, ease)
+            bool gain, IColor gainColor,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Lift = lift;
             LiftColor = liftColor;

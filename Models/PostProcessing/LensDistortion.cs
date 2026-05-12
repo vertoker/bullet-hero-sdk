@@ -38,9 +38,8 @@ namespace BHSDK.Models.PostProcessing
             Center = new Vector2Value(0.5f, 0.5f);
             Scale = 1f;
         }
-        public LensDistortion(int frame, EaseType ease, 
-            float intensity, IVector2 multiplier, IVector2 center, float scale)
-            : base(frame, ease)
+        public LensDistortion(float intensity, IVector2 multiplier, IVector2 center, float scale,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Intensity = intensity;
             Multiplier = multiplier;

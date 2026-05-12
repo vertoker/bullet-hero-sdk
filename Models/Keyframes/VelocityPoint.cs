@@ -23,14 +23,12 @@ namespace BHSDK.Models.Keyframes
             Center = new Vector2Circle();
             Force = 1;
         }
-        public VelocityPoint(int frame, EaseType ease, 
-            IVector2 center, float force)
-            : base(frame, ease)
+        public VelocityPoint(IVector2 center, float force, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Center = center;
             Force = force;
         }
 
-        public VelocityPoint Copy() => new(Frame, Ease, Center.Copy(), Force);
+        public VelocityPoint Copy() => new(Center.Copy(), Force, Frame, Ease);
     }
 }

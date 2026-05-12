@@ -35,9 +35,8 @@ namespace BHSDK.Models.PostProcessing
             Scatter = 0.5f;
             Color = ColorValue.red;
         }
-        public Bloom(int frame, EaseType ease, 
-            float intensity, float scatter, IColor color)
-            : base(frame, ease)
+        public Bloom(float intensity, float scatter, IColor color,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Intensity = intensity;
             Scatter = scatter;

@@ -18,12 +18,11 @@ namespace BHSDK.Models.Keyframes
         {
             Value = new IntValue(0);
         }
-        public IntKey(int frame, EaseType ease, IInt value)
-            : base(frame, ease)
+        public IntKey(IInt value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Value = value;
         }
 
-        public IntKey Copy() => new(Frame, Ease, Value.Copy());
+        public IntKey Copy() => new(Value.Copy(), Frame, Ease);
     }
 }

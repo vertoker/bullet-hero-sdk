@@ -59,12 +59,12 @@ namespace BHSDK.Models.PostProcessing
             ShadowLimits = new Vector2Value(0f, 0.3f);
             HighlightLimits = new Vector2Value(0.55f, 1f);
         }
-        public ShadowsMidtonesHighlights(int frame, EaseType ease, 
+        public ShadowsMidtonesHighlights(
             bool shadows, IColor shadowsColor,
             bool midtones, IColor midtonesColor, 
             bool highlights, IColor highlightsColor, 
-            IVector2 shadowLimits, IVector2 highlightLimits)
-            : base(frame, ease)
+            IVector2 shadowLimits, IVector2 highlightLimits,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Shadows = shadows;
             ShadowsColor = shadowsColor;

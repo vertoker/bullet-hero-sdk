@@ -16,7 +16,7 @@ namespace BHSDK.Models.Events
         {
             ThemeIndex = 0;
         }
-        public ThemeKeyframe(int frame, EaseType ease, int themeIndex) : base(frame, ease)
+        public ThemeKeyframe(int themeIndex, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             ThemeIndex = themeIndex;
         }

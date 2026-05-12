@@ -17,7 +17,17 @@ namespace BHSDK.Models.Values
         
         [JsonProperty(Names.CoordZ)]
         public float Z { get; set; }
-
+        
+        public static Vector3Value Zero => new(0.0f, 0.0f, 0.0f);
+        public static Vector3Value One => new(1.0f, 1.0f, 1.0f);
+        
+        public static Vector3Value Right => new(1.0f, 0.0f, 0.0f);
+        public static Vector3Value Left => new(-1.0f, 0.0f, 0.0f);
+        public static Vector3Value Up => new(0.0f, 1.0f, 0.0f);
+        public static Vector3Value Down => new(0.0f, -1.0f, 0.0f);
+        public static Vector3Value Forward => new(0.0f, 0.0f, 1.0f);
+        public static Vector3Value Backward => new(0.0f, 0.0f, -1.0f);
+        
         public Vector3Value()
         {
             X = 0f;

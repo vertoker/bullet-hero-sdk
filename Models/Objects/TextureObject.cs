@@ -22,8 +22,10 @@ namespace BHSDK.Models.Objects
         public int ColliderId { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectColors)]
+        [RuleCollectionSorted(nameof(Clr.Frame))]
+        [RuleCollectionUnique(nameof(Clr.Frame))]
         [JsonProperty(Names.Color)]
-        public List<Clr> Clr { get; set; }
+        public List<Clr> Colors { get; set; }
         
         // positive with 0 - game-defined (0 is white square), negative - user-defined
         // more about resourceId and how it works, read in Resource.cs file
@@ -31,27 +33,22 @@ namespace BHSDK.Models.Objects
         [JsonProperty(Names.TextureResourceId)]
         public int TextureResourceId { get; set; }
         
-        [JsonProperty(Names.SublingIndex)]
-        public int SublingIndex { get; set; }
-        
         public TextureObject()
         {
             Collider = true;
             ColliderId = 0;
-            Clr = new List<Clr>();
+            Colors = new List<Clr>();
             TextureResourceId = 0;
-            SublingIndex = 0;
         }
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, 
             int startFrame, int endFrame, List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot,
-            bool collider, int colliderId, List<Clr> clr, int textureResourceId, int sublingIndex)
+            bool collider, int colliderId, List<Clr> colors, int textureResourceId)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
         {
             Collider = collider;
             ColliderId = colliderId;
-            Clr = clr;
+            Colors = colors;
             TextureResourceId = textureResourceId;
-            SublingIndex = sublingIndex;
         }
 
         public void Update(TextureObject src)
@@ -60,9 +57,8 @@ namespace BHSDK.Models.Objects
             
             Collider = src.Collider;
             ColliderId = src.ColliderId;
-            Clr = src.Clr.Select(clr => clr.Copy()).ToList();
+            Colors = src.Colors.Select(clr => clr.Copy()).ToList();
             TextureResourceId = src.TextureResourceId;
-            SublingIndex = src.SublingIndex;
         }
     }
 }

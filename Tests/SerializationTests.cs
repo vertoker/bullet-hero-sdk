@@ -147,7 +147,7 @@ namespace BHSDK.Tests
             textureObject.Positions.Add(new Pos());
             textureObject.Rotations.Add(new Rot());
             textureObject.Scales.Add(new Sca());
-            textureObject.Clr.Add(new Clr());
+            textureObject.Colors.Add(new Clr());
             level.Game.Objects.Add(textureObject);
 
             var textObject = new TextObject()
@@ -245,7 +245,7 @@ namespace BHSDK.Tests
             textureObject.Positions.Add(new Pos());
             textureObject.Rotations.Add(new Rot());
             textureObject.Scales.Add(new Sca());
-            textureObject.Clr.Add(new Clr());
+            textureObject.Colors.Add(new Clr());
             level.Game.Objects.Add(textureObject);
 
             var textObject = new TextObject();

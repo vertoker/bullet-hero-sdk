@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+
 #if BHSDK_UNITY
 using UnityEngine;
 #else

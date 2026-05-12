@@ -26,6 +26,12 @@ namespace BHSDK.Models.NoGame
         [RuleNotNull, RuleCollectionMaxCount(8)]
         [JsonProperty(Names.Authors)]
         public List<Author> Authors { get; set; }
+        
+        [RuleGuidNotEmpty]
+        [JsonProperty(Names.ObjectIdCounter)]
+        public int ObjectIdCounter { get; set; }
+        
+        public int GetNextObjectId() => ObjectIdCounter++;
 
         public LevelMeta()
         {
@@ -33,20 +39,15 @@ namespace BHSDK.Models.NoGame
             LevelVersion = new Version();
             LevelGuid = Guid.NewGuid();
             Authors = new List<Author>();
+            ObjectIdCounter = 1;
         }
-        public LevelMeta(string levelName, Version levelVersion, Guid levelGuid, List<Author> authors)
-        {
-            LevelName = new StringValue(levelName);
-            LevelVersion = levelVersion;
-            LevelGuid = levelGuid;
-            Authors = authors;
-        }
-        public LevelMeta(IString levelName, Version levelVersion, Guid levelGuid, List<Author> authors)
+        public LevelMeta(IString levelName, Version levelVersion, Guid levelGuid, List<Author> authors, int objectIdCounter)
         {
             LevelName = levelName;
             LevelVersion = levelVersion;
             LevelGuid = levelGuid;
             Authors = authors;
+            ObjectIdCounter = objectIdCounter;
         }
     }
 }

@@ -22,13 +22,21 @@ namespace BHSDK.Models.Keyframes
 
         public Shake()
         {
-            Intensity = 1;
-            Speed = 1;
-            IntensityX = 1;
-            IntensityY = 1;
+            Intensity = 1f;
+            Speed = 1f;
+            IntensityX = 1f;
+            IntensityY = 1f;
         }
-        public Shake(int frame, EaseType ease, float intensity, float speed,
-            float intensityX = 1f, float intensityY = 1f) : base(frame, ease)
+        public Shake(float intensity, float speed,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        {
+            Intensity = intensity;
+            Speed = speed;
+            IntensityX = 1f;
+            IntensityY = 1f;
+        }
+        public Shake(float intensity, float speed, float intensityX, float intensityY,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Intensity = intensity;
             Speed = speed;
@@ -36,6 +44,6 @@ namespace BHSDK.Models.Keyframes
             IntensityY = intensityY;
         }
 
-        public Shake Copy() => new(Frame, Ease, Intensity, Speed, IntensityX, IntensityY);
+        public Shake Copy() => new(Intensity, Speed, IntensityX, IntensityY, Frame, Ease);
     }
 }

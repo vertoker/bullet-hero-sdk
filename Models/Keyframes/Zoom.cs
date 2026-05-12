@@ -19,12 +19,11 @@ namespace BHSDK.Models.Keyframes
         {
             Size = new FloatValue();
         }
-        public Zoom(int frame, EaseType ease, IFloat size)
-            : base(frame, ease)
+        public Zoom(IFloat size, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Size = size;
         }
 
-        public Zoom Copy() => new(Frame, Ease, Size.Copy());
+        public Zoom Copy() => new(Size.Copy(), Frame, Ease);
     }
 }

@@ -41,9 +41,8 @@ namespace BHSDK.Models.PostProcessing
             Smoothness = 0.5f;
             Rounded = false;
         }
-        public Vignette(int frame, EaseType ease, IColor colorHDR, 
-            IVector2 center, float intensity, float smoothness, bool rounded)
-            : base(frame, ease)
+        public Vignette(IColor colorHDR, IVector2 center, float intensity, float smoothness, bool rounded,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             ColorHDR = colorHDR;
             Center = center;

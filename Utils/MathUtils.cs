@@ -22,6 +22,11 @@ namespace BHSDK.Utils
                 return min;
             return value <= max ? value : max;
         }
+        public static float Clamp01(float value)
+        {
+            if (value < 0.0) return 0.0f;
+            return value <= 1.0 ? value : 1f;
+        }
         
         public static float Min(float a, float b) => a >= b ? b : a;
         public static float Max(float a, float b) => a <= b ? b : a;

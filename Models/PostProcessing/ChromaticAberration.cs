@@ -18,9 +18,8 @@ namespace BHSDK.Models.PostProcessing
         {
             Intensity = 1.0f;
         }
-        public ChromaticAberration(int frame, 
-            EaseType ease, float intensity)
-            : base(frame, ease)
+        public ChromaticAberration(float intensity,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Intensity = intensity;
         }

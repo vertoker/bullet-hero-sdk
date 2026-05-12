@@ -19,12 +19,11 @@ namespace BHSDK.Models.Keyframes
         {
             Vector2 = new Vector2Circle();
         }
-        public Velocity(int frame, EaseType ease, IVector2 vector2) 
-            : base(frame, ease)
+        public Velocity(IVector2 vector2, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Vector2 = vector2;
         }
 
-        public Velocity Copy() => new(Frame, Ease, Vector2.Copy());
+        public Velocity Copy() => new(Vector2.Copy(), Frame, Ease);
     }
 }

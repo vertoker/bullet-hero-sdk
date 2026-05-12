@@ -18,14 +18,16 @@ namespace BHSDK.Models.Keyframes
         public BoolKey()
         {
             Frame = 0;
+            
             Value = false;
         }
-        public BoolKey(int frame, bool value)
+        public BoolKey(bool value, int frame)
         {
             Frame = frame;
+            
             Value = value;
         }
 
-        public BoolKey Copy() => new(Frame, Value);
+        public BoolKey Copy() => new(Value, Frame);
     }
 }

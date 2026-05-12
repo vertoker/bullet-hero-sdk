@@ -19,12 +19,11 @@ namespace BHSDK.Models.Keyframes
         {
             Vector2 = new Vector2Circle();
         }
-        public Sca(int frame, EaseType ease, IVector2 vector2) 
-            : base(frame, ease)
+        public Sca(IVector2 vector2, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Vector2 = vector2;
         }
 
-        public Sca Copy() => new(Frame, Ease, Vector2.Copy());
+        public Sca Copy() => new(Vector2.Copy(), Frame, Ease);
     }
 }

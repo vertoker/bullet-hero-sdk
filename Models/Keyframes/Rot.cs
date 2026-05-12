@@ -19,12 +19,11 @@ namespace BHSDK.Models.Keyframes
         {
             Angle = new FloatValue();
         }
-        public Rot(int frame, EaseType ease, IFloat angle) 
-            : base(frame, ease)
+        public Rot(IFloat angle, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Angle = angle;
         }
 
-        public Rot Copy() => new(Frame, Ease, Angle.Copy());
+        public Rot Copy() => new(Angle.Copy(), Frame, Ease);
     }
 }

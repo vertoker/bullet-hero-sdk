@@ -22,9 +22,8 @@ namespace BHSDK.Models.PostProcessing
             Type = FilmGrainType.Medium1;
             Intensity = 1.0f;
         }
-        public FilmGrain(int frame, EaseType ease, 
-            FilmGrainType type, float intensity)
-            : base(frame, ease)
+        public FilmGrain(FilmGrainType type, float intensity,
+            int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Type = type;
             Intensity = intensity;

@@ -19,6 +19,8 @@
         public const int MaxObjectScales = 32;
         public const int MaxObjectColors = 32;
         
+        public const int ObjectLayerDefault = 0;
+        
         public const int MaxAudioVolumes = 32;
         public const int MaxAudioStereoPans = 32;
         

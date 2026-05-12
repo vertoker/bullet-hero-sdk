@@ -24,13 +24,12 @@ namespace BHSDK.Models.Keyframes
             Vector2 = new Vector2Value();
             Anchor = Alignment.MiddleCenter;
         }
-        public Pos(int frame, EaseType ease, IVector2 vector2, Alignment anchor) 
-            : base(frame, ease)
+        public Pos(IVector2 vector2, Alignment anchor, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Vector2 = vector2;
             Anchor = anchor;
         }
 
-        public Pos Copy() => new(Frame, Ease, Vector2.Copy(), Anchor.Copy());
+        public Pos Copy() => new(Vector2.Copy(), Anchor.Copy(), Frame, Ease);
     }
 }

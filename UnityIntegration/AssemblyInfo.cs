@@ -2,3 +2,4 @@
 
 [assembly:InternalsVisibleTo("BulletHeroSDK")]
 [assembly:InternalsVisibleTo("BulletHeroSDK.Tests")]
+[assembly:InternalsVisibleTo("BulletHeroSDK.UnityExtensions")]
