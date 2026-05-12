@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class Vector2Rect : IVector2, ICopyable<Vector2Rect>
+    public class Vector2Rect : IVector2, ICopyable<Vector2Rect>, IEquatable<Vector2Rect>
     {
         // TODO add check for Min and Max, must be always Min < Max
         [JsonProperty(Names.MinX)]
@@ -44,5 +46,20 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IVector2 ICopyable<IVector2>.Copy() => new Vector2Rect(MinX, MinY, MaxX, MaxY);
         public Vector2Rect Copy() => new(MinX, MinY, MaxX, MaxY);
+        
+        public override bool Equals(object obj) => obj is Vector2Rect value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(MinX, MinY, MaxX, MaxY);
+        
+        public bool Equals(IVector2 other) => other is Vector2Rect value && Equals(value);
+        public bool Equals(Vector2Rect other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = MinX.Equals(other.MinX)
+                         && MinY.Equals(other.MinY)
+                         && MaxX.Equals(other.MaxX)
+                         && MaxY.Equals(other.MaxY);
+            return result;
+        }
     }
 }

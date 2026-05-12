@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectAngleCurvesBySpeed : IEffectAngle, ICopyable<EffectAngleCurvesBySpeed>
+    public class EffectAngleCurvesBySpeed : IEffectAngle,
+        ICopyable<EffectAngleCurvesBySpeed>, IEquatable<EffectAngleCurvesBySpeed>
     {
         [RuleNotNull]
         [JsonProperty(Names.Curve)]
@@ -39,5 +42,18 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleCurvesBySpeed(Curve.Copy(), SpeedRange.Copy());
         public EffectAngleCurvesBySpeed Copy() => new(Curve.Copy(), SpeedRange.Copy());
+
+        public override bool Equals(object obj) => obj is EffectAngleCurvesBySpeed value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Curve, SpeedRange);
+        
+        public bool Equals(IEffectAngle other) => other is EffectAngleCurvesBySpeed value && Equals(value);
+        public bool Equals(EffectAngleCurvesBySpeed other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Curve.Equals(other.Curve)
+                         && SpeedRange.Equals(other.SpeedRange);
+            return result;
+        }
     }
 }

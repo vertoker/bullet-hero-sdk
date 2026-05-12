@@ -10,7 +10,7 @@ namespace BHSDK.Rules.Attributes
         public const AttributeTargets ClassTarget = AttributeTargets.Class;
         public const AttributeTargets PropertyTarget = AttributeTargets.Property;
 
-        protected virtual bool IsValidTypeInternal(object value) => true;
+        protected virtual bool IsValidTypeInternal(PropertyInfo property) => true;
         protected abstract bool IsValidInternal(object value, Level context);
         protected abstract void FixInternal(object target, PropertyInfo property, Level context);
 
@@ -18,9 +18,9 @@ namespace BHSDK.Rules.Attributes
         public virtual bool HasIsValid => true;
         public virtual bool HasFix => true;
 
-        public bool IsValidType(object value)
+        public bool IsValidType(PropertyInfo property)
         {
-            return value != null && IsValidTypeInternal(value);
+            return property != null && IsValidTypeInternal(property);
         }
         public bool IsValid(object value, Level context)
         {

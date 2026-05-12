@@ -1,15 +1,18 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 using Keyframe = BHSDK.Models.Keyframes.Keyframe;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LiftGammaGain : Keyframe, ICopyable<LiftGammaGain>
+    public class LiftGammaGain : Keyframe,
+        ICopyable<LiftGammaGain>, IEquatable<LiftGammaGain>
     {
         [JsonProperty(Names.Lift)]
         public bool Lift { get; set; }
@@ -57,5 +60,23 @@ namespace BHSDK.Models.PostProcessing
 
         public object Clone() => Copy();
         public LiftGammaGain Copy() => new(Lift, LiftColor.Copy(), Gamma, GammaColor.Copy(), Gain, GainColor.Copy(), Frame, Ease);
+
+        public override bool Equals(object obj) => obj is LiftGammaGain value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
+            Lift, LiftColor, Gamma, GammaColor, Gain, GainColor);
+
+        public bool Equals(LiftGammaGain other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Lift == other.Lift
+                         && LiftColor.Equals(other.LiftColor)
+                         && Gamma == other.Gamma
+                         && GammaColor.Equals(other.GammaColor)
+                         && Gain == other.Gain
+                         && GainColor.Equals(other.GainColor);
+            return result;
+        }
     }
 }

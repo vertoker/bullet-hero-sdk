@@ -20,7 +20,8 @@ namespace BHSDK.Rules.Attributes
             ItemPropertyName = itemPropertyName;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is ICollection;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(ICollection).IsAssignableFrom(property.PropertyType);
         
         protected override bool IsValidInternal(object value, Level context)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using BHSDK.Models.Enum;
@@ -9,11 +10,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class TextureObject : Object, ICopyable<TextureObject>, IUpdatable<TextureObject>
+    public class TextureObject : Object,
+        ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.Texture;
         
@@ -69,6 +72,22 @@ namespace BHSDK.Models.Objects
             ColliderId = src.ColliderId;
             Colors = src.Colors.Select(clr => clr.Copy()).ToList();
             TextureResourceId = src.TextureResourceId;
+        }
+
+        public override bool Equals(object obj) => obj is TextureObject value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
+            Collider, ColliderId, Colors.GetListHashCode(), TextureResourceId);
+
+        public bool Equals(TextureObject other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Collider == other.Collider
+                         && ColliderId.Equals(other.ColliderId)
+                         && Colors.ListEquals(other.Colors)
+                         && TextureResourceId.Equals(other.TextureResourceId);
+            return result;
         }
     }
 }

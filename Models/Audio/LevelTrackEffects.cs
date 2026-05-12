@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.AudioEffects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
@@ -6,11 +7,12 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Audio
 {
     [RuleContainer]
-    public class LevelTrackEffects : ICopyable<LevelTrackEffects>
+    public class LevelTrackEffects : ICopyable<LevelTrackEffects>, IEquatable<LevelTrackEffects>
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAudioVolumes)]
         [RuleCollectionSorted(nameof(FloatKey.Frame))]
@@ -121,5 +123,47 @@ namespace BHSDK.Models.Audio
             Lowpass.Copy(), Highpass.Copy(), Echo.Copy(), Reverb.Copy(),
             Chorus.Copy(), PitchShifter.Copy(), Distortion.Copy(),
             Flange.Copy(), Compressor.Copy(), Normalize.Copy(), ParamEQ.Copy());
+
+        public override bool Equals(object obj) => obj is LevelTrackEffects value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(Volumes.GetListHashCode());
+            hashCode.Add(StereoPans.GetListHashCode());
+            hashCode.Add(Active);
+            hashCode.Add(Lowpass);
+            hashCode.Add(Highpass);
+            hashCode.Add(Echo);
+            hashCode.Add(Reverb);
+            hashCode.Add(Chorus);
+            hashCode.Add(PitchShifter);
+            hashCode.Add(Distortion);
+            hashCode.Add(Flange);
+            hashCode.Add(Compressor);
+            hashCode.Add(Normalize);
+            hashCode.Add(ParamEQ);
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(LevelTrackEffects other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Volumes.ListEquals(other.Volumes)
+                         && StereoPans.ListEquals(other.StereoPans)
+                         && Active == other.Active
+                         && Lowpass.Equals(other.Lowpass)
+                         && Highpass.Equals(other.Highpass)
+                         && Echo.Equals(other.Echo)
+                         && Reverb.Equals(other.Reverb)
+                         && Chorus.Equals(other.Chorus)
+                         && PitchShifter.Equals(other.PitchShifter)
+                         && Distortion.Equals(other.Distortion)
+                         && Flange.Equals(other.Flange)
+                         && Compressor.Equals(other.Compressor)
+                         && Normalize.Equals(other.Normalize)
+                         && ParamEQ.Equals(other.ParamEQ);
+            return result;
+        }
     }
 }

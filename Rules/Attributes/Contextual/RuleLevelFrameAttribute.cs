@@ -8,7 +8,8 @@ namespace BHSDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleLevelFrameAttribute : BaseRuleAttribute
     {
-        protected override bool IsValidTypeInternal(object value) => value is int;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(int).IsAssignableFrom(property.PropertyType);
 
         protected override bool IsValidInternal(object value, Level context)
             => value is int frame and >= FrameRules.MinFrame && frame < context.Settings.FrameLength;

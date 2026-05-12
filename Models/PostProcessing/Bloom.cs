@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
@@ -6,11 +7,13 @@ using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class Bloom : Keyframe, ICopyable<Bloom> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class Bloom : Keyframe, // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+        ICopyable<Bloom>, IEquatable<Bloom>
     {
         // Threshold - 0 (always, not a parameter)
         
@@ -46,5 +49,19 @@ namespace BHSDK.Models.PostProcessing
 
         public object Clone() => Copy();
         public Bloom Copy() => new(Intensity, Scatter, Color.Copy(), Frame, Ease);
+
+        public override bool Equals(object obj) => obj is Bloom value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Scatter, Color);
+
+        public bool Equals(Bloom other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Intensity.Equals(other.Intensity)
+                         && Scatter.Equals(other.Scatter)
+                         && Color.Equals(other.Color);
+            return result;
+        }
     }
 }

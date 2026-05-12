@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class PlayerEvents : ICopyable<PlayerEvents>
+    public class PlayerEvents : ICopyable<PlayerEvents>, IEquatable<PlayerEvents>
     {
         // TODO add in the future with events
         // [JsonProperty(ModelNames.Velocity)]
@@ -50,5 +52,19 @@ namespace BHSDK.Models.Game
 
         public object Clone() => Copy();
         public PlayerEvents Copy() => new(Visibles.CopyList(), Controls.CopyList(), Collisions.CopyList());
+
+        public override bool Equals(object obj) => obj is PlayerEvents value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Visibles.GetListHashCode(),
+            Controls.GetListHashCode(), Collisions.GetListHashCode());
+
+        public bool Equals(PlayerEvents other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Visibles.ListEquals(other.Visibles)
+                         && Controls.ListEquals(other.Controls)
+                         && Collisions.ListEquals(other.Collisions);
+            return result;
+        }
     }
 }

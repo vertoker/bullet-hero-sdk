@@ -1,15 +1,17 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Zoom : Keyframe, ICopyable<Zoom>
+    public class Zoom : Keyframe, ICopyable<Zoom>, IEquatable<Zoom>
     {
         [RuleNotNull(typeof(FloatValue)), RuleIFloatInRange(ValueRules.MinZoom, ValueRules.MaxZoom)]
         [JsonProperty(Names.Size)]
@@ -26,5 +28,17 @@ namespace BHSDK.Models.Keyframes
 
         public object Clone() => Copy();
         public Zoom Copy() => new(Size.Copy(), Frame, Ease);
+
+        public override bool Equals(object obj) => obj is Zoom value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Size);
+
+        public bool Equals(Zoom other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Size.Equals(other.Size);
+            return result;
+        }
     }
 }

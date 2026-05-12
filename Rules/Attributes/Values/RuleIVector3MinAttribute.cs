@@ -29,7 +29,8 @@ namespace BHSDK.Rules.Attributes
             MinZ = minZ;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is IVector3;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(IVector3).IsAssignableFrom(property.PropertyType);
 
         protected override bool IsValidInternal(object value, Level context)
         {

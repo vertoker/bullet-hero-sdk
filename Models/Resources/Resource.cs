@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Enum.Resources;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Resources
 {
     [RuleContainer]
-    public abstract class Resource
+    public abstract class Resource : IEquatable<Resource>
     {
         public const int MaxSourcesCount = 4;
         
@@ -40,5 +43,17 @@ namespace BHSDK.Models.Resources
         {
             Sources = sources;
         }
+
+        public bool Equals(Resource other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Sources.ListEquals(other.Sources)
+                         && Type == other.Type;
+            return result;
+        }
+
+        public override bool Equals(object obj) => obj is Resource value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Sources.GetListHashCode(), (int)Type);
     }
 }

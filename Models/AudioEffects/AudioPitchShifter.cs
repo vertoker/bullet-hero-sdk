@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioPitchShifter : AudioEffect, ICopyable<AudioPitchShifter>
+    public class AudioPitchShifter : AudioEffect, ICopyable<AudioPitchShifter>, IEquatable<AudioPitchShifter>
     {
         [RuleInRange(AudioRules.PitchShifter.Pitch_Min, AudioRules.PitchShifter.Pitch_Max)]
         [JsonProperty(Names.Pitch)]
@@ -42,5 +44,20 @@ namespace BHSDK.Models.AudioEffects
 
         public new object Clone() => Copy();
         public new AudioPitchShifter Copy() => new(MixLevel, Pitch, FFTSize, Overlap, MaxChannels);
+
+        public override bool Equals(object obj) => obj is AudioPitchShifter value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Pitch, FFTSize, Overlap, MaxChannels);
+
+        public bool Equals(AudioPitchShifter other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Pitch.Equals(other.Pitch)
+                         && FFTSize.Equals(other.FFTSize)
+                         && Overlap.Equals(other.Overlap)
+                         && MaxChannels.Equals(other.MaxChannels);
+            return result;
+        }
     }
 }

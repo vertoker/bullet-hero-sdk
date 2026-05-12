@@ -86,10 +86,7 @@ namespace BHSDK.Models.Resources
         public object Clone() => Copy();
         public Pixel Copy() => new(r, g, b, a);
 
-        public readonly override bool Equals(object other)
-        {
-            return other is Pixel pixel && Equals(pixel);
-        }
+        public readonly override bool Equals(object other) => other is Pixel value && Equals(value);
         public readonly bool Equals(Pixel other) => rgba == other.rgba;
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

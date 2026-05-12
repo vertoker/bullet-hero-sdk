@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeSpreadPingPong : IEffectShapeSpread, ICopyable<EffectShapeSpreadPingPong>
+    public class EffectShapeSpreadPingPong : IEffectShapeSpread,
+        ICopyable<EffectShapeSpreadPingPong>, IEquatable<EffectShapeSpreadPingPong>
     {
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
@@ -42,5 +45,18 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectShapeSpread ICopyable<IEffectShapeSpread>.Copy() => new EffectShapeSpreadPingPong(Spread.Copy(), Speed.Copy());
         public EffectShapeSpreadPingPong Copy() => new(Spread.Copy(), Speed.Copy());
+
+        public override bool Equals(object obj) => obj is EffectShapeSpreadPingPong value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Spread, Speed);
+        
+        public bool Equals(IEffectShapeSpread other) => other is EffectShapeSpreadPingPong value && Equals(value);
+        public bool Equals(EffectShapeSpreadPingPong other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Spread.Equals(other.Spread)
+                         && Speed.Equals(other.Speed);
+            return result;
+        }
     }
 }

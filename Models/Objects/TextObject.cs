@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BHSDK.Models.Enum;
 using BHSDK.Models.Enum.Text;
@@ -10,11 +11,12 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class TextObject : Object, ICopyable<TextObject>, IUpdatable<TextObject>
+    public class TextObject : Object, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>
     {
         public override ObjectType GetModelType() => ObjectType.Text;
         
@@ -132,6 +134,46 @@ namespace BHSDK.Models.Objects
             OverEdge = src.OverEdge;
             UnderEdge = src.UnderEdge;
             LeadingDistribution = src.LeadingDistribution;
+        }
+
+        public override bool Equals(object obj) => obj is TextObject value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(base.GetHashCode());
+            hashCode.Add(Text);
+            hashCode.Add(FontResourceId);
+            hashCode.Add(Sizes.GetListHashCode());
+            hashCode.Add(Colors.GetListHashCode());
+            hashCode.Add(FontSizes.GetListHashCode());
+            hashCode.Add((int)Direction);
+            hashCode.Add(WordWrap);
+            hashCode.Add((int)HorizontalAlignment);
+            hashCode.Add((int)VerticalAlignment);
+            hashCode.Add((int)OverEdge);
+            hashCode.Add((int)UnderEdge);
+            hashCode.Add((int)LeadingDistribution);
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(TextObject other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Text.Equals(other.Text)
+                         && FontResourceId.Equals(other.FontResourceId)
+                         && Sizes.ListEquals(other.Sizes)
+                         && Colors.ListEquals(other.Colors)
+                         && FontSizes.ListEquals(other.FontSizes)
+                         && Direction == other.Direction
+                         && WordWrap == other.WordWrap
+                         && HorizontalAlignment == other.HorizontalAlignment
+                         && VerticalAlignment == other.VerticalAlignment
+                         && OverEdge == other.OverEdge
+                         && UnderEdge == other.UnderEdge
+                         && LeadingDistribution == other.LeadingDistribution;
+            return result;
         }
     }
 }

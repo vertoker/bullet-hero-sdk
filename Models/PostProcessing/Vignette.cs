@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
@@ -6,11 +7,13 @@ using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class Vignette : Keyframe, ICopyable<Vignette>
+    public class Vignette : Keyframe,
+        ICopyable<Vignette>, IEquatable<Vignette>
     {
         [RuleNotNull(typeof(ColorValue))] // TODO add extra part for checking HDR part
         [JsonProperty(Names.Color)]
@@ -54,5 +57,22 @@ namespace BHSDK.Models.PostProcessing
 
         public object Clone() => Copy();
         public Vignette Copy() => new(ColorHDR.Copy(), Center.Copy(), Intensity, Smoothness, Rounded, Frame, Ease);
+
+        public override bool Equals(object obj) => obj is Vignette value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
+            ColorHDR, Center, Intensity, Smoothness, Rounded);
+
+        public bool Equals(Vignette other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && ColorHDR.Equals(other.ColorHDR)
+                         && Center.Equals(other.Center)
+                         && Intensity.Equals(other.Intensity)
+                         && Smoothness.Equals(other.Smoothness)
+                         && Rounded == other.Rounded;
+            return result;
+        }
     }
 }

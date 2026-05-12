@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class IntMinMaxStep : IInt, ICopyable<IntMinMaxStep>
+    public class IntMinMaxStep : IInt, ICopyable<IntMinMaxStep>, IEquatable<IntMinMaxStep>
     {
         [JsonProperty(Names.Min)]
         public int Min { get; set; }
@@ -37,5 +39,19 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IInt ICopyable<IInt>.Copy() => new IntMinMaxStep(Min, Max, Step);
         public IntMinMaxStep Copy() => new(Min, Max, Step);
+
+        public override bool Equals(object obj) => obj is IntMinMaxStep value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Min, Max, Step);
+        
+        public bool Equals(IInt other) => other is IntMinMaxStep value && Equals(value);
+        public bool Equals(IntMinMaxStep other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Min.Equals(other.Min)
+                         && Max.Equals(other.Max)
+                         && Step.Equals(other.Step);
+            return result;
+        }
     }
 }

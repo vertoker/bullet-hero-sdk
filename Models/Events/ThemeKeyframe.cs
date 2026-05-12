@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Events
 {
     [RuleContainer]
-    public class ThemeKeyframe : Keyframe, ICopyable<ThemeKeyframe>
+    public class ThemeKeyframe : Keyframe, ICopyable<ThemeKeyframe>, IEquatable<ThemeKeyframe>
     {
         [RuleThemeIndex]
         [JsonProperty(Names.ThemeIndex)]
@@ -24,5 +26,17 @@ namespace BHSDK.Models.Events
 
         public object Clone() => Copy();
         public ThemeKeyframe Copy() => new(ThemeIndex, Frame, Ease);
+
+        public bool Equals(ThemeKeyframe other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && ThemeIndex.Equals(other.ThemeIndex);
+            return result;
+        }
+
+        public override bool Equals(object obj) => obj is ThemeKeyframe value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ThemeIndex);
     }
 }

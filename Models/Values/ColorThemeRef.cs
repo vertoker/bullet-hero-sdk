@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class ColorThemeRef : IColor, ICopyable<ColorThemeRef>
+    public class ColorThemeRef : IColor, ICopyable<ColorThemeRef>, IEquatable<ColorThemeRef>
     {
         [RuleInRange(0, ValueRules.ThemeCount - 1)]
         [JsonProperty(Names.ThemeIndex)]
@@ -28,5 +30,17 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IColor ICopyable<IColor>.Copy() => new ColorThemeRef(ThemeColorIndex);
         public ColorThemeRef Copy() => new(ThemeColorIndex);
+
+        public override bool Equals(object obj) => obj is ColorThemeRef value && Equals(value);
+        public override int GetHashCode() => ThemeColorIndex;
+        
+        public bool Equals(IColor other) => other is ColorThemeRef value && Equals(value);
+        public bool Equals(ColorThemeRef other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = ThemeColorIndex.Equals(other.ThemeColorIndex);
+            return result;
+        }
     }
 }

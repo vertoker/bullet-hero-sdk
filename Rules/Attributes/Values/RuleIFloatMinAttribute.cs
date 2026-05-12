@@ -19,7 +19,8 @@ namespace BHSDK.Rules.Attributes
             Min = min;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is IFloat;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(IFloat).IsAssignableFrom(property.PropertyType);
         
         protected override bool IsValidInternal(object value, Level context)
         {

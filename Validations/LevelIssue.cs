@@ -52,33 +52,16 @@ namespace BHSDK.Validations
             var resultProperty = Trace[^1].Property;
             return (result, resultProperty);
         }
-        
-        public string GetPath()
-        {
-            if (Trace.Count == 0) return string.Empty;
-            var builder = new StringBuilder();
-            BuildTrace(builder);
-            return builder.ToString();
-        }
+
+        public string GetPath() => Trace.GetPath();
         public override string ToString()
         {
             var builder = new StringBuilder();
             builder.Append("Issue, Rule: ");
             builder.Append(Rule.GetType().Name);
             builder.Append(", Trace: ");
-            BuildTrace(builder);
+            Trace.BuildTracePath(builder);
             return builder.ToString();
-        }
-        private void BuildTrace(StringBuilder builder)
-        {
-            if (Trace.Count == 0) return;
-            for (var i = 0; i < Trace.Count - 1; i++)
-            {
-                var path = Trace[i];
-                path.Append(builder);
-                builder.Append('.');
-            }
-            Trace[^1].Append(builder);
         }
     }
 }

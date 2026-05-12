@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioEcho : AudioEffect, ICopyable<AudioEcho>
+    public class AudioEcho : AudioEffect, ICopyable<AudioEcho>, IEquatable<AudioEcho>
     {
         [RuleInRange(AudioRules.Echo.Delay_Min, AudioRules.Echo.Delay_Max)]
         [JsonProperty(Names.Delay)]
@@ -48,5 +50,21 @@ namespace BHSDK.Models.AudioEffects
 
         public new object Clone() => Copy();
         public new AudioEcho Copy() => new(MixLevel, Delay, Decay, MaxChannels, DryMix, WetMix);
+
+        public override bool Equals(object obj) => obj is AudioEcho value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Delay, Decay, MaxChannels, DryMix, WetMix);
+
+        public bool Equals(AudioEcho other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Delay.Equals(other.Delay)
+                         && Decay.Equals(other.Decay)
+                         && MaxChannels.Equals(other.MaxChannels)
+                         && DryMix.Equals(other.DryMix)
+                         && WetMix.Equals(other.WetMix);
+            return result;
+        }
     }
 }

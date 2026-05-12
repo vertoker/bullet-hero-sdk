@@ -24,7 +24,8 @@ namespace BHSDK.Rules.Attributes
             Max = max;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is IInt;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(IInt).IsAssignableFrom(property.PropertyType);
         
         protected override bool IsValidInternal(object value, Level context)
         {

@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Shake : Keyframe, ICopyable<Shake>
+    public class Shake : Keyframe, ICopyable<Shake>, IEquatable<Shake>
     {
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
@@ -46,5 +48,21 @@ namespace BHSDK.Models.Keyframes
 
         public object Clone() => Copy();
         public Shake Copy() => new(Intensity, Speed, IntensityX, IntensityY, Frame, Ease);
+
+        public override bool Equals(object obj) => obj is Shake value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
+            Intensity, Speed, IntensityX, IntensityY);
+
+        public bool Equals(Shake other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Intensity.Equals(other.Intensity)
+                         && Speed.Equals(other.Speed)
+                         && IntensityX.Equals(other.IntensityX)
+                         && IntensityY.Equals(other.IntensityY);
+            return result;
+        }
     }
 }

@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class Alignment : ICopyable<Alignment>
+    public class Alignment : ICopyable<Alignment>, IEquatable<Alignment>
     {
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinSca, ValueRules.MaxSca)]
         [JsonProperty(Names.ValueShort)]
@@ -54,5 +56,16 @@ namespace BHSDK.Models.Values
 
         public object Clone() => Copy();
         public Alignment Copy() => new(Value.Copy());
+
+        public override bool Equals(object obj) => obj is Vector4Value value && Equals(value);
+        public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
+
+        public bool Equals(Alignment other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Value.Equals(other.Value);
+            return result;
+        }
     }
 }

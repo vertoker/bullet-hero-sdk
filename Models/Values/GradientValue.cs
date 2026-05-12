@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class GradientValue : ICopyable<GradientValue>
+    public class GradientValue : ICopyable<GradientValue>, IEquatable<GradientValue>
     {
         public const int MaxCount = 4;
         
@@ -43,7 +46,21 @@ namespace BHSDK.Models.Values
         }
 
         public object Clone() => Copy();
-        public GradientValue Copy() => new(ColorKeys.Select(color => color.Copy()).ToList(),
-            AlphaKeys.Select(alpha => alpha.Copy()).ToList(), Mode, ColorSpace);
+        public GradientValue Copy() => new(ColorKeys.CopyList(), AlphaKeys.CopyList(), Mode, ColorSpace);
+
+        public override bool Equals(object obj) => obj is GradientValue value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(ColorKeys.GetListHashCode(),
+            AlphaKeys.GetListHashCode(), (int)Mode, (int)ColorSpace);
+
+        public bool Equals(GradientValue other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = ColorKeys.ListEquals(other.ColorKeys)
+                         && AlphaKeys.ListEquals(other.AlphaKeys)
+                         && Mode == other.Mode
+                         && ColorSpace == other.ColorSpace;
+            return result;
+        }
     }
 }

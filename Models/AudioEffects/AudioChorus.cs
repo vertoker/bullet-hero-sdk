@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioChorus : AudioEffect, ICopyable<AudioChorus>
+    public class AudioChorus : AudioEffect, ICopyable<AudioChorus>, IEquatable<AudioChorus>
     {
         [RuleInRange(AudioRules.Chorus.DryMix_Min, AudioRules.Chorus.DryMix_Max)]
         [JsonProperty(Names.DryMix)]
@@ -69,5 +71,37 @@ namespace BHSDK.Models.AudioEffects
 
         public new object Clone() => Copy();
         public new AudioChorus Copy() => new(MixLevel, DryMix, WetMixTap1, WetMixTap2, WetMixTap3, Delay, Rate, Depth, Feedback);
+
+        public override bool Equals(object obj) => obj is AudioChorus value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(base.GetHashCode());
+            hashCode.Add(DryMix);
+            hashCode.Add(WetMixTap1);
+            hashCode.Add(WetMixTap2);
+            hashCode.Add(WetMixTap3);
+            hashCode.Add(Delay);
+            hashCode.Add(Rate);
+            hashCode.Add(Depth);
+            hashCode.Add(Feedback);
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(AudioChorus other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && DryMix.Equals(other.DryMix)
+                         && WetMixTap1.Equals(other.WetMixTap1)
+                         && WetMixTap2.Equals(other.WetMixTap2)
+                         && WetMixTap3.Equals(other.WetMixTap3)
+                         && Delay.Equals(other.Delay)
+                         && Rate.Equals(other.Rate)
+                         && Depth.Equals(other.Depth)
+                         && Feedback.Equals(other.Feedback);
+            return result;
+        }
     }
 }

@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class ColorMinMax : IColor, ICopyable<ColorMinMax>
+    public class ColorMinMax : IColor, ICopyable<ColorMinMax>, IEquatable<ColorMinMax>
     {
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinR)]
@@ -72,5 +74,24 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IColor ICopyable<IColor>.Copy() => new ColorMinMax(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
         public ColorMinMax Copy() => new(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
+
+        public override bool Equals(object obj) => obj is ColorMinMax value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(MinR, MinG, MinB, MinA, MaxR, MaxG, MaxB, MaxA);
+        
+        public bool Equals(IColor other) => other is ColorMinMax value && Equals(value);
+        public bool Equals(ColorMinMax other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = MinR.Equals(other.MinR)
+                         && MinG.Equals(other.MinG)
+                         && MinB.Equals(other.MinB)
+                         && MinA.Equals(other.MinA)
+                         && MaxR.Equals(other.MaxR)
+                         && MaxG.Equals(other.MaxG)
+                         && MaxB.Equals(other.MaxB)
+                         && MaxA.Equals(other.MaxA);
+            return result;
+        }
     }
 }

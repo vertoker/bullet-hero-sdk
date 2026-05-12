@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectObjectForces : ICopyable<EffectObjectForces>, IUpdatable<EffectObjectForces>
+    public class EffectObjectForces : ICopyable<EffectObjectForces>, IEquatable<EffectObjectForces>, IUpdatable<EffectObjectForces>
     {
         [RuleNotNull]
         [JsonProperty(Names.GravityMin)]
@@ -118,6 +120,42 @@ namespace BHSDK.Models.Effects
             OrbitalCenterOffset = src.OrbitalCenterOffset;
             VelocitySpeed = src.VelocitySpeed;
             LinearForce = src.LinearForce;
+        }
+
+        public override bool Equals(object obj) => obj is EffectObjectForces value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(StartGravityMin);
+            hashCode.Add(StartGravityMax);
+            hashCode.Add(StartVelocityMin);
+            hashCode.Add(StartVelocityMax);
+            hashCode.Add(StartAngularVelocityMin);
+            hashCode.Add(StartAngularVelocityMax);
+            hashCode.Add(LinearVelocity);
+            hashCode.Add(OrbitalVelocity);
+            hashCode.Add(OrbitalCenterOffset);
+            hashCode.Add(VelocitySpeed);
+            hashCode.Add(LinearForce);
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(EffectObjectForces other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = StartGravityMin.Equals(other.StartGravityMin)
+                         && StartGravityMax.Equals(other.StartGravityMax)
+                         && StartVelocityMin.Equals(other.StartVelocityMin)
+                         && StartVelocityMax.Equals(other.StartVelocityMax)
+                         && StartAngularVelocityMin.Equals(other.StartAngularVelocityMin)
+                         && StartAngularVelocityMax.Equals(other.StartAngularVelocityMax)
+                         && LinearVelocity.Equals(other.LinearVelocity)
+                         && OrbitalVelocity.Equals(other.OrbitalVelocity)
+                         && OrbitalCenterOffset.Equals(other.OrbitalCenterOffset)
+                         && VelocitySpeed.Equals(other.VelocitySpeed)
+                         && LinearForce.Equals(other.LinearForce);
+            return result;
         }
     }
 }

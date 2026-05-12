@@ -5,6 +5,7 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Objects
 {
@@ -19,7 +20,7 @@ namespace BHSDK.Models.Objects
     // No deep inheritance of changes
 
     [RuleContainer]
-    public class Modification : ICopyable<Modification>
+    public class Modification : ICopyable<Modification>, IEquatable<Modification>
     {
         [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
@@ -54,6 +55,19 @@ namespace BHSDK.Models.Objects
             if (Value.GetType().IsValueType) return Value;
             if (Value is ICloneable cloneable) return cloneable.Clone();
             return Value;
+        }
+
+        public override bool Equals(object obj) => obj is Modification value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(ObjectId, Path, Value);
+
+        public bool Equals(Modification other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = ObjectId.Equals(other.ObjectId)
+                         && Path.Equals(other.Path)
+                         && Value.Equals(other.Value);
+            return result;
         }
     }
 }

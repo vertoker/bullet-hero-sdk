@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioReverb : AudioEffect, ICopyable<AudioReverb>
+    public class AudioReverb : AudioEffect, ICopyable<AudioReverb>, IEquatable<AudioReverb>
     {
         [RuleInRange(AudioRules.Reverb.DryLevel_Min, AudioRules.Reverb.DryLevel_Max)]
         [JsonProperty(Names.DryLevel)]
@@ -106,5 +108,49 @@ namespace BHSDK.Models.AudioEffects
         public new AudioReverb Copy() => new(MixLevel, DryLevel, Room, RoomHF, RoomLF,
             DecayTime, DecayHFRatio, Reflections, ReflectDelay, Reverb,
             ReverbDelay, Diffusion, Density, HFReference, LFReference);
+
+        public override bool Equals(object obj) => obj is AudioReverb value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(base.GetHashCode());
+            hashCode.Add(DryLevel);
+            hashCode.Add(Room);
+            hashCode.Add(RoomHF);
+            hashCode.Add(RoomLF);
+            hashCode.Add(DecayTime);
+            hashCode.Add(DecayHFRatio);
+            hashCode.Add(Reflections);
+            hashCode.Add(ReflectDelay);
+            hashCode.Add(Reverb);
+            hashCode.Add(ReverbDelay);
+            hashCode.Add(Diffusion);
+            hashCode.Add(Density);
+            hashCode.Add(HFReference);
+            hashCode.Add(LFReference);
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(AudioReverb other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && DryLevel.Equals(other.DryLevel)
+                         && Room.Equals(other.Room)
+                         && RoomHF.Equals(other.RoomHF)
+                         && RoomLF.Equals(other.RoomLF)
+                         && DecayTime.Equals(other.DecayTime)
+                         && DecayHFRatio.Equals(other.DecayHFRatio)
+                         && Reflections.Equals(other.Reflections)
+                         && ReflectDelay.Equals(other.ReflectDelay)
+                         && Reverb.Equals(other.Reverb)
+                         && ReverbDelay.Equals(other.ReverbDelay)
+                         && Diffusion.Equals(other.Diffusion)
+                         && Density.Equals(other.Density)
+                         && HFReference.Equals(other.HFReference)
+                         && LFReference.Equals(other.LFReference);
+            return result;
+        }
     }
 }

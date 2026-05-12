@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeCone : IEffectShape, ICopyable<EffectShapeCone>
+    public class EffectShapeCone : IEffectShape,
+        ICopyable<EffectShapeCone>, IEquatable<EffectShapeCone>
     {
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeTopRadius_Min)]
         [JsonProperty(Names.TopRadius)]
@@ -55,5 +58,21 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeCone(TopRadius.Copy(), BaseRadius.Copy(), Arc.Copy(), Height.Copy(), Spread.Copy());
         public EffectShapeCone Copy() => new(TopRadius.Copy(), BaseRadius.Copy(), Arc.Copy(), Height.Copy(), Spread.Copy());
+
+        public override bool Equals(object obj) => obj is EffectShapeCone value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(TopRadius, BaseRadius, Arc, Height, Spread);
+        
+        public bool Equals(IEffectShape other) => other is EffectShapeCone value && Equals(value);
+        public bool Equals(EffectShapeCone other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = TopRadius.Equals(other.TopRadius)
+                         && BaseRadius.Equals(other.BaseRadius)
+                         && Arc.Equals(other.Arc)
+                         && Height.Equals(other.Height)
+                         && Spread.Equals(other.Spread);
+            return result;
+        }
     }
 }

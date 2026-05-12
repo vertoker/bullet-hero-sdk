@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Events;
 using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Audio
 {
     [RuleContainer]
-    public class AudioLevel : ICopyable<AudioLevel>
+    public class AudioLevel : ICopyable<AudioLevel>, IEquatable<AudioLevel>
     {
         // because master channels created only in Unity
         public const int FrameTrackLimit = 16;
@@ -29,5 +31,16 @@ namespace BHSDK.Models.Audio
 
         public object Clone() => Copy();
         public AudioLevel Copy() => new(Tracks.CopyList());
+
+        public bool Equals(AudioLevel other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Tracks.ListEquals(other.Tracks);
+            return result;
+        }
+
+        public override bool Equals(object obj) => obj is AudioLevel value && Equals(value);
+        public override int GetHashCode() => Tracks != null ? Tracks.GetListHashCode() : 0;
     }
 }

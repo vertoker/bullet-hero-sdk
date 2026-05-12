@@ -1,8 +1,10 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
@@ -51,5 +53,21 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IVector2 ICopyable<IVector2>.Copy() => new Vector2RectStep(MinX, MinY, MaxX, MaxY, Step);
         public Vector2RectStep Copy() => new(MinX, MinY, MaxX, MaxY, Step);
+
+        public override bool Equals(object obj) => obj is Vector2RectStep value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(MinX, MinY, MaxX, MaxY, Step);
+        
+        public bool Equals(IVector2 other) => other is Vector2RectStep value && Equals(value);
+        public bool Equals(Vector2RectStep other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = MinX.Equals(other.MinX)
+                         && MinY.Equals(other.MinY)
+                         && MaxX.Equals(other.MaxX)
+                         && MaxY.Equals(other.MaxY)
+                         && Step.Equals(other.Step);
+            return result;
+        }
     }
 }

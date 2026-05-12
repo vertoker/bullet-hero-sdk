@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
@@ -7,7 +8,7 @@ using BHSDK.Rules.Attributes;
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class ScreenLimitNone : IScreenLimit, ICopyable<ScreenLimitNone>
+    public class ScreenLimitNone : IScreenLimit, ICopyable<ScreenLimitNone>, IEquatable<ScreenLimitNone>
     {
         public ScreenLimitType GetModelType() => ScreenLimitType.None;
         public bool IsValid(float currentAspect) => true;
@@ -16,5 +17,11 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitNone();
         public ScreenLimitNone Copy() => new();
+
+        // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is ScreenLimitFixed value && Equals(value);
+        
+        public bool Equals(ScreenLimitNone other) => other is not null && ReferenceEquals(this, other);
     }
 }

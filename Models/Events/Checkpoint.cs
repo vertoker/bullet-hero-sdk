@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Events
 {
     [RuleContainer]
-    public class Checkpoint : IFrame, ICopyable<Checkpoint>
+    public class Checkpoint : IFrame, ICopyable<Checkpoint>, IEquatable<Checkpoint>
     {
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
@@ -44,5 +46,19 @@ namespace BHSDK.Models.Events
 
         public object Clone() => Copy();
         public Checkpoint Copy() => new(Name, Active, Color.Copy(), Frame);
+
+        public override bool Equals(object obj) => obj is Checkpoint value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Frame, Name, Active, Color);
+
+        public bool Equals(Checkpoint other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Frame.Equals(other.Frame)
+                         && Name.Equals(other.Name)
+                         && Active == other.Active
+                         && Color.Equals(other.Color);
+            return result;
+        }
     }
 }

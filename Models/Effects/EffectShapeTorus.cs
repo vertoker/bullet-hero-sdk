@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeTorus : IEffectShape, ICopyable<EffectShapeTorus>
+    public class EffectShapeTorus : IEffectShape,
+        ICopyable<EffectShapeTorus>, IEquatable<EffectShapeTorus>
     {
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.TorusRadiusMinor_Min)]
         [JsonProperty(Names.RadiusMinor)]
@@ -56,5 +59,20 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeTorus(RadiusMinor.Copy(), RadiusMajor.Copy(), Arc.Copy(), Spread.Copy());
         public EffectShapeTorus Copy() => new(RadiusMinor.Copy(), RadiusMajor.Copy(), Arc.Copy(), Spread.Copy());
+
+        public override bool Equals(object obj) => obj is EffectShapeTorus value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(RadiusMinor, RadiusMajor, Arc, Spread);
+        
+        public bool Equals(IEffectShape other) => other is EffectShapeTorus value && Equals(value);
+        public bool Equals(EffectShapeTorus other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = RadiusMinor.Equals(other.RadiusMinor)
+                         && RadiusMajor.Equals(other.RadiusMajor)
+                         && Arc.Equals(other.Arc)
+                         && Spread.Equals(other.Spread);
+            return result;
+        }
     }
 }

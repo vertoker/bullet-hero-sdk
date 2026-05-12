@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class Vector3Value : IVector3, ICopyable<Vector3Value>
+    public class Vector3Value : IVector3, ICopyable<Vector3Value>, IEquatable<Vector3Value>
     {
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
@@ -46,5 +48,19 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IVector3 ICopyable<IVector3>.Copy() => new Vector3Value(X, Y, Z);
         public Vector3Value Copy() => new(X, Y, Z);
+        
+        public override bool Equals(object obj) => obj is Vector3Value value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+        
+        public bool Equals(IVector3 other) => other is Vector3Value value && Equals(value);
+        public bool Equals(Vector3Value other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = X.Equals(other.X)
+                         && Y.Equals(other.Y)
+                         && Z.Equals(other.Z);
+            return result;
+        }
     }
 }

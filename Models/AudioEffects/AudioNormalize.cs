@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioNormalize : AudioEffect, ICopyable<AudioNormalize>
+    public class AudioNormalize : AudioEffect, ICopyable<AudioNormalize>, IEquatable<AudioNormalize>
     {
         [RuleInRange(AudioRules.Normalize.FadeInTime_Min, AudioRules.Normalize.FadeInTime_Max)]
         [JsonProperty(Names.FadeInTime)]
@@ -37,5 +39,19 @@ namespace BHSDK.Models.AudioEffects
 
         public new object Clone() => Copy();
         public new AudioNormalize Copy() => new(MixLevel, FadeInTime, LowestVolume, MaximumAmp);
+
+        public override bool Equals(object obj) => obj is AudioNormalize value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), FadeInTime, LowestVolume, MaximumAmp);
+
+        public bool Equals(AudioNormalize other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && FadeInTime.Equals(other.FadeInTime)
+                         && LowestVolume.Equals(other.LowestVolume)
+                         && MaximumAmp.Equals(other.MaximumAmp);
+            return result;
+        }
     }
 }

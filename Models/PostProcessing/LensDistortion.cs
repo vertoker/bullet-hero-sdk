@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Keyframes;
@@ -6,11 +7,13 @@ using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LensDistortion : Keyframe, ICopyable<LensDistortion>
+    public class LensDistortion : Keyframe,
+        ICopyable<LensDistortion>, IEquatable<LensDistortion>
     {
         [RuleInRange(PostProcessingRules.LensDistortion.IntensityMin,
             PostProcessingRules.LensDistortion.IntensityMax)]
@@ -50,5 +53,20 @@ namespace BHSDK.Models.PostProcessing
 
         public object Clone() => Copy();
         public LensDistortion Copy() => new(Intensity, Multiplier.Copy(), Center.Copy(), Scale, Frame, Ease);
+
+        public override bool Equals(object obj) => obj is LensDistortion value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Multiplier, Center, Scale);
+
+        public bool Equals(LensDistortion other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Intensity.Equals(other.Intensity)
+                         && Multiplier.Equals(other.Multiplier)
+                         && Center.Equals(other.Center)
+                         && Scale.Equals(other.Scale);
+            return result;
+        }
     }
 }

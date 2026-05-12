@@ -1,11 +1,13 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class GradientAlphaKeyValue : ICopyable<GradientAlphaKeyValue>
+    public class GradientAlphaKeyValue : ICopyable<GradientAlphaKeyValue>, IEquatable<GradientAlphaKeyValue>
     {
         [JsonProperty(Names.AlphaShort)]
         public float Alpha { get; set; }
@@ -26,5 +28,17 @@ namespace BHSDK.Models.Values
 
         public object Clone() => Copy();
         public GradientAlphaKeyValue Copy() => new(Alpha, Time);
+
+        public override bool Equals(object obj) => obj is GradientAlphaKeyValue value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Alpha, Time);
+
+        public bool Equals(GradientAlphaKeyValue other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Alpha.Equals(other.Alpha)
+                         && Time.Equals(other.Time);
+            return result;
+        }
     }
 }

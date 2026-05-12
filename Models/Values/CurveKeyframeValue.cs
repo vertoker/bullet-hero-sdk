@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class CurveKeyframeValue : ICopyable<CurveKeyframeValue>
+    public class CurveKeyframeValue : ICopyable<CurveKeyframeValue>, IEquatable<CurveKeyframeValue>
     {
         // TODO maybe replace FloatValue to IFloat (in editor step)
         
@@ -86,5 +88,24 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         public CurveKeyframeValue Copy() => new(Time, Value,
             WeightedMode, TangentMode, InTangent, OutTangent, InWeight, OutWeight);
+
+        public override bool Equals(object obj) => obj is CurveKeyframeValue value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Time, Value,
+            (int)WeightedMode, (int)TangentMode, InTangent, OutTangent, InWeight, OutWeight);
+
+        public bool Equals(CurveKeyframeValue other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Time.Equals(other.Time)
+                         && Value.Equals(other.Value)
+                         && WeightedMode == other.WeightedMode
+                         && TangentMode == other.TangentMode
+                         && InTangent.Equals(other.InTangent)
+                         && OutTangent.Equals(other.OutTangent)
+                         && InWeight.Equals(other.InWeight)
+                         && OutWeight.Equals(other.OutWeight);
+            return result;
+        }
     }
 }

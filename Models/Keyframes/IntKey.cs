@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Keyframes
 {
     [RuleContainer]
-    public class IntKey : Keyframe, ICopyable<IntKey>
+    public class IntKey : Keyframe, ICopyable<IntKey>, IEquatable<IntKey>
     {
         [RuleNotNull(typeof(IntValue))]
         [JsonProperty(Names.Int)]
@@ -25,5 +27,17 @@ namespace BHSDK.Models.Keyframes
 
         public object Clone() => Copy();
         public IntKey Copy() => new(Value.Copy(), Frame, Ease);
+
+        public override bool Equals(object obj) => obj is IntKey value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);
+
+        public bool Equals(IntKey other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Value.Equals(other.Value);
+            return result;
+        }
     }
 }

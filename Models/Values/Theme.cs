@@ -6,11 +6,12 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class Theme : ITheme, ICopyable<Theme>
+    public class Theme : ITheme, ICopyable<Theme>, IEquatable<Theme>
     {
         public Version GetVersion() => new(1, 0);
         
@@ -52,5 +53,17 @@ namespace BHSDK.Models.Values
 
         public object Clone() => Copy();
         public Theme Copy() => new(Name, Matrix.CopyArray());
+
+        public override bool Equals(object obj) => obj is Theme value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Name, Matrix.GetArrayHashCode());
+
+        public bool Equals(Theme other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Name.Equals(other.Name)
+                         && Matrix.ArrayEquals(other.Matrix);
+            return result;
+        }
     }
 }

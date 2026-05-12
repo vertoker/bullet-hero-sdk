@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioCompressor : AudioEffect, ICopyable<AudioCompressor>
+    public class AudioCompressor : AudioEffect, ICopyable<AudioCompressor>, IEquatable<AudioCompressor>
     {
         [RuleInRange(AudioRules.Compressor.Threshold_Min, AudioRules.Compressor.Threshold_Max)]
         [JsonProperty(Names.Threshold)]
@@ -43,5 +45,20 @@ namespace BHSDK.Models.AudioEffects
 
         public new object Clone() => Copy();
         public new AudioCompressor Copy() => new(MixLevel, Threshold, Attack, Release, MakeUpGain);
+
+        public override bool Equals(object obj) => obj is AudioCompressor value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Threshold, Attack, Release, MakeUpGain);
+
+        public bool Equals(AudioCompressor other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Threshold.Equals(other.Threshold)
+                         && Attack.Equals(other.Attack)
+                         && Release.Equals(other.Release)
+                         && MakeUpGain.Equals(other.MakeUpGain);
+            return result;
+        }
     }
 }

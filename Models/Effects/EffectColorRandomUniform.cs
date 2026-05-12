@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectColorRandomUniform : IEffectColor, ICopyable<EffectColorRandomUniform>
+    public class EffectColorRandomUniform : IEffectColor,
+        ICopyable<EffectColorRandomUniform>, IEquatable<EffectColorRandomUniform>
     {
         [RuleNotNull]
         [JsonProperty(Names.ColorA)]
@@ -45,5 +48,18 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorRandomUniform(ColorA.Copy(), ColorB.Copy());
         public EffectColorRandomUniform Copy() => new(ColorA.Copy(), ColorB.Copy());
+
+        public override bool Equals(object obj) => obj is EffectColorRandomUniform value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(ColorA, ColorB);
+        
+        public bool Equals(IEffectColor other) => other is EffectColorRandomUniform value && Equals(value);
+        public bool Equals(EffectColorRandomUniform other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = ColorA.Equals(other.ColorA)
+                         && ColorB.Equals(other.ColorB);
+            return result;
+        }
     }
 }

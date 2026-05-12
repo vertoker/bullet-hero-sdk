@@ -7,13 +7,14 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
+// ReSharper disable NonReadonlyMemberInGetHashCode
 // ReSharper disable InconsistentNaming
 // ReSharper disable ArrangeAccessorOwnerBody
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class ColorValue : IColor, ICopyable<ColorValue>
+    public class ColorValue : IColor, ICopyable<ColorValue>, IEquatable<ColorValue>
     {
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelR)]
@@ -51,6 +52,21 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IColor ICopyable<IColor>.Copy() => new ColorValue(R, G, B, A);
         public ColorValue Copy() => new(R, G, B, A);
+
+        public override bool Equals(object obj) => obj is ColorValue value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(R, G, B, A);
+        
+        public bool Equals(IColor other) => other is ColorValue value && Equals(value);
+        public bool Equals(ColorValue other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = R.Equals(other.R)
+                         && G.Equals(other.G)
+                         && B.Equals(other.B)
+                         && A.Equals(other.A);
+            return result;
+        }
         
         /// <summary>
         ///   <para>

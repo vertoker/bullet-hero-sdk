@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class CameraEvents : ICopyable<CameraEvents>
+    public class CameraEvents : ICopyable<CameraEvents>, IEquatable<CameraEvents>
     {
         // Camera - is a unique instance. It exists all level lifetime and any Object can be child of camera. 
         // Camera has instanceId and this is always -1 (because 0 - is a fallback).
@@ -56,5 +58,20 @@ namespace BHSDK.Models.Game
 
         public object Clone() => Copy();
         public CameraEvents Copy() => new(Positions.CopyList(), Rotations.CopyList(), Zooms.CopyList(), Shakes.CopyList());
+
+        public override bool Equals(object obj) => obj is CameraEvents value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Positions.GetListHashCode(),
+            Rotations.GetListHashCode(), Zooms.GetListHashCode(), Shakes.GetListHashCode());
+
+        public bool Equals(CameraEvents other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Positions.ListEquals(other.Positions)
+                         && Rotations.ListEquals(other.Rotations)
+                         && Zooms.ListEquals(other.Zooms)
+                         && Shakes.ListEquals(other.Shakes);
+            return result;
+        }
     }
 }

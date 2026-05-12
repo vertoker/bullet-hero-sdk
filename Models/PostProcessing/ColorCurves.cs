@@ -1,14 +1,17 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ColorCurves : Keyframe, ICopyable<ColorCurves>
+    public class ColorCurves : Keyframe,
+        ICopyable<ColorCurves>, IEquatable<ColorCurves>
     {
         [RuleInRange(PostProcessingRules.ColorCurves.HueVsHueMin,
             PostProcessingRules.ColorCurves.HueVsHueMax)]
@@ -36,5 +39,18 @@ namespace BHSDK.Models.PostProcessing
 
         public object Clone() => Copy();
         public ColorCurves Copy() => new(HueVsHue, SatVsSat, Frame, Ease);
+
+        public override bool Equals(object obj) => obj is ColorCurves value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), HueVsHue, SatVsSat);
+
+        public bool Equals(ColorCurves other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && HueVsHue.Equals(other.HueVsHue)
+                         && SatVsSat.Equals(other.SatVsSat);
+            return result;
+        }
     }
 }

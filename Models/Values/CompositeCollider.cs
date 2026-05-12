@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class CompositeCollider : ICopyable<CompositeCollider>
+    public class CompositeCollider : ICopyable<CompositeCollider>, IEquatable<CompositeCollider>
     {
         public const int MaxCount = 64;
         
@@ -36,5 +38,17 @@ namespace BHSDK.Models.Values
 
         public object Clone() => Copy();
         public CompositeCollider Copy() => new(ColliderId, Triangles.CopyList());
+
+        public override bool Equals(object obj) => obj is CompositeCollider value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(ColliderId, Triangles.GetListHashCode());
+
+        public bool Equals(CompositeCollider other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = ColliderId.Equals(other.ColliderId)
+                         && Triangles.ListEquals(other.Triangles);
+            return result;
+        }
     }
 }

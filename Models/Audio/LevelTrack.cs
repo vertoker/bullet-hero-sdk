@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Resources;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Audio
 {
     [RuleContainer]
-    public class LevelTrack : ICopyable<LevelTrack>
+    public class LevelTrack : ICopyable<LevelTrack>, IEquatable<LevelTrack>
     {
         public const int MaxSourcesCount = 4;
         
@@ -84,6 +86,26 @@ namespace BHSDK.Models.Audio
         }
 
         public object Clone() => Copy();
-        public LevelTrack Copy() => new(AudioId, Title, Author, StartFrame, EndFrame, OffsetLocalTime, AudioResourceId, Effects.Copy());
+        public LevelTrack Copy() => new(AudioId, Title, Author,
+            StartFrame, EndFrame, OffsetLocalTime, AudioResourceId, Effects.Copy());
+
+        public override bool Equals(object obj) => obj is LevelTrack value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(AudioId, Title, Author,
+            StartFrame, EndFrame, OffsetLocalTime, AudioResourceId, Effects);
+
+        public bool Equals(LevelTrack other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = AudioId.Equals(other.AudioId)
+                         && Title.Equals(other.Title)
+                         && Author.Equals(other.Author)
+                         && StartFrame.Equals(other.StartFrame)
+                         && EndFrame.Equals(other.EndFrame)
+                         && OffsetLocalTime.Equals(other.OffsetLocalTime)
+                         && AudioResourceId.Equals(other.AudioResourceId)
+                         && Equals(Effects, other.Effects);
+            return result;
+        }
     }
 }

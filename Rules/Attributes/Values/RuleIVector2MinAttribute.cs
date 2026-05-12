@@ -26,7 +26,8 @@ namespace BHSDK.Rules.Attributes
             MinY = minY;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is IVector2;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(IVector2).IsAssignableFrom(property.PropertyType);
 
         protected override bool IsValidInternal(object value, Level context)
         {

@@ -32,7 +32,8 @@ namespace BHSDK.Rules.Attributes
             MaxW = maxW;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is IVector4;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(IVector4).IsAssignableFrom(property.PropertyType);
 
         protected override bool IsValidInternal(object value, Level context)
         {

@@ -11,7 +11,7 @@ namespace BHSDK.Validations
 {
     public class LevelAnalyzer
     {
-        private readonly List<LevelPath> _paths = new(16);
+        private readonly List<LevelPath> _trace = new(16);
         private readonly Dictionary<Type, PropertyInfo[]> _typesCache = new(32);
         private readonly Dictionary<PropertyInfo, BaseRuleAttribute[]> _rulesCache = new(32);
 
@@ -45,7 +45,7 @@ namespace BHSDK.Validations
 
             Cat.Meow("Analyze");
             AnalyzeRecursive(level, settings, result, level);
-            _paths.Clear();
+            _trace.Clear();
             
             return result;
         }
@@ -65,20 +65,36 @@ namespace BHSDK.Validations
             {
                 var rules = GetRules(property);
                 var nextObj = property.GetValue(context);
-                var invalidRule = rules.FirstOrDefault(rule => !rule.IsValid(nextObj, level));
+                _trace.Add(new LevelPath(property));
+                
+                BaseRuleAttribute invalidRule = null;
+                foreach (var rule in rules)
+                {
+                    // TODO move to Roslyn Analyzer, this must not be in runtime
+                    if (!rule.IsValidType(property))
+                    {
+                        throw new ArgumentException($"Can't apply rule {rule.GetType().Name} " +
+                                                 $"to type {nextObj?.GetType().Name}, path: {_trace.GetPath()}");
+                    }
+                    
+                    if (!rule.IsValid(nextObj, level))
+                    {
+                        invalidRule = rule;
+                        break;
+                    }
+                }
 
                 if (invalidRule != null)
                 {
-                    _paths.Add(new LevelPath(property));
-                    var issue = new LevelIssue(invalidRule, level, new List<LevelPath>(_paths));
+                    var issue = new LevelIssue(invalidRule, level, new List<LevelPath>(_trace));
                     result.Add(issue);
                     Cat.MeowWarn(issue);
-                    _paths.RemoveAt(_paths.Count - 1);
                 }
                 else if (nextObj != null)
                 {
                     nextObjects.Add((nextObj, property));
                 }
+                _trace.RemoveAt(_trace.Count - 1);
             }
 
             foreach (var (nextObj, nextProp) in nextObjects)
@@ -87,9 +103,9 @@ namespace BHSDK.Validations
                 {
                     for (var i = 0; i < list.Count; i++)
                     {
-                        _paths.Add(new LevelPath(nextProp, i));
+                        _trace.Add(new LevelPath(nextProp, i));
                         AnalyzeRecursive(list[i], settings, result, level);
-                        _paths.RemoveAt(_paths.Count - 1);
+                        _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
                 else if (nextObj.GetType().IsArray)
@@ -97,16 +113,16 @@ namespace BHSDK.Validations
                     var array = (Array)nextObj;
                     for (var i = 0; i < array.Length; i++)
                     {
-                        _paths.Add(new LevelPath(nextProp, i));
+                        _trace.Add(new LevelPath(nextProp, i));
                         AnalyzeRecursive(array.GetValue(i), settings, result, level);
-                        _paths.RemoveAt(_paths.Count - 1);
+                        _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
                 else
                 {
-                    _paths.Add(new LevelPath(nextProp));
+                    _trace.Add(new LevelPath(nextProp));
                     AnalyzeRecursive(nextObj, settings, result, level);
-                    _paths.RemoveAt(_paths.Count - 1);
+                    _trace.RemoveAt(_trace.Count - 1);
                 }
             }
         }

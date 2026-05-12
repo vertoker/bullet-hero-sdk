@@ -14,7 +14,8 @@ namespace BHSDK.Rules.Attributes
             MaxLength = maxLength;
         }
         
-        protected override bool IsValidTypeInternal(object value) => value is string;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(string).IsAssignableFrom(property.PropertyType);
         
         protected override bool IsValidInternal(object value, Level context)
             => value is string str && str.Length <= MaxLength;

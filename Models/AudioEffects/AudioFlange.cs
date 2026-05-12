@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioFlange : AudioEffect, ICopyable<AudioFlange>
+    public class AudioFlange : AudioEffect, ICopyable<AudioFlange>, IEquatable<AudioFlange>
     {
         [RuleInRange(AudioRules.Flange.DryMix_Min, AudioRules.Flange.DryMix_Max)]
         [JsonProperty(Names.DryMix)]
@@ -43,5 +45,20 @@ namespace BHSDK.Models.AudioEffects
 
         public new object Clone() => Copy();
         public new AudioFlange Copy() => new(MixLevel, DryMix, WetMix, Depth, Rate);
+
+        public override bool Equals(object obj) => obj is AudioFlange value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), DryMix, WetMix, Depth, Rate);
+
+        public bool Equals(AudioFlange other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && DryMix.Equals(other.DryMix)
+                         && WetMix.Equals(other.WetMix)
+                         && Depth.Equals(other.Depth)
+                         && Rate.Equals(other.Rate);
+            return result;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeCircle : IEffectShape, ICopyable<EffectShapeCircle>
+    public class EffectShapeCircle : IEffectShape,
+        ICopyable<EffectShapeCircle>, IEquatable<EffectShapeCircle>
     {
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.CircleRadius_Min)]
         [JsonProperty(Names.Radius)]
@@ -49,5 +52,20 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeCircle(Radius.Copy(), Thickness.Copy(), Arc.Copy(), Spread.Copy());
         public EffectShapeCircle Copy() => new(Radius.Copy(), Thickness.Copy(), Arc.Copy(), Spread.Copy());
+
+        public override bool Equals(object obj) => obj is EffectShapeCircle value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Radius, Thickness, Arc, Spread);
+        
+        public bool Equals(IEffectShape other) => other is EffectShapeCircle value && Equals(value);
+        public bool Equals(EffectShapeCircle other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Radius.Equals(other.Radius)
+                         && Thickness.Equals(other.Thickness)
+                         && Arc.Equals(other.Arc)
+                         && Spread.Equals(other.Spread);
+            return result;
+        }
     }
 }

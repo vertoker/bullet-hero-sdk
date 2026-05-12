@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Objects;
@@ -8,11 +9,14 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+using Object = BHSDK.Models.Objects.Object;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class GameLevel : IObjectScope, ICopyable<GameLevel>
+    public class GameLevel : IObjectScope,
+        ICopyable<GameLevel>, IEquatable<GameLevel>
     {
         [RuleNotNull]
         [JsonProperty(Names.Events)]
@@ -86,5 +90,24 @@ namespace BHSDK.Models.Game
             PostProcessingEvents.Copy(), PlayerEvents.Copy(),
             Objects.CopyList(), PrefabObjects.CopyList(),
             Prefabs.CopyList(), Themes.CopyList());
+
+        public bool Equals(GameLevel other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Events.Equals(other.Events) 
+                         && CameraEvents.Equals(other.CameraEvents)
+                         && PostProcessingEvents.Equals(other.PostProcessingEvents)
+                         && PlayerEvents.Equals(other.PlayerEvents)
+                         && Objects.ListEquals(other.Objects)
+                         && PrefabObjects.ListEquals(other.PrefabObjects)
+                         && Themes.ListEquals(other.Themes)
+                         && Prefabs.ListEquals(other.Prefabs);
+            return result;
+        }
+
+        public override bool Equals(object obj) => obj is GameLevel value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Events, CameraEvents, PostProcessingEvents, PlayerEvents,
+            Objects.GetListHashCode(), PrefabObjects.GetListHashCode(), Themes.GetListHashCode(), Prefabs.GetListHashCode());
     }
 }

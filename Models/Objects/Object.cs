@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
@@ -8,11 +9,12 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class Object : ICopyable<Object>, IUpdatable<Object>
+    public class Object : ICopyable<Object>, IEquatable<Object>, IUpdatable<Object>
     {
         public virtual ObjectType GetModelType() => ObjectType.Object;
         
@@ -125,11 +127,47 @@ namespace BHSDK.Models.Objects
             Visible = src.Visible;
             StartFrame = src.StartFrame;
             EndFrame = src.EndFrame;
-            Positions = src.Positions.Select(p => p.Copy()).ToList();
-            Rotations = src.Rotations.Select(r => r.Copy()).ToList();
-            Scales = src.Scales.Select(s => s.Copy()).ToList();
+            Positions = src.Positions.CopyList();
+            Rotations = src.Rotations.CopyList();
+            Scales = src.Scales.CopyList();
             Layer = src.Layer;
             Pivot = src.Pivot.Copy();
+        }
+
+        public override bool Equals(object obj) => obj is Object value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(ObjectId);
+            hashCode.Add(ParentObjectId);
+            hashCode.Add(Name);
+            hashCode.Add(Visible);
+            hashCode.Add(StartFrame);
+            hashCode.Add(EndFrame);
+            hashCode.Add(Positions.GetListHashCode());
+            hashCode.Add(Rotations.GetListHashCode());
+            hashCode.Add(Scales.GetListHashCode());
+            hashCode.Add(Layer);
+            hashCode.Add(Pivot);
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(Object other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = ObjectId.Equals(other.ObjectId)
+                         && ParentObjectId.Equals(other.ParentObjectId)
+                         && Name.Equals(other.Name)
+                         && Visible == other.Visible
+                         && StartFrame.Equals(other.StartFrame)
+                         && EndFrame.Equals(other.EndFrame)
+                         && Positions.ListEquals(other.Positions)
+                         && Rotations.ListEquals(other.Rotations)
+                         && Scales.ListEquals(other.Scales)
+                         && Layer.Equals(other.Layer)
+                         && Pivot.Equals(other.Pivot);
+            return result;
         }
     }
 }

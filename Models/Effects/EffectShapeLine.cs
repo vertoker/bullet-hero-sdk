@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeLine : IEffectShape, ICopyable<EffectShapeLine>
+    public class EffectShapeLine : IEffectShape,
+        ICopyable<EffectShapeLine>, IEquatable<EffectShapeLine>
     {
         [RuleNotNull]
         [JsonProperty(Names.Start)]
@@ -47,5 +50,19 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeLine(Start.Copy(), End.Copy(), Spread.Copy());
         public EffectShapeLine Copy() => new(Start.Copy(), End.Copy(), Spread.Copy());
+
+        public override bool Equals(object obj) => obj is EffectShapeLine value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Start, End, Spread);
+        
+        public bool Equals(IEffectShape other) => other is EffectShapeLine value && Equals(value);
+        public bool Equals(EffectShapeLine other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Start.Equals(other.Start)
+                         && End.Equals(other.End)
+                         && Spread.Equals(other.Spread);
+            return result;
+        }
     }
 }

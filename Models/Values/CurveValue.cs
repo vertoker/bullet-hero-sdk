@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class CurveValue : ICopyable<CurveValue>
+    public class CurveValue : ICopyable<CurveValue>, IEquatable<CurveValue>
     {
         public const int MaxCount = 4;
         
@@ -37,6 +40,19 @@ namespace BHSDK.Models.Values
         }
         
         public object Clone() => Copy();
-        public CurveValue Copy() => new(KeyFrames.Select(keyframe => keyframe.Copy()).ToList(), PostWrapMode, PreWrapMode);
+        public CurveValue Copy() => new(KeyFrames.CopyList(), PostWrapMode, PreWrapMode);
+
+        public override bool Equals(object obj) => obj is CurveValue value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(KeyFrames.GetListHashCode(), (int)PreWrapMode, (int)PostWrapMode);
+
+        public bool Equals(CurveValue other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = KeyFrames.ListEquals(other.KeyFrames)
+                         && PreWrapMode == other.PreWrapMode
+                         && PostWrapMode == other.PostWrapMode;
+            return result;
+        }
     }
 }

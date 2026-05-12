@@ -16,6 +16,7 @@
         
         public const int MaxObjectKeyframes = 32;
         
+        public const int MinObjectIdCounter = 1;
         public const int ObjectLayerDefault = 0;
         
         public const int MaxAudioVolumes = 32;

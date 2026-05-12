@@ -1,14 +1,17 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class FilmGrain : Keyframe, ICopyable<FilmGrain>
+    public class FilmGrain : Keyframe,
+        ICopyable<FilmGrain>, IEquatable<FilmGrain>
     {
         [JsonProperty(Names.Type)]
         public FilmGrainType Type { get; set; }
@@ -32,5 +35,18 @@ namespace BHSDK.Models.PostProcessing
 
         public object Clone() => Copy();
         public FilmGrain Copy() => new(Type, Intensity, Frame, Ease);
+
+        public override bool Equals(object obj) => obj is FilmGrain value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), (int)Type, Intensity);
+
+        public bool Equals(FilmGrain other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Type == other.Type
+                         && Intensity.Equals(other.Intensity);
+            return result;
+        }
     }
 }

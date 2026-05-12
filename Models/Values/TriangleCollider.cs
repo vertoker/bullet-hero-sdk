@@ -1,12 +1,14 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class TriangleCollider : ICopyable<TriangleCollider>
+    public class TriangleCollider : ICopyable<TriangleCollider>, IEquatable<TriangleCollider>
     {
         [RuleNotNull]
         [JsonProperty(Names.Point1)]
@@ -41,5 +43,18 @@ namespace BHSDK.Models.Values
 
         public object Clone() => Copy();
         public TriangleCollider Copy() => new(Point1.Copy(), Point2.Copy(), Point3.Copy());
+
+        public bool Equals(TriangleCollider other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Point1.Equals(other.Point1)
+                         && Point2.Equals(other.Point2)
+                         && Point3.Equals(other.Point3);
+            return result;
+        }
+
+        public override bool Equals(object obj) => obj is TriangleCollider value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Point1, Point2, Point3);
     }
 }

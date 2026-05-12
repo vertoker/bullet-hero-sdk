@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class PostProcessingEvents : ICopyable<PostProcessingEvents>
+    public class PostProcessingEvents : ICopyable<PostProcessingEvents>, IEquatable<PostProcessingEvents>
     {
         // General
         
@@ -138,5 +140,43 @@ namespace BHSDK.Models.Game
             Lenses.CopyList(), Grains.CopyList(), MotionBlurs.CopyList(), ColorCurveses.CopyList(),
             LiftGammaGains.CopyList(), ShadowsMidtonesHighlightses.CopyList(), WhiteBalances.CopyList(),
             AnalogGlitches.CopyList(), DigitalGlitches.CopyList());
+
+        public override bool Equals(object obj) => obj is PostProcessingEvents value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(Blooms.GetListHashCode());
+            hashCode.Add(Chromas.GetListHashCode());
+            hashCode.Add(Vignettes.GetListHashCode());
+            hashCode.Add(Lenses.GetListHashCode());
+            hashCode.Add(Grains.GetListHashCode());
+            hashCode.Add(MotionBlurs.GetListHashCode());
+            hashCode.Add(ColorCurveses.GetListHashCode());
+            hashCode.Add(LiftGammaGains.GetListHashCode());
+            hashCode.Add(ShadowsMidtonesHighlightses.GetListHashCode());
+            hashCode.Add(WhiteBalances.GetListHashCode());
+            hashCode.Add(AnalogGlitches.GetListHashCode());
+            hashCode.Add(DigitalGlitches.GetListHashCode());
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(PostProcessingEvents other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Blooms.ListEquals(other.Blooms)
+                         && Chromas.ListEquals(other.Chromas)
+                         && Vignettes.ListEquals(other.Vignettes)
+                         && Lenses.ListEquals(other.Lenses)
+                         && Grains.ListEquals(other.Grains)
+                         && MotionBlurs.ListEquals(other.MotionBlurs)
+                         && ColorCurveses.ListEquals(other.ColorCurveses)
+                         && LiftGammaGains.ListEquals(other.LiftGammaGains)
+                         && ShadowsMidtonesHighlightses.ListEquals(other.ShadowsMidtonesHighlightses)
+                         && WhiteBalances.ListEquals(other.WhiteBalances)
+                         && AnalogGlitches.ListEquals(other.AnalogGlitches)
+                         && DigitalGlitches.ListEquals(other.DigitalGlitches);
+            return result;
+        }
     }
 }

@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
+using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class StringLocalized : IString, ICopyable<StringLocalized>
+    public class StringLocalized : IString, ICopyable<StringLocalized>, IEquatable<StringLocalized>
     {
         [RuleNotNull, RuleCollectionUnique(nameof(StringLanguage.LanguageCode))]
         [JsonProperty(Names.Strings)]
@@ -27,7 +30,19 @@ namespace BHSDK.Models.Values
         public StringType GetModelType() => StringType.Localized;
 
         public object Clone() => Copy();
-        IString ICopyable<IString>.Copy() => new StringLocalized(Strings.Select(s => s.Copy()).ToList());
-        public StringLocalized Copy() => new(Strings.Select(s => s.Copy()).ToList());
+        IString ICopyable<IString>.Copy() => Copy();
+        public StringLocalized Copy() => new(Strings.CopyList());
+        
+        public override bool Equals(object obj) => obj is StringLocalized value && Equals(value);
+        public override int GetHashCode() => Strings.GetListHashCode();
+        
+        public bool Equals(IString other) => other is StringLocalized value && Equals(value);
+        public bool Equals(StringLocalized other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Strings.ListEquals(other.Strings);
+            return result;
+        }
     }
 }

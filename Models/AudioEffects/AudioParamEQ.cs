@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioParamEQ : AudioEffect, ICopyable<AudioParamEQ>
+    public class AudioParamEQ : AudioEffect, ICopyable<AudioParamEQ>, IEquatable<AudioParamEQ>
     {
         [RuleInRange(AudioRules.ParamEQ.CenterFreq_Min, AudioRules.ParamEQ.CenterFreq_Max)]
         [JsonProperty(Names.CenterFreq)]
@@ -37,5 +39,19 @@ namespace BHSDK.Models.AudioEffects
 
         public new object Clone() => Copy();
         public new AudioParamEQ Copy() => new(MixLevel, CenterFreq, OctaveRange, FrequencyGain);
+
+        public override bool Equals(object obj) => obj is AudioParamEQ value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), CenterFreq, OctaveRange, FrequencyGain);
+
+        public bool Equals(AudioParamEQ other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && CenterFreq.Equals(other.CenterFreq)
+                         && OctaveRange.Equals(other.OctaveRange)
+                         && FrequencyGain.Equals(other.FrequencyGain);
+            return result;
+        }
     }
 }

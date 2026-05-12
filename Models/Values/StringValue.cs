@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class StringValue : IString, ICopyable<StringValue>
+    public class StringValue : IString, ICopyable<StringValue>, IEquatable<StringValue>
     {
         [RuleNotNull, RuleStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.ValueShort)]
@@ -28,5 +30,17 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IString ICopyable<IString>.Copy() => new StringValue(Value);
         public StringValue Copy() => new(Value);
+
+        public override bool Equals(object obj) => obj is StringValue value && Equals(value);
+        public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
+        
+        public bool Equals(IString other) => other is StringValue value && Equals(value);
+        public bool Equals(StringValue other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Value.Equals(other.Value);
+            return result;
+        }
     }
 }

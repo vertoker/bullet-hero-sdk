@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class ObjectIdModification : ICopyable<ObjectIdModification>
+    public class ObjectIdModification : ICopyable<ObjectIdModification>, IEquatable<ObjectIdModification>
     {
         [JsonProperty(Names.PrevObjectId)]
         public int PrevObjectId { get; set; }
@@ -28,5 +30,17 @@ namespace BHSDK.Models.Objects
 
         public object Clone() => Copy();
         public ObjectIdModification Copy() => new(PrevObjectId, NextObjectId);
+
+        public override bool Equals(object obj) => obj is ObjectIdModification value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(PrevObjectId, NextObjectId);
+
+        public bool Equals(ObjectIdModification other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = PrevObjectId.Equals(other.PrevObjectId)
+                         && NextObjectId.Equals(other.NextObjectId);
+            return result;
+        }
     }
 }

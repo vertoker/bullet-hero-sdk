@@ -18,7 +18,8 @@ namespace BHSDK.Rules.Attributes
             MaxLength = maxLength;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is IString;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(IString).IsAssignableFrom(property.PropertyType);
         
         protected override bool IsValidInternal(object value, Level context)
         {

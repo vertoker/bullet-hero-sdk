@@ -1,13 +1,15 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class Vector4RectStep : IVector4, ICopyable<Vector4RectStep>
+    public class Vector4RectStep : IVector4, ICopyable<Vector4RectStep>, IEquatable<Vector4RectStep>
     {
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
@@ -72,5 +74,38 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IVector4 ICopyable<IVector4>.Copy() => new Vector4RectStep(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW, Step);
         public Vector4RectStep Copy() => new(MinX, MinY, MinZ, MinW, MaxX, MaxY, MaxZ, MaxW, Step);
+
+        public override bool Equals(object obj) => obj is Vector4RectStep value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(MinX);
+            hashCode.Add(MinY);
+            hashCode.Add(MinZ);
+            hashCode.Add(MinW);
+            hashCode.Add(MaxX);
+            hashCode.Add(MaxY);
+            hashCode.Add(MaxZ);
+            hashCode.Add(MaxW);
+            hashCode.Add(Step);
+            return hashCode.ToHashCode();
+        }
+        
+        public bool Equals(IVector4 other) => other is Vector4RectStep value && Equals(value);
+        public bool Equals(Vector4RectStep other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = MinX.Equals(other.MinX)
+                         && MinY.Equals(other.MinY)
+                         && MinZ.Equals(other.MinZ)
+                         && MinW.Equals(other.MinW)
+                         && MaxX.Equals(other.MaxX)
+                         && MaxY.Equals(other.MaxY)
+                         && MaxZ.Equals(other.MaxZ)
+                         && MaxW.Equals(other.MaxW)
+                         && Step.Equals(other.Step);
+            return result;
+        }
     }
 }

@@ -1,11 +1,13 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class ScreenAspect : ICopyable<ScreenAspect>
+    public class ScreenAspect : ICopyable<ScreenAspect>, IEquatable<ScreenAspect>
     {
         [RuleMin(1)]
         [JsonProperty(Names.WidthShort)]
@@ -32,5 +34,17 @@ namespace BHSDK.Models.Values
 
         public object Clone() => Copy();
         public ScreenAspect Copy() => new(Width, Height);
+
+        public override bool Equals(object obj) => obj is ScreenAspect value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Width, Height);
+
+        public bool Equals(ScreenAspect other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Width.Equals(other.Width)
+                         && Height.Equals(other.Height);
+            return result;
+        }
     }
 }

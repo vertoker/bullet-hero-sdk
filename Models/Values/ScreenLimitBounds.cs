@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Enum.Values;
+﻿using System;
+using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
     [RuleContainer]
-    public class ScreenLimitBounds : IScreenLimit, ICopyable<ScreenLimitBounds>
+    public class ScreenLimitBounds : IScreenLimit, ICopyable<ScreenLimitBounds>, IEquatable<ScreenLimitBounds>
     {
         [RuleNotNull]
         [JsonProperty(Names.MinAspect)]
@@ -50,5 +52,17 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitBounds(MinAspect.Copy(), MaxAspect.Copy());
         public ScreenLimitBounds Copy() => new(MinAspect.Copy(), MaxAspect.Copy());
+
+        public override bool Equals(object obj) => obj is ScreenLimitBounds value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(MinAspect, MaxAspect);
+
+        public bool Equals(ScreenLimitBounds other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = MinAspect.Equals(other.MinAspect)
+                         && MaxAspect.Equals(other.MaxAspect);
+            return result;
+        }
     }
 }

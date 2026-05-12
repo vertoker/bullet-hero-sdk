@@ -1,15 +1,17 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Keyframes
 {
     // TODO activate for player when add events
     [RuleContainer]
-    public class Velocity : Keyframe, ICopyable<Velocity>
+    public class Velocity : Keyframe, ICopyable<Velocity>, IEquatable<Velocity>
     {
         [RuleNotNull(typeof(Vector2Value))]
         [JsonProperty(Names.Vector2)]
@@ -26,5 +28,17 @@ namespace BHSDK.Models.Keyframes
 
         public object Clone() => Copy();
         public Velocity Copy() => new(Vector2.Copy(), Frame, Ease);
+
+        public override bool Equals(object obj) => obj is Velocity value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Vector2);
+
+        public bool Equals(Velocity other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Vector2.Equals(other.Vector2);
+            return result;
+        }
     }
 }

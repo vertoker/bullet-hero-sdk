@@ -1,14 +1,16 @@
-﻿using BHSDK.Models.Enum;
+﻿using System;
+using BHSDK.Models.Enum;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Clr : Keyframe, ICopyable<Clr>
+    public class Clr : Keyframe, ICopyable<Clr>, IEquatable<Clr>
     {
         [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.Color)]
@@ -25,5 +27,17 @@ namespace BHSDK.Models.Keyframes
 
         public object Clone() => Copy();
         public Clr Copy() => new(Value.Copy(), Frame, Ease);
+
+        public override bool Equals(object obj) => obj is Clr value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);
+
+        public bool Equals(Clr other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Value.Equals(other.Value);
+            return result;
+        }
     }
 }

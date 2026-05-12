@@ -15,7 +15,8 @@ namespace BHSDK.Rules.Attributes
             MaxCount = maxCount;
         }
 
-        protected override bool IsValidTypeInternal(object value) => value is ICollection;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(ICollection).IsAssignableFrom(property.PropertyType);
 
         protected override bool IsValidInternal(object value, Level context)
             => value is ICollection col && col.Count <= MaxCount;

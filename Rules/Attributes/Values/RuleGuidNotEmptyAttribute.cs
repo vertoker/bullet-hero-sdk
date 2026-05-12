@@ -7,7 +7,8 @@ namespace BHSDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleGuidNotEmptyAttribute : BaseRuleAttribute
     {
-        protected override bool IsValidTypeInternal(object value) => value is Guid;
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => typeof(Guid).IsAssignableFrom(property.PropertyType);
         
         protected override bool IsValidInternal(object value, Level context)
             => value is Guid guid && guid != Guid.Empty;

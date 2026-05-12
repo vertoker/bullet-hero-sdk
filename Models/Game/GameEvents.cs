@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Events;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Keyframes;
@@ -6,11 +7,12 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Game
 {
     [RuleContainer]
-    public class GameEvents : ICopyable<GameEvents>
+    public class GameEvents : ICopyable<GameEvents>, IEquatable<GameEvents>
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxMarkerEvents)]
         [RuleCollectionSorted(nameof(Marker.Frame))]
@@ -53,5 +55,20 @@ namespace BHSDK.Models.Game
 
         public object Clone() => Copy();
         public GameEvents Copy() => new(Markers.CopyList(), Checkpoints.CopyList(), Backgrounds.CopyList(), Themes.CopyList());
+
+        public override bool Equals(object obj) => obj is CameraEvents value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Markers.GetListHashCode(),
+            Checkpoints.GetListHashCode(), Backgrounds.GetListHashCode(), Themes.GetListHashCode());
+
+        public bool Equals(GameEvents other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Markers.ListEquals(other.Markers)
+                         && Checkpoints.ListEquals(other.Checkpoints)
+                         && Backgrounds.ListEquals(other.Backgrounds)
+                         && Themes.ListEquals(other.Themes);
+            return result;
+        }
     }
 }

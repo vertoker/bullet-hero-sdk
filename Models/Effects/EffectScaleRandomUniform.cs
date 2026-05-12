@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectScaleRandomUniform : IEffectScale, ICopyable<EffectScaleRandomUniform>
+    public class EffectScaleRandomUniform : IEffectScale,
+        ICopyable<EffectScaleRandomUniform>, IEquatable<EffectScaleRandomUniform>
     {
         [RuleNotNull]
         [JsonProperty(Names.ScaleX)]
@@ -41,5 +44,18 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectScale ICopyable<IEffectScale>.Copy() => new EffectScaleRandomUniform(ScaleA.Copy(), ScaleB.Copy());
         public EffectScaleRandomUniform Copy() => new(ScaleA.Copy(), ScaleB.Copy());
+
+        public override bool Equals(object obj) => obj is EffectScaleRandomUniform value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(ScaleA, ScaleB);
+        
+        public bool Equals(IEffectScale other) => other is EffectScaleRandomUniform value && Equals(value);
+        public bool Equals(EffectScaleRandomUniform other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = ScaleA.Equals(other.ScaleA)
+                         && ScaleB.Equals(other.ScaleB);
+            return result;
+        }
     }
 }

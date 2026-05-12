@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Resources
 {
     [RuleContainer]
-    public class LevelResources : ICopyable<LevelResources>
+    public class LevelResources : ICopyable<LevelResources>, IEquatable<LevelResources>
     {
         [RuleNotNull, RuleCollectionUnique(nameof(TextureResource.TextureResourceId))]
         [JsonProperty(Names.Textures)]
@@ -44,5 +46,20 @@ namespace BHSDK.Models.Resources
 
         public object Clone() => Copy();
         public LevelResources Copy() => new(Textures.CopyList(), Fonts.CopyList(), Audios.CopyList(), CompositeShapes.CopyList());
+
+        public override bool Equals(object obj) => obj is LevelResources value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Textures.GetListHashCode(),
+            Fonts.GetListHashCode(), Audios.GetListHashCode(), CompositeShapes.GetListHashCode());
+
+        public bool Equals(LevelResources other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Textures.ListEquals(other.Textures)
+                          && Fonts.ListEquals(other.Fonts)
+                          && Audios.ListEquals(other.Audios)
+                          && CompositeShapes.ListEquals(other.CompositeShapes);
+            return result;
+        }
     }
 }

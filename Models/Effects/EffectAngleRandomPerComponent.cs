@@ -1,4 +1,5 @@
-﻿using BHSDK.Models.Enum.Effects;
+﻿using System;
+using BHSDK.Models.Enum.Effects;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Effects;
 using BHSDK.Models.Interfaces.Values;
@@ -7,11 +8,13 @@ using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectAngleRandomPerComponent : IEffectAngle, ICopyable<EffectAngleRandomPerComponent>
+    public class EffectAngleRandomPerComponent : IEffectAngle,
+        ICopyable<EffectAngleRandomPerComponent>, IEquatable<EffectAngleRandomPerComponent>
     {
         [RuleNotNull]
         [JsonProperty(Names.AngleA)]
@@ -42,5 +45,18 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         IEffectAngle ICopyable<IEffectAngle>.Copy() => new EffectAngleRandomPerComponent(AngleA.Copy(), AngleB.Copy());
         public EffectAngleRandomPerComponent Copy() => new(AngleA.Copy(), AngleB.Copy());
+
+        public override bool Equals(object obj) => obj is EffectAngleRandomPerComponent value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(AngleA, AngleB);
+        
+        public bool Equals(IEffectAngle other) => other is EffectAngleRandomPerComponent value && Equals(value);
+        public bool Equals(EffectAngleRandomPerComponent other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = AngleA.Equals(other.AngleA)
+                         && AngleB.Equals(other.AngleB);
+            return result;
+        }
     }
 }

@@ -1,15 +1,17 @@
-﻿using BHSDK.Models.Interfaces;
+﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectObjectCore : ICopyable<EffectObjectCore>, IUpdatable<EffectObjectCore>
+    public class EffectObjectCore : ICopyable<EffectObjectCore>, IEquatable<EffectObjectCore>, IUpdatable<EffectObjectCore>
     {
         [JsonProperty(Names.Loop)]
         public bool Loop { get; set; }
@@ -78,5 +80,23 @@ namespace BHSDK.Models.Effects
         public object Clone() => Copy();
         public EffectObjectCore Copy() => new(Loop, ParticleCount, LifetimeBounds.Copy(),
             HasStopLocalFrame, StopLocalFrame, TextureResourceId, ParticlePivot.Copy());
+
+        public override bool Equals(object obj) => obj is EffectObjectCore value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Loop, ParticleCount,
+            LifetimeBounds, HasStopLocalFrame, StopLocalFrame, TextureResourceId, ParticlePivot);
+
+        public bool Equals(EffectObjectCore other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = Loop == other.Loop
+                         && ParticleCount.Equals(other.ParticleCount)
+                         && LifetimeBounds.Equals(other.LifetimeBounds)
+                         && HasStopLocalFrame == other.HasStopLocalFrame
+                         && StopLocalFrame.Equals(other.StopLocalFrame)
+                         && TextureResourceId.Equals(other.TextureResourceId)
+                         && ParticlePivot.Equals(other.ParticlePivot);
+            return result;
+        }
     }
 }

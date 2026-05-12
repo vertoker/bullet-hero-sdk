@@ -10,11 +10,13 @@ using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class EffectObject : Object, IEffect, ICopyable<EffectObject>, IUpdatable<EffectObject>
+    public class EffectObject : Object, IEffect,
+        ICopyable<EffectObject>, IEquatable<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.Effect;
 
@@ -84,6 +86,24 @@ namespace BHSDK.Models.Objects
             EffectAngle = src.EffectAngle.Copy();
             EffectScale = src.EffectScale.Copy();
             EffectColor = src.EffectColor.Copy();
+        }
+
+        public override bool Equals(object obj) => obj is EffectObject value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
+            Core, Forces, EffectShape, EffectAngle, EffectScale, EffectColor);
+
+        public bool Equals(EffectObject other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var result = base.Equals(other)
+                         && Core.Equals(other.Core)
+                         && Forces.Equals(other.Forces)
+                         && EffectShape.Equals(other.EffectShape)
+                         && EffectAngle.Equals(other.EffectAngle)
+                         && EffectScale.Equals(other.EffectScale)
+                         && EffectColor.Equals(other.EffectColor);
+            return result;
         }
     }
 }
