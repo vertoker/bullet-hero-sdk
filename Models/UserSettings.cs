@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models
 {
     [RuleContainer]
-    public class Settings : ISettings
+    public class UserSettings : IUserSettings
     {
         public Version GetVersion() => new(1, 0);
         
@@ -31,7 +31,7 @@ namespace BHSDK.Models
         [JsonProperty(Names.GameEditor)]
         public GameEditorSettings GameEditor { get; set; }
 
-        public Settings()
+        public UserSettings()
         {
             General = new GeneralSettings();
             Controls = new ControlsSettings();
@@ -39,7 +39,7 @@ namespace BHSDK.Models
             Graphics = new GraphicsSettings();
             GameEditor = new GameEditorSettings();
         }
-        public Settings(GeneralSettings general, ControlsSettings controls,
+        public UserSettings(GeneralSettings general, ControlsSettings controls,
             AudioSettings audio, GraphicsSettings graphics, GameEditorSettings gameEditor)
         {
             General = general;

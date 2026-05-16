@@ -371,8 +371,8 @@
         
         public const string AutosaveRate = Autosave + _ + Rate;
         public const string MaxAutosaveFiles = Max + _ + Autosave + _ + Files;
-        public const string EditorCameraMinSize = Editor + _ + Camera + _ + Min + _ + Size;
-        public const string EditorCameraMaxSize = Editor + _ + Camera + _ + Max + _ + Size;
+        public const string CameraMinSize = Camera + _ + Min + _ + Size;
+        public const string CameraMaxSize = Camera + _ + Max + _ + Size;
         public const string EditorSettings = Editor + _ + Settings;
         
         public const string GameEditor = Game + _ + Editor;

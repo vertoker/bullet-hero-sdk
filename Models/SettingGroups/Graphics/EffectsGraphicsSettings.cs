@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.SettingGroups.Graphics
 {
     [RuleContainer]
-    public class EffectsSettings : BaseGraphicsSettings
+    public class EffectsGraphicsSettings : BaseGraphicsSettings
     {
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
@@ -18,14 +18,14 @@ namespace BHSDK.Models.SettingGroups.Graphics
         [JsonProperty(Names.MaxScrubTime)]
         public float MaxScrubTime { get; set; }
 
-        public EffectsSettings()
+        public EffectsGraphicsSettings()
         {
             Render = true;
             FramerateTarget = FramerateTarget.Fixed;
             FixedFramerate = 50;
             MaxScrubTime = 0.5f;
         }
-        public EffectsSettings(bool render, FramerateTarget framerateTarget,
+        public EffectsGraphicsSettings(bool render, FramerateTarget framerateTarget,
             int fixedFramerate, float maxScrubTime) : base(render)
         {
             FramerateTarget = framerateTarget;

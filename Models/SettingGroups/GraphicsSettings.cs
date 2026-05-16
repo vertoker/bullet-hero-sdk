@@ -20,23 +20,23 @@ namespace BHSDK.Models.SettingGroups
         
         [RuleNotNull]
         [JsonProperty(Names.Audio)]
-        public AudioSettings Audio { get; set; }
+        public AudioGraphicsSettings Audio { get; set; }
         
         [RuleNotNull]
         [JsonProperty(Names.Effects)]
-        public EffectsSettings Effects { get; set; }
+        public EffectsGraphicsSettings Effects { get; set; }
         
         [RuleNotNull]
         [JsonProperty(Names.Text)]
-        public PostProcessingSettings PostProcessing { get; set; }
+        public PostProcessingGraphicsSettings PostProcessing { get; set; }
 
         public GraphicsSettings()
         {
             FramerateTarget = FramerateTarget.ScreenHz;
-            FixedFramerate = 0;
-            Audio = new AudioSettings();
-            Effects = new EffectsSettings();
-            PostProcessing = new PostProcessingSettings();
+            FixedFramerate = 60;
+            Audio = new AudioGraphicsSettings();
+            Effects = new EffectsGraphicsSettings();
+            PostProcessing = new PostProcessingGraphicsSettings();
         }
     }
 }

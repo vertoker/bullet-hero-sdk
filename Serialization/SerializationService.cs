@@ -61,7 +61,7 @@ namespace BHSDK.Serialization
                 new LevelDataConverter(compatibilityService),
                 new PrefabDataConverter(compatibilityService),
                 new ThemeDataConverter(compatibilityService),
-                new SettingsDataConverter(compatibilityService),
+                new UserSettingsDataConverter(compatibilityService),
                 
                 new IntConverter(innerSerializer),
                 new FloatConverter(innerSerializer),
@@ -111,10 +111,10 @@ namespace BHSDK.Serialization
             var json = textWriter.ToString();
             return json;
         }
-        public string SerializeSettings(ISettings settings)
+        public string SerializeUserSettings(IUserSettings userSettings)
         {
-            if (settings == null) return string.Empty;
-            var data = new SettingsData(settings);
+            if (userSettings == null) return string.Empty;
+            var data = new UserSettingsData(userSettings);
             
             using var textWriter = new StringWriter();
             Serializer.Serialize(textWriter, data);
@@ -166,13 +166,13 @@ namespace BHSDK.Serialization
             
             return obj;
         }
-        public Settings DeserializeSettings(string json)
+        public UserSettings DeserializeUserSettings(string json)
         {
             using var stringReader = new StringReader(json);
             using var jsonTextReader = new JsonTextReader(stringReader);
             
-            var data = Serializer.Deserialize<SettingsData>(jsonTextReader);
-            var obj = CompatibilityService.Convert(data.Settings);
+            var data = Serializer.Deserialize<UserSettingsData>(jsonTextReader);
+            var obj = CompatibilityService.Convert(data.UserSettings);
             
             return obj;
         }

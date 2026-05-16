@@ -19,5 +19,10 @@ namespace BHSDK.Models.SettingGroups
             ResourceParallelLoadCount = 2;
             ResourceWebTimeout = 5f;
         }
+        public GeneralSettings(int resourceParallelLoadCount, float resourceWebTimeout)
+        {
+            ResourceParallelLoadCount = resourceParallelLoadCount;
+            ResourceWebTimeout = resourceWebTimeout;
+        }
     }
 }

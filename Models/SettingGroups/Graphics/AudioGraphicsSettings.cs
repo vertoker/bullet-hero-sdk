@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.SettingGroups.Graphics
 {
-    public class AudioSettings : BaseGraphicsSettings
+    public class AudioGraphicsSettings : BaseGraphicsSettings
     {
         [JsonProperty(Names.RenderEffects)]
         public bool RenderEffects { get; set; }
@@ -19,14 +19,14 @@ namespace BHSDK.Models.SettingGroups.Graphics
         [JsonProperty(Names.ScrubTime)]
         public float ScrubTime { get; set; }
 
-        public AudioSettings()
+        public AudioGraphicsSettings()
         {
             RenderEffects = true;
             MaxDiffTime = 0.2f;
             UseScrub = true;
             ScrubTime = 0.1f;
         }
-        public AudioSettings(bool render, bool renderEffects,
+        public AudioGraphicsSettings(bool render, bool renderEffects,
             float maxDiffTime, bool useScrub, float scrubTime) : base(render)
         {
             RenderEffects = renderEffects;

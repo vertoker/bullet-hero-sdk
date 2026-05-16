@@ -12,9 +12,9 @@ namespace BHSDK.Serialization
         {
             return (Level)level;
         }
-        public Settings Convert(ISettings settings)
+        public UserSettings Convert(IUserSettings userSettings)
         {
-            return (Settings)settings;
+            return (UserSettings)userSettings;
         }
         public Prefab Convert(IPrefab prefab)
         {
@@ -33,9 +33,9 @@ namespace BHSDK.Serialization
         {
             return typeof(Level);
         }
-        public Type GetSettingsType(Version version)
+        public Type GetUserSettingsType(Version version)
         {
-            return typeof(Settings);
+            return typeof(UserSettings);
         }
         public Type GetPrefabType(Version version)
         {

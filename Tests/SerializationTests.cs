@@ -370,19 +370,19 @@ namespace BHSDK.Tests
 
             var testSettings = CreateTestSettings();
 
-            var data = new SettingsData(testSettings);
+            var data = new UserSettingsData(testSettings);
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
             Cat.Meow($"Settings - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<SettingsData>(reader);
+            data = serializationService.Serializer.Deserialize<UserSettingsData>(reader);
         }
 
-        public Settings CreateTestSettings()
+        public UserSettings CreateTestSettings()
         {
-            var settings = new Settings();
+            var settings = new UserSettings();
             return settings;
         }
     }

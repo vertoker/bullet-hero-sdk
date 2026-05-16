@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Models.Interfaces.SaveData
 {
-    public interface ISettings : IData
+    public interface IUserSettings : IData
     {
         
     }

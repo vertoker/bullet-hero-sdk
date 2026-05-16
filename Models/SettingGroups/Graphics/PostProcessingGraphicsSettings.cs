@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.SettingGroups.Graphics
 {
-    public class PostProcessingSettings : BaseGraphicsSettings
+    public class PostProcessingGraphicsSettings : BaseGraphicsSettings
     {
         [JsonProperty(Names.RenderBloom)]
         public bool RenderBloom { get; set; }
@@ -41,7 +41,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
         [JsonProperty(Names.RenderDigitalGlitch)]
         public bool RenderDigitalGlitch { get; set; }
 
-        public PostProcessingSettings()
+        public PostProcessingGraphicsSettings()
         {
             RenderBloom = true;
             RenderChroma = true;
@@ -56,7 +56,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = true;
             RenderDigitalGlitch = true;
         }
-        public PostProcessingSettings(bool render, bool renderBloom, bool renderChroma, bool renderVignette,
+        public PostProcessingGraphicsSettings(bool render, bool renderBloom, bool renderChroma, bool renderVignette,
             bool renderLens, bool renderGrain, bool renderMotionBlur, bool renderColorCurves, bool renderLiftGammaGain,
             bool renderShadowsMidtonesHighlights, bool renderWhiteBalance, bool renderAnalogGlitch,
             bool renderDigitalGlitch) : base(render)
@@ -75,7 +75,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderDigitalGlitch = renderDigitalGlitch;
         }
 
-        public PostProcessingSettings PresetNone => new()
+        public PostProcessingGraphicsSettings PresetNone => new()
         {
             Render = false,
             RenderBloom = false,
@@ -91,7 +91,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = false,
             RenderDigitalGlitch = false,
         };
-        public PostProcessingSettings PresetMobile => new()
+        public PostProcessingGraphicsSettings PresetMobile => new()
         {
             Render = true,
             RenderBloom = false, // HEAVY
@@ -107,7 +107,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = false, // HEAVY
             RenderDigitalGlitch = false, // HEAVY
         };
-        public PostProcessingSettings PresetAll => new()
+        public PostProcessingGraphicsSettings PresetAll => new()
         {
             Render = true,
             RenderBloom = true,

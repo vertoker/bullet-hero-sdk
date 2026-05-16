@@ -17,28 +17,28 @@ namespace BHSDK.Models.SettingGroups
         
         // Editor Camera
         
-        [JsonProperty(Names.EditorCameraMinSize)]
-        public float EditorCameraMinSize { get; set; }
+        [JsonProperty(Names.CameraMinSize)]
+        public float CameraMinSize { get; set; }
         
-        [JsonProperty(Names.EditorCameraMaxSize)]
-        public float EditorCameraMaxSize { get; set; }
+        [JsonProperty(Names.CameraMaxSize)]
+        public float CameraMaxSize { get; set; }
 
         public GameEditorSettings()
         {
             Autosave = true;
             AutosaveRate = 60f;
             MaxAutosaveFiles = 25;
-            EditorCameraMinSize = 0.1f;
-            EditorCameraMaxSize = 100f;
+            CameraMinSize = 0.1f;
+            CameraMaxSize = 100f;
         }
         public GameEditorSettings(bool autosave, float autosaveRate, int maxAutosaveFiles,
-            float editorCameraMinSize, float editorCameraMaxSize)
+            float cameraMinSize, float cameraMaxSize)
         {
             Autosave = autosave;
             AutosaveRate = autosaveRate;
             MaxAutosaveFiles = maxAutosaveFiles;
-            EditorCameraMinSize = editorCameraMinSize;
-            EditorCameraMaxSize = editorCameraMaxSize;
+            CameraMinSize = cameraMinSize;
+            CameraMaxSize = cameraMaxSize;
         }
     }
 }
