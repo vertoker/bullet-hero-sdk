@@ -18,11 +18,11 @@ namespace BHSDK.Rules.Attributes
             DefaultConstructType = defaultConstructType;
         }
 
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
         {
             return value != null;
         }
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             var valueType = DefaultConstructType ?? property.PropertyType;
             var value = CreateDefaultValue(valueType);

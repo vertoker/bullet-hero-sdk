@@ -23,7 +23,7 @@ namespace BHSDK.Rules.Attributes
         public RuleMaxAttribute(decimal max) { Max = max; }
         public RuleMaxAttribute(object max) { Max = max; }
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
         {
             if (Max == null) return false;
 
@@ -36,7 +36,7 @@ namespace BHSDK.Rules.Attributes
             return comparableValue.CompareTo(max) <= 0;
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             if (Max == null) return;
 

@@ -39,18 +39,18 @@ namespace BHSDK.Validations
             }
         }
 
-        public List<LevelIssue> Analyze(Level level, LevelAnalyzerSettings settings)
+        public List<LevelIssue> Analyze(object obj, LevelAnalyzerSettings settings)
         {
             var result = new List<LevelIssue>(4);
 
             Cat.Meow("Analyze");
-            AnalyzeRecursive(level, settings, result, level);
+            AnalyzeRecursive(obj, settings, result, obj);
             _trace.Clear();
             
             return result;
         }
         
-        private void AnalyzeRecursive(object context, LevelAnalyzerSettings settings, List<LevelIssue> result, Level level)
+        private void AnalyzeRecursive(object context, LevelAnalyzerSettings settings, List<LevelIssue> result, object obj)
         {
             if (context == null) return;
             var contextType = context.GetType();
@@ -77,7 +77,7 @@ namespace BHSDK.Validations
                                                  $"to type {nextObj?.GetType().Name}, path: {_trace.GetPath()}");
                     }
                     
-                    if (!rule.IsValid(nextObj, level))
+                    if (!rule.IsValid(nextObj, obj))
                     {
                         invalidRule = rule;
                         break;
@@ -86,7 +86,7 @@ namespace BHSDK.Validations
 
                 if (invalidRule != null)
                 {
-                    var issue = new LevelIssue(invalidRule, level, new List<LevelPath>(_trace));
+                    var issue = new LevelIssue(invalidRule, obj, new List<LevelPath>(_trace));
                     result.Add(issue);
                     Cat.MeowWarn(issue);
                 }
@@ -104,7 +104,7 @@ namespace BHSDK.Validations
                     for (var i = 0; i < list.Count; i++)
                     {
                         _trace.Add(new LevelPath(nextProp, i));
-                        AnalyzeRecursive(list[i], settings, result, level);
+                        AnalyzeRecursive(list[i], settings, result, obj);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
@@ -114,14 +114,14 @@ namespace BHSDK.Validations
                     for (var i = 0; i < array.Length; i++)
                     {
                         _trace.Add(new LevelPath(nextProp, i));
-                        AnalyzeRecursive(array.GetValue(i), settings, result, level);
+                        AnalyzeRecursive(array.GetValue(i), settings, result, obj);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
                 else
                 {
                     _trace.Add(new LevelPath(nextProp));
-                    AnalyzeRecursive(nextObj, settings, result, level);
+                    AnalyzeRecursive(nextObj, settings, result, obj);
                     _trace.RemoveAt(_trace.Count - 1);
                 }
             }

@@ -10,12 +10,12 @@ namespace BHSDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(int).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
         {
             throw new NotImplementedException();
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             throw new NotImplementedException();
         }

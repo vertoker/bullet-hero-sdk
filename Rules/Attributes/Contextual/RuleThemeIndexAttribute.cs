@@ -11,19 +11,21 @@ namespace BHSDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(int).IsAssignableFrom(property.PropertyType);
 
-        protected override bool IsValidInternal(object value, Level context)
-            => value is int themeIndex and >= 0 && themeIndex < context.Game.Themes.Count;
+        protected override bool IsValidInternal(object value, object context)
+            => value is int themeIndex and >= 0
+               && context is Level level && themeIndex < level.Game.Themes.Count;
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
-            if (context.Game.Themes.Count == 0) return;
+            if (context is not Level level) return;
+            if (level.Game.Themes.Count == 0) return;
             
             var value = property.GetValue(target);
             if (value is not int themeIndex) return;
 
-            if (themeIndex < 0 || themeIndex >= context.Game.Themes.Count)
+            if (themeIndex < 0 || themeIndex >= level.Game.Themes.Count)
             {
-                themeIndex = MathUtils.Clamp(themeIndex, 0, context.Game.Themes.Count);
+                themeIndex = MathUtils.Clamp(themeIndex, 0, level.Game.Themes.Count);
                 property.SetValue(target, themeIndex);
             }
         }

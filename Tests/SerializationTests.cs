@@ -13,7 +13,6 @@ using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Resources;
 using BHSDK.Models.SaveData;
-using BHSDK.Models.Settings;
 using BHSDK.Models.Values;
 using BHSDK.Serialization;
 using Newtonsoft.Json;
@@ -369,46 +368,21 @@ namespace BHSDK.Tests
             var settings = new SerializationSettings(Formatting.Indented);
             var serializationService = new SerializationService(settings);
 
-            var playerSettings = CreateTestPlayerSettings();
+            var testSettings = CreateTestSettings();
 
-            var data = new PlayerSettingsData(playerSettings);
+            var data = new SettingsData(testSettings);
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
-            Cat.Meow($"PlayerSettings - <color=green>{json}</color>");
+            Cat.Meow($"Settings - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<PlayerSettingsData>(reader);
+            data = serializationService.Serializer.Deserialize<SettingsData>(reader);
         }
 
-        public PlayerSettings CreateTestPlayerSettings()
+        public Settings CreateTestSettings()
         {
-            var settings = new PlayerSettings();
-            return settings;
-        }
-        
-        [Test]
-        [Author(Metadata.Author.Vertoker)]
-        public void TestEditorSettingsSerialization()
-        {
-            var settings = new SerializationSettings(Formatting.Indented);
-            var serializationService = new SerializationService(settings);
-
-            var editorSettings = CreateTestEditorSettings();
-
-            var data = new EditorSettingsData(editorSettings);
-            var textWriter = new StringWriter();
-            serializationService.Serializer.Serialize(textWriter, data);
-            var json = textWriter.ToString();
-            Cat.Meow($"EditorSettings - <color=green>{json}</color>");
-
-            var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<EditorSettingsData>(reader);
-        }
-
-        public EditorSettings CreateTestEditorSettings()
-        {
-            var settings = new EditorSettings();
+            var settings = new Settings();
             return settings;
         }
     }

@@ -30,12 +30,6 @@ namespace BHSDK.Models.NoGame
         [RuleNotNull, RuleCollectionMaxCount(8)]
         [JsonProperty(Names.Authors)]
         public List<Author> Authors { get; set; }
-        
-        [RuleMin(ValueRules.MinObjectIdCounter)]
-        [JsonProperty(Names.ObjectIdCounter)]
-        public int ObjectIdCounter { get; set; }
-        
-        public int GetNextObjectId() => ObjectIdCounter++;
 
         public LevelMeta()
         {
@@ -43,22 +37,20 @@ namespace BHSDK.Models.NoGame
             LevelVersion = new Version();
             LevelGuid = Guid.NewGuid();
             Authors = new List<Author>();
-            ObjectIdCounter = ValueRules.MinObjectIdCounter;
         }
-        public LevelMeta(IString levelName, Version levelVersion, Guid levelGuid, List<Author> authors, int objectIdCounter)
+        public LevelMeta(IString levelName, Version levelVersion, Guid levelGuid, List<Author> authors)
         {
             LevelName = levelName;
             LevelVersion = levelVersion;
             LevelGuid = levelGuid;
             Authors = authors;
-            ObjectIdCounter = objectIdCounter;
         }
 
         public object Clone() => Copy();
-        public LevelMeta Copy() => new(LevelName.Copy(), (Version)LevelVersion.Clone(), LevelGuid, Authors.CopyList(), ObjectIdCounter);
+        public LevelMeta Copy() => new(LevelName.Copy(), (Version)LevelVersion.Clone(), LevelGuid, Authors.CopyList());
 
         public override bool Equals(object obj) => obj is LevelMeta value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(LevelName, LevelVersion, LevelGuid, Authors.GetListHashCode(), ObjectIdCounter);
+        public override int GetHashCode() => HashCode.Combine(LevelName, LevelVersion, LevelGuid, Authors.GetListHashCode());
 
         public bool Equals(LevelMeta other)
         {
@@ -67,8 +59,7 @@ namespace BHSDK.Models.NoGame
             var result = LevelName.Equals(other.LevelName)
                           && LevelVersion.Equals(other.LevelVersion)
                           && LevelGuid.Equals(other.LevelGuid)
-                          && Authors.ListEquals(other.Authors)
-                          && ObjectIdCounter.Equals(other.ObjectIdCounter);
+                          && Authors.ListEquals(other.Authors);
             return result;
         }
     }

@@ -5,9 +5,10 @@ using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Settings
+namespace BHSDK.Models.SettingGroups
 {
     [RuleContainer]
     public class LevelSettings : ICopyable<LevelSettings>, IEquatable<LevelSettings>
@@ -24,25 +25,33 @@ namespace BHSDK.Models.Settings
         [JsonProperty(Names.ScreenLimit)]
         public IScreenLimit ScreenLimit { get; set; }
         // limitations for screen will be chosen by mappers
+        
+        [RuleMin(ValueRules.MinObjectIdCounter)]
+        [JsonProperty(Names.ObjectIdCounter)]
+        public int ObjectIdCounter { get; set; }
+        
+        public int GetNextObjectId() => ObjectIdCounter++;
 
         public LevelSettings()
         {
             Framerate = 60;
             FrameLength = Framerate * 10;
             ScreenLimit = new ScreenLimitNone();
+            ObjectIdCounter = ValueRules.MinObjectIdCounter;
         }
-        public LevelSettings(int framerate, int frameLength, IScreenLimit screenLimit)
+        public LevelSettings(int framerate, int frameLength, IScreenLimit screenLimit, int objectIdCounter)
         {
             Framerate = framerate;
             FrameLength = frameLength;
             ScreenLimit = screenLimit;
+            ObjectIdCounter = objectIdCounter;
         }
 
         public object Clone() => Copy();
-        public LevelSettings Copy() => new(Framerate, FrameLength, ScreenLimit.Copy());
+        public LevelSettings Copy() => new(Framerate, FrameLength, ScreenLimit.Copy(), ObjectIdCounter);
 
         public override bool Equals(object obj) => obj is LevelSettings value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ScreenLimit);
+        public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ScreenLimit, ObjectIdCounter);
 
         public bool Equals(LevelSettings other)
         {
@@ -50,7 +59,8 @@ namespace BHSDK.Models.Settings
             if (ReferenceEquals(this, other)) return true;
             var result = Framerate.Equals(other.Framerate)
                           && FrameLength.Equals(other.FrameLength)
-                          && ScreenLimit.Equals(other.ScreenLimit);
+                          && ScreenLimit.Equals(other.ScreenLimit)
+                          && ObjectIdCounter.Equals(other.ObjectIdCounter);
             return result;
         }
     }

@@ -24,7 +24,7 @@ namespace BHSDK.Rules.Attributes
         public RuleMinAttribute(decimal min) { Min = min; }
         public RuleMinAttribute(object min) { Min = min; }
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
         {
             if (Min == null) return false;
 
@@ -37,7 +37,7 @@ namespace BHSDK.Rules.Attributes
             return comparableValue.CompareTo(min) >= 0;
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             if (Min == null) return;
 

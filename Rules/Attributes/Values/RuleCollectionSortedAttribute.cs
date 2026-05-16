@@ -23,7 +23,7 @@ namespace BHSDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(ICollection).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
         {
             if (value is not ICollection collection) return false;
             
@@ -66,7 +66,7 @@ namespace BHSDK.Rules.Attributes
             return true;
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             var value = property.GetValue(target);
             if (value is not ICollection collection) return;

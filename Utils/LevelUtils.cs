@@ -1,13 +1,13 @@
-﻿using BHSDK.Models.NoGame;
-using BHSDK.Models.Objects;
+﻿using BHSDK.Models.Objects;
+using BHSDK.Models.SettingGroups;
 
 namespace BHSDK.Utils
 {
     public static class LevelUtils
     {
-        public static void SetObjectId(this Object obj, LevelMeta meta)
+        public static void SetObjectId(this Object obj, LevelSettings settings)
         {
-            obj.ObjectId = meta.GetNextObjectId();
+            obj.ObjectId = settings.GetNextObjectId();
         }
         public static void SetParent(this Object obj, Object parentObj)
         {

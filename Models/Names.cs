@@ -32,11 +32,21 @@
         public const string Track = "track";
         public const string Tracks = "tracks";
         public const string Settings = "settings";
+        public const string General = "general";
+        public const string Graphics = "graphics";
         public const string Game = "game";
         public const string Audio = "audio";
         public const string Audios = "audios";
         public const string AudioShort = "a";
         public const string Resources = "resources";
+        public const string Target = "target";
+        public const string Fixed = "fixed";
+        public const string Render = "render";
+        public const string Load = "load";
+        public const string Parallel = "parallel";
+        public const string Delta = "delta";
+        public const string Scrub = "scrub";
+        public const string Diff = "diff";
         
         public const string Name = "name";
         public const string Title = "title";
@@ -162,6 +172,7 @@
         public const string AnalogGlitchShort = "agl";
         public const string DigitalGlitchShort = "dgl";
         
+        public const string Classic = "classic";
         public const string Control = "control";
         public const string Controls = "controls";
         public const string Visible = "visible";
@@ -346,6 +357,8 @@
         public const string Make = "make";
         
         public const string Autosave = "autosave";
+        public const string File = "file";
+        public const string Files = "files";
         
         private const string _ = "_";
         
@@ -357,8 +370,34 @@
         public const string ScreenLimit = Screen + _ + Limit;
         
         public const string AutosaveRate = Autosave + _ + Rate;
-        public const string PlayerSettings = Player + _ + Settings;
+        public const string MaxAutosaveFiles = Max + _ + Autosave + _ + Files;
+        public const string EditorCameraMinSize = Editor + _ + Camera + _ + Min + _ + Size;
+        public const string EditorCameraMaxSize = Editor + _ + Camera + _ + Max + _ + Size;
         public const string EditorSettings = Editor + _ + Settings;
+        
+        public const string GameEditor = Game + _ + Editor;
+        public const string ClassicControlsType = Classic + _ + Controls + _ + Type;
+        public const string FramerateTarget = Framerate + _ + Target;
+        public const string FixedFramerate = Fixed + _ + Framerate;
+        public const string RenderEffects = Render + _ + Effects;
+        public const string ResourceParallelLoadCount = Resource + _ + Parallel + _ + Load + _ + Count;
+        public const string TargetDeltaTime = Target + _ + Delta + _ + Time;
+        public const string ScrubTime = Scrub + _ + Time;
+        public const string MaxScrubTime = Max + _ + Scrub + _ + Time;
+        public const string MaxDiffTime = Max + _ + Diff + _ + Time;
+        
+        public const string RenderBloom = Render + _ + BloomShort;
+        public const string RenderChroma = Render + _ + ChromaShort;
+        public const string RenderVignette = Render + _ + VignetteShort;
+        public const string RenderLens = Render + _ + LensShort;
+        public const string RenderGrain = Render + _ + GrainShort;
+        public const string RenderMotionBlur = Render + _ + MotionBlurShort;
+        public const string RenderColorCurves = Render + _ + ColorCurvesShort;
+        public const string RenderLiftGammaGain = Render + _ + LiftGammaGainShort;
+        public const string RenderShadowsMidtonesHighlights = Render + _ + ShadowsMidtonesHighlightsShort;
+        public const string RenderWhiteBalance = Render + _ + WhiteBalanceShort;
+        public const string RenderAnalogGlitch = Render + _ + AnalogGlitchShort;
+        public const string RenderDigitalGlitch = Render + _ + DigitalGlitchShort;
         
         public const string ThemeIndex = Theme + _ + Index;
         

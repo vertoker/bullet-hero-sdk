@@ -10,10 +10,10 @@ namespace BHSDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(Guid).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
             => value is Guid guid && guid != Guid.Empty;
         
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             property.SetValue(target, Guid.NewGuid());
         }

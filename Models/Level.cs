@@ -5,7 +5,7 @@ using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.NoGame;
 using BHSDK.Models.Resources;
-using BHSDK.Models.Settings;
+using BHSDK.Models.SettingGroups;
 using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 // ReSharper disable NonReadonlyMemberInGetHashCode

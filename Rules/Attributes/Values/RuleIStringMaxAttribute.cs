@@ -21,7 +21,7 @@ namespace BHSDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IString).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
         {
             if (value is not IString str) return false;
 
@@ -46,7 +46,7 @@ namespace BHSDK.Rules.Attributes
             }
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             var value = property.GetValue(target);
             if (value is not IString str) return;

@@ -25,7 +25,7 @@ namespace BHSDK.Rules.Attributes
         public RuleInRangeAttribute(decimal min, decimal max) { Min = min; Max = max; }
         public RuleInRangeAttribute(object min, object max) { Min = min; Max = max; }
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
         {
             if (Min == null || Max == null) return false;
 
@@ -39,7 +39,7 @@ namespace BHSDK.Rules.Attributes
             return comparableValue.CompareTo(min) >= 0 && comparableValue.CompareTo(max) <= 0;
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             if (Min == null || Max == null) return;
 

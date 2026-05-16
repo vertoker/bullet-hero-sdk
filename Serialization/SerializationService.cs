@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using BHSDK.Models;
 using BHSDK.Models.Interfaces.SaveData;
+using BHSDK.Models.Objects;
+using BHSDK.Models.SaveData;
+using BHSDK.Models.Values;
 using BHSDK.Serialization.Converters;
 using BHSDK.Serialization.Converters.CustomTypes;
 using Newtonsoft.Json;
@@ -19,7 +23,8 @@ namespace BHSDK.Serialization
         {
             
         }
-        public SerializationService(SerializationSettings serializationSettings, CompatibilityService compatibilityService)
+        public SerializationService(SerializationSettings serializationSettings,
+            CompatibilityService compatibilityService)
         {
             var contractResolver = new ContractResolver(serializationSettings);
 
@@ -56,8 +61,7 @@ namespace BHSDK.Serialization
                 new LevelDataConverter(compatibilityService),
                 new PrefabDataConverter(compatibilityService),
                 new ThemeDataConverter(compatibilityService),
-                new PlayerSettingsDataConverter(compatibilityService),
-                new EditorSettingsDataConverter(compatibilityService),
+                new SettingsDataConverter(compatibilityService),
                 
                 new IntConverter(innerSerializer),
                 new FloatConverter(innerSerializer),
@@ -96,45 +100,113 @@ namespace BHSDK.Serialization
             }
         }
         
-        public string Serialize(ILevel level)
+        public string SerializeLevel(ILevel level)
         {
-            throw new NotImplementedException();
-            
-            /*if (level == null) return string.Empty;
+            if (level == null) return string.Empty;
+            var data = new LevelData(level);
             
             using var textWriter = new StringWriter();
-            textWriter.Write(SerializedDataMimeType);
-            Serializer.Serialize(textWriter, level);
+            Serializer.Serialize(textWriter, data);
             
             var json = textWriter.ToString();
-            // if serializer doesn't write anything - header can't be added, see deserialize realization
-            return json.Length == SerializedDataMimeType.Length ? string.Empty : json;*/
-
-            // var json = JsonConvert.SerializeObject(level, _settings);
-            // if (string.IsNullOrEmpty(json)) return json;
-            // return SerializedDataMimeType + " " + json;
+            return json;
+        }
+        public string SerializeSettings(ISettings settings)
+        {
+            if (settings == null) return string.Empty;
+            var data = new SettingsData(settings);
+            
+            using var textWriter = new StringWriter();
+            Serializer.Serialize(textWriter, data);
+            
+            var json = textWriter.ToString();
+            return json;
+        }
+        public string SerializePrefab(IPrefab prefab)
+        {
+            if (prefab == null) return string.Empty;
+            var data = new PrefabData(prefab);
+            
+            using var textWriter = new StringWriter();
+            Serializer.Serialize(textWriter, data);
+            
+            var json = textWriter.ToString();
+            return json;
+        }
+        public string SerializeEffect(IEffect effect)
+        {
+            if (effect == null) return string.Empty;
+            var data = new EffectData(effect);
+            
+            using var textWriter = new StringWriter();
+            Serializer.Serialize(textWriter, data);
+            
+            var json = textWriter.ToString();
+            return json;
+        }
+        public string SerializeTheme(ITheme theme)
+        {
+            if (theme == null) return string.Empty;
+            var data = new ThemeData(theme);
+            
+            using var textWriter = new StringWriter();
+            Serializer.Serialize(textWriter, data);
+            
+            var json = textWriter.ToString();
+            return json;
         }
         
-        public bool CanDeserialize(string json)
+        public Level DeserializeLevel(string json)
         {
-            throw new NotImplementedException();
-            // return json != null && json.StartsWith(SerializedDataMimeType);
-        }
-        public ILevel Deserialize(string json, bool autoUpdate = true)
-        {
-            throw new NotImplementedException();
-            /*using var stringReader = new StringReader(json);
-            
-            if (json.StartsWith(SerializedDataMimeType))
-                for (var i = 0; i < SerializedDataMimeType.Length; i++)
-                    stringReader.Read();
-            
+            using var stringReader = new StringReader(json);
             using var jsonTextReader = new JsonTextReader(stringReader);
-            var level = (ILevel)Serializer.Deserialize(jsonTextReader, typeof(ILevel));
-            // var level = JsonConvert.DeserializeObject<ILevel>(json, _settings);
             
-            //if (autoUpdate) level = _compatibilityService.UpdateModel(level);
-            return level;*/
+            var data = Serializer.Deserialize<LevelData>(jsonTextReader);
+            var obj = CompatibilityService.Convert(data.Level);
+            
+            return obj;
         }
+        public Settings DeserializeSettings(string json)
+        {
+            using var stringReader = new StringReader(json);
+            using var jsonTextReader = new JsonTextReader(stringReader);
+            
+            var data = Serializer.Deserialize<SettingsData>(jsonTextReader);
+            var obj = CompatibilityService.Convert(data.Settings);
+            
+            return obj;
+        }
+        public Prefab DeserializePrefab(string json)
+        {
+            using var stringReader = new StringReader(json);
+            using var jsonTextReader = new JsonTextReader(stringReader);
+            
+            var data = Serializer.Deserialize<PrefabData>(jsonTextReader);
+            var obj = CompatibilityService.Convert(data.Prefab);
+            
+            return obj;
+        }
+        public EffectObject DeserializeEffect(string json)
+        {
+            using var stringReader = new StringReader(json);
+            using var jsonTextReader = new JsonTextReader(stringReader);
+            
+            var data = Serializer.Deserialize<EffectData>(jsonTextReader);
+            var obj = CompatibilityService.Convert(data.Effect);
+            
+            return obj;
+        }
+        public Theme DeserializeTheme(string json)
+        {
+            using var stringReader = new StringReader(json);
+            using var jsonTextReader = new JsonTextReader(stringReader);
+            
+            var data = Serializer.Deserialize<ThemeData>(jsonTextReader);
+            var obj = CompatibilityService.Convert(data.Theme);
+            
+            return obj;
+        }
+        
+        // TODO add BSON serialization (from Newtonsoft of course)
     }
 }

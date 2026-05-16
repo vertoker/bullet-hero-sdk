@@ -11,8 +11,8 @@ namespace BHSDK.Rules.Attributes
         public const AttributeTargets PropertyTarget = AttributeTargets.Property;
 
         protected virtual bool IsValidTypeInternal(PropertyInfo property) => true;
-        protected abstract bool IsValidInternal(object value, Level context);
-        protected abstract void FixInternal(object target, PropertyInfo property, Level context);
+        protected abstract bool IsValidInternal(object value, object context);
+        protected abstract void FixInternal(object target, PropertyInfo property, object context);
 
         public virtual RuleGroup Group => RuleGroup.Error;
         public virtual bool HasIsValid => true;
@@ -22,13 +22,13 @@ namespace BHSDK.Rules.Attributes
         {
             return property != null && IsValidTypeInternal(property);
         }
-        public bool IsValid(object value, Level context)
+        public bool IsValid(object value, object context)
         {
             if (!HasIsValid) return true; // by default any property is valid
             if (value == null) return false;
             return IsValidInternal(value, context);
         }
-        public void Fix(object target, PropertyInfo property, Level context)
+        public void Fix(object target, PropertyInfo property, object context)
         {
             if (!HasFix) return;
             if (target == null || property == null || !property.CanWrite) return;

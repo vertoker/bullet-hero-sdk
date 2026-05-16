@@ -14,7 +14,7 @@ namespace BHSDK.Generators
             var heightMult = parameters.Height / (float)parameters.Texture.Height;
 
             var parentObj = new Object();
-            parentObj.SetObjectId(level.Meta);
+            parentObj.SetObjectId(level.Settings);
             parentObj.SetBounds(parameters.StartFrame, parameters.EndFrame);
             parentObj.Layer = parameters.Layer;
             level.Game.Objects.Add(parentObj);
@@ -28,7 +28,7 @@ namespace BHSDK.Generators
                 var mappedIndexY = (int)(enumerator.Current.IndexHeight * heightMult);
 
                 var textureObj = new TextureObject();
-                textureObj.SetObjectId(level.Meta);
+                textureObj.SetObjectId(level.Settings);
                 textureObj.SetParent(parentObj);
                 textureObj.SetBounds(parameters.StartFrame, parameters.EndFrame);
                 parentObj.Layer = parameters.Layer;

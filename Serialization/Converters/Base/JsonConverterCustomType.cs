@@ -1,4 +1,5 @@
 ﻿using System;
+using BHSDK.Models;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters.Base
@@ -22,10 +23,10 @@ namespace BHSDK.Serialization.Converters.Base
             
             writer.WriteStartObject();
             
-            writer.WritePropertyName(SerializationUtils.TypePropertyName);
+            writer.WritePropertyName(Names.TypeShort);
             serializer.Serialize(writer, GetCustomType(value));
             
-            writer.WritePropertyName(SerializationUtils.ValuePropertyName);
+            writer.WritePropertyName(Names.ValueShort);
             // serialize via another serializer, it must NOT include this instance of converter
             SerializerDefault.Serialize(writer, value);
             
@@ -53,10 +54,10 @@ namespace BHSDK.Serialization.Converters.Base
 
                 switch (propertyName)
                 {
-                    case SerializationUtils.TypePropertyName:
+                    case Names.TypeShort:
                         customType = serializer.Deserialize<TType>(reader);
                         break;
-                    case SerializationUtils.ValuePropertyName:
+                    case Names.ValueShort:
                         var type = GetType(customType);
                         // deserialize via another serializer, it must NOT include this instance of converter
                         value = (T)SerializerDefault.Deserialize(reader, type);

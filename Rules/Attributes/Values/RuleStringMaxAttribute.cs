@@ -17,10 +17,10 @@ namespace BHSDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(string).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, Level context)
+        protected override bool IsValidInternal(object value, object context)
             => value is string str && str.Length <= MaxLength;
 
-        protected override void FixInternal(object target, PropertyInfo property, Level context)
+        protected override void FixInternal(object target, PropertyInfo property, object context)
         {
             if (property.PropertyType != typeof(string)) return;
             if (property.GetValue(target) is not string s) return;
