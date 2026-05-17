@@ -78,14 +78,14 @@ namespace BHSDK.Utils
             }
         }
         
-        public static string GetPath(this List<LevelPath> trace)
+        public static string GetPath(this List<RulePath> trace)
         {
             if (trace.Count == 0) return string.Empty;
             var builder = new StringBuilder();
             trace.BuildTracePath(builder);
             return builder.ToString();
         }
-        public static void BuildTracePath(this List<LevelPath> trace, StringBuilder builder)
+        public static void BuildTracePath(this List<RulePath> trace, StringBuilder builder)
         {
             if (trace.Count == 0) return;
             for (var i = 0; i < trace.Count - 1; i++)

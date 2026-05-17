@@ -9,13 +9,13 @@ using BHSDK.Utils;
 
 namespace BHSDK.Validations
 {
-    public class LevelAnalyzer
+    public class RuleAnalyzer
     {
-        private readonly List<LevelPath> _trace = new(16);
+        private readonly List<RulePath> _trace = new(16);
         private readonly Dictionary<Type, PropertyInfo[]> _typesCache = new(32);
         private readonly Dictionary<PropertyInfo, BaseRuleAttribute[]> _rulesCache = new(32);
 
-        public LevelAnalyzer()
+        public RuleAnalyzer()
         {
             CacheRecursively(typeof(Level));
         }
@@ -39,9 +39,9 @@ namespace BHSDK.Validations
             }
         }
 
-        public List<LevelIssue> Analyze(object obj, LevelAnalyzerSettings settings)
+        public List<RuleIssue> Analyze(object obj, RuleAnalyzerSettings settings)
         {
-            var result = new List<LevelIssue>(4);
+            var result = new List<RuleIssue>(4);
 
             Cat.Meow("Analyze");
             AnalyzeRecursive(obj, settings, result, obj);
@@ -50,7 +50,7 @@ namespace BHSDK.Validations
             return result;
         }
         
-        private void AnalyzeRecursive(object context, LevelAnalyzerSettings settings, List<LevelIssue> result, object obj)
+        private void AnalyzeRecursive(object context, RuleAnalyzerSettings settings, List<RuleIssue> result, object obj)
         {
             if (context == null) return;
             var contextType = context.GetType();
@@ -65,7 +65,7 @@ namespace BHSDK.Validations
             {
                 var rules = GetRules(property);
                 var nextObj = property.GetValue(context);
-                _trace.Add(new LevelPath(property));
+                _trace.Add(new RulePath(property));
                 
                 BaseRuleAttribute invalidRule = null;
                 foreach (var rule in rules)
@@ -86,7 +86,7 @@ namespace BHSDK.Validations
 
                 if (invalidRule != null)
                 {
-                    var issue = new LevelIssue(invalidRule, obj, new List<LevelPath>(_trace));
+                    var issue = new RuleIssue(invalidRule, obj, new List<RulePath>(_trace));
                     result.Add(issue);
                     Cat.MeowWarn(issue);
                 }
@@ -103,7 +103,7 @@ namespace BHSDK.Validations
                 {
                     for (var i = 0; i < list.Count; i++)
                     {
-                        _trace.Add(new LevelPath(nextProp, i));
+                        _trace.Add(new RulePath(nextProp, i));
                         AnalyzeRecursive(list[i], settings, result, obj);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
@@ -113,14 +113,14 @@ namespace BHSDK.Validations
                     var array = (Array)nextObj;
                     for (var i = 0; i < array.Length; i++)
                     {
-                        _trace.Add(new LevelPath(nextProp, i));
+                        _trace.Add(new RulePath(nextProp, i));
                         AnalyzeRecursive(array.GetValue(i), settings, result, obj);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
                 else
                 {
-                    _trace.Add(new LevelPath(nextProp));
+                    _trace.Add(new RulePath(nextProp));
                     AnalyzeRecursive(nextObj, settings, result, obj);
                     _trace.RemoveAt(_trace.Count - 1);
                 }
@@ -131,7 +131,9 @@ namespace BHSDK.Validations
         {
             if (!_typesCache.TryGetValue(objType, out var objProperties))
             {
-                objProperties = objType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                objProperties = objType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(property => property.CanRead && property.CanWrite).ToArray();
+                
                 _typesCache.Add(objType, objProperties);
             }
             return objProperties;

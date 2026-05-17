@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Validations
 {
-    public class LevelAnalyzerSettings
+    public class RuleAnalyzerSettings
     {
         public bool EnableNullChecks = true;
     }

@@ -1,25 +1,33 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using BHSDK.Models.Interfaces;
+using BHSDK.Rules.Attributes;
+using Newtonsoft.Json;
 
 namespace BHSDK.Models.SettingGroups
 {
-    public class GameEditorSettings
+    [RuleContainer]
+    public class GameEditorSettings : ICopyable<GameEditorSettings>, IEquatable<GameEditorSettings>
     {
         // Savings
         
         [JsonProperty(Names.Autosave)]
         public bool Autosave { get; set; }
         
+        [RuleMin(1f)]
         [JsonProperty(Names.AutosaveRate)]
         public float AutosaveRate { get; set; }
         
+        [RuleInRange(1, 1000)]
         [JsonProperty(Names.MaxAutosaveFiles)]
         public int MaxAutosaveFiles { get; set; }
         
         // Editor Camera
         
+        [RuleMin(0f)]
         [JsonProperty(Names.CameraMinSize)]
         public float CameraMinSize { get; set; }
         
+        [RuleMin(0f)]
         [JsonProperty(Names.CameraMaxSize)]
         public float CameraMaxSize { get; set; }
 
@@ -39,6 +47,23 @@ namespace BHSDK.Models.SettingGroups
             MaxAutosaveFiles = maxAutosaveFiles;
             CameraMinSize = cameraMinSize;
             CameraMaxSize = cameraMaxSize;
+        }
+
+        public object Clone() => Copy();
+        public GameEditorSettings Copy() => new(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize, CameraMaxSize);
+
+        public override bool Equals(object obj) => obj is GameEditorSettings value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize, CameraMaxSize);
+
+        public bool Equals(GameEditorSettings other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Autosave == other.Autosave
+                   && AutosaveRate.Equals(other.AutosaveRate)
+                   && MaxAutosaveFiles == other.MaxAutosaveFiles
+                   && CameraMinSize.Equals(other.CameraMinSize)
+                   && CameraMaxSize.Equals(other.CameraMaxSize);
         }
     }
 }

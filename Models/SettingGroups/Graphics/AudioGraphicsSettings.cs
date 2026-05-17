@@ -1,9 +1,12 @@
-﻿using BHSDK.Rules.Attributes;
+﻿using System;
+using BHSDK.Models.Interfaces;
+using BHSDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.SettingGroups.Graphics
 {
-    public class AudioGraphicsSettings : BaseGraphicsSettings
+    public class AudioGraphicsSettings : BaseGraphicsSettings,
+        ICopyable<AudioGraphicsSettings>, IEquatable<AudioGraphicsSettings>
     {
         [JsonProperty(Names.RenderEffects)]
         public bool RenderEffects { get; set; }
@@ -33,6 +36,24 @@ namespace BHSDK.Models.SettingGroups.Graphics
             MaxDiffTime = maxDiffTime;
             UseScrub = useScrub;
             ScrubTime = scrubTime;
+        }
+
+        public object Clone() => Copy();
+        public AudioGraphicsSettings Copy() => new(Render, RenderEffects, MaxDiffTime, UseScrub, ScrubTime);
+
+        public override bool Equals(object obj) => obj is AudioGraphicsSettings value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
+            RenderEffects, MaxDiffTime, UseScrub, ScrubTime);
+
+        public bool Equals(AudioGraphicsSettings other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other)
+                   && RenderEffects == other.RenderEffects
+                   && MaxDiffTime.Equals(other.MaxDiffTime)
+                   && UseScrub == other.UseScrub
+                   && ScrubTime.Equals(other.ScrubTime);
         }
     }
 }

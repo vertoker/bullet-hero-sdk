@@ -8,22 +8,22 @@ using BHSDK.Utils;
 
 namespace BHSDK.Validations
 {
-    public readonly struct LevelIssue
+    public readonly struct RuleIssue
     {
         public readonly BaseRuleAttribute Rule;
-        public readonly object LevelRoot;
-        public readonly List<LevelPath> Trace;
+        public readonly object Root;
+        public readonly List<RulePath> Trace;
 
-        public LevelIssue(BaseRuleAttribute rule, object levelRoot, List<LevelPath> trace)
+        public RuleIssue(BaseRuleAttribute rule, object root, List<RulePath> trace)
         {
             Rule = rule;
-            LevelRoot = levelRoot;
+            Root = root;
             Trace = trace;
         }
 
         public object GetValue()
         {
-            var result = LevelRoot;
+            var result = Root;
             foreach (var path in Trace)
             {
                 result = path.Property.GetValue(result);
@@ -37,7 +37,7 @@ namespace BHSDK.Validations
         }
         public (object, PropertyInfo) GetContextAndProperty()
         {
-            var result = LevelRoot;
+            var result = Root;
             for (var i = 0; i < Trace.Count - 1; i++)
             {
                 var path = Trace[i];

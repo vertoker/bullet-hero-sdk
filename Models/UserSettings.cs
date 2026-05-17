@@ -1,4 +1,5 @@
 ﻿using System;
+using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.SettingGroups;
 using BHSDK.Rules.Attributes;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 namespace BHSDK.Models
 {
     [RuleContainer]
-    public class UserSettings : IUserSettings
+    public class UserSettings : IUserSettings, ICopyable<UserSettings>, IEquatable<UserSettings>
     {
         public Version GetVersion() => new(1, 0);
         
@@ -48,5 +49,23 @@ namespace BHSDK.Models
             Graphics = graphics;
             GameEditor = gameEditor;
         }
+
+        public object Clone() => Copy();
+        public UserSettings Copy() => new(General.Copy(), Controls.Copy(),
+            Audio.Copy(), Graphics.Copy(), GameEditor.Copy());
+
+        public bool Equals(UserSettings other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return General.Equals(other.General)
+                   && Controls.Equals(other.Controls)
+                   && Audio.Equals(other.Audio)
+                   && Graphics.Equals(other.Graphics)
+                   && GameEditor.Equals(other.GameEditor);
+        }
+
+        public override bool Equals(object obj) => obj is UserSettings value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(General, Controls, Audio, Graphics, GameEditor);
     }
 }

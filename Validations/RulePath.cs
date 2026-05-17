@@ -3,19 +3,19 @@ using System.Text;
 
 namespace BHSDK.Validations
 {
-    public readonly struct LevelPath
+    public readonly struct RulePath
     {
         public readonly PropertyInfo Property;
         public readonly int Index;
         
         public bool HasIndex => Index != -1;
 
-        public LevelPath(PropertyInfo property)
+        public RulePath(PropertyInfo property)
         {
             Property = property;
             Index = -1;
         }
-        public LevelPath(PropertyInfo property, int index)
+        public RulePath(PropertyInfo property, int index)
         {
             Property = property;
             Index = index;

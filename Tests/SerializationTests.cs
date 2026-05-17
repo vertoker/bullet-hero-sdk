@@ -5,6 +5,7 @@ using BHSDK.Models;
 using BHSDK.Models.Audio;
 using BHSDK.Models.Effects;
 using BHSDK.Models.Enum.Resources;
+using BHSDK.Models.Enum.Settings;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Events;
 using BHSDK.Models.Keyframes;
@@ -368,7 +369,7 @@ namespace BHSDK.Tests
             var settings = new SerializationSettings(Formatting.Indented);
             var serializationService = new SerializationService(settings);
 
-            var testSettings = CreateTestSettings();
+            var testSettings = CreateValidTestSettings();
 
             var data = new UserSettingsData(testSettings);
             var textWriter = new StringWriter();
@@ -380,9 +381,24 @@ namespace BHSDK.Tests
             data = serializationService.Serializer.Deserialize<UserSettingsData>(reader);
         }
 
-        public UserSettings CreateTestSettings()
+        public static UserSettings CreateValidTestSettings()
         {
             var settings = new UserSettings();
+            return settings;
+        }
+        public static UserSettings CreateInvalidTestSettings()
+        {
+            var settings = new UserSettings();
+            settings.General.ResourceParallelLoadCount = -1;
+            settings.General.ResourceWebTimeout = -1f;
+            settings.Controls.ClassicControlsType = ClassicControlsType.Mouse;
+            settings.Audio.Game = 1.5f;
+            settings.Audio.UI = -1f;
+            settings.Graphics.FixedFramerate = 1000;
+            settings.Graphics.Effects.FixedFramerate = -1;
+            settings.Graphics.PostProcessing.RenderColorCurves = false;
+            settings.GameEditor.CameraMinSize = -23f;
+            settings.GameEditor.CameraMaxSize = 23f;
             return settings;
         }
     }

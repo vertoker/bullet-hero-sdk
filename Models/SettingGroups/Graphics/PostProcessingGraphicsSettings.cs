@@ -1,9 +1,12 @@
-﻿using BHSDK.Models.Enum.Settings;
+﻿using System;
+using BHSDK.Models.Enum.Settings;
+using BHSDK.Models.Interfaces;
 using Newtonsoft.Json;
 
 namespace BHSDK.Models.SettingGroups.Graphics
 {
-    public class PostProcessingGraphicsSettings : BaseGraphicsSettings
+    public class PostProcessingGraphicsSettings : BaseGraphicsSettings,
+        ICopyable<PostProcessingGraphicsSettings>, IEquatable<PostProcessingGraphicsSettings>
     {
         [JsonProperty(Names.RenderBloom)]
         public bool RenderBloom { get; set; }
@@ -123,5 +126,49 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = true,
             RenderDigitalGlitch = true,
         };
+
+        public object Clone() => Copy();
+        public PostProcessingGraphicsSettings Copy() => new(Render, RenderBloom, RenderChroma, RenderVignette,
+            RenderLens, RenderGrain, RenderMotionBlur, RenderColorCurves, RenderLiftGammaGain,
+            RenderShadowsMidtonesHighlights, RenderWhiteBalance, RenderAnalogGlitch, RenderDigitalGlitch);
+
+        public override bool Equals(object obj) => obj is PostProcessingGraphicsSettings value && Equals(value);
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(base.GetHashCode());
+            hashCode.Add(RenderBloom);
+            hashCode.Add(RenderChroma);
+            hashCode.Add(RenderVignette);
+            hashCode.Add(RenderLens);
+            hashCode.Add(RenderGrain);
+            hashCode.Add(RenderMotionBlur);
+            hashCode.Add(RenderColorCurves);
+            hashCode.Add(RenderLiftGammaGain);
+            hashCode.Add(RenderShadowsMidtonesHighlights);
+            hashCode.Add(RenderWhiteBalance);
+            hashCode.Add(RenderAnalogGlitch);
+            hashCode.Add(RenderDigitalGlitch);
+            return hashCode.ToHashCode();
+        }
+
+        public bool Equals(PostProcessingGraphicsSettings other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other)
+                   && RenderBloom == other.RenderBloom
+                   && RenderChroma == other.RenderChroma
+                   && RenderVignette == other.RenderVignette
+                   && RenderLens == other.RenderLens
+                   && RenderGrain == other.RenderGrain
+                   && RenderMotionBlur == other.RenderMotionBlur
+                   && RenderColorCurves == other.RenderColorCurves
+                   && RenderLiftGammaGain == other.RenderLiftGammaGain
+                   && RenderShadowsMidtonesHighlights == other.RenderShadowsMidtonesHighlights
+                   && RenderWhiteBalance == other.RenderWhiteBalance
+                   && RenderAnalogGlitch == other.RenderAnalogGlitch
+                   && RenderDigitalGlitch == other.RenderDigitalGlitch;
+        }
     }
 }

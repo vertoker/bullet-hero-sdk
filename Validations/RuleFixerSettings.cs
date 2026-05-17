@@ -1,6 +1,6 @@
 ﻿namespace BHSDK.Validations
 {
-    public class LevelFixerSettings
+    public class RuleFixerSettings
     {
         
     }
