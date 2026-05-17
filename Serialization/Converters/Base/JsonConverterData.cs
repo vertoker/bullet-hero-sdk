@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters.Base
 {
-    public abstract class JsonConverterData<T> : JsonConverter<T> where T : class, ISaveData, new()
+    public abstract class JsonConverterData<T> : JsonConverter<SaveData<T>> where T : class, IData, new()
     {
-        public override void WriteJson(JsonWriter writer, T value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, SaveData<T> value, JsonSerializer serializer)
         {
             if (value == null)
             {
@@ -20,22 +20,21 @@ namespace BHSDK.Serialization.Converters.Base
             writer.WritePropertyName(Names.Version);
             serializer.Serialize(writer, value.Version);
             
-            writer.WritePropertyName(GetObjectPropertyName());
+            writer.WritePropertyName(Names.Value);
             var valueSerializer = OverrideValueSerializer ?? serializer;
             valueSerializer.Serialize(writer, value.GetData());
             
             writer.WriteEndObject();
         }
         
-        public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue,
+        public override SaveData<T> ReadJson(JsonReader reader, Type objectType, SaveData<T> existingValue, bool hasExistingValue,
             JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null) return null;
             if (reader.TokenType != JsonToken.StartObject)
                 throw new JsonSerializationException("Expected start of LevelData");
 
-            var result = new T();
-            var dataPropertyName = GetObjectPropertyName();
+            var result = new SaveData<T>();
 
             while (reader.Read()) // to property name
             {
@@ -50,7 +49,7 @@ namespace BHSDK.Serialization.Converters.Base
                 {
                     result.Version = serializer.Deserialize<Version>(reader);
                 }
-                else if (propertyName == dataPropertyName)
+                else if (propertyName == Names.Value)
                 {
                     var levelType = GetType(result.Version);
                     var valueSerializer = OverrideValueSerializer ?? serializer;
@@ -70,7 +69,6 @@ namespace BHSDK.Serialization.Converters.Base
             return result;
         }
 
-        protected abstract string GetObjectPropertyName();
         protected abstract Type GetType(Version version);
         protected virtual JsonSerializer OverrideValueSerializer => null;
     }

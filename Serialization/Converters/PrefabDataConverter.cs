@@ -1,11 +1,11 @@
 ﻿using System;
 using BHSDK.Models;
-using BHSDK.Models.SaveData;
+using BHSDK.Models.Objects;
 using BHSDK.Serialization.Converters.Base;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class PrefabDataConverter : JsonConverterData<PrefabData>
+    public class PrefabDataConverter : JsonConverterData<Prefab>
     {
         private readonly CompatibilityService _compatibilityService;
 
@@ -13,8 +13,7 @@ namespace BHSDK.Serialization.Converters
         {
             _compatibilityService = compatibilityService;
         }
-
-        protected override string GetObjectPropertyName() => Names.Prefab;
+        
         protected override Type GetType(Version version) => _compatibilityService.GetPrefabType(version);
     }
 }

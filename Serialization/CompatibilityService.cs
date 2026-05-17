@@ -6,8 +6,20 @@ using BHSDK.Models.Values;
 
 namespace BHSDK.Serialization
 {
+    // TODO refactor this class, add MORE type checks, add at least 1 real converter
     public class CompatibilityService
     {
+        public TValue Convert<TValue>(IData data) where TValue : IData
+        {
+            if (data is ILevel level) return (TValue)level;
+            if (data is IUserSettings userSettings) return (TValue)userSettings;
+            if (data is IPrefab prefab) return (TValue)prefab;
+            if (data is IEffect effect) return (TValue)effect;
+            if (data is ITheme theme) return (TValue)theme;
+            
+            throw new ArgumentException(typeof(TValue).Name);
+        }
+        
         public Level Convert(ILevel level)
         {
             return (Level)level;

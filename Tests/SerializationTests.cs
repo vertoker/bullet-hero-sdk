@@ -13,7 +13,6 @@ using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Resources;
-using BHSDK.Models.SaveData;
 using BHSDK.Models.Values;
 using BHSDK.Serialization;
 using Newtonsoft.Json;
@@ -32,14 +31,14 @@ namespace BHSDK.Tests
 
             var effect = CreateTestEffect();
 
-            var data = new EffectData(effect);
+            var data = new SaveData<EffectObject>(effect);
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
             Cat.Meow($"Effect - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<EffectData>(reader);
+            data = serializationService.Serializer.Deserialize<SaveData<EffectObject>>(reader);
         }
 
         public static EffectObject CreateTestEffect()
@@ -95,10 +94,10 @@ namespace BHSDK.Tests
             var serializationService = new SerializationService(settings);
 
             var level = CreateTestLevel();
-            var json = serializationService.SerializeLevel(level);
+            var json = serializationService.SerializeData(level);
             Cat.Meow($"Level - <color=green>{json}</color>");
 
-            var level2 = serializationService.DeserializeLevel(json);
+            var level2 = serializationService.DeserializeData<Level>(json);
             Assert.IsTrue(level.Equals(level2));
         }
         
@@ -292,14 +291,14 @@ namespace BHSDK.Tests
 
             var prefab = CreateTestPrefab();
 
-            var data = new PrefabData(prefab);
+            var data = new SaveData<Prefab>(prefab);
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
             Cat.Meow($"Prefab - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<PrefabData>(reader);
+            data = serializationService.Serializer.Deserialize<SaveData<Prefab>>(reader);
         }
 
         public static Prefab CreateTestPrefab()
@@ -334,14 +333,14 @@ namespace BHSDK.Tests
 
             var theme = CreateTestTheme();
 
-            var data = new ThemeData(theme);
+            var data = new SaveData<Theme>(theme);
             var textWriter = new StringWriter();
             serializationService.Serializer.Serialize(textWriter, data);
             var json = textWriter.ToString();
             Cat.Meow($"Theme - <color=green>{json}</color>");
 
             var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<ThemeData>(reader);
+            data = serializationService.Serializer.Deserialize<SaveData<Theme>>(reader);
         }
 
         public static Theme CreateTestTheme()
@@ -367,10 +366,10 @@ namespace BHSDK.Tests
 
             var testSettings = CreateValidTestSettings();
 
-            var json = serializationService.SerializeUserSettings(testSettings);
+            var json = serializationService.SerializeData(testSettings);
             Cat.Meow($"Settings - <color=green>{json}</color>");
 
-            var testSettings2 = serializationService.DeserializeUserSettings(json);
+            var testSettings2 = serializationService.DeserializeData<UserSettings>(json);
             Assert.IsTrue(testSettings.Equals(testSettings2));
         }
 

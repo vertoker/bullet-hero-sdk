@@ -1,12 +1,12 @@
 ﻿using System;
 using BHSDK.Models;
-using BHSDK.Models.SaveData;
+using BHSDK.Models.Objects;
 using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class EffectDataConverter : JsonConverterData<EffectData>
+    public class EffectDataConverter : JsonConverterData<EffectObject>
     {
         private readonly CompatibilityService _compatibilityService;
 
@@ -17,8 +17,7 @@ namespace BHSDK.Serialization.Converters
             _compatibilityService = compatibilityService;
             OverrideValueSerializer = serializerDefault;
         }
-
-        protected override string GetObjectPropertyName() => Names.Effect;
+        
         protected override Type GetType(Version version) => _compatibilityService.GetEffectType(version);
     }
 }
