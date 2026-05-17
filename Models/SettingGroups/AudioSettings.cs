@@ -2,18 +2,22 @@
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Values;
 using BHSDK.Rules.Attributes;
+using Newtonsoft.Json;
 
 namespace BHSDK.Models.SettingGroups
 {
     [RuleContainer]
     public class AudioSettings : ICopyable<AudioSettings>, IEquatable<AudioSettings>
     {
+        [JsonProperty(Names.Volume)]
         [RuleInRange(0f, 1f)]
         public float Volume { get; set; }
         
+        [JsonProperty(Names.Game)]
         [RuleInRange(0f, 1f)]
         public float Game { get; set; }
         
+        [JsonProperty(Names.UI)]
         [RuleInRange(0f, 1f)]
         public float UI { get; set; }
 

@@ -13,7 +13,7 @@ namespace BHSDK.Models.SettingGroups
         public int ResourceParallelLoadCount { get; set; }
         
         [RuleMin(0f)]
-        [JsonProperty(Names.ResourceParallelLoadCount)]
+        [JsonProperty(Names.ResourceWebTimeout)]
         public float ResourceWebTimeout { get; set; }
 
         public GeneralSettings()

@@ -18,6 +18,10 @@ namespace BHSDK.Serialization
         public readonly CompatibilityService CompatibilityService;
         public readonly JsonSerializer Serializer;
         
+        public SerializationService() : this(new SerializationSettings(), new CompatibilityService())
+        {
+            
+        }
         public SerializationService(SerializationSettings serializationSettings)
             : this(serializationSettings, new CompatibilityService())
         {

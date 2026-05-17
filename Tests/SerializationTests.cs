@@ -95,15 +95,11 @@ namespace BHSDK.Tests
             var serializationService = new SerializationService(settings);
 
             var level = CreateTestLevel();
-
-            var data = new LevelData(level);
-            var textWriter = new StringWriter();
-            serializationService.Serializer.Serialize(textWriter, data);
-            var json = textWriter.ToString();
+            var json = serializationService.SerializeLevel(level);
             Cat.Meow($"Level - <color=green>{json}</color>");
 
-            var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<LevelData>(reader);
+            var level2 = serializationService.DeserializeLevel(json);
+            Assert.IsTrue(level.Equals(level2));
         }
         
         public static Level CreateTestLevel()
@@ -371,14 +367,11 @@ namespace BHSDK.Tests
 
             var testSettings = CreateValidTestSettings();
 
-            var data = new UserSettingsData(testSettings);
-            var textWriter = new StringWriter();
-            serializationService.Serializer.Serialize(textWriter, data);
-            var json = textWriter.ToString();
+            var json = serializationService.SerializeUserSettings(testSettings);
             Cat.Meow($"Settings - <color=green>{json}</color>");
 
-            var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<UserSettingsData>(reader);
+            var testSettings2 = serializationService.DeserializeUserSettings(json);
+            Assert.IsTrue(testSettings.Equals(testSettings2));
         }
 
         public static UserSettings CreateValidTestSettings()
@@ -388,17 +381,40 @@ namespace BHSDK.Tests
         }
         public static UserSettings CreateInvalidTestSettings()
         {
-            var settings = new UserSettings();
-            settings.General.ResourceParallelLoadCount = -1;
-            settings.General.ResourceWebTimeout = -1f;
-            settings.Controls.ClassicControlsType = ClassicControlsType.Mouse;
-            settings.Audio.Game = 1.5f;
-            settings.Audio.UI = -1f;
-            settings.Graphics.FixedFramerate = 1000;
-            settings.Graphics.Effects.FixedFramerate = -1;
-            settings.Graphics.PostProcessing.RenderColorCurves = false;
-            settings.GameEditor.CameraMinSize = -23f;
-            settings.GameEditor.CameraMaxSize = 23f;
+            var settings = new UserSettings
+            {
+                General =
+                {
+                    ResourceParallelLoadCount = -1,
+                    ResourceWebTimeout = -1f
+                },
+                Controls =
+                {
+                    ClassicControlsType = ClassicControlsType.Mouse
+                },
+                Audio =
+                {
+                    Game = 1.5f,
+                    UI = -1f
+                },
+                Graphics =
+                {
+                    FixedFramerate = 1000,
+                    Effects =
+                    {
+                        FixedFramerate = -1
+                    },
+                    PostProcessing =
+                    {
+                        RenderColorCurves = false
+                    }
+                },
+                GameEditor =
+                {
+                    CameraMinSize = -23f,
+                    CameraMaxSize = 23f
+                }
+            };
             return settings;
         }
     }

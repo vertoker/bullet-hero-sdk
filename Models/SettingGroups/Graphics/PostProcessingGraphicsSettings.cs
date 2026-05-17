@@ -78,7 +78,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderDigitalGlitch = renderDigitalGlitch;
         }
 
-        public PostProcessingGraphicsSettings PresetNone => new()
+        public PostProcessingGraphicsSettings GetPresetNone() => new()
         {
             Render = false,
             RenderBloom = false,
@@ -94,7 +94,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = false,
             RenderDigitalGlitch = false,
         };
-        public PostProcessingGraphicsSettings PresetMobile => new()
+        public PostProcessingGraphicsSettings GetPresetMobile() => new()
         {
             Render = true,
             RenderBloom = false, // HEAVY
@@ -110,7 +110,7 @@ namespace BHSDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = false, // HEAVY
             RenderDigitalGlitch = false, // HEAVY
         };
-        public PostProcessingGraphicsSettings PresetAll => new()
+        public PostProcessingGraphicsSettings GetPresetAll() => new()
         {
             Render = true,
             RenderBloom = true,

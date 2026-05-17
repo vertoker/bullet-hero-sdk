@@ -35,6 +35,7 @@
         public const string General = "general";
         public const string Graphics = "graphics";
         public const string Game = "game";
+        public const string UI = "ui";
         public const string Audio = "audio";
         public const string Audios = "audios";
         public const string AudioShort = "a";
@@ -44,6 +45,8 @@
         public const string Render = "render";
         public const string Load = "load";
         public const string Parallel = "parallel";
+        public const string Web = "web";
+        public const string Timeout = "timeout";
         public const string Delta = "delta";
         public const string Scrub = "scrub";
         public const string Diff = "diff";
@@ -381,6 +384,7 @@
         public const string FixedFramerate = Fixed + _ + Framerate;
         public const string RenderEffects = Render + _ + Effects;
         public const string ResourceParallelLoadCount = Resource + _ + Parallel + _ + Load + _ + Count;
+        public const string ResourceWebTimeout = Resource + _ + Web + _ + Timeout;
         public const string TargetDeltaTime = Target + _ + Delta + _ + Time;
         public const string ScrubTime = Scrub + _ + Time;
         public const string MaxScrubTime = Max + _ + Scrub + _ + Time;
