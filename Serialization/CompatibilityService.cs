@@ -7,6 +7,7 @@ using BHSDK.Models.Values;
 namespace BHSDK.Serialization
 {
     // TODO refactor this class, add MORE type checks, add at least 1 real converter
+    // TODO add new attribute [DataVersion(1, 0, 0, 0)] and direct collect to dictionary
     public class CompatibilityService
     {
         public Type GetSaveDataType<TValue>() where TValue : IData
