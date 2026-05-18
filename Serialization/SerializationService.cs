@@ -118,9 +118,10 @@ namespace BHSDK.Serialization
         {
             using var stringReader = new StringReader(json);
             using var jsonTextReader = new JsonTextReader(stringReader);
-            
-            var data = Serializer.Deserialize<SaveData<IData>>(jsonTextReader);
-            var value = CompatibilityService.Convert<TValue>(data.Value);
+
+            var saveDataType = CompatibilityService.GetSaveDataType<TValue>();
+            var data = (ISaveData)Serializer.Deserialize(jsonTextReader, saveDataType);
+            var value = CompatibilityService.Convert<TValue>(data.GetData());
             
             return value;
         }

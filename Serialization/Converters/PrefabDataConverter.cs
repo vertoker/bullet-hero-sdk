@@ -1,11 +1,12 @@
 ﻿using System;
 using BHSDK.Models;
+using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Objects;
 using BHSDK.Serialization.Converters.Base;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class PrefabDataConverter : JsonConverterData<Prefab>
+    public class PrefabDataConverter : JsonConverterData<IPrefab>
     {
         private readonly CompatibilityService _compatibilityService;
 

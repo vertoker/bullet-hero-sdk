@@ -24,5 +24,10 @@ namespace BHSDK.Models
             Version = value.GetVersion();
             Value = value;
         }
+        public SaveData(TData value, Version version)
+        {
+            Version = version;
+            Value = value;
+        }
     }
 }

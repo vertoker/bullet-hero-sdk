@@ -20,7 +20,8 @@ namespace BHSDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.Effect;
 
-        public Version GetVersion() => new(1, 0);
+        public static readonly Version Version = new(1, 0);
+        public Version GetVersion() => Version;
         
         [RuleNotNull]
         [JsonProperty(Names.Core)]

@@ -10,10 +10,10 @@ using Newtonsoft.Json;
 namespace BHSDK.Models.Objects
 {
     [RuleContainer]
-    public class Prefab : IObjectScope, IPrefab,
-        ICopyable<Prefab>, IEquatable<Prefab>
+    public class Prefab : IObjectScope, IPrefab, ICopyable<Prefab>, IEquatable<Prefab>
     {
-        public Version GetVersion() => new(1, 0);
+        public static readonly Version Version = new(1, 0);
+        public Version GetVersion() => Version;
         
         [RuleGuidNotEmpty]
         [JsonProperty(Names.PrefabGuid)]

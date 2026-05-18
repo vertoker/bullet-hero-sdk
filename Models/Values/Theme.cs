@@ -13,7 +13,8 @@ namespace BHSDK.Models.Values
     [RuleContainer]
     public class Theme : ITheme, ICopyable<Theme>, IEquatable<Theme>
     {
-        public Version GetVersion() => new(1, 0);
+        public static readonly Version Version = new(1, 0);
+        public Version GetVersion() => Version;
         
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]

@@ -9,57 +9,118 @@ namespace BHSDK.Serialization
     // TODO refactor this class, add MORE type checks, add at least 1 real converter
     public class CompatibilityService
     {
+        public Type GetSaveDataType<TValue>() where TValue : IData
+        {
+            if (typeof(ILevel).IsAssignableFrom(typeof(TValue)))
+                return typeof(SaveData<ILevel>);
+            if (typeof(IUserSettings).IsAssignableFrom(typeof(TValue)))
+                return typeof(SaveData<IUserSettings>);
+            if (typeof(IPrefab).IsAssignableFrom(typeof(TValue)))
+                return typeof(SaveData<IPrefab>);
+            if (typeof(IEffect).IsAssignableFrom(typeof(TValue)))
+                return typeof(SaveData<IEffect>);
+            if (typeof(ITheme).IsAssignableFrom(typeof(TValue)))
+                return typeof(SaveData<ITheme>);
+            
+            throw new NotSupportedException($"Unsupported data type: {typeof(TValue)}");
+        }
+        
         public TValue Convert<TValue>(IData data) where TValue : IData
         {
-            if (data is ILevel level) return (TValue)level;
-            if (data is IUserSettings userSettings) return (TValue)userSettings;
-            if (data is IPrefab prefab) return (TValue)prefab;
-            if (data is IEffect effect) return (TValue)effect;
-            if (data is ITheme theme) return (TValue)theme;
-            
+            if (typeof(TValue) == typeof(IData)) return (TValue)data;
+            if (data is ILevel level)
+                return Convert<TValue>(level);
+            if (data is IUserSettings userSettings)
+                return Convert<TValue>(userSettings);
+            if (data is IPrefab prefab)
+                return Convert<TValue>(prefab);
+            if (data is IEffect effect)
+                return Convert<TValue>(effect);
+            if (data is ITheme theme)
+                return Convert<TValue>(theme);
             throw new ArgumentException(typeof(TValue).Name);
         }
         
-        public Level Convert(ILevel level)
+        public TValue Convert<TValue>(ILevel data) where TValue : IData
         {
-            return (Level)level;
+            if (typeof(TValue) == typeof(ILevel)) return (TValue)data;
+            if (typeof(TValue) == typeof(Level))
+            {
+                // var fromVersion = data.GetVersion();
+                // var toVersion = Level.Version;
+                return (TValue)data;
+            }
+            throw new ArgumentException(typeof(TValue).Name);
         }
-        public UserSettings Convert(IUserSettings userSettings)
+        public TValue Convert<TValue>(IUserSettings data) where TValue : IData
         {
-            return (UserSettings)userSettings;
+            if (typeof(TValue) == typeof(IUserSettings)) return (TValue)data;
+            if (typeof(TValue) == typeof(UserSettings))
+            {
+                // var fromVersion = data.GetVersion();
+                // var toVersion = UserSettings.Version;
+                return (TValue)data;
+            }
+            throw new ArgumentException(typeof(TValue).Name);
         }
-        public Prefab Convert(IPrefab prefab)
+        public TValue Convert<TValue>(IPrefab data) where TValue : IData
         {
-            return (Prefab)prefab;
+            if (typeof(TValue) == typeof(IPrefab)) return (TValue)data;
+            if (typeof(TValue) == typeof(Prefab))
+            {
+                // var fromVersion = data.GetVersion();
+                // var toVersion = Prefab.Version;
+                return (TValue)data;
+            }
+            throw new ArgumentException(typeof(TValue).Name);
         }
-        public EffectObject Convert(IEffect effect)
+        public TValue Convert<TValue>(IEffect data) where TValue : IData
         {
-            return (EffectObject)effect;
+            if (typeof(TValue) == typeof(IEffect)) return (TValue)data;
+            if (typeof(TValue) == typeof(EffectObject))
+            {
+                // var fromVersion = data.GetVersion();
+                // var toVersion = EffectObject.Version;
+                return (TValue)data;
+            }
+            throw new ArgumentException(typeof(TValue).Name);
         }
-        public Theme Convert(ITheme theme)
+        public TValue Convert<TValue>(ITheme data) where TValue : IData
         {
-            return (Theme)theme;
+            if (typeof(TValue) == typeof(ITheme)) return (TValue)data;
+            if (typeof(TValue) == typeof(Theme))
+            {
+                // var fromVersion = data.GetVersion();
+                // var toVersion = Theme.Version;
+                return (TValue)data;
+            }
+            throw new ArgumentException(typeof(TValue).Name);
         }
         
         public Type GetLevelType(Version version)
         {
-            return typeof(Level);
+            if (version == Level.Version) return typeof(Level);
+            throw new NotSupportedException($"Unsupported version: {version}");
         }
         public Type GetUserSettingsType(Version version)
         {
-            return typeof(UserSettings);
+            if (version == UserSettings.Version) return typeof(UserSettings);
+            throw new NotSupportedException($"Unsupported version: {version}");
         }
         public Type GetPrefabType(Version version)
         {
-            return typeof(Prefab);
+            if (version == Prefab.Version) return typeof(Prefab);
+            throw new NotSupportedException($"Unsupported version: {version}");
         }
         public Type GetEffectType(Version version)
         {
-            return typeof(EffectObject);
+            if (version == EffectObject.Version) return typeof(EffectObject);
+            throw new NotSupportedException($"Unsupported version: {version}");
         }
         public Type GetThemeType(Version version)
         {
-            return typeof(Theme);
+            if (version == Theme.Version) return typeof(Theme);
+            throw new NotSupportedException($"Unsupported version: {version}");
         }
     }
 }

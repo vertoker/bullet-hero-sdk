@@ -1,12 +1,13 @@
 ﻿using System;
 using BHSDK.Models;
+using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Objects;
 using BHSDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class EffectDataConverter : JsonConverterData<EffectObject>
+    public class EffectDataConverter : JsonConverterData<IEffect>
     {
         private readonly CompatibilityService _compatibilityService;
 

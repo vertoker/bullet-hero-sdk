@@ -10,7 +10,8 @@ namespace BHSDK.Models
     [RuleContainer]
     public class UserSettings : IUserSettings, ICopyable<UserSettings>, IEquatable<UserSettings>
     {
-        public Version GetVersion() => new(1, 0);
+        public static readonly Version Version = new(1, 0);
+        public Version GetVersion() => Version;
         
         [RuleNotNull]
         [JsonProperty(Names.General)]

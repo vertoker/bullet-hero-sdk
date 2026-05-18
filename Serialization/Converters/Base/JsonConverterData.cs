@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Serialization.Converters.Base
 {
-    public abstract class JsonConverterData<T> : JsonConverter<SaveData<T>> where T : class, IData, new()
+    public abstract class JsonConverterData<T> : JsonConverter<SaveData<T>> where T : IData
     {
         public override void WriteJson(JsonWriter writer, SaveData<T> value, JsonSerializer serializer)
         {

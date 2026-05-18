@@ -1,10 +1,11 @@
 ﻿using System;
 using BHSDK.Models;
+using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Serialization.Converters.Base;
 
 namespace BHSDK.Serialization.Converters
 {
-    public class UserSettingsDataConverter : JsonConverterData<UserSettings>
+    public class UserSettingsDataConverter : JsonConverterData<IUserSettings>
     {
         private readonly CompatibilityService _compatibilityService;
 
