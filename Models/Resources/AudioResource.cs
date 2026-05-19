@@ -23,7 +23,7 @@ namespace BHSDK.Models.Resources
 
         public AudioResource()
         {
-            AudioResourceId = 0;
+            AudioResourceId = UninitializedId;
         }
         public AudioResource(int audioResourceId, List<ResourceKey> sources) : base(sources)
         {

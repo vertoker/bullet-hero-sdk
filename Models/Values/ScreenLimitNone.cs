@@ -13,15 +13,16 @@ namespace BHSDK.Models.Values
         public ScreenLimitType GetModelType() => ScreenLimitType.None;
         public bool IsValid(float currentAspect) => true;
         public float GetValid(float currentAspect) => currentAspect;
-        
+
         public object Clone() => Copy();
-        IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitNone();
+        IScreenLimit ICopyable<IScreenLimit>.Copy() => Copy();
         public ScreenLimitNone Copy() => new();
 
         // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
         public override int GetHashCode() => base.GetHashCode();
-        public override bool Equals(object obj) => obj is ScreenLimitFixed value && Equals(value);
-        
+        public override bool Equals(object obj) => obj is ScreenLimitNone value && Equals(value);
+
+        public bool Equals(IScreenLimit other) => other is not null && ReferenceEquals(this, other);
         public bool Equals(ScreenLimitNone other) => other is not null && ReferenceEquals(this, other);
     }
 }

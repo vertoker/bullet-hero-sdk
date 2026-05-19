@@ -23,7 +23,7 @@ namespace BHSDK.Models.Resources
 
         public TextureResource()
         {
-            TextureResourceId = 0;
+            TextureResourceId = UninitializedId;
         }
         public TextureResource(int textureResourceId, List<ResourceKey> sources) : base(sources)
         {

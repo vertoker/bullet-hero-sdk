@@ -23,7 +23,7 @@ namespace BHSDK.Models.Resources
 
         public TextResource()
         {
-            TextResourceId = 0;
+            TextResourceId = UninitializedId;
         }
         public TextResource(int textResourceId, List<ResourceKey> sources) : base(sources)
         {

@@ -222,7 +222,6 @@
         
         public const string Prefab = "prefab";
         public const string Prefabs = "prefabs";
-        public const string Modification = "modification";
         public const string Mod = "mod";
         public const string Property = "property";
         public const string Path = "path";
@@ -246,7 +245,6 @@
         public const string Over = "over";
         public const string Under = "under";
         public const string Edge = "edge";
-        public const string Distribution = "distribution";
         public const string Distrib = "distrib";
         
         public const string Scan = "scan";
@@ -363,6 +361,20 @@
         public const string File = "file";
         public const string Files = "files";
         
+        public const string Aggressive = "aggressive";
+        public const string License = "license";
+        public const string Use = "use";
+        public const string Same = "same";
+        public const string Allow = "allow";
+        public const string Allows = "allows";
+        public const string Require = "require";
+        public const string Requires = "requires";
+        public const string Distribution = "distribution";
+        public const string Modification = "modification";
+        public const string Commercial = "commercial";
+        public const string Attribution = "attribution";
+        public const string Disclosure = "disclosure";
+        
         private const string _ = "_";
         
         // ---------------------------------------------------------------------------------------------
@@ -444,6 +456,9 @@
         public const string OverEdge = Over + _ + Edge;
         public const string UnderEdge = Under + _ + Edge;
         
+        public const string ResourceType = Resource + _ + Type;
+        public const string ResourceId = Resource + _ + Id;
+        public const string ResourcesMeta = Resources + _ + Meta;
         public const string TextureResourceId = Texture + _ + Res + _ + Id;
         public const string FontResourceId = Font + _ + Res + _ + Id;
         public const string AudioResourceId = Audio + _ + Res + _ + Id;
@@ -578,5 +593,17 @@
         public const string HighlightColor = Highlight + _ + Color;
         public const string ShadowLimit = Shadow + _ + Limit;
         public const string HighlightLimit = Highlight + _ + Limit;
+        
+        // Licensing
+        
+        public const string LicenseName = License + _ + Name;
+        public const string LicenseUrl = License + _ + Url;
+        public const string LicenseType = License + _ + Type;
+        public const string AllowsDistribution = Allows + _ + Distribution;
+        public const string AllowsModification = Allows + _ + Modification;
+        public const string AllowsCommercialUse = Allows + _ + Commercial + _ + Use;
+        public const string RequiresAttribution = Requires + _ + Attribution;
+        public const string RequiresSourceDisclosure = Requires + _ + Source + _ + Disclosure;
+        public const string RequiresSameLicense = Requires + _ + Same + _ + License;
     }
 }

@@ -56,6 +56,7 @@ namespace BHSDK.Models.Values
         public override bool Equals(object obj) => obj is ScreenLimitBounds value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(MinAspect, MaxAspect);
 
+        public bool Equals(IScreenLimit other) => other is ScreenLimitBounds value && Equals(value);
         public bool Equals(ScreenLimitBounds other)
         {
             if (other is null) return false;

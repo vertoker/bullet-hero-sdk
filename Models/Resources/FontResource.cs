@@ -23,7 +23,7 @@ namespace BHSDK.Models.Resources
 
         public FontResource()
         {
-            FontResourceId = 0;
+            FontResourceId = UninitializedId;
         }
         public FontResource(int fontResourceId, List<ResourceKey> sources) : base(sources)
         {

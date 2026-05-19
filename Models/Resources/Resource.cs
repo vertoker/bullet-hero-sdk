@@ -11,6 +11,7 @@ namespace BHSDK.Models.Resources
     [RuleContainer]
     public abstract class Resource : IEquatable<Resource>
     {
+        public const int UninitializedId = 0;
         public const int MaxSourcesCount = 4;
         
         // Introduction into resourceId

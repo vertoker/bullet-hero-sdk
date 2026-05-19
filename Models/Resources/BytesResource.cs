@@ -23,7 +23,7 @@ namespace BHSDK.Models.Resources
 
         public BytesResource()
         {
-            ByteResourceId = 0;
+            ByteResourceId = UninitializedId;
         }
         public BytesResource(int byteResourceId, List<ResourceKey> sources) : base(sources)
         {

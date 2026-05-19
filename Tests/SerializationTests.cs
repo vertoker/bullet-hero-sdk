@@ -9,7 +9,6 @@ using BHSDK.Models.Enum.Settings;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Events;
 using BHSDK.Models.Keyframes;
-using BHSDK.Models.NoGame;
 using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Resources;
@@ -108,8 +107,6 @@ namespace BHSDK.Tests
             level.Settings.Framerate = 61;
             level.Settings.ScreenLimit = new ScreenLimitBounds();
             
-            level.Meta.Authors.Add(new Author());
-            
             level.Game.Events.Backgrounds.Add(new Clr());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
@@ -195,8 +192,7 @@ namespace BHSDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(1, "cool song", "vertoker", 0, 10, 0f,
-                0, trackEffects);
+            var track = new LevelTrack(1, 0, 10, 0f, 0, trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;
@@ -208,8 +204,6 @@ namespace BHSDK.Tests
 
             level.Settings.Framerate = -15;
             level.Settings.ScreenLimit = null;
-            
-            level.Meta.Authors.Add(new Author());
             
             level.Game.Events.Backgrounds.Add(new Clr());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
@@ -275,8 +269,7 @@ namespace BHSDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(1, "cool song", "vertoker", 0, 1000, 0f,
-                0, trackEffects);
+            var track = new LevelTrack(1, 0, 1000, 0f, 0, trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;

@@ -36,6 +36,7 @@
         public const int ThemeCount = 64;
         public const int MaxThemes = 32;
         public const int MaxPrefabs = 64;
+        public const int MaxAuthors = 16;
         
         public const float MinColor = 0f;
         public const float MaxColor = 1f;

@@ -40,16 +40,16 @@ namespace BHSDK.Utils
         
         public static bool ArrayEquals<T>(this T[] array, T[] other)
         {
-            if (ReferenceEquals(array, other)) return true;
             if (array is null || other is null) return false;
+            if (ReferenceEquals(array, other)) return true;
             if (array.Length != other.Length) return false;
             var result = array.SequenceEqual(other);
             return result;
         }
         public static bool ListEquals<T>(this List<T> list, List<T> other)
         {
-            if (ReferenceEquals(list, other)) return true;
             if (list is null || other is null) return false;
+            if (ReferenceEquals(list, other)) return true;
             if (list.Count != other.Count) return false;
             var result = list.SequenceEqual(other);
             return result;

@@ -12,33 +12,16 @@ namespace BHSDK.Models.Audio
     [RuleContainer]
     public class LevelTrack : ICopyable<LevelTrack>, IEquatable<LevelTrack>
     {
-        public const int MaxSourcesCount = 4;
-        
         // Same logic as Object.ObjectId, but only for audio and much simpler
         // 0 - undefined
         // 1, 2, 3... - user-defined audio
-        // negative space is banned for consistency
+        // negative space IS BANNED for consistency
         
         [RuleMin(1)]
         [JsonProperty(Names.AudioId)]
         public int AudioId { get; set; }
         
         public const int UndefinedAudioId = 0;
-        
-        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
-        [JsonProperty(Names.Title)]
-        public string Title { get; set; }
-        
-        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
-        [JsonProperty(Names.Author)]
-        public string Author { get; set; }
-        
-        // TODO add audio parsers for this services
-        // "Spotify", "https://open.spotify.com/artist/{0}"
-        // "SoundCloud", "https://soundcloud.com/{0}"
-        // "Bandcamp", "https://{0}.bandcamp.com"
-        // "Youtube Music", "https://music.youtube.com/channel/{0}"
-        // "Newgrounds", "https://{0}.newgrounds.com/"
         
         [RuleLevelFrame]
         [JsonProperty(Names.StartFrameShort)]
@@ -64,20 +47,16 @@ namespace BHSDK.Models.Audio
         public LevelTrack()
         {
             AudioId = 0;
-            Title = string.Empty;
-            Author = string.Empty;
             StartFrame = 0;
             EndFrame = 0;
             OffsetLocalTime = 0f;
             AudioResourceId = 0;
             Effects = new LevelTrackEffects();
         }
-        public LevelTrack(int audioId, string title, string author, int startFrame, int endFrame,
+        public LevelTrack(int audioId, int startFrame, int endFrame,
             float offsetLocalTime, int audioResourceId, LevelTrackEffects effects)
         {
             AudioId = audioId;
-            Title = title;
-            Author = author;
             StartFrame = startFrame;
             EndFrame = endFrame;
             OffsetLocalTime = offsetLocalTime;
@@ -86,11 +65,10 @@ namespace BHSDK.Models.Audio
         }
 
         public object Clone() => Copy();
-        public LevelTrack Copy() => new(AudioId, Title, Author,
-            StartFrame, EndFrame, OffsetLocalTime, AudioResourceId, Effects.Copy());
+        public LevelTrack Copy() => new(AudioId, StartFrame, EndFrame, OffsetLocalTime, AudioResourceId, Effects.Copy());
 
         public override bool Equals(object obj) => obj is LevelTrack value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(AudioId, Title, Author,
+        public override int GetHashCode() => HashCode.Combine(AudioId,
             StartFrame, EndFrame, OffsetLocalTime, AudioResourceId, Effects);
 
         public bool Equals(LevelTrack other)
@@ -98,13 +76,11 @@ namespace BHSDK.Models.Audio
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = AudioId.Equals(other.AudioId)
-                         && Title.Equals(other.Title)
-                         && Author.Equals(other.Author)
                          && StartFrame.Equals(other.StartFrame)
                          && EndFrame.Equals(other.EndFrame)
                          && OffsetLocalTime.Equals(other.OffsetLocalTime)
                          && AudioResourceId.Equals(other.AudioResourceId)
-                         && Equals(Effects, other.Effects);
+                         && Effects.Equals(other.Effects);
             return result;
         }
     }

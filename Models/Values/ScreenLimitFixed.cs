@@ -32,10 +32,11 @@ namespace BHSDK.Models.Values
         public object Clone() => Copy();
         IScreenLimit ICopyable<IScreenLimit>.Copy() => new ScreenLimitFixed(Aspect.Copy());
         public ScreenLimitFixed Copy() => new(Aspect.Copy());
-
+        
         public override bool Equals(object obj) => obj is ScreenLimitFixed value && Equals(value);
         public override int GetHashCode() => Aspect != null ? Aspect.GetHashCode() : 0;
 
+        public bool Equals(IScreenLimit other) => other is ScreenLimitFixed value && Equals(value);
         public bool Equals(ScreenLimitFixed other)
         {
             if (other is null) return false;
