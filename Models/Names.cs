@@ -361,6 +361,7 @@
         public const string Autosave = "autosave";
         public const string File = "file";
         public const string Files = "files";
+        public const string Logo = "Logo";
         
         public const string Aggressive = "aggressive";
         public const string License = "license";

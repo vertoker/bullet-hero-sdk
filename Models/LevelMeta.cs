@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using BHSDK.Models.Enum.Meta;
+using BHSDK.Models.Enum.Resources;
 using BHSDK.Models.Interfaces;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Meta;
+using BHSDK.Models.Resources;
 using BHSDK.Models.Values;
 using BHSDK.Rules;
 using BHSDK.Rules.Attributes;
@@ -31,8 +34,20 @@ namespace BHSDK.Models
         public IString LevelDescription { get; set; }
         
         [RuleNotNull]
+        [JsonProperty(Names.Logo)]
+        public ResourceKey LevelLogo { get; set; }
+        
+        [RuleNotNull(1, 0)]
         [JsonProperty(Names.Version)]
         public Version LevelVersion { get; set; }
+        
+        // Level can have any license, but typical it's a 2 choice
+        // CC BY-NC or CC BY-NC-SA, they both have incompatible resources (because of ShareAlike)
+        // If you don't know what to choose - choose CC BY-NC
+        
+        [RuleNotNull(typeof(TypicalLicense), TypicalLicenseType.CC_BY_NC_4_0)]
+        [JsonProperty(Names.License)]
+        public ILicense LevelLicense { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAuthors)]
         [JsonProperty(Names.Authors)]
@@ -47,28 +62,34 @@ namespace BHSDK.Models
             LevelGuid = Guid.NewGuid();
             LevelName = new StringValue();
             LevelDescription = new StringValue();
-            LevelVersion = new Version();
+            LevelLogo = new ResourceKey(ResourceUriType.LevelPath, FileNames.LogoFileNamePng);
+            LevelVersion = new Version(1, 0);
+            LevelLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
             LevelAuthors = new List<Author>();
             ResourcesMeta = new List<ResourceMeta>();
         }
-        public LevelMeta(Guid levelGuid, IString levelName, IString levelDescription,
-            Version levelVersion, List<Author> levelAuthors, List<ResourceMeta> resourcesMeta)
+        public LevelMeta(Guid levelGuid, IString levelName, IString levelDescription, ResourceKey levelLogo,
+            Version levelVersion, ILicense levelLicense, List<Author> levelAuthors, List<ResourceMeta> resourcesMeta)
         {
             LevelGuid = levelGuid;
             LevelName = levelName;
             LevelDescription = levelDescription;
+            LevelLogo = levelLogo;
             LevelVersion = levelVersion;
+            LevelLicense = levelLicense;
             LevelAuthors = levelAuthors;
             ResourcesMeta = resourcesMeta;
         }
 
         public object Clone() => Copy();
         public LevelMeta Copy() => new(LevelGuid, LevelName.Copy(), LevelDescription.Copy(),
-            (Version)LevelVersion.Clone(), LevelAuthors.CopyList(), ResourcesMeta.CopyList());
+            LevelLogo.Copy(), (Version)LevelVersion.Clone(), LevelLicense.Copy(),
+            LevelAuthors.CopyList(), ResourcesMeta.CopyList());
 
         public override bool Equals(object obj) => obj is LevelMeta value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(LevelGuid, LevelName, LevelDescription,
-            LevelVersion, LevelAuthors.GetListHashCode(), ResourcesMeta.GetListHashCode());
+        public override int GetHashCode() => HashCode.Combine(LevelGuid, LevelName.Copy(), LevelDescription.Copy(),
+            LevelLogo.Copy(), LevelVersion, LevelLicense.Copy(),
+            LevelAuthors.GetListHashCode(), ResourcesMeta.GetListHashCode());
 
         public bool Equals(LevelMeta other)
         {
@@ -77,7 +98,9 @@ namespace BHSDK.Models
             var result = LevelGuid.Equals(other.LevelGuid) 
                          && LevelName.Equals(other.LevelName)
                          && LevelDescription.Equals(other.LevelDescription)
+                         && LevelLogo.Equals(other.LevelLogo)
                          && LevelVersion.Equals(other.LevelVersion)
+                         && LevelLicense.Equals(other.LevelLicense)
                          && LevelAuthors.ListEquals(other.LevelAuthors)
                          && ResourcesMeta.ListEquals(other.ResourcesMeta);
             return result;

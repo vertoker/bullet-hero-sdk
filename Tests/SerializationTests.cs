@@ -299,6 +299,7 @@ namespace BHSDK.Tests
             meta.LevelVersion = new Version(1, 0);
             meta.LevelName = new StringValue("cool level");
             meta.LevelDescription = new StringValue("cool description");
+            meta.LevelLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
             meta.LevelAuthors = new List<Author>
             {
                 new(new StringValue("vertoker"), "vertoker.com"),
@@ -326,6 +327,7 @@ namespace BHSDK.Tests
         {
             var meta = new LevelMeta();
             meta.LevelVersion = null;
+            meta.LevelLicense = null;
             meta.ResourcesMeta = new List<ResourceMeta>
             {
                 new()
