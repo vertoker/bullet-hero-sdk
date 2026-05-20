@@ -33,16 +33,16 @@ namespace BHSDK.Serialization
 
             var settingsDefault = new JsonSerializerSettings
             {
-                Formatting = serializationSettings.Formatting,
-                TypeNameHandling = serializationSettings.TypeNameHandling,
+                Formatting = serializationSettings.formatting,
+                TypeNameHandling = serializationSettings.typeNameHandling,
                 ContractResolver = contractResolver,
             };
             var innerSerializer = JsonSerializer.CreateDefault(settingsDefault);
             
             var settings = new JsonSerializerSettings
             {
-                Formatting = serializationSettings.Formatting,
-                TypeNameHandling = serializationSettings.TypeNameHandling,
+                Formatting = serializationSettings.formatting,
+                TypeNameHandling = serializationSettings.typeNameHandling,
                 ContractResolver = contractResolver,
                 Converters = GetConverters(compatibilityService, innerSerializer),
             };
@@ -98,7 +98,7 @@ namespace BHSDK.Serialization
             {
                 var contract = base.CreateObjectContract(objectType);
                 
-                contract.MemberSerialization = _serializationSettings.MemberSerialization;
+                contract.MemberSerialization = _serializationSettings.memberSerialization;
         
                 return contract;
             }

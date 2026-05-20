@@ -2,25 +2,26 @@
 
 namespace BHSDK.Serialization
 {
+    [System.Serializable]
     public class SerializationSettings
     {
-        public Formatting Formatting { get; set; }
-        public TypeNameHandling TypeNameHandling { get; set; }
-        public MemberSerialization MemberSerialization { get; set; }
+        public Formatting formatting;
+        public TypeNameHandling typeNameHandling;
+        public MemberSerialization memberSerialization;
 
         public SerializationSettings()
         {
-            Formatting = Formatting.None;
-            TypeNameHandling = TypeNameHandling.None;
-            MemberSerialization = MemberSerialization.OptIn;
+            formatting = Formatting.None;
+            typeNameHandling = TypeNameHandling.None;
+            memberSerialization = MemberSerialization.OptIn;
         }
         public SerializationSettings(Formatting formatting = Formatting.None,
             TypeNameHandling typeNameHandling = TypeNameHandling.None,
             MemberSerialization memberSerialization = MemberSerialization.OptIn)
         {
-            Formatting = formatting;
-            TypeNameHandling = typeNameHandling;
-            MemberSerialization = memberSerialization;
+            this.formatting = formatting;
+            this.typeNameHandling = typeNameHandling;
+            this.memberSerialization = memberSerialization;
         }
     }
 }
