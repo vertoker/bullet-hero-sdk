@@ -34,6 +34,32 @@ namespace BHSDK.Tests
         
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        public void TestValidatorLevelMeta()
+        {
+            var validator = new RuleAnalyzer();
+            var level = SerializationTests.CreateTestLevelMeta();
+            var issues = validator.Analyze(level, new RuleAnalyzerSettings());
+            
+            Assert.IsEmpty(issues);
+        }
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestFixerLevelMeta()
+        {
+            var fixer = new RuleFixer();
+            var validator = new RuleAnalyzer();
+            var level = SerializationTests.CreateInvalidTestLevelMeta();
+            
+            var issues = validator.Analyze(level, new RuleAnalyzerSettings());
+            Assert.IsNotEmpty(issues);
+            
+            fixer.Fix(issues, level, new RuleFixerSettings());
+            issues = validator.Analyze(level, new RuleAnalyzerSettings());
+            Assert.IsEmpty(issues);
+        }
+        
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
         public void TestValidatorSettings()
         {
             var validator = new RuleAnalyzer();

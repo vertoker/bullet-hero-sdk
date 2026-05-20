@@ -28,6 +28,7 @@
         
         // public const int MaxObjects = 100000; // no limit for objects count
         
+        public const int MaxUrl = 512;
         public const int MaxEditorName = 512;
         public const int MaxEditorDescription = 4096;
         public const int MinAuthorOrder = -10000;
@@ -36,6 +37,7 @@
         public const int ThemeCount = 64;
         public const int MaxThemes = 32;
         public const int MaxPrefabs = 64;
+        public const int MaxSources = 16;
         public const int MaxAuthors = 16;
         
         public const float MinColor = 0f;

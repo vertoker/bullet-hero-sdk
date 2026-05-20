@@ -4,11 +4,13 @@ using System.IO;
 using BHSDK.Models;
 using BHSDK.Models.Audio;
 using BHSDK.Models.Effects;
+using BHSDK.Models.Enum.Meta;
 using BHSDK.Models.Enum.Resources;
 using BHSDK.Models.Enum.Settings;
 using BHSDK.Models.Enum.Values;
 using BHSDK.Models.Events;
 using BHSDK.Models.Keyframes;
+using BHSDK.Models.Meta;
 using BHSDK.Models.Objects;
 using BHSDK.Models.PostProcessing;
 using BHSDK.Models.Resources;
@@ -273,6 +275,74 @@ namespace BHSDK.Tests
             level.Audio.Tracks.Add(track);
 
             return level;
+        }
+        
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestLevelMetaSerialization()
+        {
+            var settings = new SerializationSettings(Formatting.Indented);
+            var serializationService = new SerializationService(settings);
+
+            var levelMeta = CreateTestLevelMeta();
+            var json = serializationService.SerializeData(levelMeta);
+            Cat.Meow($"LevelMeta - <color=green>{json}</color>");
+
+            var levelMeta2 = serializationService.DeserializeData<LevelMeta>(json);
+            Assert.IsTrue(levelMeta.Equals(levelMeta2));
+        }
+
+        public static LevelMeta CreateTestLevelMeta()
+        {
+            var meta = new LevelMeta();
+            meta.LevelGuid = Guid.NewGuid();
+            meta.LevelVersion = new Version(1, 0);
+            meta.LevelName = new StringValue("cool level");
+            meta.LevelDescription = new StringValue("cool description");
+            meta.LevelAuthors = new List<Author>
+            {
+                new(new StringValue("vertoker"), "vertoker.com"),
+            };
+            meta.ResourcesMeta = new List<ResourceMeta>
+            {
+                new()
+                {
+                    ResourceType = ResourceType.Audio,
+                    ResourceId = -1,
+                    ResourceTitle = new StringValue("Spider Dance"),
+                    ResourceDescription = new StringValue("Cool boss track from Undertale"),
+                    ResourceUrl = "https://www.youtube.com/watch?v=NH-GAwLAO30",
+                    ResourceLicense = new TypicalLicense(TypicalLicenseType.Proprietary),
+                    ResourceAuthors = new List<Author>
+                    {
+                        new(new StringValue("Toby Fox"), "https://x.com/tobyfox"),
+                    },
+                },
+            };
+            return meta;
+        }
+
+        public static LevelMeta CreateInvalidTestLevelMeta()
+        {
+            var meta = new LevelMeta();
+            meta.LevelVersion = null;
+            meta.ResourcesMeta = new List<ResourceMeta>
+            {
+                new()
+                {
+                    ResourceType = ResourceType.Audio,
+                    ResourceId = -1,
+                    ResourceTitle = null,
+                    ResourceDescription = null,
+                    ResourceUrl = null,
+                    ResourceLicense = null,
+                    ResourceAuthors = new List<Author>
+                    {
+                        new(new StringValue("Toby Fox"), "https://x.com/tobyfox"),
+                    },
+                },
+            };
+            return meta;
         }
         
         [Test]

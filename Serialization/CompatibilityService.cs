@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BHSDK.Models;
 using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Objects;
@@ -10,35 +11,53 @@ namespace BHSDK.Serialization
     // TODO add new attribute [DataVersion(1, 0, 0, 0)] and direct collect to dictionary
     public class CompatibilityService
     {
+        private static readonly List<Type> InterfaceTypes;
+        private static readonly List<Type> SafeDataInterfaceTypes;
+        private static int _count;
+
+        private static void Add(Type interfaceType)
+        {
+            InterfaceTypes.Add(interfaceType);
+            var safeDataInterface = typeof(SaveData<>).MakeGenericType(interfaceType);
+            SafeDataInterfaceTypes.Add(safeDataInterface);
+            _count++;
+        }
+
+        static CompatibilityService()
+        {
+            const int typeCapacity = 8;
+            InterfaceTypes = new List<Type>(typeCapacity);
+            SafeDataInterfaceTypes = new List<Type>(typeCapacity);
+            
+            Add(typeof(ILevel));
+            Add(typeof(ILevelMeta));
+            Add(typeof(IUserSettings));
+            Add(typeof(IPrefab));
+            Add(typeof(IEffect));
+            Add(typeof(ITheme));
+        }
+
         public Type GetSaveDataType<TValue>() where TValue : IData
         {
-            if (typeof(ILevel).IsAssignableFrom(typeof(TValue)))
-                return typeof(SaveData<ILevel>);
-            if (typeof(IUserSettings).IsAssignableFrom(typeof(TValue)))
-                return typeof(SaveData<IUserSettings>);
-            if (typeof(IPrefab).IsAssignableFrom(typeof(TValue)))
-                return typeof(SaveData<IPrefab>);
-            if (typeof(IEffect).IsAssignableFrom(typeof(TValue)))
-                return typeof(SaveData<IEffect>);
-            if (typeof(ITheme).IsAssignableFrom(typeof(TValue)))
-                return typeof(SaveData<ITheme>);
-            
+            for (var i = 0; i < _count; i++)
+            {
+                if (InterfaceTypes[i].IsAssignableFrom(typeof(TValue)))
+                    return SafeDataInterfaceTypes[i];
+            }
             throw new NotSupportedException($"Unsupported data type: {typeof(TValue)}");
         }
         
         public TValue Convert<TValue>(IData data) where TValue : IData
         {
             if (typeof(TValue) == typeof(IData)) return (TValue)data;
-            if (data is ILevel level)
-                return Convert<TValue>(level);
-            if (data is IUserSettings userSettings)
-                return Convert<TValue>(userSettings);
-            if (data is IPrefab prefab)
-                return Convert<TValue>(prefab);
-            if (data is IEffect effect)
-                return Convert<TValue>(effect);
-            if (data is ITheme theme)
-                return Convert<TValue>(theme);
+            
+            if (data is ILevel level) return Convert<TValue>(level);
+            if (data is ILevelMeta levelMeta) return Convert<TValue>(levelMeta);
+            if (data is IUserSettings settings) return Convert<TValue>(settings);
+            if (data is IPrefab prefab) return Convert<TValue>(prefab);
+            if (data is IEffect effect) return Convert<TValue>(effect);
+            if (data is ITheme theme) return Convert<TValue>(theme);
+            
             throw new ArgumentException(typeof(TValue).Name);
         }
         
@@ -46,6 +65,17 @@ namespace BHSDK.Serialization
         {
             if (typeof(TValue) == typeof(ILevel)) return (TValue)data;
             if (typeof(TValue) == typeof(Level))
+            {
+                // var fromVersion = data.GetVersion();
+                // var toVersion = Level.Version;
+                return (TValue)data;
+            }
+            throw new ArgumentException(typeof(TValue).Name);
+        }
+        public TValue Convert<TValue>(ILevelMeta data) where TValue : IData
+        {
+            if (typeof(TValue) == typeof(ILevelMeta)) return (TValue)data;
+            if (typeof(TValue) == typeof(LevelMeta))
             {
                 // var fromVersion = data.GetVersion();
                 // var toVersion = Level.Version;
@@ -101,6 +131,11 @@ namespace BHSDK.Serialization
         public Type GetLevelType(Version version)
         {
             if (version == Level.Version) return typeof(Level);
+            throw new NotSupportedException($"Unsupported version: {version}");
+        }
+        public Type GetLevelMetaType(Version version)
+        {
+            if (version == LevelMeta.Version) return typeof(LevelMeta);
             throw new NotSupportedException($"Unsupported version: {version}");
         }
         public Type GetUserSettingsType(Version version)

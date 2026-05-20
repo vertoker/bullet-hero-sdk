@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BHSDK.Models.Interfaces;
+using BHSDK.Models.Interfaces.SaveData;
 using BHSDK.Models.Interfaces.Values;
 using BHSDK.Models.Meta;
 using BHSDK.Models.Values;
@@ -12,8 +13,11 @@ using Newtonsoft.Json;
 namespace BHSDK.Models
 {
     [RuleContainer]
-    public class LevelMeta : ICopyable<LevelMeta>, IEquatable<LevelMeta>
+    public class LevelMeta : ILevelMeta, ICopyable<LevelMeta>, IEquatable<LevelMeta>
     {
+        public static readonly Version Version = new(1, 0);
+        public Version GetVersion() => Version;
+        
         [RuleGuidNotEmpty]
         [JsonProperty(Names.LevelGuid)]
         public Guid LevelGuid { get; set; }

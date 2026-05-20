@@ -9,7 +9,7 @@ namespace BHSDK.Models.Enum.Meta
         
         /// <summary> All rights reserved </summary>
         Proprietary = 0,
-        /// <summary> License with full freedom of usage (https://choosealicense.com/licenses/unlicense/) </summary>
+        /// <summary> No rights reserved, full freedom of usage (https://choosealicense.com/licenses/unlicense/) </summary>
         PublicDomain = 1,
         
         /// <summary> MIT License (Massachusetts Institute of Technology)
@@ -42,10 +42,14 @@ namespace BHSDK.Models.Enum.Meta
         // Creative Commons Family
         // https://creativecommons.org/cc-licenses/
         
+        /// <summary> Creative Commons Zero v4.0 - public domain
+        /// (https://creativecommons.org/publicdomain/zero/1.0/) </summary>
+        CC0_1_0 = 100,
+        
+        // v4.0
+        
         // Allows to share/remix/commercial
         
-        /// <summary> Creative Commons Zero v4.0 - public domain </summary>
-        CC0_4_0 = 100,
         /// <summary> Creative Commons Attribution v4.0
         /// (https://creativecommons.org/licenses/by/4.0/) </summary>
         CC_BY_4_0 = 101,
@@ -71,8 +75,42 @@ namespace BHSDK.Models.Enum.Meta
         /// (https://creativecommons.org/licenses/by-nc-nd/4.0/) </summary>
         CC_BY_NC_ND_4_0 = 106,
         
+        // v3.0
+        
+        // Allows to share/remix/commercial
+        
+        /// <summary> Creative Commons Attribution v3.0
+        /// (https://creativecommons.org/licenses/by/3.0/) </summary>
+        CC_BY_3_0 = 107,
+        /// <summary> Creative Commons Attribution-ShareAlike v3.0
+        /// (https://creativecommons.org/licenses/by-sa/3.0/) </summary>
+        CC_BY_SA_3_0 = 108,
+        
+        // Allows to share/remix
+        
+        /// <summary> Creative Commons Attribution-NonCommercial v3.0
+        /// (https://creativecommons.org/licenses/by-nc/3.0/) </summary>
+        CC_BY_NC_3_0 = 109,
+        /// <summary> Creative Commons Attribution-NonCommercial-ShareAlike v3.0
+        /// (https://creativecommons.org/licenses/by-nc-sa/3.0/) </summary>
+        CC_BY_NC_SA_3_0 = 110,
+        
+        // Allows to share
+        
+        /// <summary> Creative Commons Attribution-NoDerivation v3.0
+        /// (https://creativecommons.org/licenses/by-nd/3.0/) </summary>
+        CC_BY_ND_3_0 = 111,
+        /// <summary> Creative Commons Attribution-NonCommercial-NoDerivation v3.0
+        /// (https://creativecommons.org/licenses/by-nc-nd/3.0/) </summary>
+        CC_BY_NC_ND_3_0 = 112,
+        
         
         // Commercial music licenses for non-commercial games
+        
+        /// <summary> Standard YouTube License, require author permission
+        /// (https://support.google.com/youtube/answer/2797468) </summary>
+        YT = 150,
+        
         // NCS = 150,
         // SoundBible = 151,
         // DL_Sounds = 152,

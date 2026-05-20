@@ -7,7 +7,6 @@ using BHSDK.Models.Interfaces.Values;
 using BHSDK.Rules.Attributes;
 using BHSDK.Utils;
 using Newtonsoft.Json;
-// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BHSDK.Models.Values
 {
@@ -21,6 +20,10 @@ namespace BHSDK.Models.Values
         public StringLocalized()
         {
             Strings = new List<StringLanguage>();
+        }
+        public StringLocalized(params StringLanguage[] strings)
+        {
+            Strings = strings.ToList();
         }
         public StringLocalized(List<StringLanguage> strings)
         {

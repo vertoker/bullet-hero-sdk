@@ -231,6 +231,7 @@
         public const string Author = "author";
         public const string Authors = "authors";
         public const string Source = "source";
+        public const string Sources = "sources";
         public const string Src = "src";
         public const string Link = "link";
         public const string Uri = "uri";

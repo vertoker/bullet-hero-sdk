@@ -62,6 +62,7 @@ namespace BHSDK.Serialization
                 new EffectDataConverter(compatibilityService, innerSerializer),
                 
                 new LevelDataConverter(compatibilityService),
+                new LevelMetaDataConverter(compatibilityService),
                 new PrefabDataConverter(compatibilityService),
                 new ThemeDataConverter(compatibilityService),
                 new UserSettingsDataConverter(compatibilityService),

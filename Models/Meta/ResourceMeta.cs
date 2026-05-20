@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 
 namespace BHSDK.Models.Meta
 {
+    [RuleContainer]
     public class ResourceMeta : ICopyable<ResourceMeta>, IEquatable<ResourceMeta>
     {
         [JsonProperty(Names.ResourceType)]
@@ -23,35 +24,45 @@ namespace BHSDK.Models.Meta
         [JsonProperty(Names.ResourceId)]
         public int ResourceId { get; set; }
         
-        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
+        [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Title)]
-        public string ResourceTitle { get; set; }
+        public IString ResourceTitle { get; set; }
         
-        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorDescription)]
+        [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxEditorDescription)]
         [JsonProperty(Names.Description)]
-        public string ResourceDescription { get; set; }
+        public IString ResourceDescription { get; set; }
         
+        [RuleNotNull, RuleStringMax(ValueRules.MaxUrl)]
         [JsonProperty(Names.Url)]
         public string ResourceUrl { get; set; }
         
+        [RuleNotNull(typeof(NoSpecifiedLicense))]
         [JsonProperty(Names.License)]
         public ILicense ResourceLicense { get; set; }
+        
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxSources)]
+        [JsonProperty(Names.Sources)]
+        public List<IString> ResourceSources { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAuthors)]
         [JsonProperty(Names.Authors)]
         public List<Author> ResourceAuthors { get; set; }
+        
+        // TODO add method for author permission to use resource (for whole BH or several levels / unlimited or time limit)
 
         public ResourceMeta()
         {
             ResourceType = ResourceType.Bytes;
             ResourceId = Resource.UninitializedId;
-            ResourceTitle = string.Empty;
-            ResourceDescription = string.Empty;
+            ResourceTitle = new StringValue();
+            ResourceDescription = new StringValue();
             ResourceLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
+            ResourceSources = new List<IString>();
             ResourceAuthors = new List<Author>();
         }
-        public ResourceMeta(ResourceType resourceType, int resourceId, string resourceTitle,
-            string resourceDescription, string resourceUrl, ILicense resourceLicense, List<Author> resourceAuthors)
+        public ResourceMeta(ResourceType resourceType, int resourceId, IString resourceTitle,
+            IString resourceDescription, string resourceUrl, ILicense resourceLicense,
+            List<IString> resourceSources, List<Author> resourceAuthors)
         {
             ResourceType = resourceType;
             ResourceId = resourceId;
@@ -59,12 +70,28 @@ namespace BHSDK.Models.Meta
             ResourceDescription = resourceDescription;
             ResourceUrl = resourceUrl;
             ResourceLicense = resourceLicense;
+            ResourceSources = resourceSources;
             ResourceAuthors = resourceAuthors;
         }
 
         public object Clone() => Copy();
-        public ResourceMeta Copy() => new(ResourceType, ResourceId, ResourceTitle, ResourceDescription,
-            ResourceUrl, ResourceLicense.Copy(), ResourceAuthors.CopyList());
+        public ResourceMeta Copy() => new(ResourceType, ResourceId, ResourceTitle.Copy(), 
+            ResourceDescription.Copy(), ResourceUrl, ResourceLicense.Copy(),
+            ResourceSources.CopyList(), ResourceAuthors.CopyList());
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((ResourceMeta)obj);
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)ResourceType, ResourceId, ResourceTitle,
+                ResourceDescription, ResourceUrl, ResourceLicense, 
+                ResourceSources.GetListHashCode(), ResourceAuthors.GetListHashCode());
+        }
 
         public bool Equals(ResourceMeta other)
         {
@@ -76,21 +103,8 @@ namespace BHSDK.Models.Meta
                    && ResourceDescription.Equals(other.ResourceDescription)
                    && ResourceUrl.Equals(other.ResourceUrl)
                    && ResourceLicense.Equals(other.ResourceLicense)
+                   && ResourceSources.ListEquals(other.ResourceSources)
                    && ResourceAuthors.ListEquals(other.ResourceAuthors);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((ResourceMeta)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine((int)ResourceType, ResourceId, ResourceTitle,
-                ResourceDescription, ResourceUrl, ResourceLicense, ResourceAuthors.GetListHashCode());
         }
     }
 }
