@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace BHSDK.Rules
+namespace BH.SDK.Rules
 {
     public static class FrameRules
     {

@@ -1,12 +1,12 @@
 ﻿using System;
-
-#if BHSDK_UNITY
 using UnityEngine;
+#if BHSDK_UNITY
+
 #else
 using System;
 #endif
 
-namespace BHSDK
+namespace BH.SDK
 {
     public class Cat
     {

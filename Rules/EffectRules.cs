@@ -1,11 +1,11 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using System.Collections.Generic;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Values;
-using BHSDK.Utils;
+using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Values;
+using BH.SDK.Utils;
 
-namespace BHSDK.Rules
+namespace BH.SDK.Rules
 {
     public static class EffectRules
     {

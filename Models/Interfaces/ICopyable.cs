@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BHSDK.Models.Interfaces
+namespace BH.SDK.Models.Interfaces
 {
     public interface ICopyable<out T> : ICloneable
     {

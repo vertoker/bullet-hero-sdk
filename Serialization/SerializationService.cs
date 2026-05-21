@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using BHSDK.Models;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Objects;
-using BHSDK.Models.Values;
-using BHSDK.Serialization.Converters;
-using BHSDK.Serialization.Converters.CustomTypes;
+using BH.SDK.Models;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Serialization.Converters;
+using BH.SDK.Serialization.Converters.CustomTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace BHSDK.Serialization
+namespace BH.SDK.Serialization
 {
     public class SerializationService
     {

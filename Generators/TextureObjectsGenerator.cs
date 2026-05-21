@@ -1,10 +1,10 @@
-﻿using BHSDK.Models;
-using BHSDK.Models.Keyframes;
-using BHSDK.Models.Objects;
-using BHSDK.Models.Values;
-using BHSDK.Utils;
+﻿using BH.SDK.Models;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.Values;
+using BH.SDK.Utils;
 
-namespace BHSDK.Generators
+namespace BH.SDK.Generators
 {
     public class TextureObjectsGenerator : ILevelGenerator<TextureObjectsParameters>
     {

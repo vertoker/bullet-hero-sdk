@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Resources;
-using BHSDK.Models.Values;
-using BHSDK.Validations;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Resources;
+using BH.SDK.Models.Values;
+using BH.SDK.Validations;
 
-namespace BHSDK.Utils
+namespace BH.SDK.Utils
 {
     public static class ModelUtils
     {

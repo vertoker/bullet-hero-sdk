@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Interfaces;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Values
+namespace BH.SDK.Models.Values
 {
     [RuleContainer]
     public class CurveValue : ICopyable<CurveValue>, IEquatable<CurveValue>

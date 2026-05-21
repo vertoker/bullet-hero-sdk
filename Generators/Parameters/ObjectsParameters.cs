@@ -1,6 +1,6 @@
-﻿using BHSDK.Rules;
+﻿using BH.SDK.Rules;
 
-namespace BHSDK.Generators
+namespace BH.SDK.Generators
 {
     public abstract class ObjectsParameters
     {

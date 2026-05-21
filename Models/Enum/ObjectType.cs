@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum
+﻿namespace BH.SDK.Models.Enum
 {
     public enum ObjectType : byte
     {

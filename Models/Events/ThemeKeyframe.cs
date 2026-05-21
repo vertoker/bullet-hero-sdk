@@ -1,12 +1,13 @@
 ﻿using System;
-using BHSDK.Models.Enum;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Keyframes;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Events
+namespace BH.SDK.Models.Events
 {
     [RuleContainer]
     public class ThemeKeyframe : Keyframe, ICopyable<ThemeKeyframe>, IEquatable<ThemeKeyframe>

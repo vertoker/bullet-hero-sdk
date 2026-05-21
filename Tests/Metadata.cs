@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Tests
+﻿namespace BH.SDK.Tests
 {
     public static class Metadata
     {

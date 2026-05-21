@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Effects;
-using BHSDK.Models.Enum;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Effects;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Keyframes;
-using BHSDK.Models.Values;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Effects;
+using BH.SDK.Models.Enum;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Effects;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Objects
+namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
     public class EffectObject : Object, IEffect,

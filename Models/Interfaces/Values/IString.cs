@@ -1,7 +1,7 @@
 ﻿using System;
-using BHSDK.Models.Enum.Values;
+using BH.SDK.Models.Enum.Values;
 
-namespace BHSDK.Models.Interfaces.Values
+namespace BH.SDK.Models.Interfaces.Values
 {
     public interface IString : ICopyable<IString>, IEquatable<IString>
     {

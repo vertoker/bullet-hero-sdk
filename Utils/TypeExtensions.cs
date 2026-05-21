@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BHSDK.Utils
+namespace BH.SDK.Utils
 {
     public static class TypeExtensions
     {

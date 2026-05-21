@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text;
 
-namespace BHSDK.Validations
+namespace BH.SDK.Validations
 {
     public readonly struct RulePath
     {

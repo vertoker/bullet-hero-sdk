@@ -1,9 +1,10 @@
 ﻿using System;
-using BHSDK.Models.Interfaces;
-using BHSDK.Utils;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Utils;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Resources
+namespace BH.SDK.Models.Resources
 {
     public class PixelTexture : ICopyable<PixelTexture>, IEquatable<PixelTexture>
     {

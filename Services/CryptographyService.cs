@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BHSDK.Services
+namespace BH.SDK.Services
 {
     public class CryptographyService
     {

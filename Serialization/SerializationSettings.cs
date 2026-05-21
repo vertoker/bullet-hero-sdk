@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BHSDK.Serialization
+namespace BH.SDK.Serialization
 {
     [System.Serializable]
     public class SerializationSettings

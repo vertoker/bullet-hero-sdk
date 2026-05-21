@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BHSDK.Models.Enum;
-using BHSDK.Models.Enum.Text;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Keyframes;
-using BHSDK.Models.Values;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enum.Text;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Objects
+namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
     public class TextObject : Object, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>

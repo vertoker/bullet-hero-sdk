@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum.Values
+﻿namespace BH.SDK.Models.Enum.Values
 {
     public enum GradientInterpolationMode : byte
     {

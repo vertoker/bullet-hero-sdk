@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 
-namespace BHSDK.Validations
+namespace BH.SDK.Validations
 {
     public readonly struct RuleIssue
     {

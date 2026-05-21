@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
-using BHSDK.Services;
+using BH.SDK.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using UnityEngine;
 
-namespace BHSDK.Tests
+namespace BH.SDK.Tests
 {
     public class ModificationTests
     {

@@ -1,6 +1,6 @@
 {
     "name": "BulletHeroSDK.UnityIntegration",
-    "rootNamespace": "BHSDK",
+    "rootNamespace": "BH.SDK",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

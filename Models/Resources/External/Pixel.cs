@@ -4,10 +4,10 @@ using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using BHSDK.Models.Interfaces;
-using BHSDK.Utils;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Utils;
 
-namespace BHSDK.Models.Resources
+namespace BH.SDK.Models.Resources
 {
     [StructLayout(LayoutKind.Explicit, Size = 4)]
     public struct Pixel : IEquatable<Pixel>, IFormattable, ICopyable<Pixel>

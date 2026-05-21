@@ -1,8 +1,8 @@
-﻿using BHSDK.Models.Resources;
-using BHSDK.Models.Values;
-using BHSDK.Rules;
+﻿using BH.SDK.Models.Resources;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules;
 
-namespace BHSDK.Generators
+namespace BH.SDK.Generators
 {
     public class TextureObjectsParameters : ObjectsParameters
     {

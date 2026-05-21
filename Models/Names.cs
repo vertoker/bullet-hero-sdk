@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models
+﻿namespace BH.SDK.Models
 {
     public static class Names
     {

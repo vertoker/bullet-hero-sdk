@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Rules
+﻿namespace BH.SDK.Rules
 {
     public enum RuleGroup : byte
     {

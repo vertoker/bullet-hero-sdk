@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace BHSDK.Models.Enum.Meta
+namespace BH.SDK.Models.Enum.Meta
 {
     public enum TypicalLicenseType : short
     {

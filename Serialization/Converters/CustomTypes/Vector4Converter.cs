@@ -1,11 +1,11 @@
 ﻿using System;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values;
-using BHSDK.Serialization.Converters.Base;
+using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Values;
+using BH.SDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization.Converters.CustomTypes
+namespace BH.SDK.Serialization.Converters.CustomTypes
 {
     public class Vector4Converter : JsonConverterCustomType<IVector4, VectorType>
     {

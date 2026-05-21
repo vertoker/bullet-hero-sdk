@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Objects
+namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
     public class Prefab : IObjectScope, IPrefab, ICopyable<Prefab>, IEquatable<Prefab>

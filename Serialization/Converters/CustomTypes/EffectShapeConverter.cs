@@ -1,11 +1,11 @@
 ﻿using System;
-using BHSDK.Models.Effects;
-using BHSDK.Models.Enum.Effects;
-using BHSDK.Models.Interfaces.Effects;
-using BHSDK.Serialization.Converters.Base;
+using BH.SDK.Models.Effects;
+using BH.SDK.Models.Enum.Effects;
+using BH.SDK.Models.Interfaces.Effects;
+using BH.SDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization.Converters.CustomTypes
+namespace BH.SDK.Serialization.Converters.CustomTypes
 {
     public class EffectShapeConverter : JsonConverterCustomType<IEffectShape, EffectShapeType>
     {

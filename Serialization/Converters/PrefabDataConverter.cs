@@ -1,10 +1,8 @@
 ﻿using System;
-using BHSDK.Models;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Objects;
-using BHSDK.Serialization.Converters.Base;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Serialization.Converters.Base;
 
-namespace BHSDK.Serialization.Converters
+namespace BH.SDK.Serialization.Converters
 {
     public class PrefabDataConverter : JsonConverterData<IPrefab>
     {

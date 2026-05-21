@@ -1,7 +1,7 @@
 ﻿using System;
-using BHSDK.Models.Enum.Effects;
+using BH.SDK.Models.Enum.Effects;
 
-namespace BHSDK.Models.Interfaces.Effects
+namespace BH.SDK.Models.Interfaces.Effects
 {
     public interface IEffectAngle : ICopyable<IEffectAngle>, IEquatable<IEffectAngle>
     {

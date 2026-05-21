@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using BHSDK.Models;
-using BHSDK.Models.Audio;
-using BHSDK.Models.Effects;
-using BHSDK.Models.Enum.Meta;
-using BHSDK.Models.Enum.Resources;
-using BHSDK.Models.Enum.Settings;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Events;
-using BHSDK.Models.Keyframes;
-using BHSDK.Models.Meta;
-using BHSDK.Models.Objects;
-using BHSDK.Models.PostProcessing;
-using BHSDK.Models.Resources;
-using BHSDK.Models.Values;
-using BHSDK.Serialization;
+using BH.SDK.Models;
+using BH.SDK.Models.Audio;
+using BH.SDK.Models.Effects;
+using BH.SDK.Models.Enum.Meta;
+using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enum.Settings;
+using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Events;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Meta;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.PostProcessing;
+using BH.SDK.Models.Resources;
+using BH.SDK.Models.Values;
+using BH.SDK.Serialization;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace BHSDK.Tests
+namespace BH.SDK.Tests
 {
     public class SerializationTests
     {

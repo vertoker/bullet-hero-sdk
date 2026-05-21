@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Events;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Keyframes;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Events;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Game
+namespace BH.SDK.Models.Game
 {
     [RuleContainer]
     public class GameEvents : ICopyable<GameEvents>, IEquatable<GameEvents>

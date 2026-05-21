@@ -1,8 +1,8 @@
 ﻿using System;
-using BHSDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Interfaces.SaveData;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BH.SDK.Models
 {
     public class SaveData<TData> : ISaveData where TData : IData
     {

@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
-using BHSDK.Models;
 
-namespace BHSDK.Rules.Attributes
+namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionSortedAttribute : BaseRuleAttribute

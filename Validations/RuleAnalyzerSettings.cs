@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Validations
+﻿namespace BH.SDK.Validations
 {
     public class RuleAnalyzerSettings
     {

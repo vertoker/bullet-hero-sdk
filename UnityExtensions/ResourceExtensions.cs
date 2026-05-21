@@ -1,9 +1,7 @@
-﻿using BHSDK.Models.Resources;
-#if BHSDK_UNITY
+﻿using BH.SDK.Models.Resources;
 using UnityEngine;
-#endif
 
-namespace BHSDK
+namespace BH.SDK
 {
     public static class ResourceExtensions
     {

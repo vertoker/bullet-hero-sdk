@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum.Meta
+﻿namespace BH.SDK.Models.Enum.Meta
 {
     public enum LicenseType : byte
     {

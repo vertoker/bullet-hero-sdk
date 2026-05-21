@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models;
 
-namespace BHSDK.Validations
+namespace BH.SDK.Validations
 {
     public class RuleFixer
     {

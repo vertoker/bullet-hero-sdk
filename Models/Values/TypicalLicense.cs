@@ -1,10 +1,10 @@
 ﻿using System;
-using BHSDK.Models.Enum.Meta;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Values;
+using BH.SDK.Models.Enum.Meta;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Values;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Values
+namespace BH.SDK.Models.Values
 {
     public class TypicalLicense : ILicense, ICopyable<TypicalLicense>, IEquatable<TypicalLicense>
     {

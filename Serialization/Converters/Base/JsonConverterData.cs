@@ -1,9 +1,9 @@
 ﻿using System;
-using BHSDK.Models;
-using BHSDK.Models.Interfaces.SaveData;
+using BH.SDK.Models;
+using BH.SDK.Models.Interfaces.SaveData;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization.Converters.Base
+namespace BH.SDK.Serialization.Converters.Base
 {
     public abstract class JsonConverterData<T> : JsonConverter<SaveData<T>> where T : IData
     {

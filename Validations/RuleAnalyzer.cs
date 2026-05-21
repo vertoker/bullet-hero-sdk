@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BHSDK.Models;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 
-namespace BHSDK.Validations
+namespace BH.SDK.Validations
 {
     public class RuleAnalyzer
     {

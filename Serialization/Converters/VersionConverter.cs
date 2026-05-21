@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization.Converters
+namespace BH.SDK.Serialization.Converters
 {
     public class VersionConverter : JsonConverter<Version>
     {

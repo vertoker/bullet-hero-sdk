@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Linq;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Values
+namespace BH.SDK.Models.Values
 {
     [RuleContainer]
     public class Theme : ITheme, ICopyable<Theme>, IEquatable<Theme>

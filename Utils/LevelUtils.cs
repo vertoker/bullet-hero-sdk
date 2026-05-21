@@ -1,7 +1,7 @@
-﻿using BHSDK.Models.Objects;
-using BHSDK.Models.SettingGroups;
+﻿using BH.SDK.Models.Objects;
+using BH.SDK.Models.SettingGroups;
 
-namespace BHSDK.Utils
+namespace BH.SDK.Utils
 {
     public static class LevelUtils
     {

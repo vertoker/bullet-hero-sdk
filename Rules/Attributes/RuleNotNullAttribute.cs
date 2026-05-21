@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using BHSDK.Utils;
+using BH.SDK.Utils;
 
-namespace BHSDK.Rules.Attributes
+namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
     public class RuleNotNullAttribute : BaseRuleAttribute

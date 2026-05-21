@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Enum.Meta;
-using BHSDK.Models.Enum.Resources;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Meta;
-using BHSDK.Models.Resources;
-using BHSDK.Models.Values;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Enum.Meta;
+using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Meta;
+using BH.SDK.Models.Resources;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BH.SDK.Models
 {
     [RuleContainer]
     public class LevelMeta : ILevelMeta, ICopyable<LevelMeta>, IEquatable<LevelMeta>

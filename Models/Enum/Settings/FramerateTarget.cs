@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum.Settings
+﻿namespace BH.SDK.Models.Enum.Settings
 {
     public enum FramerateTarget
     {

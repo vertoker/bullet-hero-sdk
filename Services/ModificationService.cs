@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
 
-namespace BHSDK.Services
+namespace BH.SDK.Services
 {
     public class ModificationService
     {

@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum.Text
+﻿namespace BH.SDK.Models.Enum.Text
 {
     // Copied from UniText, if source enum will change - mention it anywhere
     

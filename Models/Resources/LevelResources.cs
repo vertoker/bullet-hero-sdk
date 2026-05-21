@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Values;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Resources
+namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
     public class LevelResources : ICopyable<LevelResources>, IEquatable<LevelResources>

@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Interfaces
+﻿namespace BH.SDK.Models.Interfaces
 {
     public interface IUpdatable<in T>
     {

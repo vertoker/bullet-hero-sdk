@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Resources;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Audio
+namespace BH.SDK.Models.Audio
 {
     [RuleContainer]
     public class LevelTrack : ICopyable<LevelTrack>, IEquatable<LevelTrack>

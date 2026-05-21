@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Enum.Resources;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Resources
+namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
     public abstract class Resource : IEquatable<Resource>

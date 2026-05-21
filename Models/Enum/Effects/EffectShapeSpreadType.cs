@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum.Effects
+﻿namespace BH.SDK.Models.Enum.Effects
 {
     public enum EffectShapeSpreadType : byte
     {

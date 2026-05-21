@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace BHSDK.Rules
+namespace BH.SDK.Rules
 {
     public static class AudioRules
     {

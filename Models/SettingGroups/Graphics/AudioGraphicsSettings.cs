@@ -1,9 +1,9 @@
 ﻿using System;
-using BHSDK.Models.Interfaces;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.SettingGroups.Graphics
+namespace BH.SDK.Models.SettingGroups.Graphics
 {
     public class AudioGraphicsSettings : BaseGraphicsSettings,
         ICopyable<AudioGraphicsSettings>, IEquatable<AudioGraphicsSettings>

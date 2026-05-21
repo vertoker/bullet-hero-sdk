@@ -1,14 +1,14 @@
 ﻿using System;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.SettingGroups
+namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
     public class LevelSettings : ICopyable<LevelSettings>, IEquatable<LevelSettings>

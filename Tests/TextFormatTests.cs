@@ -1,8 +1,7 @@
-﻿using BHSDK.Services;
+﻿using BH.SDK.Services;
 using NUnit.Framework;
-using UnityEngine;
 
-namespace BHSDK.Tests
+namespace BH.SDK.Tests
 {
     public class TextFormatTests
     {

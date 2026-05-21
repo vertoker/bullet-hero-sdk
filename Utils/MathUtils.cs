@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BHSDK.Utils
+namespace BH.SDK.Utils
 {
     // Mixed functions from UnityEngine.Mathf and Unity.Collections.math
     public static class MathUtils

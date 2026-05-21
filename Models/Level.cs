@@ -1,15 +1,14 @@
 ﻿using System;
-using BHSDK.Models.Audio;
-using BHSDK.Models.Game;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Resources;
-using BHSDK.Models.SettingGroups;
-using BHSDK.Rules.Attributes;
-using BHSDK.Serialization;
+using BH.SDK.Models.Audio;
+using BH.SDK.Models.Game;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Resources;
+using BH.SDK.Models.SettingGroups;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BH.SDK.Models
 {
     [RuleContainer]
     public class Level : ILevel, ICopyable<Level>, IEquatable<Level>

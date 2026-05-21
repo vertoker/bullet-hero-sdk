@@ -1,17 +1,18 @@
 ﻿using System;
-using BHSDK.Models.Enum;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
-using Keyframe = BHSDK.Models.Keyframes.Keyframe;
+using Keyframes_Keyframe = BH.SDK.Models.Keyframes.Keyframe;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.PostProcessing
+namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LiftGammaGain : Keyframe,
+    public class LiftGammaGain : Keyframes_Keyframe,
         ICopyable<LiftGammaGain>, IEquatable<LiftGammaGain>
     {
         [JsonProperty(Names.Lift)]

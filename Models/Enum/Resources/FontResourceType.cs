@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Enum.Resources
+﻿namespace BH.SDK.Models.Enum.Resources
 {
     public enum FontResourceType : byte
     {

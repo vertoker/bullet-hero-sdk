@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Objects;
-using BHSDK.Models.Resources;
-using BHSDK.Models.Values;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
-using Object = BHSDK.Models.Objects.Object;
+using Object = BH.SDK.Models.Objects.Object;
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Game
+namespace BH.SDK.Models.Game
 {
     [RuleContainer]
     public class GameLevel : IObjectScope,

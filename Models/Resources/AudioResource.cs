@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models.Enum.Resources;
-using BHSDK.Models.Interfaces;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules.Attributes;
+using BH.SDK.Utils;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Resources
+namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
     public class AudioResource : Resource, ICopyable<AudioResource>, IEquatable<AudioResource>

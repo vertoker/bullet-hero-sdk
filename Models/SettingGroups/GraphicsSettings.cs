@@ -1,11 +1,11 @@
 ﻿using System;
-using BHSDK.Models.Enum.Settings;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.SettingGroups.Graphics;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum.Settings;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.SettingGroups.Graphics;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.SettingGroups
+namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
     public class GraphicsSettings : ICopyable<GraphicsSettings>, IEquatable<GraphicsSettings>

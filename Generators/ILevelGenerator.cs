@@ -1,6 +1,6 @@
-﻿using BHSDK.Models;
+﻿using BH.SDK.Models;
 
-namespace BHSDK.Generators
+namespace BH.SDK.Generators
 {
     public interface ILevelGenerator<in TInputParameters>
     {

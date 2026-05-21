@@ -1,11 +1,11 @@
 ﻿using System;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.SettingGroups;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.SettingGroups;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models
+namespace BH.SDK.Models
 {
     [RuleContainer]
     public class UserSettings : IUserSettings, ICopyable<UserSettings>, IEquatable<UserSettings>

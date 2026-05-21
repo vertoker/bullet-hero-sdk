@@ -1,9 +1,8 @@
 ﻿using System;
-using BHSDK.Models.Interfaces;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.SettingGroups.Graphics
+namespace BH.SDK.Models.SettingGroups.Graphics
 {
     [RuleContainer]
     public abstract class BaseGraphicsSettings : IEquatable<BaseGraphicsSettings>

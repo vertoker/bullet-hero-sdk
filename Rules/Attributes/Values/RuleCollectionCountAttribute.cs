@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Reflection;
-using BHSDK.Models;
-using BHSDK.Utils;
+using BH.SDK.Utils;
 
-namespace BHSDK.Rules.Attributes
+namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionCountAttribute : BaseRuleAttribute

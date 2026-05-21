@@ -1,8 +1,8 @@
 ﻿using System;
-using BHSDK.Models;
+using BH.SDK.Models;
 using Newtonsoft.Json;
 
-namespace BHSDK.Serialization.Converters.Base
+namespace BH.SDK.Serialization.Converters.Base
 {
     public abstract class JsonConverterCustomType<T, TType> : JsonConverter<T>
     {

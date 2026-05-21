@@ -1,12 +1,12 @@
 ﻿using System;
-using BHSDK.Models.Interfaces;
-using BHSDK.Rules;
-using BHSDK.Rules.Attributes;
-using BHSDK.Utils;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Objects
+namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
     public class ObjectIdModification : ICopyable<ObjectIdModification>, IEquatable<ObjectIdModification>

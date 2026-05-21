@@ -1,11 +1,12 @@
 ﻿using System;
-using BHSDK.Models.Enum.Resources;
-using BHSDK.Models.Interfaces;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Resources
+namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
     public class ResourceKey : ICopyable<ResourceKey>, IEquatable<ResourceKey>

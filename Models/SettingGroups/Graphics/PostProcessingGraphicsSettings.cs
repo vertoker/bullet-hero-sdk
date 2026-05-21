@@ -1,9 +1,8 @@
 ﻿using System;
-using BHSDK.Models.Enum.Settings;
-using BHSDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.SettingGroups.Graphics
+namespace BH.SDK.Models.SettingGroups.Graphics
 {
     public class PostProcessingGraphicsSettings : BaseGraphicsSettings,
         ICopyable<PostProcessingGraphicsSettings>, IEquatable<PostProcessingGraphicsSettings>

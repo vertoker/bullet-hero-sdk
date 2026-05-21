@@ -1,11 +1,10 @@
 ﻿using System;
-using BHSDK.Models.Enum;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules.Attributes;
 
-namespace BHSDK.Models.Values
+namespace BH.SDK.Models.Values
 {
     [RuleContainer]
     public class ScreenLimitNone : IScreenLimit, ICopyable<ScreenLimitNone>, IEquatable<ScreenLimitNone>

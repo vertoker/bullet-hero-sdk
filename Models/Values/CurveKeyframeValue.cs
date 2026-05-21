@@ -1,11 +1,12 @@
 ﻿using System;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Interfaces;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BHSDK.Models.Values
+namespace BH.SDK.Models.Values
 {
     [RuleContainer]
     public class CurveKeyframeValue : ICopyable<CurveKeyframeValue>, IEquatable<CurveKeyframeValue>

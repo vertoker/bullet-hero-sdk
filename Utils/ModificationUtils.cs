@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using BHSDK.Models.Effects;
-using BHSDK.Models.Objects;
-using BHSDK.Models.Values;
+using BH.SDK.Models.Effects;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.Values;
 using Newtonsoft.Json;
-using Object = BHSDK.Models.Objects.Object;
+using Object = BH.SDK.Models.Objects.Object;
 
-namespace BHSDK.Utils
+namespace BH.SDK.Utils
 {
     public static class ModificationUtils
     {

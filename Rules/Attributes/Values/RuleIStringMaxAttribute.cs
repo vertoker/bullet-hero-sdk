@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
-using BHSDK.Models;
-using BHSDK.Models.Enum.Values;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Models.Values;
+using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Values;
 
-namespace BHSDK.Rules.Attributes
+namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
     public class RuleIStringMaxAttribute : BaseRuleAttribute

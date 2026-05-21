@@ -1,7 +1,7 @@
 ﻿using System;
-using BHSDK.Models.Enum.Meta;
+using BH.SDK.Models.Enum.Meta;
 
-namespace BHSDK.Models.Interfaces.Values
+namespace BH.SDK.Models.Interfaces.Values
 {
     public interface ILicense : ICopyable<ILicense>, IEquatable<ILicense>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace BHSDK.Utils
+namespace BH.SDK.Utils
 {
     /// <summary>
     /// Прокси-класс, предназначенный для работы с обычными массивами как в 2-мерными.

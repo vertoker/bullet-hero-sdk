@@ -1,10 +1,10 @@
 ﻿using System;
-using BHSDK.Models.Enum.Effects;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Effects;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum.Effects;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Effects;
+using BH.SDK.Rules.Attributes;
 
-namespace BHSDK.Models.Effects
+namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
     public class EffectShapePoint : IEffectShape,

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using BHSDK.Models;
-using BHSDK.Models.Interfaces.SaveData;
-using BHSDK.Models.Objects;
-using BHSDK.Models.Values;
+using BH.SDK.Models;
+using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.Values;
 
-namespace BHSDK.Serialization
+namespace BH.SDK.Serialization
 {
     // TODO refactor this class, add MORE type checks, add at least 1 real converter
     // TODO add new attribute [DataVersion(1, 0, 0, 0)] and direct collect to dictionary

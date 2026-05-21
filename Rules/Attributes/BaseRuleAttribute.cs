@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using BHSDK.Models;
-using BHSDK.Validations;
 
-namespace BHSDK.Rules.Attributes
+namespace BH.SDK.Rules.Attributes
 {
     public abstract class BaseRuleAttribute : Attribute
     {

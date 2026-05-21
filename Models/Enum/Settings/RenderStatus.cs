@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BHSDK.Models.Enum.Settings
+namespace BH.SDK.Models.Enum.Settings
 {
     [Flags]
     public enum RenderStatus : byte

@@ -1,8 +1,8 @@
-﻿using BHSDK.Models.Values;
-using BHSDK.Validations;
+﻿using BH.SDK.Models.Values;
+using BH.SDK.Validations;
 using NUnit.Framework;
 
-namespace BHSDK.Tests
+namespace BH.SDK.Tests
 {
     public class ValidatorTests
     {

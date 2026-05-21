@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using BHSDK.Models.Objects;
+using BH.SDK.Models.Objects;
 
-namespace BHSDK.Models.Interfaces
+namespace BH.SDK.Models.Interfaces
 {
     public interface IObjectScope
     {

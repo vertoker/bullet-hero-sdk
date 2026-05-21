@@ -1,7 +1,7 @@
 ﻿using System;
-using BHSDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Interfaces.SaveData;
 
-namespace BHSDK.Serialization.DataConverters
+namespace BH.SDK.Serialization.DataConverters
 {
     public interface IDataConverter
     {

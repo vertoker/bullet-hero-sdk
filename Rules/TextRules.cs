@@ -1,8 +1,8 @@
-﻿using BHSDK.Models.Enum.Text;
+﻿using BH.SDK.Models.Enum.Text;
 
 // ReSharper disable InconsistentNaming
 
-namespace BHSDK.Rules
+namespace BH.SDK.Rules
 {
     public static class TextRules
     {

@@ -1,4 +1,4 @@
-﻿namespace BHSDK.Models.Interfaces.SaveData
+﻿namespace BH.SDK.Models.Interfaces.SaveData
 {
     public interface IEffect : IData
     {

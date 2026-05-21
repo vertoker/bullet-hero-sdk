@@ -1,6 +1,6 @@
 {
     "name": "BulletHeroSDK.Roslyn",
-    "rootNamespace": "BHSDK.Roslyn",
+    "rootNamespace": "BH.SDK.Roslyn",
     "references": [],
     "includePlatforms": [
         "Editor"

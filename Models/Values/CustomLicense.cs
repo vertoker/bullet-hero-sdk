@@ -1,11 +1,11 @@
 ﻿using System;
-using BHSDK.Models.Enum.Meta;
-using BHSDK.Models.Interfaces;
-using BHSDK.Models.Interfaces.Values;
-using BHSDK.Rules.Attributes;
+using BH.SDK.Models.Enum.Meta;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
-namespace BHSDK.Models.Values
+namespace BH.SDK.Models.Values
 {
     [RuleContainer]
     public class CustomLicense : ILicense, ICopyable<CustomLicense>, IEquatable<CustomLicense>

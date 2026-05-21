@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BHSDK.Services
+namespace BH.SDK.Services
 {
     public class TextFormatService
     {
