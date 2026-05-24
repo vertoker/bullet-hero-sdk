@@ -16,9 +16,6 @@
         
         public const int MaxObjectKeyframes = 32;
         
-        public const int MinObjectIdCounter = 1;
-        public const int ObjectLayerDefault = 0;
-        
         public const int MaxAudioVolumes = 32;
         public const int MaxAudioStereoPans = 32;
         
@@ -31,14 +28,10 @@
         public const int MaxUrl = 512;
         public const int MaxEditorName = 512;
         public const int MaxEditorDescription = 4096;
-        public const int MinAuthorOrder = -10000;
-        public const int MaxAuthorOrder = 10000;
         
         public const int ThemeCount = 64;
         public const int MaxThemes = 32;
         public const int MaxPrefabs = 64;
-        public const int MaxSources = 16;
-        public const int MaxAuthors = 16;
         
         public const float MinColor = 0f;
         public const float MaxColor = 1f;
@@ -53,7 +46,5 @@
         public const float MaxSca = 100f;
         public const float MinZoom = 0f;
         public const float MaxZoom = 100f;
-        public const int MinLayer = -1000;
-        public const int MaxLayer = 1000;
     }
 }

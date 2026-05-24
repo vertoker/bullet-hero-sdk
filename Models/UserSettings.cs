@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
+    // TODO Add tests for IResetable
+    
     [RuleContainer]
     public class UserSettings : IUserSettings, IResetable, ICopyable<UserSettings>, IEquatable<UserSettings>
     {

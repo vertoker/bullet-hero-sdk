@@ -4,7 +4,6 @@ using BH.SDK.Models.Enum.Meta;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
-using BH.SDK.Models.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -20,6 +19,7 @@ namespace BH.SDK.Models.Meta
         public ResourceType ResourceType { get; set; }
         
         // Abstract resId, it cast to dedicated ids (audioResId, texResId...)
+        [RuleMax(IdRules.MaxUserTypedResourceId)]
         [JsonProperty(Names.ResourceId)]
         public int ResourceId { get; set; }
         
@@ -39,11 +39,11 @@ namespace BH.SDK.Models.Meta
         [JsonProperty(Names.License)]
         public ILicense ResourceLicense { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxSources)]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxSources)]
         [JsonProperty(Names.Sources)]
         public List<IString> ResourceSources { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAuthors)]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxAuthors)]
         [JsonProperty(Names.Authors)]
         public List<Author> ResourceAuthors { get; set; }
         
@@ -52,7 +52,7 @@ namespace BH.SDK.Models.Meta
         public ResourceMeta()
         {
             ResourceType = ResourceType.Bytes;
-            ResourceId = Resource.UninitializedId;
+            ResourceId = IdRules.UninitializedUserTypedResourceId;
             ResourceTitle = new StringValue();
             ResourceDescription = new StringValue();
             ResourceLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);

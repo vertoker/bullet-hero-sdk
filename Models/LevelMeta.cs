@@ -15,6 +15,8 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
+    // TODO add IResetable (and tests)
+    
     [RuleContainer]
     public class LevelMeta : ILevelMeta, ICopyable<LevelMeta>, IEquatable<LevelMeta>
     {
@@ -49,7 +51,7 @@ namespace BH.SDK.Models
         [JsonProperty(Names.License)]
         public ILicense LevelLicense { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAuthors)]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxAuthors)]
         [JsonProperty(Names.Authors)]
         public List<Author> LevelAuthors { get; set; }
         

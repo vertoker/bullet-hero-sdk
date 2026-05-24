@@ -18,25 +18,11 @@ namespace BH.SDK.Models.Objects
     {
         public virtual ObjectType GetModelType() => ObjectType.Object;
         
-        // Introducing to game identifiers. There are 2 types
-        
-        // 1. ObjectId - stable identifier for saving.
-        // Unique only inside each object scope. Can be referred (as pid) only in scope.
-        // When PrefabObjects converts to regular Objects, they change all ids for each hierarchy level
-        
-        // 2. FrameIndex - runtime temporary index (not id, use for direct indexation).
-        // Changes every runtime and using for rendering instances in frame context only
-        
+        [RuleMin(IdRules.MinObjectId)]
         [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; }
         
-        // What certain objectId's meaning
-        // - 0 => undefined (for ObjectId) or null (for ParentObjectId), exists as a fallback value
-        // - (1 - int.MaxValue) => user-space objects, valid for both ObjectId and ParentObjectId
-        // All negative numbers (int.MinValue - -1) reserved for core-space objects
-        // - -1 => camera predefined object, exists only in player runtime (for ObjectId - error),
-        // can be used as a parent with unique transform (scale applied as a size, similar with RectTransform)
-        
+        [RuleMin(IdRules.MinParentObjectId)]
         [JsonProperty(Names.ParentObjectId)]
         public int ParentObjectId { get; set; }
         
@@ -74,7 +60,7 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.Scale)]
         public List<Sca> Scales { get; set; }
         
-        [RuleInRange(ValueRules.MinLayer, ValueRules.MaxLayer)]
+        [RuleInRange(ObjectRules.MinLayer, ObjectRules.MaxLayer)]
         [JsonProperty(Names.LayerShort)]
         public int Layer { get; set; }
         
@@ -84,17 +70,17 @@ namespace BH.SDK.Models.Objects
 
         public Object()
         {
-            ObjectId = 0;
-            ParentObjectId = 0;
+            ObjectId = IdRules.NullObjectId;
+            ParentObjectId = IdRules.NullObjectId;
             Name = string.Empty;
             Visible = true;
             
-            StartFrame = 0;
-            EndFrame = 0;
+            StartFrame = FrameRules.MinFrame;
+            EndFrame = FrameRules.MinFrame;
             Positions = new List<Pos>();
             Rotations = new List<Rot>();
             Scales = new List<Sca>();
-            Layer = 0;
+            Layer = ObjectRules.DefaultLayer;
             Pivot = Alignment.MiddleCenter;
         }
         public Object(int objectId, int parentObjectId, string name, bool visible, 

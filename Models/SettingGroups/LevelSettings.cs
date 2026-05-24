@@ -26,7 +26,7 @@ namespace BH.SDK.Models.SettingGroups
         public IScreenLimit ScreenLimit { get; set; }
         // limitations for screen will be chosen by mappers
         
-        [RuleMin(ValueRules.MinObjectIdCounter)]
+        [RuleMin(IdRules.MinUserObjectIdCounter)]
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
         
@@ -37,7 +37,7 @@ namespace BH.SDK.Models.SettingGroups
             Framerate = 60;
             FrameLength = Framerate * 10;
             ScreenLimit = new ScreenLimitNone();
-            ObjectIdCounter = ValueRules.MinObjectIdCounter;
+            ObjectIdCounter = IdRules.MinUserObjectIdCounter;
         }
         public LevelSettings(int framerate, int frameLength, IScreenLimit screenLimit, int objectIdCounter)
         {

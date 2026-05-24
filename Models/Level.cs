@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
+    // TODO allow null objects, this will save many space on serialization
+    // TODO add IResetable
+    
     [RuleContainer]
     public class Level : ILevel, ICopyable<Level>, IEquatable<Level>
     {

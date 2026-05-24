@@ -13,7 +13,7 @@ namespace BH.SDK.Generators
         public readonly Vector2Value PixelSca;
 
         public TextureObjectsParameters(PixelTexture texture,
-            int startFrame, int endFrame, int layer = ValueRules.ObjectLayerDefault) : base(startFrame, endFrame, layer)
+            int startFrame, int endFrame, int layer = ObjectRules.DefaultLayer) : base(startFrame, endFrame, layer)
         {
             Texture = texture;
             Width = texture.Width;
@@ -22,7 +22,7 @@ namespace BH.SDK.Generators
             PixelSca = new Vector2Value(1f, 1f);
         }
         public TextureObjectsParameters(PixelTexture texture, int width, int height, Alignment pixelAnchor, Vector2Value pixelSca,
-            int startFrame, int endFrame, int layer = ValueRules.ObjectLayerDefault) : base(startFrame, endFrame, layer)
+            int startFrame, int endFrame, int layer = ObjectRules.DefaultLayer) : base(startFrame, endFrame, layer)
         {
             Texture = texture;
             Width = width;

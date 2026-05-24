@@ -11,16 +11,18 @@ namespace BH.SDK.Models.Objects
     [RuleContainer]
     public class ObjectIdModification : ICopyable<ObjectIdModification>, IEquatable<ObjectIdModification>
     {
+        [RuleMin(IdRules.MinObjectId)]
         [JsonProperty(Names.PrevObjectId)]
         public int PrevObjectId { get; set; }
         
+        [RuleMin(IdRules.MinObjectId)]
         [JsonProperty(Names.NextObjectId)]
         public int NextObjectId { get; set; }
 
         public ObjectIdModification()
         {
-            PrevObjectId = ObjectRules.UndefinedId;
-            NextObjectId = ObjectRules.UndefinedId;
+            PrevObjectId = IdRules.NullObjectId;
+            NextObjectId = IdRules.NullObjectId;
         }
         public ObjectIdModification(int prevObjectId, int nextObjectId)
         {

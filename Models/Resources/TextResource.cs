@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -13,10 +14,7 @@ namespace BH.SDK.Models.Resources
     [RuleContainer]
     public class TextResource : Resource, ICopyable<TextResource>, IEquatable<TextResource>
     {
-        // id for user-defined resources, allowed only negative (started with -1, 0 is uninitialized)
-        // more about resourceId and how it works, read in Resource.cs file
-        
-        [RuleMax(0)]
+        [RuleMax(IdRules.MaxUserTypedResourceId)]
         [JsonProperty(Names.TextResourceId)]
         public int TextResourceId { get; set; }
         
@@ -24,7 +22,7 @@ namespace BH.SDK.Models.Resources
 
         public TextResource()
         {
-            TextResourceId = UninitializedId;
+            TextResourceId = IdRules.UninitializedUserTypedResourceId;
         }
         public TextResource(int textResourceId, List<ResourceKey> sources) : base(sources)
         {

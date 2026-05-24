@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using BH.SDK.Models.Enum;
 
 namespace BH.SDK.Rules
 {
@@ -9,6 +10,7 @@ namespace BH.SDK.Rules
         public const int MinFrameLength = 1;
         public const float MinTime = 0f;
         public const int MinFramerate = 1;
+        public const EaseType DefaultEase = EaseType.Linear;
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsValidFramerate(int framerate) => framerate > 0;

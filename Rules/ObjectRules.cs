@@ -2,10 +2,8 @@
 {
     public static class ObjectRules
     {
-        public const int UndefinedId = 0;
-        public const int UndefinedFrameIndex = int.MinValue;
-        
-        public const int CameraId = -1;
-        public const int LocalPlayerId = -2;
+        public const int MinLayer = -1000;
+        public const int DefaultLayer = 0;
+        public const int MaxLayer = 1000;
     }
 }
