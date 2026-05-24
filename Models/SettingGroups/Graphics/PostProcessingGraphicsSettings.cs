@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
-    public class PostProcessingGraphicsSettings : BaseGraphicsSettings,
+    public class PostProcessingGraphicsSettings : BaseGraphicsSettings, IResetable,
         ICopyable<PostProcessingGraphicsSettings>, IEquatable<PostProcessingGraphicsSettings>
     {
         [JsonProperty(Names.RenderBloom)]
@@ -45,6 +45,7 @@ namespace BH.SDK.Models.SettingGroups.Graphics
 
         public PostProcessingGraphicsSettings()
         {
+            Render = true;
             RenderBloom = true;
             RenderChroma = true;
             RenderVignette = true;
@@ -75,6 +76,22 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             RenderWhiteBalance = renderWhiteBalance;
             RenderAnalogGlitch = renderAnalogGlitch;
             RenderDigitalGlitch = renderDigitalGlitch;
+        }
+        public void Reset() // PresetAll
+        {
+            Render = true;
+            RenderBloom = true;
+            RenderChroma = true;
+            RenderVignette = true;
+            RenderLens = true;
+            RenderGrain = true;
+            RenderMotionBlur = true;
+            RenderColorCurves = true;
+            RenderLiftGammaGain = true;
+            RenderShadowsMidtonesHighlights = true;
+            RenderWhiteBalance = true;
+            RenderAnalogGlitch = true;
+            RenderDigitalGlitch = true;
         }
 
         public PostProcessingGraphicsSettings GetPresetNone() => new()
@@ -150,7 +167,7 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             hashCode.Add(RenderDigitalGlitch);
             return hashCode.ToHashCode();
         }
-
+        
         public bool Equals(PostProcessingGraphicsSettings other)
         {
             if (other is null) return false;

@@ -7,13 +7,13 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
     [RuleContainer]
-    public class EffectsGraphicsSettings : BaseGraphicsSettings,
+    public class EffectsGraphicsSettings : BaseGraphicsSettings, IFrameable, IResetable,
         ICopyable<EffectsGraphicsSettings>, IEquatable<EffectsGraphicsSettings>
     {
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
         
-        [RuleMin(0)]
+        [RuleMin(1)]
         [JsonProperty(Names.FixedFramerate)]
         public int FixedFramerate { get; set; }
         
@@ -35,6 +35,13 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             FixedFramerate = fixedFramerate;
             MaxScrubTime = maxScrubTime;
         }
+        public void Reset()
+        {
+            Render = true;
+            FramerateTarget = FramerateTarget.Fixed;
+            FixedFramerate = 50;
+            MaxScrubTime = 0.5f;
+        }
 
         public object Clone() => Copy();
         public EffectsGraphicsSettings Copy() => new(Render, FramerateTarget, FixedFramerate, MaxScrubTime);
@@ -42,7 +49,7 @@ namespace BH.SDK.Models.SettingGroups.Graphics
         public override bool Equals(object obj) => obj is EffectsGraphicsSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
             (int)FramerateTarget, FixedFramerate, MaxScrubTime);
-
+        
         public bool Equals(EffectsGraphicsSettings other)
         {
             if (other is null) return false;

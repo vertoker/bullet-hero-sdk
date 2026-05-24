@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class AudioSettings : ICopyable<AudioSettings>, IEquatable<AudioSettings>
+    public class AudioSettings : IResetable, ICopyable<AudioSettings>, IEquatable<AudioSettings>
     {
         [JsonProperty(Names.Volume)]
         [RuleInRange(0f, 1f)]
@@ -31,6 +31,12 @@ namespace BH.SDK.Models.SettingGroups
             Volume = volume;
             Game = game;
             UI = ui;
+        }
+        public void Reset()
+        {
+            Volume = 1f;
+            Game = 1f;
+            UI = 1f;
         }
 
         public object Clone() => Copy();

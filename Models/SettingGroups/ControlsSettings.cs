@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class ControlsSettings : ICopyable<ControlsSettings>, IEquatable<ControlsSettings>
+    public class ControlsSettings : IResetable, ICopyable<ControlsSettings>, IEquatable<ControlsSettings>
     {
         [JsonProperty(Names.ClassicControlsType)]
         public ClassicControlsType ClassicControlsType { get; set; }
@@ -21,6 +21,10 @@ namespace BH.SDK.Models.SettingGroups
         public ControlsSettings(ClassicControlsType classicControlsType)
         {
             ClassicControlsType = classicControlsType;
+        }
+        public void Reset()
+        {
+            ClassicControlsType = ClassicControlsType.Keyboard;
         }
 
         public object Clone() => Copy();

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
-    public class AudioGraphicsSettings : BaseGraphicsSettings,
+    public class AudioGraphicsSettings : BaseGraphicsSettings, IResetable,
         ICopyable<AudioGraphicsSettings>, IEquatable<AudioGraphicsSettings>
     {
         [JsonProperty(Names.RenderEffects)]
@@ -24,6 +24,7 @@ namespace BH.SDK.Models.SettingGroups.Graphics
 
         public AudioGraphicsSettings()
         {
+            Render = true;
             RenderEffects = true;
             MaxDiffTime = 0.2f;
             UseScrub = true;
@@ -36,6 +37,14 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             MaxDiffTime = maxDiffTime;
             UseScrub = useScrub;
             ScrubTime = scrubTime;
+        }
+        public void Reset()
+        {
+            Render = true;
+            RenderEffects = true;
+            MaxDiffTime = 0.2f;
+            UseScrub = true;
+            ScrubTime = 0.1f;
         }
 
         public object Clone() => Copy();

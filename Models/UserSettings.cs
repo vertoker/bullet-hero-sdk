@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models
 {
     [RuleContainer]
-    public class UserSettings : IUserSettings, ICopyable<UserSettings>, IEquatable<UserSettings>
+    public class UserSettings : IUserSettings, IResetable, ICopyable<UserSettings>, IEquatable<UserSettings>
     {
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
@@ -49,6 +49,14 @@ namespace BH.SDK.Models
             Audio = audio;
             Graphics = graphics;
             GameEditor = gameEditor;
+        }
+        public void Reset()
+        {
+            General.Reset();
+            Controls.Reset();
+            Audio.Reset();
+            Graphics.Reset();
+            GameEditor.Reset();
         }
 
         public object Clone() => Copy();

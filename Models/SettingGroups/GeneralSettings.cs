@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class GeneralSettings : ICopyable<GeneralSettings>, IEquatable<GeneralSettings>
+    public class GeneralSettings : IResetable, ICopyable<GeneralSettings>, IEquatable<GeneralSettings>
     {
         [RuleInRange(1, 8)]
         [JsonProperty(Names.ResourceParallelLoadCount)]
@@ -25,6 +25,11 @@ namespace BH.SDK.Models.SettingGroups
         {
             ResourceParallelLoadCount = resourceParallelLoadCount;
             ResourceWebTimeout = resourceWebTimeout;
+        }
+        public void Reset()
+        {
+            ResourceParallelLoadCount = 2;
+            ResourceWebTimeout = 5f;
         }
 
         public object Clone() => Copy();

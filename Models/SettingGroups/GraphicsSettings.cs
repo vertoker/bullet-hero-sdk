@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class GraphicsSettings : ICopyable<GraphicsSettings>, IEquatable<GraphicsSettings>
+    public class GraphicsSettings : IResetable, IFrameable, ICopyable<GraphicsSettings>, IEquatable<GraphicsSettings>
     {
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
@@ -16,7 +16,7 @@ namespace BH.SDK.Models.SettingGroups
         // if 0 - doesn't setup framerate, use Unity default. Require project restart
         // if > 0 - target framerate
         
-        [RuleMin(0)]
+        [RuleMin(1)]
         [JsonProperty(Names.FixedFramerate)]
         public int FixedFramerate { get; set; }
         
@@ -29,7 +29,7 @@ namespace BH.SDK.Models.SettingGroups
         public EffectsGraphicsSettings Effects { get; set; }
         
         [RuleNotNull]
-        [JsonProperty(Names.Text)]
+        [JsonProperty(Names.PostProcessing)]
         public PostProcessingGraphicsSettings PostProcessing { get; set; }
 
         public GraphicsSettings()
@@ -49,6 +49,14 @@ namespace BH.SDK.Models.SettingGroups
             Audio = audio;
             Effects = effects;
             PostProcessing = postProcessing;
+        }
+        public void Reset()
+        {
+            FramerateTarget = FramerateTarget.ScreenHz;
+            FixedFramerate = 60;
+            Audio.Reset();
+            Effects.Reset();
+            PostProcessing.Reset();
         }
 
         public object Clone() => Copy();

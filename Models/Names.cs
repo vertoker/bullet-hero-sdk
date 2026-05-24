@@ -404,6 +404,7 @@
         public const string MaxScrubTime = Max + _ + Scrub + _ + Time;
         public const string MaxDiffTime = Max + _ + Diff + _ + Time;
         
+        public const string PostProcessing = Post + Processing;
         public const string RenderBloom = Render + _ + BloomShort;
         public const string RenderChroma = Render + _ + ChromaShort;
         public const string RenderVignette = Render + _ + VignetteShort;
