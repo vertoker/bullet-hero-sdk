@@ -24,7 +24,7 @@ namespace BH.SDK.Rules
             public const float LifetimeBounds_X_Default = 3f;
             public const float LifetimeBounds_Y_Default = 3f;
             
-            // Alignment.MiddleCenterValue.Get();
+            // Alignment.CenterMiddleValue.Get();
             public const float Pivot_X_Default = 0.5f;
             public const float Pivot_Y_Default = 0.5f;
             

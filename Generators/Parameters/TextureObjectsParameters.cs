@@ -18,7 +18,7 @@ namespace BH.SDK.Generators
             Texture = texture;
             Width = texture.Width;
             Height = texture.Height;
-            PixelAnchor = Alignment.MiddleCenter;
+            PixelAnchor = Alignment.CenterMiddle;
             PixelSca = new Vector2Value(1f, 1f);
         }
         public TextureObjectsParameters(PixelTexture texture, int width, int height, Alignment pixelAnchor, Vector2Value pixelSca,

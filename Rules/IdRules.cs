@@ -80,7 +80,7 @@
         public const int MinResourceIdCounter = 1;
         public const int NullResourceId = 0;
         // Special number for internal usings
-        public const int InvalidResourceId = -1;
+        public const int InvalidResourceId = int.MinValue;
         
         // user-space resources by default must be uninitialized and also invalid
         public const int UninitializedUserTypedResourceId = 0;

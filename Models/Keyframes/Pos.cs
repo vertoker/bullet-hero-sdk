@@ -25,7 +25,7 @@ namespace BH.SDK.Models.Keyframes
         public Pos()
         {
             Vector2 = new Vector2Value();
-            Anchor = Alignment.MiddleCenter;
+            Anchor = Alignment.CenterMiddle;
         }
         public Pos(IVector2 vector2, Alignment anchor, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {

@@ -81,7 +81,7 @@ namespace BH.SDK.Models.Objects
             Rotations = new List<Rot>();
             Scales = new List<Sca>();
             Layer = ObjectRules.DefaultLayer;
-            Pivot = Alignment.MiddleCenter;
+            Pivot = Alignment.CenterMiddle;
         }
         public Object(int objectId, int parentObjectId, string name, bool visible, 
             int startFrame, int endFrame, List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot)
