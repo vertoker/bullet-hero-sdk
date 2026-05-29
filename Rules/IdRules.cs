@@ -21,6 +21,8 @@
         // Changes every runtime and using for rendering instances in frame context only
         
         public const int InvalidInstanceIndex = -1;
+        public const int MinInstanceIndex = 0;
+        public const int CameraInstanceIndex = 0;
         
         // What certain objectId's meaning
         // (1 - int.MaxValue) => user-space objects, valid for both ObjectId and ParentObjectId
