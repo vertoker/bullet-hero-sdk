@@ -11,33 +11,32 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Clr : Keyframe, ICopyable<Clr>, IEquatable<Clr>
+    public class ColorKey : Keyframe, ICopyable<ColorKey>, IEquatable<ColorKey>
     {
         [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.Color)]
         public IColor Value { get; set; }
 
-        public Clr()
+        public ColorKey()
         {
             Value = ColorValue.white;
         }
-        public Clr(IColor value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ColorKey(IColor value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Value = value;
         }
 
         public object Clone() => Copy();
-        public Clr Copy() => new(Value.Copy(), Frame, Ease);
+        public ColorKey Copy() => new(Value.Copy(), Frame, Ease);
 
-        public override bool Equals(object obj) => obj is Clr value && Equals(value);
+        public override bool Equals(object obj) => obj is ColorKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);
 
-        public bool Equals(Clr other)
+        public bool Equals(ColorKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = base.Equals(other)
-                         && Value.Equals(other.Value);
+            var result = base.Equals(other) && Value.Equals(other.Value);
             return result;
         }
     }

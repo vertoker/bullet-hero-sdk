@@ -14,55 +14,72 @@ namespace BH.SDK.Models.Game
     [RuleContainer]
     public class CameraEvents : ICopyable<CameraEvents>, IEquatable<CameraEvents>
     {
-        // Camera - is a unique instance. It exists all level lifetime and any Object can be child of camera. 
-        // Camera has instanceId and this is always -1 (because 0 - is a fallback).
-        // Camera GO != camera info for parenting, this info just duplicate from camera.transform 
+        // Camera - is a unique form of default RectObject. It cut some data, here's all
+        // Positions - unchanged
+        // Layers - camera is not an TextureObject, you can't see it, it's otherwise, remove
+        // Rotations - unchanged
+        // Scales - always (1f, 1f) because of aspect, remove
+        // Size - camera aspect is locked by user screen, also Level.Settings provide tool for
+        // manual setup aspect (IScreenLimit). Because of that
+        // changed to Zooms - Size with 1 value applied to xy simultaneously
+        // AnchorsMin/AnchorsMax - camera doesn't have any parents, remove
+        // Pivot - unchanged
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraPositions)]
-        [RuleCollectionSorted(nameof(Pos.Frame))]
-        [RuleCollectionUnique(nameof(Pos.Frame))]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
+        [RuleCollectionSorted(nameof(PosKey.Frame))]
+        [RuleCollectionUnique(nameof(PosKey.Frame))]
         [JsonProperty(Names.Position)]
-        public List<Pos> Positions { get; set; }
+        public List<PosKey> Positions { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraRotations)]
-        [RuleCollectionSorted(nameof(Rot.Frame))]
-        [RuleCollectionUnique(nameof(Rot.Frame))]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
+        [RuleCollectionSorted(nameof(AngleKey.Frame))]
+        [RuleCollectionUnique(nameof(AngleKey.Frame))]
         [JsonProperty(Names.Rotation)]
-        public List<Rot> Rotations { get; set; }
+        public List<AngleKey> Rotations { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraZooms)]
-        [RuleCollectionSorted(nameof(Zoom.Frame))]
-        [RuleCollectionUnique(nameof(Zoom.Frame))]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
+        [RuleCollectionSorted(nameof(ZoomKey.Frame))]
+        [RuleCollectionUnique(nameof(ZoomKey.Frame))]
         [JsonProperty(Names.Zoom)]
-        public List<Zoom> Zooms { get; set; }
+        public List<ZoomKey> Zooms { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCameraShakes)]
-        [RuleCollectionSorted(nameof(Shake.Frame))]
-        [RuleCollectionUnique(nameof(Shake.Frame))]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
+        [RuleCollectionSorted(nameof(AlignmentKey.Frame))]
+        [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
+        [JsonProperty(Names.Pivot)]
+        public List<AlignmentKey> Pivots { get; set; }
+        
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
+        [RuleCollectionSorted(nameof(ShakeKey.Frame))]
+        [RuleCollectionUnique(nameof(ShakeKey.Frame))]
         [JsonProperty(Names.Shake)]
-        public List<Shake> Shakes { get; set; }
+        public List<ShakeKey> Shakes { get; set; }
 
         public CameraEvents()
         {
-            Positions = new List<Pos>();
-            Rotations = new List<Rot>();
-            Zooms = new List<Zoom>();
-            Shakes = new List<Shake>();
+            Positions = new List<PosKey>();
+            Rotations = new List<AngleKey>();
+            Zooms = new List<ZoomKey>();
+            Pivots = new List<AlignmentKey>();
+            Shakes = new List<ShakeKey>();
         }
-        public CameraEvents(List<Pos> positions, List<Rot> rotations, List<Zoom> zooms, List<Shake> shakes)
+        public CameraEvents(List<PosKey> positions, List<AngleKey> rotations,
+            List<ZoomKey> zooms, List<AlignmentKey> pivots, List<ShakeKey> shakes)
         {
             Positions = positions;
             Rotations = rotations;
             Zooms = zooms;
+            Pivots = pivots;
             Shakes = shakes;
         }
 
         public object Clone() => Copy();
-        public CameraEvents Copy() => new(Positions.CopyList(), Rotations.CopyList(), Zooms.CopyList(), Shakes.CopyList());
+        public CameraEvents Copy() => new(Positions.CopyList(), Rotations.CopyList(),
+            Zooms.CopyList(), Pivots.CopyList(), Shakes.CopyList());
 
         public override bool Equals(object obj) => obj is CameraEvents value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Positions.GetListHashCode(),
-            Rotations.GetListHashCode(), Zooms.GetListHashCode(), Shakes.GetListHashCode());
+            Rotations.GetListHashCode(), Zooms.GetListHashCode(), Pivots.GetListHashCode(), Shakes.GetListHashCode());
 
         public bool Equals(CameraEvents other)
         {
@@ -71,6 +88,7 @@ namespace BH.SDK.Models.Game
             var result = Positions.ListEquals(other.Positions)
                          && Rotations.ListEquals(other.Rotations)
                          && Zooms.ListEquals(other.Zooms)
+                         && Pivots.ListEquals(other.Pivots)
                          && Shakes.ListEquals(other.Shakes);
             return result;
         }

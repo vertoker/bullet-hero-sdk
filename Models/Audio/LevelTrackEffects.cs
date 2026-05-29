@@ -15,13 +15,13 @@ namespace BH.SDK.Models.Audio
     [RuleContainer]
     public class LevelTrackEffects : ICopyable<LevelTrackEffects>, IEquatable<LevelTrackEffects>
     {
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAudioVolumes)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxAudioKeys)]
         [RuleCollectionSorted(nameof(FloatKey.Frame))]
         [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.Volume)]
         public List<FloatKey> Volumes { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxAudioStereoPans)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxAudioKeys)]
         [RuleCollectionSorted(nameof(FloatKey.Frame))]
         [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.StereoPan)]

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Keyframes;
-using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
@@ -15,26 +13,24 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class TextureObject : Object,
-        ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
+    public class TextureObject : RectObject, ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.Texture;
         
         [JsonProperty(Names.ColliderShort)]
         public bool Collider { get; set; }
         
+        [RuleMax(IdRules.MaxColliderId)]
         [JsonProperty(Names.ColliderId)]
         public int ColliderId { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
-        [RuleCollectionSorted(nameof(Clr.Frame))]
-        [RuleCollectionUnique(nameof(Clr.Frame))]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
+        [RuleCollectionSorted(nameof(ColorKey.Frame))]
+        [RuleCollectionUnique(nameof(ColorKey.Frame))]
         [JsonProperty(Names.Color)]
-        public List<Clr> Colors { get; set; }
+        public List<ColorKey> Colors { get; set; }
         
-        // positive with 0 - game-defined (0 is white square), negative - user-defined
-        // more about resourceId and how it works, read in Resource.cs file
-        
+        [RuleMax(IdRules.MaxUserTypedResourceId)]
         [JsonProperty(Names.TextureResourceId)]
         public int TextureResourceId { get; set; }
         
@@ -42,13 +38,16 @@ namespace BH.SDK.Models.Objects
         {
             Collider = true;
             ColliderId = 0;
-            Colors = new List<Clr>();
+            Colors = new List<ColorKey>();
             TextureResourceId = 0;
         }
-        public TextureObject(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot,
-            bool collider, int colliderId, List<Clr> colors, int textureResourceId)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
+
+        public TextureObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
+            List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+            List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
+            bool collider, int colliderId, List<ColorKey> colors, int textureResourceId)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
+                positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             Collider = collider;
             ColliderId = colliderId;
@@ -61,7 +60,8 @@ namespace BH.SDK.Models.Objects
         TextureObject ICopyable<TextureObject>.Copy() => CopyImpl();
         
         private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy(),
+            Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
+            AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
             Collider, ColliderId, Colors.CopyList(), TextureResourceId);
 
         public void Update(TextureObject src)
@@ -70,7 +70,7 @@ namespace BH.SDK.Models.Objects
             
             Collider = src.Collider;
             ColliderId = src.ColliderId;
-            Colors = src.Colors.Select(clr => clr.Copy()).ToList();
+            Colors = src.Colors.CopyList();
             TextureResourceId = src.TextureResourceId;
         }
 

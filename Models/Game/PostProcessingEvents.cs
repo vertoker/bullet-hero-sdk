@@ -16,37 +16,37 @@ namespace BH.SDK.Models.Game
     {
         // General
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(Bloom.Frame))]
         [RuleCollectionUnique(nameof(Bloom.Frame))]
         [JsonProperty(Names.BloomShort)]
         public List<Bloom> Blooms { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(ChromaticAberration.Frame))]
         [RuleCollectionUnique(nameof(ChromaticAberration.Frame))]
         [JsonProperty(Names.ChromaShort)]
         public List<ChromaticAberration> Chromas { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(Vignette.Frame))]
         [RuleCollectionUnique(nameof(Vignette.Frame))]
         [JsonProperty(Names.VignetteShort)]
         public List<Vignette> Vignettes { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(LensDistortion.Frame))]
         [RuleCollectionUnique(nameof(LensDistortion.Frame))]
         [JsonProperty(Names.LensShort)]
         public List<LensDistortion> Lenses { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(FilmGrain.Frame))]
         [RuleCollectionUnique(nameof(FilmGrain.Frame))]
         [JsonProperty(Names.GrainShort)]
         public List<FilmGrain> Grains { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(MotionBlur.Frame))]
         [RuleCollectionUnique(nameof(MotionBlur.Frame))]
         [JsonProperty(Names.MotionBlurShort)]
@@ -54,25 +54,25 @@ namespace BH.SDK.Models.Game
         
         // Colors
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(ColorCurves.Frame))]
         [RuleCollectionUnique(nameof(ColorCurves.Frame))]
         [JsonProperty(Names.ColorCurvesShort)]
         public List<ColorCurves> ColorCurveses { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(LiftGammaGain.Frame))]
         [RuleCollectionUnique(nameof(LiftGammaGain.Frame))]
         [JsonProperty(Names.LiftGammaGainShort)]
         public List<LiftGammaGain> LiftGammaGains { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(ShadowsMidtonesHighlights.Frame))]
         [RuleCollectionUnique(nameof(ShadowsMidtonesHighlights.Frame))]
         [JsonProperty(Names.ShadowsMidtonesHighlightsShort)]
         public List<ShadowsMidtonesHighlights> ShadowsMidtonesHighlightses { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(WhiteBalance.Frame))]
         [RuleCollectionUnique(nameof(WhiteBalance.Frame))]
         [JsonProperty(Names.WhiteBalanceShort)]
@@ -80,13 +80,13 @@ namespace BH.SDK.Models.Game
         
         // Glitches
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(AnalogGlitch.Frame))]
         [RuleCollectionUnique(nameof(AnalogGlitch.Frame))]
         [JsonProperty(Names.AnalogGlitchShort)]
         public List<AnalogGlitch> AnalogGlitches { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPostProcessingEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
         [RuleCollectionSorted(nameof(DigitalGlitch.Frame))]
         [RuleCollectionUnique(nameof(DigitalGlitch.Frame))]
         [JsonProperty(Names.DigitalGlitchShort)]

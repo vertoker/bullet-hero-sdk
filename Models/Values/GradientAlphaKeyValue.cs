@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -10,9 +11,11 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class GradientAlphaKeyValue : ICopyable<GradientAlphaKeyValue>, IEquatable<GradientAlphaKeyValue>
     {
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.AlphaShort)]
         public float Alpha { get; set; }
         
+        [RuleInRange(ValueRules.MinGradientTime, ValueRules.MaxGradientTime)]
         [JsonProperty(Names.TimeShort)]
         public float Time { get; set; }
         

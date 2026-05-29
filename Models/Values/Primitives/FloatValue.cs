@@ -2,6 +2,7 @@
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -12,12 +13,13 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class FloatValue : IFloat, ICopyable<FloatValue>, IEquatable<FloatValue>
     {
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.ValueShort)]
         public float Value { get; set; }
 
         public FloatValue()
         {
-            Value = 0f;
+            Value = ValueRules.ZeroFloat;
         }
         public FloatValue(float value)
         {

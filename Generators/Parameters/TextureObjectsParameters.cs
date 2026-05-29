@@ -9,25 +9,25 @@ namespace BH.SDK.Generators
         public readonly PixelTexture Texture;
         public readonly int Width;
         public readonly int Height;
-        public readonly Alignment PixelAnchor;
+        public readonly Alignment PixelPivot;
         public readonly Vector2Value PixelSca;
 
         public TextureObjectsParameters(PixelTexture texture,
-            int startFrame, int endFrame, int layer = ObjectRules.DefaultLayer) : base(startFrame, endFrame, layer)
+            int startFrame, int endFrame, int layer = ValueRules.DefaultLayer) : base(startFrame, endFrame, layer)
         {
             Texture = texture;
             Width = texture.Width;
             Height = texture.Height;
-            PixelAnchor = Alignment.CenterMiddle;
+            PixelPivot = Alignment.CenterMiddle;
             PixelSca = new Vector2Value(1f, 1f);
         }
-        public TextureObjectsParameters(PixelTexture texture, int width, int height, Alignment pixelAnchor, Vector2Value pixelSca,
-            int startFrame, int endFrame, int layer = ObjectRules.DefaultLayer) : base(startFrame, endFrame, layer)
+        public TextureObjectsParameters(PixelTexture texture, int width, int height, Alignment pixelPivot, Vector2Value pixelSca,
+            int startFrame, int endFrame, int layer = ValueRules.DefaultLayer) : base(startFrame, endFrame, layer)
         {
             Texture = texture;
             Width = width;
             Height = height;
-            PixelAnchor = pixelAnchor;
+            PixelPivot = pixelPivot;
             PixelSca = pixelSca;
         }
     }

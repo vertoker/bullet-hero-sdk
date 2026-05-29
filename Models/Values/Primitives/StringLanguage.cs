@@ -20,7 +20,7 @@ namespace BH.SDK.Models.Values
 
         public StringLanguage()
         {
-            LanguageCode = "en";
+            LanguageCode = ValueRules.DefaultLanguageCode;
             Value = string.Empty;
         }
         public StringLanguage(string languageCode, string value)

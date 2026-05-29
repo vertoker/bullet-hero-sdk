@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -13,13 +14,11 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class GradientValue : ICopyable<GradientValue>, IEquatable<GradientValue>
     {
-        public const int MaxCount = 4;
-        
-        [RuleNotNull, RuleCollectionMaxCount(MaxCount)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
         [JsonProperty(Names.ColorKeys)]
         public List<GradientColorKeyValue> ColorKeys { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(MaxCount)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
         [JsonProperty(Names.AlphaKeys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
         

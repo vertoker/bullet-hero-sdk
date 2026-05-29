@@ -6,7 +6,6 @@ using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Effects;
 using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Keyframes;
-using BH.SDK.Models.Values;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -16,7 +15,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class EffectObject : Object, IEffect,
+    public class EffectObject : RectObject, IEffect,
         ICopyable<EffectObject>, IEquatable<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.Effect;
@@ -57,10 +56,13 @@ namespace BH.SDK.Models.Objects
             EffectScale = new EffectScaleValue();
             EffectColor = new EffectColorValue();
         }
-        public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
-            List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot, EffectObjectCore core,
-            EffectObjectForces forces, IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor) 
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
+        public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
+            List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+            List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
+            EffectObjectCore core, EffectObjectForces forces, IEffectShape effectShape,
+            IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
+                positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             Core = core;
             Forces = forces;
@@ -75,8 +77,9 @@ namespace BH.SDK.Models.Objects
         EffectObject ICopyable<EffectObject>.Copy() => CopyImpl();
         
         private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy(), Core.Copy(), Forces.Copy(),
-            EffectShape.Copy(), EffectAngle.Copy(), EffectScale.Copy(), EffectColor.Copy());
+            Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
+            AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
+            Core.Copy(), Forces.Copy(), EffectShape.Copy(), EffectAngle.Copy(), EffectScale.Copy(), EffectColor.Copy());
         
         public void Update(EffectObject src)
         {

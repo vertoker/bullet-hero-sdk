@@ -1,33 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
-
-// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
     public class CompositeCollider : ICopyable<CompositeCollider>, IEquatable<CompositeCollider>
     {
-        public const int MaxCount = 64;
-        
-        // id for user-defined colliders, allowed only negative (started with -1, 0 is uninitialized)
-        // this works like resource, but integrated in model. Works only with TextureObject
-        
-        [RuleMax(0)]
+        [RuleMax(IdRules.MaxColliderId)]
         [JsonProperty(Names.ColliderId)]
         public int ColliderId { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(MaxCount)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxColliderTriangles)]
         [JsonProperty(Names.TrianglesShort)]
         public List<TriangleCollider> Triangles { get; set; }
 
         public CompositeCollider()
         {
-            ColliderId = 0;
+            ColliderId = IdRules.NullColliderId;
             Triangles = new List<TriangleCollider>();
         }
         public CompositeCollider(int colliderId, List<TriangleCollider> triangles)

@@ -1,4 +1,5 @@
-﻿using BH.SDK.Models.Values;
+﻿using BH.SDK.Models.Objects;
+using BH.SDK.Models.Values;
 using BH.SDK.Validations;
 using NUnit.Framework;
 
@@ -109,7 +110,7 @@ namespace BH.SDK.Tests
         {
             var level = SerializationTests.CreateTestLevel();
             var copyLevel = level.Copy();
-            copyLevel.Game.Objects[0].Positions[0].Anchor.Value = Alignment.LeftBottomValue;
+            ((RectObject)copyLevel.Game.Objects[0]).AnchorsMin[0].Value = Alignment.LeftBottomValue;
             Assert.IsFalse(level.Equals(copyLevel));
         }
         

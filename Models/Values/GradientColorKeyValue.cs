@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -16,6 +17,7 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.Color)]
         public ColorValue ColorHDR { get; set; }
         
+        [RuleInRange(ValueRules.MinGradientTime, ValueRules.MaxGradientTime)]
         [JsonProperty(Names.TimeShort)]
         public float Time { get; set; }
         

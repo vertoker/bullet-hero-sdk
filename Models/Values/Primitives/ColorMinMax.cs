@@ -29,7 +29,6 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.MinA)]
         public float MinA { get; set; }
         
-        
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxR)]
         public float MaxR { get; set; }
@@ -48,14 +47,15 @@ namespace BH.SDK.Models.Values
 
         public ColorMinMax()
         {
-            MinR = 0f;
-            MinG = 0f;
-            MinB = 0f;
-            MinA = 0f;
-            MaxR = 1f;
-            MaxG = 1f;
-            MaxB = 1f;
-            MaxA = 1f;
+            MinR = ValueRules.MinColor;
+            MinG = ValueRules.MinColor;
+            MinB = ValueRules.MinColor;
+            MinA = ValueRules.MinColor;
+            
+            MaxR = ValueRules.MaxColor;
+            MaxG = ValueRules.MaxColor;
+            MaxB = ValueRules.MaxColor;
+            MaxA = ValueRules.MaxColor;
         }
         public ColorMinMax(float minR, float minG, float minB, float minA, 
             float maxR, float maxG, float maxB, float maxA)
@@ -64,6 +64,7 @@ namespace BH.SDK.Models.Values
             MinG = minG;
             MinB = minB;
             MinA = minA;
+            
             MaxR = maxR;
             MaxG = maxG;
             MaxB = maxB;

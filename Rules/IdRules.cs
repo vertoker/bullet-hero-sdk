@@ -85,5 +85,15 @@
         // user-space resources by default must be uninitialized and also invalid
         public const int UninitializedUserTypedResourceId = 0;
         public const int MaxUserTypedResourceId = -1;
+        
+        // ------------------------------------------------------------------------------------------------------------
+        // ColliderId
+        // ------------------------------------------------------------------------------------------------------------
+        
+        // id for user-defined colliders, allowed only negative (started with -1, 0 is uninitialized)
+        // this works like resource, but integrated in model. Works only with TextureObject
+        
+        public const int MaxColliderId = 0;
+        public const int NullColliderId = 0;
     }
 }

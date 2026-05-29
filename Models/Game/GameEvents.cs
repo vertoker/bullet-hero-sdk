@@ -15,24 +15,24 @@ namespace BH.SDK.Models.Game
     [RuleContainer]
     public class GameEvents : ICopyable<GameEvents>, IEquatable<GameEvents>
     {
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxMarkerEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxMarkerEvents)]
         [RuleCollectionSorted(nameof(Marker.Frame))]
         [JsonProperty(Names.Markers)]
         public List<Marker> Markers { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCheckpointEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCheckpointEvents)]
         [RuleCollectionSorted(nameof(Checkpoint.Frame))]
         [RuleCollectionUnique(nameof(Checkpoint.Frame))]
         [JsonProperty(Names.Checkpoints)]
         public List<Checkpoint> Checkpoints { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxBackgroundEvents)]
-        [RuleCollectionSorted(nameof(Clr.Frame))]
-        [RuleCollectionUnique(nameof(Clr.Frame))]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxBackgroundEvents)]
+        [RuleCollectionSorted(nameof(ColorKey.Frame))]
+        [RuleCollectionUnique(nameof(ColorKey.Frame))]
         [JsonProperty(Names.Backgrounds)]
-        public List<Clr> Backgrounds { get; set; }
+        public List<ColorKey> Backgrounds { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxThemeEvents)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemeEvents)]
         [RuleCollectionSorted(nameof(ThemeKeyframe.Frame))]
         [RuleCollectionUnique(nameof(ThemeKeyframe.Frame))]
         [JsonProperty(Names.Themes)]
@@ -42,11 +42,11 @@ namespace BH.SDK.Models.Game
         {
             Markers = new List<Marker>();
             Checkpoints = new List<Checkpoint>();
-            Backgrounds = new List<Clr>();
+            Backgrounds = new List<ColorKey>();
             Themes = new List<ThemeKeyframe>();
         }
         public GameEvents(List<Marker> markers, List<Checkpoint> checkpoints, 
-            List<Clr> backgrounds, List<ThemeKeyframe> themes)
+            List<ColorKey> backgrounds, List<ThemeKeyframe> themes)
         {
             Markers = markers;
             Checkpoints = checkpoints;

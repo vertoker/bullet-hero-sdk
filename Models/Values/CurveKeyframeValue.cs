@@ -1,6 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -13,9 +14,11 @@ namespace BH.SDK.Models.Values
     {
         // TODO maybe replace FloatValue to IFloat (in editor step)
         
+        [RuleInRange(ValueRules.MinCurveTime, ValueRules.MaxCurveTime)]
         [JsonProperty(Names.TimeShort)]
         public float Time { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.ValueShort)]
         public float Value { get; set; }
         
@@ -26,15 +29,19 @@ namespace BH.SDK.Models.Values
         public CurveTangentMode TangentMode { get; set; }
         
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.InTangent)]
         public float InTangent { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.OutTangent)]
         public float OutTangent { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.InWeight)]
         public float InWeight { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.OutWeight)]
         public float OutWeight { get; set; }
         

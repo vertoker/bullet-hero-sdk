@@ -20,13 +20,11 @@ namespace BH.SDK.Models.Keyframes
         public BoolKey()
         {
             Frame = 0;
-            
             Value = false;
         }
         public BoolKey(bool value, int frame)
         {
             Frame = frame;
-            
             Value = value;
         }
 
@@ -40,8 +38,7 @@ namespace BH.SDK.Models.Keyframes
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Frame.Equals(other.Frame)
-                         && Value.Equals(other.Value);
+            var result = Frame.Equals(other.Frame) && Value.Equals(other.Value);
             return result;
         }
     }

@@ -2,6 +2,7 @@
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -12,9 +13,11 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class IntMinMax : IInt, ICopyable<IntMinMax>, IEquatable<IntMinMax>
     {
+        [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Min)]
         public int Min { get; set; }
         
+        [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Max)]
         public int Max { get; set; }
 

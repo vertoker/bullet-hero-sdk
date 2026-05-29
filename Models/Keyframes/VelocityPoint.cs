@@ -3,6 +3,7 @@ using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Values;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -11,6 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     // TODO activate for player when add events
+    
     [RuleContainer]
     public class VelocityPoint : Keyframe, ICopyable<VelocityPoint>, IEquatable<VelocityPoint>
     {
@@ -18,12 +20,13 @@ namespace BH.SDK.Models.Keyframes
         [JsonProperty(Names.Center)]
         public IVector2 Center { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Force)]
         public float Force { get; set; }
 
         public VelocityPoint()
         {
-            Center = new Vector2Circle();
+            Center = new Vector2Value();
             Force = 1;
         }
         public VelocityPoint(IVector2 center, float force, int frame, EaseType ease = DefaultEase) : base(frame, ease)

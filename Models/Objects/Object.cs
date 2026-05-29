@@ -33,7 +33,6 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.VisibleShort)]
         public bool Visible { get; set; }
         
-        
         [RuleLevelFrame]
         [JsonProperty(Names.StartFrameShort)]
         public int StartFrame { get; set; }
@@ -41,32 +40,6 @@ namespace BH.SDK.Models.Objects
         [RuleLevelFrame]
         [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
-        
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
-        [RuleCollectionSorted(nameof(Pos.Frame))]
-        [RuleCollectionUnique(nameof(Pos.Frame))]
-        [JsonProperty(Names.Position)]
-        public List<Pos> Positions { get; set; }
-        
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
-        [RuleCollectionSorted(nameof(Rot.Frame))]
-        [RuleCollectionUnique(nameof(Rot.Frame))]
-        [JsonProperty(Names.Rotation)]
-        public List<Rot> Rotations { get; set; }
-        
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
-        [RuleCollectionSorted(nameof(Sca.Frame))]
-        [RuleCollectionUnique(nameof(Sca.Frame))]
-        [JsonProperty(Names.Scale)]
-        public List<Sca> Scales { get; set; }
-        
-        [RuleInRange(ObjectRules.MinLayer, ObjectRules.MaxLayer)]
-        [JsonProperty(Names.LayerShort)]
-        public int Layer { get; set; }
-        
-        [RuleNotNull]
-        [JsonProperty(Names.PivotShort)]
-        public Alignment Pivot { get; set; }
 
         public Object()
         {
@@ -74,17 +47,10 @@ namespace BH.SDK.Models.Objects
             ParentObjectId = IdRules.NullObjectId;
             Name = string.Empty;
             Visible = true;
-            
             StartFrame = FrameRules.MinFrame;
             EndFrame = FrameRules.MinFrame;
-            Positions = new List<Pos>();
-            Rotations = new List<Rot>();
-            Scales = new List<Sca>();
-            Layer = ObjectRules.DefaultLayer;
-            Pivot = Alignment.CenterMiddle;
         }
-        public Object(int objectId, int parentObjectId, string name, bool visible, 
-            int startFrame, int endFrame, List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot)
+        public Object(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame)
         {
             ObjectId = objectId;
             ParentObjectId = parentObjectId;
@@ -92,18 +58,12 @@ namespace BH.SDK.Models.Objects
             Visible = visible;
             StartFrame = startFrame;
             EndFrame = endFrame;
-            Positions = positions;
-            Rotations = rotations;
-            Scales = scales;
-            Layer = layer;
-            Pivot = pivot;
         }
 
         public virtual object Clone() => CopyImpl();
         public virtual Object Copy() => CopyImpl();
         
-        private Object CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy());
+        private Object CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame);
         
         public void Update(Object src)
         {
@@ -113,30 +73,11 @@ namespace BH.SDK.Models.Objects
             Visible = src.Visible;
             StartFrame = src.StartFrame;
             EndFrame = src.EndFrame;
-            Positions = src.Positions.CopyList();
-            Rotations = src.Rotations.CopyList();
-            Scales = src.Scales.CopyList();
-            Layer = src.Layer;
-            Pivot = src.Pivot.Copy();
         }
 
         public override bool Equals(object obj) => obj is Object value && Equals(value);
-        public override int GetHashCode()
-        {
-            var hashCode = new HashCode();
-            hashCode.Add(ObjectId);
-            hashCode.Add(ParentObjectId);
-            hashCode.Add(Name);
-            hashCode.Add(Visible);
-            hashCode.Add(StartFrame);
-            hashCode.Add(EndFrame);
-            hashCode.Add(Positions.GetListHashCode());
-            hashCode.Add(Rotations.GetListHashCode());
-            hashCode.Add(Scales.GetListHashCode());
-            hashCode.Add(Layer);
-            hashCode.Add(Pivot);
-            return hashCode.ToHashCode();
-        }
+        public override int GetHashCode() =>
+            HashCode.Combine(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame);
 
         public bool Equals(Object other)
         {
@@ -147,12 +88,7 @@ namespace BH.SDK.Models.Objects
                          && Name.Equals(other.Name)
                          && Visible == other.Visible
                          && StartFrame.Equals(other.StartFrame)
-                         && EndFrame.Equals(other.EndFrame)
-                         && Positions.ListEquals(other.Positions)
-                         && Rotations.ListEquals(other.Rotations)
-                         && Scales.ListEquals(other.Scales)
-                         && Layer.Equals(other.Layer)
-                         && Pivot.Equals(other.Pivot);
+                         && EndFrame.Equals(other.EndFrame);
             return result;
         }
     }

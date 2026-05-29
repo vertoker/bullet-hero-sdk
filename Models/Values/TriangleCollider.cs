@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -10,15 +11,15 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class TriangleCollider : ICopyable<TriangleCollider>, IEquatable<TriangleCollider>
     {
-        [RuleNotNull]
+        [RuleNotNull, RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Point1)]
         public Vector2Value Point1 { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull, RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Point2)]
         public Vector2Value Point2 { get; set; }
         
-        [RuleNotNull]
+        [RuleNotNull, RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Point3)]
         public Vector2Value Point3 { get; set; }
         

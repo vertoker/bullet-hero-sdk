@@ -45,11 +45,11 @@ namespace BH.SDK.Models.Game
         public List<PrefabObject> PrefabObjects { get; set; }
         
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxThemes)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemes)]
         [JsonProperty(Names.Themes)]
         public List<Theme> Themes { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxPrefabs)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPrefabs)]
         [RuleCollectionUnique(nameof(PrefabObject.PrefabGuid))]
         [JsonProperty(Names.Prefabs)]
         public List<Prefab> Prefabs { get; set; }

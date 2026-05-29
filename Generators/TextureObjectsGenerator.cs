@@ -16,7 +16,6 @@ namespace BH.SDK.Generators
             var parentObj = new Object();
             parentObj.SetObjectId(level.Settings);
             parentObj.SetBounds(parameters.StartFrame, parameters.EndFrame);
-            parentObj.Layer = parameters.Layer;
             level.Game.Objects.Add(parentObj);
             
             var indexer = new DimensionalIndexer2(parameters.Width, parameters.Height);
@@ -31,15 +30,18 @@ namespace BH.SDK.Generators
                 textureObj.SetObjectId(level.Settings);
                 textureObj.SetParent(parentObj);
                 textureObj.SetBounds(parameters.StartFrame, parameters.EndFrame);
-                parentObj.Layer = parameters.Layer;
 
                 var posVec = new Vector2Value(mappedIndexX, -mappedIndexY);
-                var pos = new Pos(posVec, parameters.PixelAnchor.Copy(), parameters.StartFrame);
-                var sca = new Sca(parameters.PixelSca.Copy(), parameters.StartFrame);
-                var clr = new Clr(pixel.ToColorValue(), parameters.StartFrame);
+                var pos = new PosKey(posVec, parameters.StartFrame);
+                var pivot = new AlignmentKey(parameters.PixelPivot.Value.Copy(), parameters.StartFrame);
+                var sca = new ScaKey(parameters.PixelSca.Copy(), parameters.StartFrame);
+                var clr = new ColorKey(pixel.ToColorValue(), parameters.StartFrame);
+                var layer = new LayerKey(new IntValue(parameters.Layer), parameters.StartFrame);
                 
                 textureObj.Positions.Add(pos);
+                textureObj.Layers.Add(layer);
                 textureObj.Scales.Add(sca);
+                textureObj.Pivots.Add(pivot);
                 textureObj.Colors.Add(clr);
             }
         }

@@ -11,6 +11,7 @@ namespace BH.SDK.Models.Keyframes
     [RuleContainer]
     public abstract class Keyframe : IFrame, IEquatable<Keyframe>
     {
+        public const int DefaultFrame = 0;
         public const EaseType DefaultEase = EaseType.Linear;
         
         [RuleLevelFrame]
@@ -22,8 +23,8 @@ namespace BH.SDK.Models.Keyframes
 
         protected Keyframe()
         {
-            Frame = 0;
-            Ease = EaseType.Linear;
+            Frame = DefaultFrame;
+            Ease = DefaultEase;
         }
         protected Keyframe(int frame, EaseType ease = DefaultEase)
         {
@@ -38,8 +39,7 @@ namespace BH.SDK.Models.Keyframes
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Frame.Equals(other.Frame)
-                         && Ease == other.Ease;
+            var result = Frame.Equals(other.Frame) && Ease == other.Ease;
             return result;
         }
     }

@@ -13,7 +13,7 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class ColorThemeRef : IColor, ICopyable<ColorThemeRef>, IEquatable<ColorThemeRef>
     {
-        [RuleInRange(0, ValueRules.ThemeCount - 1)]
+        [RuleInRange(ValueRules.MinThemeIndex, ValueRules.MaxThemeIndex)]
         [JsonProperty(Names.ThemeIndex)]
         public int ThemeColorIndex { get; set; }
         
@@ -21,7 +21,7 @@ namespace BH.SDK.Models.Values
 
         public ColorThemeRef()
         {
-            ThemeColorIndex = 0;
+            ThemeColorIndex = ValueRules.MinThemeIndex;
         }
         public ColorThemeRef(int themeColorIndex)
         {

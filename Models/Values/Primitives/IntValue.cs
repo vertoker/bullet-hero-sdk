@@ -2,6 +2,7 @@
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -12,12 +13,13 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class IntValue : IInt, ICopyable<IntValue>, IEquatable<IntValue>
     {
+        [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.ValueShort)]
         public int Value { get; set; }
 
         public IntValue()
         {
-            Value = 0;
+            Value = ValueRules.ZeroInt;
         }
         public IntValue(int value)
         {

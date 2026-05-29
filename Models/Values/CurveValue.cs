@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -13,9 +14,7 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class CurveValue : ICopyable<CurveValue>, IEquatable<CurveValue>
     {
-        public const int MaxCount = 4;
-        
-        [RuleNotNull, RuleCollectionMaxCount(MaxCount)]
+        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCurveKeys)]
         [JsonProperty(Names.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
         

@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -10,11 +11,11 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class ScreenAspect : ICopyable<ScreenAspect>, IEquatable<ScreenAspect>
     {
-        [RuleMin(1)]
+        [RuleInRange(ValueRules.MinAspectWidth, ValueRules.MaxAspectWidth)]
         [JsonProperty(Names.WidthShort)]
         public int Width { get; set; }
         
-        [RuleMin(1)]
+        [RuleInRange(ValueRules.MinAspectHeight, ValueRules.MaxAspectHeight)]
         [JsonProperty(Names.HeightShort)]
         public int Height { get; set; }
         
@@ -24,8 +25,8 @@ namespace BH.SDK.Models.Values
 
         public ScreenAspect()
         {
-            Width = 16;
-            Height = 9;
+            Width = ValueRules.DefaultAspectWidth;
+            Height = ValueRules.DefaultAspectHeight;
         }
         public ScreenAspect(int width, int height)
         {

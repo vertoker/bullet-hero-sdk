@@ -109,14 +109,14 @@ namespace BH.SDK.Tests
             level.Settings.Framerate = 61;
             level.Settings.ScreenLimit = new ScreenLimitBounds();
             
-            level.Game.Events.Backgrounds.Add(new Clr());
+            level.Game.Events.Backgrounds.Add(new ColorKey());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
             level.Game.Events.Themes.Add(new ThemeKeyframe());
-            level.Game.CameraEvents.Positions.Add(new Pos());
-            level.Game.CameraEvents.Rotations.Add(new Rot());
-            level.Game.CameraEvents.Shakes.Add(new Shake());
-            level.Game.CameraEvents.Zooms.Add(new Zoom());
+            level.Game.CameraEvents.Positions.Add(new PosKey());
+            level.Game.CameraEvents.Rotations.Add(new AngleKey());
+            level.Game.CameraEvents.Shakes.Add(new ShakeKey());
+            level.Game.CameraEvents.Zooms.Add(new ZoomKey());
 
             level.Game.PostProcessingEvents.Blooms.Add(new Bloom());
             level.Game.PostProcessingEvents.Chromas.Add(new ChromaticAberration());
@@ -138,17 +138,22 @@ namespace BH.SDK.Tests
             {
                 ObjectId = 1,
             };
-            textureObject.Positions.Add(new Pos());
-            textureObject.Rotations.Add(new Rot());
-            textureObject.Scales.Add(new Sca());
-            textureObject.Colors.Add(new Clr());
+            textureObject.Positions.Add(new PosKey());
+            textureObject.Layers.Add(new LayerKey());
+            textureObject.Rotations.Add(new AngleKey());
+            textureObject.Scales.Add(new ScaKey());
+            textureObject.Sizes.Add(new ScaKey());
+            textureObject.AnchorsMin.Add(new AlignmentKey());
+            textureObject.AnchorsMax.Add(new AlignmentKey());
+            textureObject.Pivots.Add(new AlignmentKey());
+            textureObject.Colors.Add(new ColorKey());
             level.Game.Objects.Add(textureObject);
 
             var textObject = new TextObject()
             {
                 ObjectId = 2,
             };
-            textObject.Colors.Add(new Clr());
+            textObject.Colors.Add(new ColorKey());
             level.Game.Objects.Add(textObject);
 
             var effectObject = new EffectObject()
@@ -207,14 +212,14 @@ namespace BH.SDK.Tests
             level.Settings.Framerate = -15;
             level.Settings.ScreenLimit = null;
             
-            level.Game.Events.Backgrounds.Add(new Clr());
+            level.Game.Events.Backgrounds.Add(new ColorKey());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
             level.Game.Events.Themes.Add(new ThemeKeyframe());
-            level.Game.CameraEvents.Positions.Add(new Pos());
-            level.Game.CameraEvents.Rotations.Add(new Rot());
-            level.Game.CameraEvents.Shakes.Add(new Shake());
-            level.Game.CameraEvents.Zooms.Add(new Zoom());
+            level.Game.CameraEvents.Positions.Add(new PosKey());
+            level.Game.CameraEvents.Rotations.Add(new AngleKey());
+            level.Game.CameraEvents.Shakes.Add(new ShakeKey());
+            level.Game.CameraEvents.Zooms.Add(new ZoomKey());
 
             level.Game.PostProcessingEvents.Blooms.Add(new Bloom());
             level.Game.PostProcessingEvents.Chromas.Add(new ChromaticAberration());
@@ -233,14 +238,19 @@ namespace BH.SDK.Tests
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());
 
             var textureObject = new TextureObject();
-            textureObject.Positions.Add(new Pos());
-            textureObject.Rotations.Add(new Rot());
-            textureObject.Scales.Add(new Sca());
-            textureObject.Colors.Add(new Clr());
+            textureObject.Positions.Add(new PosKey());
+            textureObject.Layers.Add(new LayerKey());
+            textureObject.Rotations.Add(new AngleKey());
+            textureObject.Scales.Add(new ScaKey());
+            textureObject.Sizes.Add(new ScaKey());
+            textureObject.AnchorsMin.Add(new AlignmentKey());
+            textureObject.AnchorsMax.Add(new AlignmentKey());
+            textureObject.Pivots.Add(new AlignmentKey());
+            textureObject.Colors.Add(new ColorKey());
             level.Game.Objects.Add(textureObject);
 
             var textObject = new TextObject();
-            textObject.Colors.Add(new Clr());
+            textObject.Colors.Add(new ColorKey());
             level.Game.Objects.Add(textObject);
 
             var effectObject = new EffectObject();

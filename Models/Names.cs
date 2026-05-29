@@ -76,10 +76,10 @@
         
         public const string Position = "pos";
         public const string Rotation = "rot";
+        public const string Scale = "sca";
         public const string Zoom = "zoom";
         public const string Shake = "shake";
         public const string Size = "size";
-        public const string Scale = "sca";
         public const string Angle = "ang";
         public const string Curve = "curve";
         public const string Gradient = "gradient";
@@ -182,6 +182,7 @@
         public const string VisibleShort = "vis";
         public const string Visibles = "visibles";
         public const string Layer = "layer";
+        public const string Layers = "layers";
         public const string Pivot = "pivot";
         public const string Anchor = "anchor";
         public const string LayerShort = "l";
@@ -519,6 +520,9 @@
         
         public const string MinAspect = Min + _ + Aspect;
         public const string MaxAspect = Max + _ + Aspect;
+        
+        public const string AnchorMin = Anchor + _ + Min;
+        public const string AnchorMax = Anchor + _ + Max;
         
         public const string LanguageStrings = Language + _ + Strings;
         

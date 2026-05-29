@@ -2,6 +2,7 @@
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -12,31 +13,39 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class Vector4RectStep : IVector4, ICopyable<Vector4RectStep>, IEquatable<Vector4RectStep>
     {
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinY)]
         public float MinY { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinZ)]
         public float MinZ { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinW)]
         public float MinW { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxY)]
         public float MaxY { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxZ)]
         public float MaxZ { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxW)]
         public float MaxW { get; set; }
         
-        [RuleMin(0f)]
+        [RuleInRange(ValueRules.ZeroFloat, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }
 

@@ -19,7 +19,7 @@ namespace BH.SDK.Models.Keyframes
 
         public IntKey()
         {
-            Value = new IntValue(0);
+            Value = new IntValue();
         }
         public IntKey(IInt value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
@@ -36,8 +36,7 @@ namespace BH.SDK.Models.Keyframes
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = base.Equals(other)
-                         && Value.Equals(other.Value);
+            var result = base.Equals(other) && Value.Equals(other.Value);
             return result;
         }
     }

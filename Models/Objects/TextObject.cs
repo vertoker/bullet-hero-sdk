@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class TextObject : Object, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>
+    public class TextObject : RectObject, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>
     {
         public override ObjectType GetModelType() => ObjectType.Text;
         
@@ -31,24 +31,17 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.FontResourceId)]
         public int FontResourceId { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
-        [RuleCollectionSorted(nameof(Sca.Frame))]
-        [RuleCollectionUnique(nameof(Sca.Frame))]
-        [JsonProperty(Names.Size)]
-        public List<Sca> Sizes { get; set; }
-        
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
-        [RuleCollectionSorted(nameof(Clr.Frame))]
-        [RuleCollectionUnique(nameof(Clr.Frame))]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
+        [RuleCollectionSorted(nameof(ColorKey.Frame))]
+        [RuleCollectionUnique(nameof(ColorKey.Frame))]
         [JsonProperty(Names.Color)]
-        public List<Clr> Colors { get; set; }
+        public List<ColorKey> Colors { get; set; }
         
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxObjectKeyframes)]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionSorted(nameof(FloatKey.Frame))]
         [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
-        
         
         [JsonProperty(Names.Direction)]
         public TextObjectDirection Direction { get; set; }
@@ -73,10 +66,9 @@ namespace BH.SDK.Models.Objects
         
         public TextObject()
         {
-            Text = new StringValue(string.Empty);
+            Text = new StringValue();
             FontResourceId = 0;
-            Sizes = new List<Sca>();
-            Colors = new List<Clr>();
+            Colors = new List<ColorKey>();
             FontSizes = new List<FloatKey>();
             
             Direction = TextRules.Direction_Default;
@@ -87,19 +79,19 @@ namespace BH.SDK.Models.Objects
             UnderEdge = TextRules.UnderEdge_Default;
             LeadingDistribution = TextRules.LeadingDistribution_Default;
         }
-        public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, 
-            List<Pos> positions, List<Rot> rotations, List<Sca> scales, int layer, Alignment pivot, IString text, int fontResourceId,
-            List<Sca> sizes, List<Clr> colors, List<FloatKey> fontSizes, TextObjectDirection direction, bool wordWrap, 
-            TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment, 
+        public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
+            List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+            List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
+            IString text, int fontResourceId, List<ColorKey> colors, List<FloatKey> fontSizes, TextObjectDirection direction, bool wordWrap,
+            TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment,
             TextObjectOverEdge overEdge, TextObjectUnderEdge underEdge, TextObjectLeadingDistribution leadingDistribution)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, positions, rotations, scales, layer, pivot)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
+                positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             Text = text;
             FontResourceId = fontResourceId;
-            Sizes = sizes;
             Colors = colors;
             FontSizes = fontSizes;
-            
             Direction = direction;
             WordWrap = wordWrap;
             HorizontalAlignment = horizontalAlignment;
@@ -114,19 +106,19 @@ namespace BH.SDK.Models.Objects
         TextObject ICopyable<TextObject>.Copy() => CopyImpl();
         
         private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Layer, Pivot.Copy(),
-            Text.Copy(), FontResourceId, Sizes.CopyList(), Colors.CopyList(), FontSizes.CopyList(),
+            Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
+            AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
+            Text.Copy(), FontResourceId, Colors.CopyList(), FontSizes.CopyList(),
             Direction, WordWrap, HorizontalAlignment, VerticalAlignment, OverEdge, UnderEdge, LeadingDistribution);
-
+        
         public void Update(TextObject src)
         {
             base.Update(src);
             
-            Text = src.Text;
+            Text = src.Text.Copy();
             FontResourceId = src.FontResourceId;
-            Sizes = src.Sizes.Select(sca => sca.Copy()).ToList();
-            Colors = src.Colors.Select(sca => sca.Copy()).ToList();
-            FontSizes = src.FontSizes.Select(floatKey => floatKey.Copy()).ToList();
+            Colors = src.Colors.CopyList();
+            FontSizes = src.FontSizes.CopyList();
             
             Direction = src.Direction;
             WordWrap = src.WordWrap;
@@ -144,7 +136,6 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(base.GetHashCode());
             hashCode.Add(Text);
             hashCode.Add(FontResourceId);
-            hashCode.Add(Sizes.GetListHashCode());
             hashCode.Add(Colors.GetListHashCode());
             hashCode.Add(FontSizes.GetListHashCode());
             hashCode.Add((int)Direction);
@@ -164,7 +155,6 @@ namespace BH.SDK.Models.Objects
             var result = base.Equals(other)
                          && Text.Equals(other.Text)
                          && FontResourceId.Equals(other.FontResourceId)
-                         && Sizes.ListEquals(other.Sizes)
                          && Colors.ListEquals(other.Colors)
                          && FontSizes.ListEquals(other.FontSizes)
                          && Direction == other.Direction

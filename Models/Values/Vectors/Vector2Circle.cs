@@ -2,6 +2,7 @@
 using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -12,13 +13,15 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class Vector2Circle : IVector2, ICopyable<Vector2Circle>, IEquatable<Vector2Circle>
     {
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
         
+        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordY)]
         public float Y { get; set; }
         
-        [RuleMin(0f)]
+        [RuleInRange(ValueRules.ZeroFloat, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Radius)]
         public float Radius { get; set; }
         
