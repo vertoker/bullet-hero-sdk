@@ -7,9 +7,9 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleInRangeAttribute : BaseRuleAttribute
     {
-        // always include
-        public object Min { get; set; }
-        public object Max { get; set; }
+        public object Min { get; set; } // always include
+        public object Max { get; set; } // always include
+        public object DefaultValue { get; set; }
 
         public RuleInRangeAttribute(byte min, byte max) { Min = min; Max = max; }
         public RuleInRangeAttribute(sbyte min, sbyte max) { Min = min; Max = max; }
@@ -23,6 +23,31 @@ namespace BH.SDK.Rules.Attributes
         public RuleInRangeAttribute(double min, double max) { Min = min; Max = max; }
         public RuleInRangeAttribute(decimal min, decimal max) { Min = min; Max = max; }
         public RuleInRangeAttribute(object min, object max) { Min = min; Max = max; }
+
+        public RuleInRangeAttribute(byte min, byte max, byte defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(sbyte min, sbyte max, sbyte defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(short min, short max, short defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(ushort min, ushort max, ushort defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(int min, int max, int defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(uint min, uint max, uint defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(long min, long max, long defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(ulong min, ulong max, ulong defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(float min, float max, float defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(double min, double max, double defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(decimal min, decimal max, decimal defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
+        public RuleInRangeAttribute(object min, object max, object defaultValue)
+            { Min = min; Max = max; DefaultValue = defaultValue; }
         
         protected override bool IsValidInternal(object value, object context)
         {
@@ -53,9 +78,15 @@ namespace BH.SDK.Rules.Attributes
             if (convertedValue is not IComparable comparableValue) return;
             
             if (comparableValue.CompareTo(min) < 0)
-                property.SetValue(target, min);
+            {
+                var newValue = DefaultValue ?? min;
+                property.SetValue(target, newValue);
+            }
             else if (comparableValue.CompareTo(max) > 0)
-                property.SetValue(target, max);
+            {
+                var newValue = DefaultValue ?? max;
+                property.SetValue(target, newValue);
+            }
         }
         
         private static object ConvertBoundary(Type targetType, object boundary)

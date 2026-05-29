@@ -24,12 +24,13 @@ namespace BH.SDK.Tests
             var fixer = new RuleFixer();
             var validator = new RuleAnalyzer();
             var level = SerializationTests.CreateInvalidTestLevel();
-            
-            var issues = validator.Analyze(level, new RuleAnalyzerSettings());
+
+            var settings = new RuleAnalyzerSettings(true, true);
+            var issues = validator.Analyze(level, settings);
             Assert.IsNotEmpty(issues);
             
             fixer.Fix(issues, level, new RuleFixerSettings());
-            issues = validator.Analyze(level, new RuleAnalyzerSettings());
+            issues = validator.Analyze(level, settings);
             Assert.IsEmpty(issues);
         }
         

@@ -11,11 +11,11 @@ namespace BH.SDK.Models.Objects
     [RuleContainer]
     public class ObjectIdModification : ICopyable<ObjectIdModification>, IEquatable<ObjectIdModification>
     {
-        [RuleMin(IdRules.MinObjectId)]
+        [RuleObjectIdValid]
         [JsonProperty(Names.PrevObjectId)]
         public int PrevObjectId { get; set; }
         
-        [RuleMin(IdRules.MinObjectId)]
+        [RuleObjectIdValid]
         [JsonProperty(Names.NextObjectId)]
         public int NextObjectId { get; set; }
 

@@ -152,8 +152,65 @@ namespace BH.SDK.Models.Objects
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = base.Equals(other)
-                         && Text.Equals(other.Text)
+            
+            var result = EqualsObject(other)
+                         && EqualsRectObject(other)
+                         && EqualsTextObject(other);
+            return result;
+        }
+        public override bool Equals(RectObject other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            switch (other)
+            {
+                case TextObject textObject:
+                {
+                    var result = EqualsObject(textObject)
+                                 && EqualsRectObject(textObject)
+                                 && EqualsTextObject(textObject);
+                    return result;
+                }
+                default:
+                {
+                    var result = EqualsObject(other)
+                                 && EqualsRectObject(other);
+                    return result;
+                }
+            }
+        }
+        public override bool Equals(Object other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            switch (other)
+            {
+                case TextObject textObject:
+                {
+                    var result = EqualsObject(textObject)
+                                 && EqualsRectObject(textObject)
+                                 && EqualsTextObject(textObject);
+                    return result;
+                }
+                case RectObject rectObject:
+                {
+                    var result = EqualsObject(rectObject)
+                                 && EqualsRectObject(rectObject);
+                    return result;
+                }
+                default:
+                {
+                    var result = EqualsObject(other);
+                    return result;
+                }
+            }
+        }
+        
+        private bool EqualsTextObject(TextObject other)
+        {
+            var result = Text.Equals(other.Text)
                          && FontResourceId.Equals(other.FontResourceId)
                          && Colors.ListEquals(other.Colors)
                          && FontSizes.ListEquals(other.FontSizes)

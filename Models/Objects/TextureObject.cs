@@ -30,7 +30,6 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.Color)]
         public List<ColorKey> Colors { get; set; }
         
-        [RuleMax(IdRules.MaxUserTypedResourceId)]
         [JsonProperty(Names.TextureResourceId)]
         public int TextureResourceId { get; set; }
         
@@ -82,8 +81,65 @@ namespace BH.SDK.Models.Objects
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = base.Equals(other)
-                         && Collider == other.Collider
+            
+            var result = EqualsObject(other)
+                         && EqualsRectObject(other)
+                         && EqualsTextureObject(other);
+            return result;
+        }
+        public override bool Equals(RectObject other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            switch (other)
+            {
+                case TextureObject textureObject:
+                {
+                    var result = EqualsObject(textureObject)
+                                 && EqualsRectObject(textureObject)
+                                 && EqualsTextureObject(textureObject);
+                    return result;
+                }
+                default:
+                {
+                    var result = EqualsObject(other)
+                                 && EqualsRectObject(other);
+                    return result;
+                }
+            }
+        }
+        public override bool Equals(Object other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            switch (other)
+            {
+                case TextureObject textureObject:
+                {
+                    var result = EqualsObject(textureObject)
+                                 && EqualsRectObject(textureObject)
+                                 && EqualsTextureObject(textureObject);
+                    return result;
+                }
+                case RectObject rectObject:
+                {
+                    var result = EqualsObject(rectObject)
+                                 && EqualsRectObject(rectObject);
+                    return result;
+                }
+                default:
+                {
+                    var result = EqualsObject(other);
+                    return result;
+                }
+            }
+        }
+
+        private bool EqualsTextureObject(TextureObject other)
+        {
+            var result = Collider == other.Collider
                          && ColliderId.Equals(other.ColliderId)
                          && Colors.ListEquals(other.Colors)
                          && TextureResourceId.Equals(other.TextureResourceId);

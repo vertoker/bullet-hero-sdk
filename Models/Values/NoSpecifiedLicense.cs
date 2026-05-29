@@ -18,6 +18,6 @@ namespace BH.SDK.Models.Values
         public override bool Equals(object obj) => obj is NoSpecifiedLicense value && Equals(value);
         
         public bool Equals(ILicense other) => other is not null && ReferenceEquals(this, other);
-        public bool Equals(NoSpecifiedLicense other) => other is not null && ReferenceEquals(this, other);
+        public bool Equals(NoSpecifiedLicense other) => other is not null;
     }
 }

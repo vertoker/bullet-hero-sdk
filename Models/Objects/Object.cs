@@ -18,11 +18,11 @@ namespace BH.SDK.Models.Objects
     {
         public virtual ObjectType GetModelType() => ObjectType.Object;
         
-        [RuleMin(IdRules.MinObjectId)]
+        [RuleObjectIdValid]
         [JsonProperty(Names.ObjectId)]
         public int ObjectId { get; set; }
         
-        [RuleMin(IdRules.MinParentObjectId)]
+        [RuleMin(IdRules.MinParentObjectId, IdRules.NullObjectId)]
         [JsonProperty(Names.ParentObjectId)]
         public int ParentObjectId { get; set; }
         
@@ -79,10 +79,17 @@ namespace BH.SDK.Models.Objects
         public override int GetHashCode() =>
             HashCode.Combine(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame);
 
-        public bool Equals(Object other)
+        public virtual bool Equals(Object other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            
+            var result = EqualsObject(other);
+            return result;
+        }
+        
+        protected bool EqualsObject(Object other)
+        {
             var result = ObjectId.Equals(other.ObjectId)
                          && ParentObjectId.Equals(other.ParentObjectId)
                          && Name.Equals(other.Name)

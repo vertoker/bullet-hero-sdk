@@ -126,12 +126,39 @@ namespace BH.SDK.Models.Objects
             return hashCode.ToHashCode();
         }
 
-        public bool Equals(RectObject other)
+        public virtual bool Equals(RectObject other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = base.Equals(other)
-                         && Positions.ListEquals(other.Positions)
+
+            var result = EqualsObject(other)
+                         && EqualsRectObject(other);
+            return result;
+        }
+        public override bool Equals(Object other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            switch (other)
+            {
+                case RectObject rectObject:
+                {
+                    var result = EqualsObject(rectObject)
+                                 && EqualsRectObject(rectObject);
+                    return result;
+                }
+                default:
+                {
+                    var result = EqualsObject(other);
+                    return result;
+                }
+            }
+        }
+
+        protected bool EqualsRectObject(RectObject other)
+        {
+            var result = Positions.ListEquals(other.Positions)
                          && Layers.ListEquals(other.Layers)
                          && Rotations.ListEquals(other.Rotations)
                          && Scales.ListEquals(other.Scales)

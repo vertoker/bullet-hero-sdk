@@ -23,6 +23,6 @@ namespace BH.SDK.Models.Effects
         public override bool Equals(object obj) => obj is EffectShapePoint value && Equals(value);
         
         public bool Equals(IEffectShape other) => other is EffectShapePoint value && Equals(value);
-        public bool Equals(EffectShapePoint other) => other is not null && ReferenceEquals(this, other);
+        public bool Equals(EffectShapePoint other) => other is not null;
     }
 }

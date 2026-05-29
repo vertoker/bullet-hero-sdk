@@ -35,7 +35,7 @@ namespace BH.SDK.Models.Keyframes
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Frame.Equals(other.Frame) && Layer.Equals(other.Layer);
+            var result = base.Equals(other) && Layer.Equals(other.Layer);
             return result;
         }
     }

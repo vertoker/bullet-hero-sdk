@@ -14,9 +14,14 @@ namespace BH.SDK.Validations
         private readonly List<RulePath> _trace = new(16);
         private readonly Dictionary<Type, PropertyInfo[]> _typesCache = new(32);
         private readonly Dictionary<PropertyInfo, BaseRuleAttribute[]> _rulesCache = new(32);
+        private readonly Stack<List<(object, PropertyInfo)>> _nextObjectsPool;
 
         public RuleAnalyzer()
         {
+            _nextObjectsPool = new Stack<List<(object, PropertyInfo)>>(16);
+            for (var i = 0; i < 16; i++)
+                _nextObjectsPool.Push(new List<(object, PropertyInfo)>(8));
+            
             CacheRecursively(typeof(Level));
         }
 
@@ -41,7 +46,7 @@ namespace BH.SDK.Validations
 
         public List<RuleIssue> Analyze(object obj, RuleAnalyzerSettings settings)
         {
-            var result = new List<RuleIssue>(4);
+            var result = new List<RuleIssue>(8);
 
             Cat.Meow("Analyze");
             AnalyzeRecursive(obj, settings, result, obj);
@@ -60,14 +65,14 @@ namespace BH.SDK.Validations
             
             var objProperties = GetObjProperties(contextType);
             
-            var nextObjects = new List<(object, PropertyInfo)>();
+            var nextObjects = _nextObjectsPool.Pop();
             foreach (var property in objProperties)
             {
                 var rules = GetRules(property);
                 var nextObj = property.GetValue(context);
                 _trace.Add(new RulePath(property));
-                
-                BaseRuleAttribute invalidRule = null;
+
+                var hasInvalidRule = false;
                 foreach (var rule in rules)
                 {
                     // TODO move to Roslyn Analyzer, this must not be in runtime
@@ -79,21 +84,25 @@ namespace BH.SDK.Validations
                     
                     if (!rule.IsValid(nextObj, obj))
                     {
-                        invalidRule = rule;
-                        break;
+                        hasInvalidRule = true;
+                        var issue = new RuleIssue(rule, obj, new List<RulePath>(_trace));
+                        result.Add(issue);
+                        Cat.MeowWarn(issue);
+                        
+                        if (!settings.analyzeAllPropertyRules) break;
                     }
                 }
 
-                if (invalidRule != null)
+                if (hasInvalidRule)
                 {
-                    var issue = new RuleIssue(invalidRule, obj, new List<RulePath>(_trace));
-                    result.Add(issue);
-                    Cat.MeowWarn(issue);
+                    if (settings.analyzeAllRecursiveRules && nextObj != null)
+                        nextObjects.Add((nextObj, property));
                 }
                 else if (nextObj != null)
                 {
                     nextObjects.Add((nextObj, property));
                 }
+                
                 _trace.RemoveAt(_trace.Count - 1);
             }
 
@@ -125,6 +134,9 @@ namespace BH.SDK.Validations
                     _trace.RemoveAt(_trace.Count - 1);
                 }
             }
+            
+            nextObjects.Clear();
+            _nextObjectsPool.Push(nextObjects);
         }
         
         private PropertyInfo[] GetObjProperties(Type objType)

@@ -22,6 +22,6 @@ namespace BH.SDK.Models.Values
         public override bool Equals(object obj) => obj is ScreenLimitNone value && Equals(value);
 
         public bool Equals(IScreenLimit other) => other is not null && ReferenceEquals(this, other);
-        public bool Equals(ScreenLimitNone other) => other is not null && ReferenceEquals(this, other);
+        public bool Equals(ScreenLimitNone other) => other is not null;
     }
 }

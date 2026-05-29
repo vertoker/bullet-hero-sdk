@@ -30,6 +30,8 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
         
+        // TODO add other counters (audio, resources, colliders)
+        
         public int GetNextObjectId() => ObjectIdCounter++;
 
         public LevelSettings()

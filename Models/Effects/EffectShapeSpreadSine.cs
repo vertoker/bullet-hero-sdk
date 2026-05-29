@@ -21,6 +21,6 @@ namespace BH.SDK.Models.Effects
         public override bool Equals(object obj) => obj is EffectShapeSpreadSine value && Equals(value);
         
         public bool Equals(IEffectShapeSpread other) => other is EffectShapeSpreadSine value && Equals(value);
-        public bool Equals(EffectShapeSpreadSine other) => other is not null && ReferenceEquals(this, other);
+        public bool Equals(EffectShapeSpreadSine other) => other is not null;
     }
 }

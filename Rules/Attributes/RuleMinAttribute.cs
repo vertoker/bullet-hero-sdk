@@ -7,8 +7,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleMinAttribute : BaseRuleAttribute
     {
-        // always include
-        public object Min { get; set; }
+        public object Min { get; set; } // always include
+        public object DefaultValue { get; set; }
 
         public RuleMinAttribute(byte min) { Min = min; }
         public RuleMinAttribute(sbyte min) { Min = min; }
@@ -22,6 +22,19 @@ namespace BH.SDK.Rules.Attributes
         public RuleMinAttribute(double min) { Min = min; }
         public RuleMinAttribute(decimal min) { Min = min; }
         public RuleMinAttribute(object min) { Min = min; }
+        
+        public RuleMinAttribute(byte min, byte defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(sbyte min, sbyte defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(short min, short defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(ushort min, ushort defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(int min, int defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(uint min, uint defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(long min, long defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(ulong min, ulong defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(float min, float defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(double min, double defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(decimal min, decimal defaultValue) { Min = min; DefaultValue = defaultValue; }
+        public RuleMinAttribute(object min, object defaultValue) { Min = min; DefaultValue = defaultValue; }
         
         protected override bool IsValidInternal(object value, object context)
         {
@@ -48,9 +61,12 @@ namespace BH.SDK.Rules.Attributes
             var convertedValue = Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
             if (convertedValue is not IComparable comparableValue) return;
-            
+
             if (comparableValue.CompareTo(min) < 0)
-                property.SetValue(target, min);
+            {
+                var newValue = DefaultValue ?? min;
+                property.SetValue(target, newValue);
+            }
         }
         
         private static object ConvertBoundary(Type targetType, object boundary)

@@ -101,8 +101,65 @@ namespace BH.SDK.Models.Objects
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = base.Equals(other)
-                         && Core.Equals(other.Core)
+            
+            var result = EqualsObject(other)
+                         && EqualsRectObject(other)
+                         && EqualsEffectObject(other);
+            return result;
+        }
+        public override bool Equals(RectObject other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            switch (other)
+            {
+                case EffectObject effectObject:
+                {
+                    var result = EqualsObject(effectObject)
+                                 && EqualsRectObject(effectObject)
+                                 && EqualsEffectObject(effectObject);
+                    return result;
+                }
+                default:
+                {
+                    var result = EqualsObject(other)
+                                 && EqualsRectObject(other);
+                    return result;
+                }
+            }
+        }
+        public override bool Equals(Object other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            switch (other)
+            {
+                case EffectObject effectObject:
+                {
+                    var result = EqualsObject(effectObject)
+                                 && EqualsRectObject(effectObject)
+                                 && EqualsEffectObject(effectObject);
+                    return result;
+                }
+                case RectObject rectObject:
+                {
+                    var result = EqualsObject(rectObject)
+                                 && EqualsRectObject(rectObject);
+                    return result;
+                }
+                default:
+                {
+                    var result = EqualsObject(other);
+                    return result;
+                }
+            }
+        }
+        
+        private bool EqualsEffectObject(EffectObject other)
+        {
+            var result = Core.Equals(other.Core)
                          && Forces.Equals(other.Forces)
                          && EffectShape.Equals(other.EffectShape)
                          && EffectAngle.Equals(other.EffectAngle)
