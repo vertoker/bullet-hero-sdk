@@ -21,6 +21,7 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
         
+        // TODO make List of keyframes
         [RuleNotNull(typeof(ScreenLimitFixed))]
         [JsonProperty(Names.ScreenLimit)]
         public IScreenLimit ScreenLimit { get; set; }
