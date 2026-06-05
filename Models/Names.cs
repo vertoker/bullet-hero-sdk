@@ -51,6 +51,7 @@
         public const string Scrub = "scrub";
         public const string Diff = "diff";
         
+        public const string Is = "is";
         public const string Name = "name";
         public const string Title = "title";
         public const string Description = "desc";
@@ -384,6 +385,7 @@
         // Combined names
         // ---------------------------------------------------------------------------------------------
 
+        public const string IsLocal = Is + _ + Local;
         public const string FrameLengthShort = FrameShort + _ + LengthShort;
         public const string ScreenLimit = Screen + _ + Limit;
         

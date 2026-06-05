@@ -6,6 +6,7 @@ using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Effects;
 using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Keyframes;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -22,6 +23,13 @@ namespace BH.SDK.Models.Objects
 
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
+        
+        [JsonProperty(Names.HasStopLocalFrame)]
+        public bool HasStopLocalFrame { get; set; }
+        
+        [RuleLevelFrame]
+        [JsonProperty(Names.StopLocalFrame)]
+        public int StopLocalFrame { get; set; }
         
         [RuleNotNull]
         [JsonProperty(Names.Core)]
@@ -49,6 +57,8 @@ namespace BH.SDK.Models.Objects
 
         public EffectObject()
         {
+            HasStopLocalFrame = EffectRules.HasStopLocalFrame_Default;
+            StopLocalFrame = EffectRules.StopLocalFrame_Default;
             Core = new EffectObjectCore();
             Forces = new EffectObjectForces();
             EffectShape = new EffectShapePoint();
@@ -59,11 +69,13 @@ namespace BH.SDK.Models.Objects
         public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
             List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            EffectObjectCore core, EffectObjectForces forces, IEffectShape effectShape,
-            IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor)
+            bool hasStopLocalFrame, int stopLocalFrame, EffectObjectCore core, EffectObjectForces forces,
+            IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
                 positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
+            HasStopLocalFrame = hasStopLocalFrame;
+            StopLocalFrame = stopLocalFrame;
             Core = core;
             Forces = forces;
             EffectShape = effectShape;
@@ -79,12 +91,15 @@ namespace BH.SDK.Models.Objects
         private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
             Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
-            Core.Copy(), Forces.Copy(), EffectShape.Copy(), EffectAngle.Copy(), EffectScale.Copy(), EffectColor.Copy());
+            HasStopLocalFrame, StopLocalFrame, Core.Copy(), Forces.Copy(),
+            EffectShape.Copy(), EffectAngle.Copy(), EffectScale.Copy(), EffectColor.Copy());
         
         public void Update(EffectObject src)
         {
             base.Update(this);
             
+            HasStopLocalFrame = src.HasStopLocalFrame;
+            StopLocalFrame = src.StopLocalFrame;
             Core.Update(src.Core);
             Forces.Update(src.Forces);
             EffectShape = src.EffectShape.Copy();
@@ -94,9 +109,21 @@ namespace BH.SDK.Models.Objects
         }
 
         public override bool Equals(object obj) => obj is EffectObject value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
-            Core, Forces, EffectShape, EffectAngle, EffectScale, EffectColor);
-
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(base.GetHashCode());
+            hashCode.Add(HasStopLocalFrame);
+            hashCode.Add(StopLocalFrame);
+            hashCode.Add(Core);
+            hashCode.Add(Forces);
+            hashCode.Add(EffectShape);
+            hashCode.Add(EffectAngle);
+            hashCode.Add(EffectScale);
+            hashCode.Add(EffectColor);
+            return hashCode.ToHashCode();
+        }
+        
         public bool Equals(EffectObject other)
         {
             if (other is null) return false;
@@ -159,7 +186,9 @@ namespace BH.SDK.Models.Objects
         
         private bool EqualsEffectObject(EffectObject other)
         {
-            var result = Core.Equals(other.Core)
+            var result = HasStopLocalFrame == other.HasStopLocalFrame
+                         && StopLocalFrame.Equals(other.StopLocalFrame)
+                         && Core.Equals(other.Core)
                          && Forces.Equals(other.Forces)
                          && EffectShape.Equals(other.EffectShape)
                          && EffectAngle.Equals(other.EffectAngle)

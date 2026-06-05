@@ -15,6 +15,7 @@ namespace BH.SDK.Rules
         public static class Core
         {
             public const bool Loop_Default = true;
+            public const bool IsLocal_Default = true;
             
             public const uint ParticleCount_Min = 0;
             public const uint ParticleCount_Max = 32768;
