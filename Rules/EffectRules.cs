@@ -14,6 +14,7 @@ namespace BH.SDK.Rules
 
         public static class Core
         {
+            public const bool Render_Default = true;
             public const bool Loop_Default = true;
             public const bool IsLocal_Default = true;
             

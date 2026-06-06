@@ -13,6 +13,9 @@ namespace BH.SDK.Models.Effects
     [RuleContainer]
     public class EffectObjectCore : ICopyable<EffectObjectCore>, IEquatable<EffectObjectCore>, IUpdatable<EffectObjectCore>
     {
+        [JsonProperty(Names.Render)]
+        public bool Render { get; set; }
+        
         [JsonProperty(Names.Local)]
         public bool Loop { get; set; }
         
@@ -37,6 +40,7 @@ namespace BH.SDK.Models.Effects
 
         public EffectObjectCore()
         {
+            Render = EffectRules.Core.Render_Default;
             Loop = EffectRules.Core.Loop_Default;
             ParticleCount = EffectRules.Core.ParticleCount_Default;
             LifetimeBounds = new Vector2Value(
@@ -47,9 +51,10 @@ namespace BH.SDK.Models.Effects
                 EffectRules.Core.Pivot_X_Default,
                 EffectRules.Core.Pivot_Y_Default));
         }
-        public EffectObjectCore(bool loop, uint particleCount,
+        public EffectObjectCore(bool render, bool loop, uint particleCount,
             IVector2 lifetimeBounds, int textureResourceId, Alignment particlePivot)
         {
+            Render = render;
             Loop = loop;
             ParticleCount = particleCount;
             LifetimeBounds = lifetimeBounds;
@@ -59,6 +64,7 @@ namespace BH.SDK.Models.Effects
 
         public void Update(EffectObjectCore src)
         {
+            Render = src.Render;
             Loop = src.Loop;
             ParticleCount = src.ParticleCount;
             LifetimeBounds = src.LifetimeBounds;
@@ -67,18 +73,19 @@ namespace BH.SDK.Models.Effects
         }
 
         public object Clone() => Copy();
-        public EffectObjectCore Copy() => new(Loop, ParticleCount,
+        public EffectObjectCore Copy() => new(Render, Loop, ParticleCount,
             LifetimeBounds.Copy(), TextureResourceId, ParticlePivot.Copy());
 
         public override bool Equals(object obj) => obj is EffectObjectCore value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Loop, ParticleCount,
+        public override int GetHashCode() => HashCode.Combine(Render, Loop, ParticleCount,
             LifetimeBounds, TextureResourceId, ParticlePivot);
 
         public bool Equals(EffectObjectCore other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Loop == other.Loop
+            var result = Render == other.Render
+                         && Loop == other.Loop
                          && ParticleCount.Equals(other.ParticleCount)
                          && LifetimeBounds.Equals(other.LifetimeBounds)
                          && TextureResourceId.Equals(other.TextureResourceId)
