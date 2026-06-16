@@ -6,7 +6,8 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class GameEditorSettings : IResetable, ICopyable<GameEditorSettings>, IEquatable<GameEditorSettings>
+    public class GameEditorSettings : IResetable,
+        ICopyable<GameEditorSettings>, IMoveable<GameEditorSettings>, IEquatable<GameEditorSettings>
     {
         // Savings
         
@@ -59,6 +60,15 @@ namespace BH.SDK.Models.SettingGroups
 
         public object Clone() => Copy();
         public GameEditorSettings Copy() => new(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize, CameraMaxSize);
+
+        public void Pull(GameEditorSettings source)
+        {
+            Autosave = source.Autosave;
+            AutosaveRate = source.AutosaveRate;
+            MaxAutosaveFiles = source.MaxAutosaveFiles;
+            CameraMinSize = source.CameraMinSize;
+            CameraMaxSize = source.CameraMaxSize;
+        }
 
         public override bool Equals(object obj) => obj is GameEditorSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize, CameraMaxSize);

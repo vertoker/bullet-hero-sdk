@@ -8,7 +8,8 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class GraphicsSettings : IResetable, IFrameable, ICopyable<GraphicsSettings>, IEquatable<GraphicsSettings>
+    public class GraphicsSettings : IResetable, IFrameable,
+        ICopyable<GraphicsSettings>, IMoveable<GraphicsSettings>, IEquatable<GraphicsSettings>
     {
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
@@ -62,6 +63,14 @@ namespace BH.SDK.Models.SettingGroups
         public object Clone() => Copy();
         public GraphicsSettings Copy() => new(FramerateTarget, FixedFramerate,
             Audio.Copy(), Effects.Copy(), PostProcessing.Copy());
+
+        public void Pull(GraphicsSettings source)
+        {
+            FramerateTarget = source.FramerateTarget;
+            Audio.Pull(source.Audio);
+            Effects.Pull(source.Effects);
+            PostProcessing.Pull(source.PostProcessing);
+        }
 
         public override bool Equals(object obj) => obj is GraphicsSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine((int)FramerateTarget,

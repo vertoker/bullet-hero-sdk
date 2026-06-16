@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
     public class PostProcessingGraphicsSettings : BaseGraphicsSettings, IResetable,
-        ICopyable<PostProcessingGraphicsSettings>, IEquatable<PostProcessingGraphicsSettings>
+        ICopyable<PostProcessingGraphicsSettings>, IMoveable<PostProcessingGraphicsSettings>, IEquatable<PostProcessingGraphicsSettings>
     {
         [JsonProperty(Names.RenderBloom)]
         public bool RenderBloom { get; set; }
@@ -147,6 +147,23 @@ namespace BH.SDK.Models.SettingGroups.Graphics
         public PostProcessingGraphicsSettings Copy() => new(Render, RenderBloom, RenderChroma, RenderVignette,
             RenderLens, RenderGrain, RenderMotionBlur, RenderColorCurves, RenderLiftGammaGain,
             RenderShadowsMidtonesHighlights, RenderWhiteBalance, RenderAnalogGlitch, RenderDigitalGlitch);
+
+        public void Pull(PostProcessingGraphicsSettings source)
+        {
+            Render = source.Render;
+            RenderBloom = source.RenderBloom;
+            RenderChroma = source.RenderChroma;
+            RenderVignette = source.RenderVignette;
+            RenderLens = source.RenderLens;
+            RenderGrain = source.RenderGrain;
+            RenderMotionBlur = source.RenderMotionBlur;
+            RenderColorCurves = source.RenderColorCurves;
+            RenderLiftGammaGain = source.RenderLiftGammaGain;
+            RenderShadowsMidtonesHighlights = source.RenderShadowsMidtonesHighlights;
+            RenderWhiteBalance = source.RenderWhiteBalance;
+            RenderAnalogGlitch = source.RenderAnalogGlitch;
+            RenderDigitalGlitch = source.RenderDigitalGlitch;
+        }
 
         public override bool Equals(object obj) => obj is PostProcessingGraphicsSettings value && Equals(value);
         public override int GetHashCode()

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class GeneralSettings : IResetable, ICopyable<GeneralSettings>, IEquatable<GeneralSettings>
+    public class GeneralSettings : IResetable, ICopyable<GeneralSettings>, IMoveable<GeneralSettings>, IEquatable<GeneralSettings>
     {
         [RuleInRange(1, 8)]
         [JsonProperty(Names.ResourceParallelLoadCount)]
@@ -34,6 +34,12 @@ namespace BH.SDK.Models.SettingGroups
 
         public object Clone() => Copy();
         public GeneralSettings Copy() => new(ResourceParallelLoadCount, ResourceWebTimeout);
+
+        public void Pull(GeneralSettings source)
+        {
+            ResourceParallelLoadCount = source.ResourceParallelLoadCount;
+            ResourceWebTimeout = source.ResourceWebTimeout;
+        }
 
         public override bool Equals(object obj) => obj is GeneralSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(ResourceParallelLoadCount, ResourceWebTimeout);

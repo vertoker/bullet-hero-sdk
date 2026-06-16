@@ -8,7 +8,7 @@ namespace BH.SDK.Models.SettingGroups.Graphics
 {
     [RuleContainer]
     public class EffectsGraphicsSettings : BaseGraphicsSettings, IFrameable, IResetable,
-        ICopyable<EffectsGraphicsSettings>, IEquatable<EffectsGraphicsSettings>
+        ICopyable<EffectsGraphicsSettings>, IMoveable<EffectsGraphicsSettings>, IEquatable<EffectsGraphicsSettings>
     {
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
@@ -45,6 +45,14 @@ namespace BH.SDK.Models.SettingGroups.Graphics
 
         public object Clone() => Copy();
         public EffectsGraphicsSettings Copy() => new(Render, FramerateTarget, FixedFramerate, MaxScrubTime);
+
+        public void Pull(EffectsGraphicsSettings source)
+        {
+            Render = source.Render;
+            FramerateTarget = source.FramerateTarget;
+            FixedFramerate = source.FixedFramerate;
+            MaxScrubTime = source.MaxScrubTime;
+        }
 
         public override bool Equals(object obj) => obj is EffectsGraphicsSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),

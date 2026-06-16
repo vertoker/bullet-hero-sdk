@@ -10,7 +10,8 @@ namespace BH.SDK.Models
     // TODO Add tests for IResetable
     
     [RuleContainer]
-    public class UserSettings : IUserSettings, IResetable, ICopyable<UserSettings>, IEquatable<UserSettings>
+    public class UserSettings : IUserSettings, IResetable,
+        ICopyable<UserSettings>, IMoveable<UserSettings>, IEquatable<UserSettings>
     {
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
@@ -64,6 +65,15 @@ namespace BH.SDK.Models
         public object Clone() => Copy();
         public UserSettings Copy() => new(General.Copy(), Controls.Copy(),
             Audio.Copy(), Graphics.Copy(), GameEditor.Copy());
+        
+        public void Pull(UserSettings source)
+        {
+            General.Pull(source.General);
+            Controls.Pull(source.Controls);
+            Audio.Pull(source.Audio);
+            Graphics.Pull(source.Graphics);
+            GameEditor.Pull(source.GameEditor);
+        }
 
         public bool Equals(UserSettings other)
         {
@@ -75,7 +85,7 @@ namespace BH.SDK.Models
                    && Graphics.Equals(other.Graphics)
                    && GameEditor.Equals(other.GameEditor);
         }
-
+        
         public override bool Equals(object obj) => obj is UserSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(General, Controls, Audio, Graphics, GameEditor);
     }

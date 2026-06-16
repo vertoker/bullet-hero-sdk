@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class ControlsSettings : IResetable, ICopyable<ControlsSettings>, IEquatable<ControlsSettings>
+    public class ControlsSettings : IResetable, ICopyable<ControlsSettings>, IMoveable<ControlsSettings>, IEquatable<ControlsSettings>
     {
         [JsonProperty(Names.ClassicControlsType)]
         public ClassicControlsType ClassicControlsType { get; set; }
@@ -29,6 +29,11 @@ namespace BH.SDK.Models.SettingGroups
 
         public object Clone() => Copy();
         public ControlsSettings Copy() => new(ClassicControlsType);
+
+        public void Pull(ControlsSettings source)
+        {
+            ClassicControlsType = source.ClassicControlsType;
+        }
 
         public override bool Equals(object obj) => obj is ControlsSettings value && Equals(value);
         public override int GetHashCode() => (int)ClassicControlsType;
