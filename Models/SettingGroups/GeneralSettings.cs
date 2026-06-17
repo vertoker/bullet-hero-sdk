@@ -15,6 +15,8 @@ namespace BH.SDK.Models.SettingGroups
         [RuleMin(0f)]
         [JsonProperty(Names.ResourceWebTimeout)]
         public float ResourceWebTimeout { get; set; }
+        
+        // TODO add and integrate language with Unity Localization package (save as string like "en" or "ru")
 
         public GeneralSettings()
         {
