@@ -1,24 +1,29 @@
 ﻿Bullet Hero allows to create UGC (user-generated content) and it must be licensing.
 Licensing is simular to Geometry Dash, but "one music track" replace to ALL external resources for level
 
+All user levels distribute under license **CC BY-NC**. It means
+- **CC** - Creative Commons license
+- **BY** - Attribution required (credits the authors)
+- **NC** - Non‑commercial use only
+
 External resources is a wide range of data, it includes
 - Music/Audio
 - Textures/Images
 - Fonts
 - Texts/Bytes
 
-All user levels created and distribute under license **CC BY-NC**. It means
-- **CC** - Creative Commons license
-- **BY** - Attribution required (credit the authors)
-- **NC** - Non‑commercial use only
-
 External resources must have **same license or more free**.
 If you use commercial resources in your level - this level can't be
 distributed through Bullet Hero official web services (aka. official server, next is OWS)
 
-You are not allowed to change license of your level. It must be always **CC BY-NC**.
-We will not prevent free distribution through unofficial sources,
-but we categorically against the commercial use of levels
+Level most likely must have **CC BY-NC** license, otherwise it's not allowed on OWS.
+I will not prevent free distribution through unofficial sources,
+but I categorically against the commercial use of levels
+
+Another option to allow usage resource in your level is get from author/artist "permission to use" specially for game.
+This can be anything that moderators can check: mail, direct message or public statement (like Twitter/X).
+
+(TODO make template for message on mail to artist)
 
 Game allows to use several external services, which is
 - Official Web Services (OWS) - default server, has on all platforms by default
@@ -90,3 +95,5 @@ Where you can find "allowed" external resources
 
 This is not a big game, we try to BE HUMAN for the community, try to BE HUMAN too.
 Together we build excellent community, thanks everyone
+
+vertoker
