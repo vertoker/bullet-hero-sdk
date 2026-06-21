@@ -62,7 +62,8 @@ Where you can find "allowed" external resources
       - Perfect, all content under CC BY
     - SoundImage (https://soundimage.org/)
     - Pixabay (https://pixabay.com)
-    - 
+    - GoodKid (https://goodkidofficial.com/creators/)
+      - They don't declare license, but from they FAQ it's CC BY but without author mention. Use it as CC BY
   - Require manual license check
     - OpenGameArt (https://opengameart.org/)
       - If license can't be identified - can't use it
