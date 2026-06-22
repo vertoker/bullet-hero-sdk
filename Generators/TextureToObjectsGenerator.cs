@@ -1,14 +1,16 @@
 ﻿using BH.SDK.Models;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Resources;
 using BH.SDK.Models.Values;
+using BH.SDK.Rules;
 using BH.SDK.Utils;
 
 namespace BH.SDK.Generators
 {
-    public class TextureObjectsGenerator : ILevelGenerator<TextureObjectsParameters>
+    public class TextureToObjectsGenerator : BaseGenerator<TextureToObjectsGenerator.InputParameters>
     {
-        public void Generate(Level level, TextureObjectsParameters parameters)
+        public override void Generate(Level level, InputParameters parameters)
         {
             var widthMult = parameters.Width / (float)parameters.Texture.Width;
             var heightMult = parameters.Height / (float)parameters.Texture.Height;
@@ -43,6 +45,34 @@ namespace BH.SDK.Generators
                 textureObj.Scales.Add(sca);
                 textureObj.Pivots.Add(pivot);
                 textureObj.Colors.Add(clr);
+            }
+        }
+        
+        public class InputParameters : BaseInputParameters
+        {
+            public readonly PixelTexture Texture;
+            public readonly int Width;
+            public readonly int Height;
+            public readonly Alignment PixelPivot;
+            public readonly Vector2Value PixelSca;
+
+            public InputParameters(PixelTexture texture,
+                int startFrame, int endFrame, int layer = ValueRules.DefaultLayer) : base(startFrame, endFrame, layer)
+            {
+                Texture = texture;
+                Width = texture.Width;
+                Height = texture.Height;
+                PixelPivot = Alignment.CenterMiddle;
+                PixelSca = new Vector2Value(1f, 1f);
+            }
+            public InputParameters(PixelTexture texture, int width, int height, Alignment pixelPivot, Vector2Value pixelSca,
+                int startFrame, int endFrame, int layer = ValueRules.DefaultLayer) : base(startFrame, endFrame, layer)
+            {
+                Texture = texture;
+                Width = width;
+                Height = height;
+                PixelPivot = pixelPivot;
+                PixelSca = pixelSca;
             }
         }
     }

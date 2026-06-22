@@ -5,8 +5,8 @@ using System.Runtime.CompilerServices;
 namespace BH.SDK.Utils
 {
     /// <summary>
-    /// Прокси-класс, предназначенный для работы с обычными массивами как в 2-мерными.
-    /// Специальная реализация только для 2 измерений в целях оптимизации
+    /// Proxy is a struct designed to work with regular arrays as in 2-dimensional arrays.
+    /// Special implementation for only 2 dimensions for optimization purposes
     /// </summary>
     public readonly struct DimensionalIndexer2 : IEnumerable<int>, IEnumerable<DimensionalIndexer2.IndexTuple>
     {
