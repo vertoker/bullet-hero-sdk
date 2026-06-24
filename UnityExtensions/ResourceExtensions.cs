@@ -5,7 +5,6 @@ namespace BH.SDK
 {
     public static class ResourceExtensions
     {
-#if BHSDK_UNITY
         public static Color32 ToColor32(this Pixel pixel) => new(pixel.r, pixel.g, pixel.b, pixel.a);
         public static Pixel ToPixel(this Color32 color) => new(color.r, color.g, color.b, color.a);
 
@@ -23,6 +22,5 @@ namespace BH.SDK
             texture.Apply();
             return texture;
         }
-#endif
     }
 }
