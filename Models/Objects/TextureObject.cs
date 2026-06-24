@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class TextureObject : RectObject, ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
+    public class TextureObject : Object, ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.Texture;
         
@@ -83,31 +83,8 @@ namespace BH.SDK.Models.Objects
             if (ReferenceEquals(this, other)) return true;
             
             var result = EqualsObject(other)
-                         && EqualsRectObject(other)
                          && EqualsTextureObject(other);
             return result;
-        }
-        public override bool Equals(RectObject other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            switch (other)
-            {
-                case TextureObject textureObject:
-                {
-                    var result = EqualsObject(textureObject)
-                                 && EqualsRectObject(textureObject)
-                                 && EqualsTextureObject(textureObject);
-                    return result;
-                }
-                default:
-                {
-                    var result = EqualsObject(other)
-                                 && EqualsRectObject(other);
-                    return result;
-                }
-            }
         }
         public override bool Equals(Object other)
         {
@@ -119,14 +96,7 @@ namespace BH.SDK.Models.Objects
                 case TextureObject textureObject:
                 {
                     var result = EqualsObject(textureObject)
-                                 && EqualsRectObject(textureObject)
                                  && EqualsTextureObject(textureObject);
-                    return result;
-                }
-                case RectObject rectObject:
-                {
-                    var result = EqualsObject(rectObject)
-                                 && EqualsRectObject(rectObject);
                     return result;
                 }
                 default:

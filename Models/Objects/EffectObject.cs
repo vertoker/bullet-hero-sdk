@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class EffectObject : RectObject, IEffect,
+    public class EffectObject : Object, IEffect,
         ICopyable<EffectObject>, IEquatable<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.Effect;
@@ -130,31 +130,8 @@ namespace BH.SDK.Models.Objects
             if (ReferenceEquals(this, other)) return true;
             
             var result = EqualsObject(other)
-                         && EqualsRectObject(other)
                          && EqualsEffectObject(other);
             return result;
-        }
-        public override bool Equals(RectObject other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            switch (other)
-            {
-                case EffectObject effectObject:
-                {
-                    var result = EqualsObject(effectObject)
-                                 && EqualsRectObject(effectObject)
-                                 && EqualsEffectObject(effectObject);
-                    return result;
-                }
-                default:
-                {
-                    var result = EqualsObject(other)
-                                 && EqualsRectObject(other);
-                    return result;
-                }
-            }
         }
         public override bool Equals(Object other)
         {
@@ -166,14 +143,7 @@ namespace BH.SDK.Models.Objects
                 case EffectObject effectObject:
                 {
                     var result = EqualsObject(effectObject)
-                                 && EqualsRectObject(effectObject)
                                  && EqualsEffectObject(effectObject);
-                    return result;
-                }
-                case RectObject rectObject:
-                {
-                    var result = EqualsObject(rectObject)
-                                 && EqualsRectObject(rectObject);
                     return result;
                 }
                 default:

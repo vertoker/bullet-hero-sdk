@@ -3,9 +3,8 @@
     public enum ObjectType : byte
     {
         Object = 0,
-        RectObject = 1,
-        Texture = 2,
-        Effect = 3,
-        Text = 4,
+        Texture = 1,
+        Effect = 2,
+        Text = 3,
     }
 }

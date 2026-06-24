@@ -111,7 +111,7 @@ namespace BH.SDK.Tests
         {
             var level = SerializationTests.CreateTestLevel();
             var copyLevel = level.Copy();
-            ((RectObject)copyLevel.Game.Objects[0]).AnchorsMin[0].Value = Alignment.LeftBottomValue;
+            copyLevel.Game.Objects[0].AnchorsMin[0].Value = Alignment.LeftBottomValue;
             Assert.IsFalse(level.Equals(copyLevel));
         }
         
