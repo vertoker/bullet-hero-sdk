@@ -43,9 +43,6 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
         
-        [JsonProperty(Names.Direction)]
-        public TextObjectDirection Direction { get; set; }
-        
         [JsonProperty(Names.WordWrap)]
         public bool WordWrap { get; set; }
         
@@ -55,15 +52,6 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.VerticalAlignment)]
         public TextObjectVerticalAlignment VerticalAlignment { get; set; }
         
-        [JsonProperty(Names.OverEdge)]
-        public TextObjectOverEdge OverEdge { get; set; }
-        
-        [JsonProperty(Names.UnderEdge)]
-        public TextObjectUnderEdge UnderEdge { get; set; }
-        
-        [JsonProperty(Names.Distrib)]
-        public TextObjectLeadingDistribution LeadingDistribution { get; set; }
-        
         public TextObject()
         {
             Text = new StringValue();
@@ -71,20 +59,15 @@ namespace BH.SDK.Models.Objects
             Colors = new List<ColorKey>();
             FontSizes = new List<FloatKey>();
             
-            Direction = TextRules.Direction_Default;
             WordWrap = TextRules.WordWrap_Default;
             HorizontalAlignment = TextRules.HorizontalAlignment_Default;
             VerticalAlignment = TextRules.VerticalAlignment_Default;
-            OverEdge = TextRules.OverEdge_Default;
-            UnderEdge = TextRules.UnderEdge_Default;
-            LeadingDistribution = TextRules.LeadingDistribution_Default;
         }
         public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
             List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            IString text, int fontResourceId, List<ColorKey> colors, List<FloatKey> fontSizes, TextObjectDirection direction, bool wordWrap,
-            TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment,
-            TextObjectOverEdge overEdge, TextObjectUnderEdge underEdge, TextObjectLeadingDistribution leadingDistribution)
+            IString text, int fontResourceId, List<ColorKey> colors, List<FloatKey> fontSizes, bool wordWrap,
+            TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
                 positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
@@ -92,13 +75,9 @@ namespace BH.SDK.Models.Objects
             FontResourceId = fontResourceId;
             Colors = colors;
             FontSizes = fontSizes;
-            Direction = direction;
             WordWrap = wordWrap;
             HorizontalAlignment = horizontalAlignment;
             VerticalAlignment = verticalAlignment;
-            OverEdge = overEdge;
-            UnderEdge = underEdge;
-            LeadingDistribution = leadingDistribution;
         }
         
         public override object Clone() => CopyImpl();
@@ -107,9 +86,8 @@ namespace BH.SDK.Models.Objects
         
         private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
             Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
-            AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
-            Text.Copy(), FontResourceId, Colors.CopyList(), FontSizes.CopyList(),
-            Direction, WordWrap, HorizontalAlignment, VerticalAlignment, OverEdge, UnderEdge, LeadingDistribution);
+            AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(), Text.Copy(), FontResourceId,
+            Colors.CopyList(), FontSizes.CopyList(), WordWrap, HorizontalAlignment, VerticalAlignment);
         
         public void Update(TextObject src)
         {
@@ -120,13 +98,9 @@ namespace BH.SDK.Models.Objects
             Colors = src.Colors.CopyList();
             FontSizes = src.FontSizes.CopyList();
             
-            Direction = src.Direction;
             WordWrap = src.WordWrap;
             HorizontalAlignment = src.HorizontalAlignment;
             VerticalAlignment = src.VerticalAlignment;
-            OverEdge = src.OverEdge;
-            UnderEdge = src.UnderEdge;
-            LeadingDistribution = src.LeadingDistribution;
         }
 
         public override bool Equals(object obj) => obj is TextObject value && Equals(value);
@@ -138,13 +112,9 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(FontResourceId);
             hashCode.Add(Colors.GetListHashCode());
             hashCode.Add(FontSizes.GetListHashCode());
-            hashCode.Add((int)Direction);
             hashCode.Add(WordWrap);
             hashCode.Add((int)HorizontalAlignment);
             hashCode.Add((int)VerticalAlignment);
-            hashCode.Add((int)OverEdge);
-            hashCode.Add((int)UnderEdge);
-            hashCode.Add((int)LeadingDistribution);
             return hashCode.ToHashCode();
         }
 
@@ -184,13 +154,9 @@ namespace BH.SDK.Models.Objects
                          && FontResourceId.Equals(other.FontResourceId)
                          && Colors.ListEquals(other.Colors)
                          && FontSizes.ListEquals(other.FontSizes)
-                         && Direction == other.Direction
                          && WordWrap == other.WordWrap
                          && HorizontalAlignment == other.HorizontalAlignment
-                         && VerticalAlignment == other.VerticalAlignment
-                         && OverEdge == other.OverEdge
-                         && UnderEdge == other.UnderEdge
-                         && LeadingDistribution == other.LeadingDistribution;
+                         && VerticalAlignment == other.VerticalAlignment;
             return result;
         }
     }
