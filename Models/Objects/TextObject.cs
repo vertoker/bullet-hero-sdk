@@ -19,7 +19,7 @@ namespace BH.SDK.Models.Objects
     [RuleContainer]
     public class TextObject : Object, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>
     {
-        public override ObjectType GetModelType() => ObjectType.Text;
+        public override ObjectType GetModelType() => ObjectType.TextObject;
         
         [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Text)]

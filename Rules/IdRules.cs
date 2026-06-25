@@ -1,4 +1,6 @@
-﻿namespace BH.SDK.Rules
+﻿using System.Runtime.CompilerServices;
+
+namespace BH.SDK.Rules
 {
     /// <summary> All rules and values/limits about all types of id in whole BH </summary>
     public static class IdRules
@@ -16,6 +18,9 @@
         public const int NullObjectId = 0;
         public const int MinObjectId = 1;
         public const int MinUserObjectIdCounter = 1;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsValidObjectId(int objectId) => objectId >= MinObjectId;
         
         // 2. InstanceIndex - runtime temporary index (not id, exactly direct indexation).
         // Changes every runtime and using for rendering instances in frame context only
@@ -41,6 +46,9 @@
         public const int MinParentObjectId = -2;
         public const int MaxInframeObjectIdCounter = -3;
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsInframe(int objectId) => objectId <= MaxInframeObjectIdCounter;
+        
         // Public game objects (stable ids)
         
         // -1 => camera game object, exists only in player runtime (for ObjectId - error),
@@ -54,15 +62,6 @@
         // In multiplayer works each localPlayer individually (no effect for )
         // Recommend: try not to use colliders for user objects, which parented from localPlayer
         public const int LocalPlayerObjectId = -2;
-        
-        // Private game objects (unstable ids)
-        
-        // (-4 - -3) - screen black borders, execute data from IScreenLimit, cover unwanted parts of level.
-        // Exists as a children of camera
-        public const int LeftScreenBorderObjectId = -3;
-        public const int RightScreenBorderObjectId = -4;
-        
-        // TODO add selection for editor
         
         // ------------------------------------------------------------------------------------------------------------
         // ResourceId (TypedResourceId)

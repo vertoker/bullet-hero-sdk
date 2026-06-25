@@ -21,9 +21,9 @@ namespace BH.SDK.Serialization.Converters.CustomTypes
             return customType switch
             {
                 ObjectType.Object => typeof(Object),
-                ObjectType.Texture => typeof(TextureObject),
-                ObjectType.Text => typeof(TextObject),
-                ObjectType.Effect => typeof(EffectObject),
+                ObjectType.TextureObject => typeof(TextureObject),
+                ObjectType.TextObject => typeof(TextObject),
+                ObjectType.EffectObject => typeof(EffectObject),
                 _ => throw new ArgumentOutOfRangeException(nameof(customType), customType, null)
             };
         }

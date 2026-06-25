@@ -8,3 +8,10 @@ UI style + GameEditor design
 [YouTube](https://www.youtube.com/channel/UCzD4VAatib6cnjils-QuuJg))
 
 - `Måns Mattisson` ([Figma](https://www.figma.com/community/file/1610012879053642759/3d-game-editor-design)) 
+
+Icons
+
+- Icons8
+  - <a target="_blank" href="https://icons8.com/icon/85130/eye">Visible</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/85137/hide">Hide</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - 

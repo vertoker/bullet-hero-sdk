@@ -19,7 +19,7 @@ namespace BH.SDK.Models.Objects
     public class EffectObject : Object, IEffect,
         ICopyable<EffectObject>, IEquatable<EffectObject>, IUpdatable<EffectObject>
     {
-        public override ObjectType GetModelType() => ObjectType.Effect;
+        public override ObjectType GetModelType() => ObjectType.EffectObject;
 
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;

@@ -15,7 +15,7 @@ namespace BH.SDK.Models.Objects
     [RuleContainer]
     public class TextureObject : Object, ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
     {
-        public override ObjectType GetModelType() => ObjectType.Texture;
+        public override ObjectType GetModelType() => ObjectType.TextureObject;
         
         [JsonProperty(Names.ColliderShort)]
         public bool Collider { get; set; }
