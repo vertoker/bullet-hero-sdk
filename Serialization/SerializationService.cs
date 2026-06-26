@@ -5,6 +5,8 @@ using BH.SDK.Models;
 using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Serialization.Converters;
 using BH.SDK.Serialization.Converters.CustomTypes;
+using BH.SDK.Serialization.Converters.Data;
+using BH.SDK.Serialization.Converters.Dict;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -54,6 +56,8 @@ namespace BH.SDK.Serialization
             return new List<JsonConverter>
             {
                 new VersionConverter(),
+                
+                new DictionaryObjectsConverter(),
                 
                 // Effect is also serialized by ObjectConverter.
                 // We already know the type (EffectObject), parse it via default serializer 

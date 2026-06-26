@@ -6,7 +6,7 @@ namespace BH.SDK.Validations
     {
         public void Fix(List<RuleIssue> issues, object obj, RuleFixerSettings settings)
         {
-            Cat.Meow("Fix");
+            // Cat.Meow("Fix");
             
             // inverse fixing is same variant because some fixes invalidate data for next deeper issues
             // Especially if you using RuleAnalyzerSettings.analyzeAllRecursiveRules

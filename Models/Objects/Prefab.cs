@@ -22,9 +22,8 @@ namespace BH.SDK.Models.Objects
         
         // TODO add more contextual checks
         [RuleNotNull]
-        [RuleCollectionUnique(nameof(Object.ObjectId))]
         [JsonProperty(Names.Objects)]
-        public List<Object> Objects { get; set; }
+        public Dictionary<int, Object> Objects { get; set; }
         
         // TODO add more contextual checks
         [RuleNotNull]
@@ -34,10 +33,10 @@ namespace BH.SDK.Models.Objects
         public Prefab()
         {
             PrefabGuid = Guid.NewGuid();
-            Objects = new List<Object>();
+            Objects = new Dictionary<int, Object>();
             PrefabObjects = new List<PrefabObject>();
         }
-        public Prefab(Guid prefabGuid, List<Object> objects, List<PrefabObject> prefabObjects)
+        public Prefab(Guid prefabGuid, Dictionary<int, Object> objects, List<PrefabObject> prefabObjects)
         {
             PrefabGuid = prefabGuid;
             Objects = objects;
@@ -45,18 +44,18 @@ namespace BH.SDK.Models.Objects
         }
 
         public object Clone() => Copy();
-        public Prefab Copy() => new(PrefabGuid, Objects.CopyList(), PrefabObjects.CopyList());
+        public Prefab Copy() => new(PrefabGuid, Objects.CopyDictionary(), PrefabObjects.CopyList());
 
         public override bool Equals(object obj) => obj is Prefab value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(PrefabGuid,
-            Objects.GetListHashCode(), PrefabObjects.GetListHashCode());
+            Objects.GetDictionaryHashCode(), PrefabObjects.GetListHashCode());
 
         public bool Equals(Prefab other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = PrefabGuid.Equals(other.PrefabGuid)
-                         && Objects.ListEquals(other.Objects)
+                         && Objects.DictionaryEquals(other.Objects)
                          && PrefabObjects.ListEquals(other.PrefabObjects);
             return result;
         }

@@ -147,34 +147,34 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
             textureObject.Colors.Add(new ColorKey());
-            level.Game.Objects.Add(textureObject);
+            level.Game.Objects.Add(1, textureObject);
 
             var textObject = new TextObject()
             {
                 ObjectId = 2,
             };
             textObject.Colors.Add(new ColorKey());
-            level.Game.Objects.Add(textObject);
+            level.Game.Objects.Add(2, textObject);
 
             var effectObject = new EffectObject()
             {
                 ObjectId = 3,
             };
-            level.Game.Objects.Add(effectObject);
+            level.Game.Objects.Add(3, effectObject);
 
             var prefab = new Prefab()
             {
                 PrefabGuid = Guid.NewGuid(),
             };
-            prefab.Objects.Add(new TextureObject()
+            prefab.Objects.Add(1, new TextureObject()
             {
                 ObjectId = 1,
             });
-            prefab.Objects.Add(new TextObject()
+            prefab.Objects.Add(2, new TextObject()
             {
                 ObjectId = 2,
             });
-            prefab.Objects.Add(new EffectObject()
+            prefab.Objects.Add(3, new EffectObject()
             {
                 ObjectId = 3,
             });
@@ -237,7 +237,10 @@ namespace BH.SDK.Tests
             level.Game.PlayerEvents.Visibles.Add(new BoolKey());
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());
 
-            var textureObject = new TextureObject();
+            var textureObject = new TextureObject()
+            {
+                ObjectId = 1,
+            };
             textureObject.Positions.Add(new PosKey());
             textureObject.Layers.Add(new LayerKey());
             textureObject.Rotations.Add(new AngleKey());
@@ -247,19 +250,25 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
             textureObject.Colors.Add(new ColorKey());
-            level.Game.Objects.Add(textureObject);
+            level.Game.Objects.Add(1, textureObject);
 
-            var textObject = new TextObject();
+            var textObject = new TextObject()
+            {
+                ObjectId = 2,
+            };
             textObject.Colors.Add(new ColorKey());
-            level.Game.Objects.Add(textObject);
+            level.Game.Objects.Add(2, textObject);
 
-            var effectObject = new EffectObject();
-            level.Game.Objects.Add(effectObject);
+            var effectObject = new EffectObject()
+            {
+                ObjectId = 3,
+            };
+            level.Game.Objects.Add(3, effectObject);
 
             var prefab = new Prefab();
-            prefab.Objects.Add(new TextureObject());
-            prefab.Objects.Add(new TextObject());
-            prefab.Objects.Add(new EffectObject());
+            prefab.Objects.Add(4, new TextureObject() { ObjectId = 4, });
+            prefab.Objects.Add(5, new TextObject() { ObjectId = 5, });
+            prefab.Objects.Add(6, new EffectObject() { ObjectId = 6, });
             level.Game.Prefabs.Add(prefab);
             
             var prefabObject = new PrefabObject();
@@ -379,9 +388,9 @@ namespace BH.SDK.Tests
         public static Prefab CreateTestPrefab()
         {
             var prefab = new Prefab();
-            prefab.Objects.Add(new TextureObject());
-            prefab.Objects.Add(new TextObject());
-            prefab.Objects.Add(new EffectObject());
+            prefab.Objects.Add(1, new TextureObject() { ObjectId = 1, });
+            prefab.Objects.Add(2, new TextObject() { ObjectId = 2, });
+            prefab.Objects.Add(3, new EffectObject() { ObjectId = 3, });
             
             var prefabObject = new PrefabObject
             {

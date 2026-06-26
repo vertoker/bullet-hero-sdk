@@ -42,31 +42,34 @@ namespace BH.SDK.Serialization.Converters.Base
                 if (reader.TokenType != JsonToken.PropertyName)
                     throw new JsonSerializationException($"Expected property name, got {reader.TokenType}");
 
-                var propertyName = reader.Value?.ToString();
-                reader.Read(); // to property value
-
-                if (propertyName == Names.Version)
-                {
-                    result.Version = serializer.Deserialize<Version>(reader);
-                }
-                else if (propertyName == Names.Value)
-                {
-                    var levelType = GetType(result.Version);
-                    var valueSerializer = OverrideValueSerializer ?? serializer;
-                    result.SetData(valueSerializer.Deserialize(reader, levelType));
-                }
-                else
-                {
-                    reader.Skip();
-                }
+                ReadToken(reader, serializer, result);
             }
             
-            if (result.Version == null)
-                throw new JsonSerializationException("Missing version property");
-            if (result.GetData() == null)
-                throw new JsonSerializationException("Missing data property");
-            
             return result;
+        }
+
+        private void ReadToken(JsonReader reader, JsonSerializer serializer, SaveData<T> result)
+        {
+            var propertyName = reader.Value?.ToString();
+            reader.Read(); // to property value
+
+            if (propertyName == Names.Version)
+            {
+                result.Version = serializer.Deserialize<Version>(reader);
+            }
+            else if (propertyName == Names.Value)
+            {
+                if (result.Version == null)
+                    throw new JsonSerializationException("Missing version property");
+                
+                var levelType = GetType(result.Version);
+                var valueSerializer = OverrideValueSerializer ?? serializer;
+                result.SetData(valueSerializer.Deserialize(reader, levelType));
+            }
+            else
+            {
+                reader.Skip();
+            }
         }
 
         protected abstract Type GetType(Version version);

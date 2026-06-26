@@ -37,6 +37,14 @@ namespace BH.SDK.Utils
                 copyList.Add(item.Copy());
             return copyList;
         }
+        public static Dictionary<TKey, TValue> CopyDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+            where TKey : unmanaged where TValue : ICopyable<TValue>
+        {
+            var copyDictionary = new Dictionary<TKey, TValue>(dictionary.Count);
+            foreach (var (key, value) in dictionary)
+                copyDictionary.Add(key, value.Copy());
+            return copyDictionary;
+        }
         
         public static bool ArrayEquals<T>(this T[] array, T[] other)
         {
@@ -53,6 +61,21 @@ namespace BH.SDK.Utils
             if (list.Count != other.Count) return false;
             var result = list.SequenceEqual(other);
             return result;
+        }
+        public static bool DictionaryEquals<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> other)
+        {
+            if (dictionary is null || other is null) return false;
+            if (ReferenceEquals(dictionary, other)) return true;
+            if (dictionary.Count != other.Count) return false;
+            
+            foreach (var (key, value) in dictionary)
+            {
+                if (!other.TryGetValue(key, out var otherValue))
+                    return false;
+                if (!value.Equals(otherValue))
+                    return false;
+            }
+            return true;
         }
         
         public static int GetArrayHashCode<T>(this T[] array)
@@ -74,6 +97,20 @@ namespace BH.SDK.Utils
                 int hash = 17;
                 foreach (var item in list)
                     hash = hash * 31 + (item?.GetHashCode() ?? 0);
+                return hash;
+            }
+        }
+        public static int GetDictionaryHashCode<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+        {
+            if (dictionary is null) return 0;
+            unchecked
+            {
+                int hash = 17;
+                foreach (var kvp in dictionary.OrderBy(kvp => kvp.Key))
+                {
+                    hash = hash * 31 + (kvp.Key?.GetHashCode() ?? 0);
+                    hash = hash * 31 + (kvp.Value?.GetHashCode() ?? 0);
+                }
                 return hash;
             }
         }

@@ -3,7 +3,7 @@ using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Serialization.Converters.Base;
 using Newtonsoft.Json;
 
-namespace BH.SDK.Serialization.Converters
+namespace BH.SDK.Serialization.Converters.Data
 {
     public class EffectDataConverter : JsonConverterData<IEffect>
     {

@@ -18,7 +18,7 @@ namespace BH.SDK.Generators
             var parentObj = new Object();
             parentObj.SetObjectId(level.Settings);
             parentObj.SetBounds(parameters.StartFrame, parameters.EndFrame);
-            level.Game.Objects.Add(parentObj);
+            level.Game.Objects.Add(parentObj.ObjectId, parentObj);
             
             var indexer = new DimensionalIndexer2(parameters.Width, parameters.Height);
             using var enumerator = indexer.GetEnumerator2();

@@ -2,7 +2,7 @@
 using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Serialization.Converters.Base;
 
-namespace BH.SDK.Serialization.Converters
+namespace BH.SDK.Serialization.Converters.Data
 {
     public class UserSettingsDataConverter : JsonConverterData<IUserSettings>
     {

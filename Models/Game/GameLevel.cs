@@ -35,9 +35,8 @@ namespace BH.SDK.Models.Game
         
         // TODO add more contextual checks
         [RuleNotNull]
-        [RuleCollectionUnique(nameof(Object.ObjectId))]
         [JsonProperty(Names.Objects)]
-        public List<Object> Objects { get; set; }
+        public Dictionary<int, Object> Objects { get; set; }
         
         // TODO add more contextual checks
         [RuleNotNull]
@@ -61,14 +60,14 @@ namespace BH.SDK.Models.Game
             PostProcessingEvents = new PostProcessingEvents();
             PlayerEvents = new PlayerEvents();
             
-            Objects = new List<Object>();
+            Objects = new Dictionary<int, Object>();
             PrefabObjects = new List<PrefabObject>();
             
             Prefabs = new List<Prefab>();
             Themes = new List<Theme>();
         }
         public GameLevel(GameEvents events, CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents,
-            PlayerEvents playerEvents, List<Object> objects, List<PrefabObject> prefabObjects,
+            PlayerEvents playerEvents, Dictionary<int, Object> objects, List<PrefabObject> prefabObjects,
             List<Prefab> prefabs, List<Theme> themes)
         {
             Events = events;
@@ -86,7 +85,7 @@ namespace BH.SDK.Models.Game
         public object Clone() => Copy();
         public GameLevel Copy() => new(Events.Copy(), CameraEvents.Copy(),
             PostProcessingEvents.Copy(), PlayerEvents.Copy(),
-            Objects.CopyList(), PrefabObjects.CopyList(),
+            Objects.CopyDictionary(), PrefabObjects.CopyList(),
             Prefabs.CopyList(), Themes.CopyList());
 
         public bool Equals(GameLevel other)
@@ -97,7 +96,7 @@ namespace BH.SDK.Models.Game
                          && CameraEvents.Equals(other.CameraEvents)
                          && PostProcessingEvents.Equals(other.PostProcessingEvents)
                          && PlayerEvents.Equals(other.PlayerEvents)
-                         && Objects.ListEquals(other.Objects)
+                         && Objects.DictionaryEquals(other.Objects)
                          && PrefabObjects.ListEquals(other.PrefabObjects)
                          && Themes.ListEquals(other.Themes)
                          && Prefabs.ListEquals(other.Prefabs);
@@ -106,6 +105,6 @@ namespace BH.SDK.Models.Game
 
         public override bool Equals(object obj) => obj is GameLevel value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Events, CameraEvents, PostProcessingEvents, PlayerEvents,
-            Objects.GetListHashCode(), PrefabObjects.GetListHashCode(), Themes.GetListHashCode(), Prefabs.GetListHashCode());
+            Objects.GetDictionaryHashCode(), PrefabObjects.GetListHashCode(), Themes.GetListHashCode(), Prefabs.GetListHashCode());
     }
 }

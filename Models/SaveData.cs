@@ -19,6 +19,10 @@ namespace BH.SDK.Models
         {
             
         }
+        public SaveData(Version version)
+        {
+            Version = version;
+        }
         public SaveData(TData value)
         {
             Version = value.GetVersion();

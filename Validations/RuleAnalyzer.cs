@@ -48,7 +48,7 @@ namespace BH.SDK.Validations
         {
             var result = new List<RuleIssue>(8);
 
-            Cat.Meow("Analyze");
+            // Cat.Meow("Analyze");
             AnalyzeRecursive(obj, settings, result, obj);
             _trace.Clear();
             

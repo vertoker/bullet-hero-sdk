@@ -14,4 +14,5 @@ Icons
 - Icons8
   - <a target="_blank" href="https://icons8.com/icon/85130/eye">Visible</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - <a target="_blank" href="https://icons8.com/icon/85137/hide">Hide</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/3VzYsdCiF1RR/more">Other</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - 

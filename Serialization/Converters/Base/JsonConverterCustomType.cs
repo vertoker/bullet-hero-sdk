@@ -21,54 +21,37 @@ namespace BH.SDK.Serialization.Converters.Base
                 return;
             }
             
-            writer.WriteStartObject();
+            writer.WriteStartArray();
             
-            writer.WritePropertyName(Names.TypeShort);
+            // writer.WritePropertyName(Names.TypeShort);
             serializer.Serialize(writer, GetCustomType(value));
             
-            writer.WritePropertyName(Names.ValueShort);
+            // writer.WritePropertyName(Names.ValueShort);
             // serialize via another serializer, it must NOT include this instance of converter
             SerializerDefault.Serialize(writer, value);
             
-            writer.WriteEndObject();
+            writer.WriteEndArray();
         }
 
         public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue,
             JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null) return default;
-            if (reader.TokenType != JsonToken.StartObject) 
-                throw new JsonSerializationException("Expected StartObject");
+            if (reader.TokenType != JsonToken.StartArray) 
+                throw new JsonSerializationException("Expected StartArray");
 
-            TType customType = default;
-            T value = default;
+            reader.Read(); // to first array element, it's type (as "t")
+            var customType = serializer.Deserialize<TType>(reader);
 
-            while (reader.Read()) // to property name
-            {
-                if (reader.TokenType == JsonToken.EndObject) break;
-                if (reader.TokenType != JsonToken.PropertyName)
-                    throw new JsonSerializationException($"Expected property name, got {reader.TokenType}");
+            reader.Read(); // to second array element, it's value (as "v")
+            var targetType = GetType(customType);
+            var value = (T)SerializerDefault.Deserialize(reader, targetType);
 
-                var propertyName = reader.Value?.ToString();
-                reader.Read(); // to property value
+            reader.Read(); // to EndArray
+            if (reader.TokenType != JsonToken.EndArray)
+                throw new JsonSerializationException("Expected EndArray");
 
-                switch (propertyName)
-                {
-                    case Names.TypeShort:
-                        customType = serializer.Deserialize<TType>(reader);
-                        break;
-                    case Names.ValueShort:
-                        var type = GetType(customType);
-                        // deserialize via another serializer, it must NOT include this instance of converter
-                        value = (T)SerializerDefault.Deserialize(reader, type);
-                        break;
-                    default:
-                        reader.Skip();
-                        break;
-                }
-            }
-
-            return value ?? throw new JsonSerializationException("Missing value");
+            return value;
         }
 
         public abstract TType GetCustomType(T value);

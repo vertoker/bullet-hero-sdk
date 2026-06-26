@@ -206,20 +206,25 @@ namespace BH.SDK.Generators
             var prefab1 = new Prefab
             {
                 PrefabGuid = prefabGuid1,
-                Objects = new List<Object>
+                Objects = new Dictionary<int, Object>()
                 {
-                    new TextureObject
                     {
-                        ObjectId = 1, ParentObjectId = IdRules.NullObjectId, TextureResourceId = 78, ColliderId = 78, 
-                        StartFrame = 150, EndFrame = 210, Name = "Prefab 1",
-                    },
-                    new TextureObject
-                    {
-                        ObjectId = 2, ParentObjectId = 1, TextureResourceId = 79, ColliderId = 79,
-                        StartFrame = 150, EndFrame = 210, Name = "Prefab 2",
-                        Positions = new List<PosKey>
+                        1, new TextureObject
                         {
-                            new(new Vector2Value(2f, 2f), 150)
+                            ObjectId = 1, ParentObjectId = IdRules.NullObjectId, TextureResourceId = 78,
+                            ColliderId = 78,
+                            StartFrame = 150, EndFrame = 210, Name = "Prefab 1",
+                        }
+                    },
+                    {
+                        2, new TextureObject
+                        {
+                            ObjectId = 2, ParentObjectId = 1, TextureResourceId = 79, ColliderId = 79,
+                            StartFrame = 150, EndFrame = 210, Name = "Prefab 2",
+                            Positions = new List<PosKey>
+                            {
+                                new(new Vector2Value(2f, 2f), 150)
+                            }
                         }
                     }
                 }
@@ -268,11 +273,11 @@ namespace BH.SDK.Generators
                 Settings = settings
             };
 
-            level.Game.Objects.Add(textureObject2);
-            level.Game.Objects.Add(textureObject3);
-            level.Game.Objects.Add(effectObject1);
-            level.Game.Objects.Add(textureObject1);
-            level.Game.Objects.Add(textObject1);
+            level.Game.Objects.Add(textureObject2.ObjectId, textureObject2);
+            level.Game.Objects.Add(textureObject3.ObjectId, textureObject3);
+            level.Game.Objects.Add(effectObject1.ObjectId, effectObject1);
+            level.Game.Objects.Add(textureObject1.ObjectId, textureObject1);
+            level.Game.Objects.Add(textObject1.ObjectId, textObject1);
             
             level.Game.Prefabs.Add(prefab1);
             level.Game.Prefabs.Add(prefab2);
