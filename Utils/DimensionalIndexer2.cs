@@ -48,11 +48,22 @@ namespace BH.SDK.Utils
             var indexWidth = index - indexHeight * LengthWidth;
             return (indexWidth, indexHeight);
         }
+        public void GetIndexes(int index, out int indexWidth, out int indexHeight)
+        {
+            indexHeight = index / LengthWidth;
+            indexWidth = index - indexHeight * LengthWidth;
+        }
+        
         public static (int, int) GetIndexes(int index, int lengthWidth)
         {
             var indexHeight = index / lengthWidth;
             var indexWidth = index - indexHeight * lengthWidth;
             return (indexWidth, indexHeight);
+        }
+        public static void GetIndexes(int index, int lengthWidth, out int indexWidth, out int indexHeight)
+        {
+            indexHeight = index / lengthWidth;
+            indexWidth = index - indexHeight * lengthWidth;
         }
         
         // IEnumerators
