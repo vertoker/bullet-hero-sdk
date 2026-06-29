@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
@@ -18,29 +19,42 @@ namespace BH.SDK.Models.Resources
         [JsonProperty(Names.TextureResourceId)]
         public int TextureResourceId { get; set; }
         
+        [JsonProperty(Names.TextureResourceUV)]
+        public Vector4Value TextureResourceUV { get; set; }
+        
         public override ResourceType Type => ResourceType.Texture;
 
         public TextureResource()
         {
             TextureResourceId = IdRules.UninitializedUserTypedResourceId;
+            TextureResourceUV = new Vector4Value(ValueRules.DefaultUvX,
+                ValueRules.DefaultUvY, ValueRules.DefaultUvZ, ValueRules.DefaultUvW);
         }
         public TextureResource(int textureResourceId, List<ResourceKey> sources) : base(sources)
         {
             TextureResourceId = textureResourceId;
+            TextureResourceUV = new Vector4Value(ValueRules.DefaultUvX,
+                ValueRules.DefaultUvY, ValueRules.DefaultUvZ, ValueRules.DefaultUvW);
+        }
+        public TextureResource(int textureResourceId, Vector4Value textureResourceUV, List<ResourceKey> sources) : base(sources)
+        {
+            TextureResourceId = textureResourceId;
+            TextureResourceUV = textureResourceUV;
         }
 
         public object Clone() => Copy();
-        public TextureResource Copy() => new(TextureResourceId, Sources.CopyList());
+        public TextureResource Copy() => new(TextureResourceId, TextureResourceUV.Copy(), Sources.CopyList());
 
         public override bool Equals(object obj) => obj is TextureResource value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), TextureResourceId);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), TextureResourceId, TextureResourceUV);
 
         public bool Equals(TextureResource other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = base.Equals(other)
-                         && TextureResourceId.Equals(other.TextureResourceId);
+                         && TextureResourceId.Equals(other.TextureResourceId)
+                         && TextureResourceUV.Equals(other.TextureResourceUV);
             return result;
         }
     }

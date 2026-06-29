@@ -33,7 +33,13 @@ namespace BH.SDK.Rules
             public const float GravityConstraint_X_Default = 0f;
             public const float GravityConstraint_Y_Default = -9.81f;
             
-            public const int TextureResourceId_Default = 1;
+            public const int TextureResourceId_Default = 1; // circle (atlas + uv)
+            
+            // circle uv, it's more simple to use it
+            public const float TextureResourceUV_X_Default = 0.0625f;
+            public const float TextureResourceUV_Y_Default = 0.0625f;
+            public const float TextureResourceUV_Z_Default = 0.0625f;
+            public const float TextureResourceUV_W_Default = 0.9375f;
         }
         public static class Forces
         {

@@ -201,6 +201,7 @@
         public const string Direction = "direction";
         public const string Resource = "resource";
         public const string Res = "res";
+        public const string UV = "uv";
         
         public const string Loop = "loop";
         public const string Particle = "particle";
@@ -466,6 +467,7 @@
         public const string ResourceId = Resource + _ + Id;
         public const string ResourcesMeta = Resources + _ + Meta;
         public const string TextureResourceId = Texture + _ + Res + _ + Id;
+        public const string TextureResourceUV = Texture + _ + Res + _ + UV;
         public const string FontResourceId = Font + _ + Res + _ + Id;
         public const string AudioResourceId = Audio + _ + Res + _ + Id;
         public const string ByteResourceId = Byte + _ + Res + _ + Id;
