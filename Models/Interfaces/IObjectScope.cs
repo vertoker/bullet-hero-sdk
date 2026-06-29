@@ -5,7 +5,7 @@ namespace BH.SDK.Models.Interfaces
 {
     public interface IObjectScope
     {
-        public Dictionary<int, Object> Objects { get; set; }
+        public Dictionary<int, RectObject> Objects { get; set; }
         public List<PrefabObject> PrefabObjects { get; set; }
     }
 }

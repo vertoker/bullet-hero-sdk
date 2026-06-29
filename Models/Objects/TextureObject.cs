@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class TextureObject : Object, ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
+    public class TextureObject : RectObject, ICopyable<TextureObject>, IEquatable<TextureObject>, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.TextureObject;
         
@@ -55,7 +55,7 @@ namespace BH.SDK.Models.Objects
         }
         
         public override object Clone() => CopyImpl();
-        public override Object Copy() => CopyImpl();
+        public override RectObject Copy() => CopyImpl();
         TextureObject ICopyable<TextureObject>.Copy() => CopyImpl();
         
         private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
@@ -86,7 +86,7 @@ namespace BH.SDK.Models.Objects
                          && EqualsTextureObject(other);
             return result;
         }
-        public override bool Equals(Object other)
+        public override bool Equals(RectObject other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

@@ -23,7 +23,7 @@ namespace BH.SDK.Models.Objects
         // TODO add more contextual checks
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
-        public Dictionary<int, Object> Objects { get; set; }
+        public Dictionary<int, RectObject> Objects { get; set; }
         
         // TODO add more contextual checks
         [RuleNotNull]
@@ -33,10 +33,10 @@ namespace BH.SDK.Models.Objects
         public Prefab()
         {
             PrefabGuid = Guid.NewGuid();
-            Objects = new Dictionary<int, Object>();
+            Objects = new Dictionary<int, RectObject>();
             PrefabObjects = new List<PrefabObject>();
         }
-        public Prefab(Guid prefabGuid, Dictionary<int, Object> objects, List<PrefabObject> prefabObjects)
+        public Prefab(Guid prefabGuid, Dictionary<int, RectObject> objects, List<PrefabObject> prefabObjects)
         {
             PrefabGuid = prefabGuid;
             Objects = objects;

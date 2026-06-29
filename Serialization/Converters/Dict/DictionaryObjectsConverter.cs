@@ -3,8 +3,8 @@ using BH.SDK.Serialization.Converters.Base;
 
 namespace BH.SDK.Serialization.Converters.Dict
 {
-    public class DictionaryObjectsConverter : DictionaryAsListConverter<int, Object>
+    public class DictionaryObjectsConverter : DictionaryAsListConverter<int, RectObject>
     {
-        protected override int GetKey(Object value) => value.ObjectId;
+        protected override int GetKey(RectObject value) => value.ObjectId;
     }
 }

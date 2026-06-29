@@ -14,9 +14,9 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class Object : ICopyable<Object>, IEquatable<Object>, IUpdatable<Object>
+    public class RectObject : ICopyable<RectObject>, IEquatable<RectObject>, IUpdatable<RectObject>
     {
-        public virtual ObjectType GetModelType() => ObjectType.Object;
+        public virtual ObjectType GetModelType() => ObjectType.RectObject;
         
         [RuleObjectIdValid]
         [JsonProperty(Names.ObjectId)]
@@ -90,7 +90,7 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.Pivot)]
         public List<AlignmentKey> Pivots { get; set; }
 
-        public Object()
+        public RectObject()
         {
             ObjectId = IdRules.NullObjectId;
             ParentObjectId = IdRules.NullObjectId;
@@ -108,7 +108,7 @@ namespace BH.SDK.Models.Objects
             AnchorsMax = new List<AlignmentKey>();
             Pivots = new List<AlignmentKey>();
         }
-        public Object(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
+        public RectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
             List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots)
         {
@@ -130,13 +130,13 @@ namespace BH.SDK.Models.Objects
         }
 
         public virtual object Clone() => CopyImpl();
-        public virtual Object Copy() => CopyImpl();
+        public virtual RectObject Copy() => CopyImpl();
         
-        private Object CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
+        private RectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
             Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList());
         
-        public void Update(Object src)
+        public void Update(RectObject src)
         {
             ObjectId = src.ObjectId;
             ParentObjectId = src.ParentObjectId;
@@ -155,7 +155,7 @@ namespace BH.SDK.Models.Objects
             Pivots = src.Pivots.CopyList();
         }
 
-        public override bool Equals(object obj) => obj is Object value && Equals(value);
+        public override bool Equals(object obj) => obj is RectObject value && Equals(value);
         public override int GetHashCode()
         {
             var hashCode = new HashCode();
@@ -179,7 +179,7 @@ namespace BH.SDK.Models.Objects
             return hashCode.ToHashCode();
         }
 
-        public virtual bool Equals(Object other)
+        public virtual bool Equals(RectObject other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -188,7 +188,7 @@ namespace BH.SDK.Models.Objects
             return result;
         }
         
-        protected bool EqualsObject(Object other)
+        protected bool EqualsObject(RectObject other)
         {
             var result = ObjectId.Equals(other.ObjectId)
                          && ParentObjectId.Equals(other.ParentObjectId)

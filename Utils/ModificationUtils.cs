@@ -5,7 +5,6 @@ using BH.SDK.Models.Effects;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Values;
 using Newtonsoft.Json;
-using Object = BH.SDK.Models.Objects.Object;
 
 namespace BH.SDK.Utils
 {
@@ -25,7 +24,7 @@ namespace BH.SDK.Utils
             
             // Objects
             
-            AddPropertiesRecursive<Object, TextureObject, EffectObject, TextObject>();
+            AddPropertiesRecursive<RectObject, TextureObject, EffectObject, TextObject>();
             
             // Effects
             
@@ -53,7 +52,7 @@ namespace BH.SDK.Utils
             AddPropertiesRecursive<ScreenLimitNone, ScreenLimitFixed, ScreenLimitBounds>();
         }
 
-        public static void Apply(this Object obj, Modification mod)
+        public static void Apply(this RectObject obj, Modification mod)
         {
             ParsePath(mod.Path, SegmentBuffer);
             if (SegmentBuffer.Count == 0) return;

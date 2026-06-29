@@ -7,7 +7,7 @@ using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
-using Object = BH.SDK.Models.Objects.Object;
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BH.SDK.Models.Game
@@ -36,7 +36,7 @@ namespace BH.SDK.Models.Game
         // TODO add more contextual checks
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
-        public Dictionary<int, Object> Objects { get; set; }
+        public Dictionary<int, RectObject> Objects { get; set; }
         
         // TODO add more contextual checks
         [RuleNotNull]
@@ -60,14 +60,14 @@ namespace BH.SDK.Models.Game
             PostProcessingEvents = new PostProcessingEvents();
             PlayerEvents = new PlayerEvents();
             
-            Objects = new Dictionary<int, Object>();
+            Objects = new Dictionary<int, RectObject>();
             PrefabObjects = new List<PrefabObject>();
             
             Prefabs = new List<Prefab>();
             Themes = new List<Theme>();
         }
         public GameLevel(GameEvents events, CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents,
-            PlayerEvents playerEvents, Dictionary<int, Object> objects, List<PrefabObject> prefabObjects,
+            PlayerEvents playerEvents, Dictionary<int, RectObject> objects, List<PrefabObject> prefabObjects,
             List<Prefab> prefabs, List<Theme> themes)
         {
             Events = events;

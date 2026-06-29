@@ -10,7 +10,7 @@ namespace BH.SDK.Models.Audio
     [RuleContainer]
     public class LevelTrack : ICopyable<LevelTrack>, IEquatable<LevelTrack>
     {
-        // Same logic as Object.ObjectId, but only for audio and much simpler
+        // Same logic as RectObject.ObjectId, but only for audio and much simpler
         // 0 - undefined
         // 1, 2, 3... - user-defined audio
         // negative space IS BANNED for consistency

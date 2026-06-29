@@ -15,7 +15,7 @@ namespace BH.SDK.Generators
             var widthMult = parameters.Width / (float)parameters.Texture.Width;
             var heightMult = parameters.Height / (float)parameters.Texture.Height;
 
-            var parentObj = new Object();
+            var parentObj = new RectObject();
             parentObj.SetObjectId(level.Settings);
             parentObj.SetBounds(parameters.StartFrame, parameters.EndFrame);
             level.Game.Objects.Add(parentObj.ObjectId, parentObj);

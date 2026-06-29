@@ -22,12 +22,18 @@ namespace BH.SDK.Rules
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsValidObjectId(int objectId) => objectId >= MinObjectId;
         
-        // 2. InstanceIndex - runtime temporary index (not id, exactly direct indexation).
+        // 2. FrameIndex - runtime temporary index (not id, exactly direct indexation).
         // Changes every runtime and using for rendering instances in frame context only
         
-        public const int InvalidInstanceIndex = -1;
-        public const int MinInstanceIndex = 0;
-        public const int CameraInstanceIndex = 0;
+        public const int InvalidFrameIndex = -1;
+        
+        public const int ReservedFrameIndexes = 1;
+        // For textures, effects and texts don't reserved anything. Therefore, use regular frameIndex
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsReservedFrameIndex(int frameIndex) => frameIndex < ReservedFrameIndexes;
+        
+        public const int CameraFrameIndex = 0;
         
         // What certain objectId's meaning
         // (1 - int.MaxValue) => user-space objects, valid for both ObjectId and ParentObjectId

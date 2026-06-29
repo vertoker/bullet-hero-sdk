@@ -2,7 +2,7 @@
 {
     public enum ObjectType : byte
     {
-        Object = 0,
+        RectObject = 0,
         TextureObject = 1,
         EffectObject = 2,
         TextObject = 3,

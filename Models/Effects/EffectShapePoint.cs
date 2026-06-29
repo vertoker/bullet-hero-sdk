@@ -10,7 +10,7 @@ namespace BH.SDK.Models.Effects
     public class EffectShapePoint : IEffectShape,
         ICopyable<EffectShapePoint>, IEquatable<EffectShapePoint>
     {
-        // None, inherit TRS from Object
+        // None, inherit TRS from RectObject
         
         public EffectShapeType GetModelType() => EffectShapeType.Point;
         

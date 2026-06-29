@@ -9,9 +9,9 @@ namespace BH.SDK.Models.Objects
 {
     // Limitations for modifications
 
-    // 1. Works only for Object and Prefab, not applied to anything else
+    // 1. Works only for RectObject and Prefab, not applied to anything else
 
-    // 2. You can't make Object a child or any Object in Prefab, no parenting from low levels
+    // 2. You can't make RectObject a child or any Object in Prefab, no parenting from low levels
     // (but you still can make root of prefab inherit from outside Object, parenting from high levels is allowed)
 
     // 3. Modification works only for prefab scope where it's located.

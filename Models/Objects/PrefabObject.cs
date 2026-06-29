@@ -12,7 +12,7 @@ namespace BH.SDK.Models.Objects
     [RuleContainer]
     public class PrefabObject : ICopyable<PrefabObject>, IEquatable<PrefabObject>
     {
-        // In build process, this PrefabObject converted to Object
+        // In build process, this PrefabObject converted to RectObject
         // 1. Loaded SourcePrefab to runtime model
         // 2. It uses fields and reflection in modifications for finding and replace value in runtime model
         // 3. Play it

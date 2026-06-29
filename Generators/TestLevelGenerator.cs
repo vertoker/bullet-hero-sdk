@@ -15,7 +15,6 @@ using BH.SDK.Models.SettingGroups;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Utils;
-using Object = BH.SDK.Models.Objects.Object;
 
 namespace BH.SDK.Generators
 {
@@ -206,7 +205,7 @@ namespace BH.SDK.Generators
             var prefab1 = new Prefab
             {
                 PrefabGuid = prefabGuid1,
-                Objects = new Dictionary<int, Object>()
+                Objects = new Dictionary<int, RectObject>()
                 {
                     {
                         1, new TextureObject

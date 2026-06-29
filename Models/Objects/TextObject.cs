@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class TextObject : Object, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>
+    public class TextObject : RectObject, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>
     {
         public override ObjectType GetModelType() => ObjectType.TextObject;
         
@@ -81,7 +81,7 @@ namespace BH.SDK.Models.Objects
         }
         
         public override object Clone() => CopyImpl();
-        public override Object Copy() => CopyImpl();
+        public override RectObject Copy() => CopyImpl();
         TextObject ICopyable<TextObject>.Copy() => CopyImpl();
         
         private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
@@ -127,7 +127,7 @@ namespace BH.SDK.Models.Objects
                          && EqualsTextObject(other);
             return result;
         }
-        public override bool Equals(Object other)
+        public override bool Equals(RectObject other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

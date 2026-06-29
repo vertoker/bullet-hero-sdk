@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class EffectObject : Object, IEffect,
+    public class EffectObject : RectObject, IEffect,
         ICopyable<EffectObject>, IEquatable<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.EffectObject;
@@ -85,7 +85,7 @@ namespace BH.SDK.Models.Objects
         }
 
         public override object Clone() => CopyImpl();
-        public override Object Copy() => CopyImpl();
+        public override RectObject Copy() => CopyImpl();
         EffectObject ICopyable<EffectObject>.Copy() => CopyImpl();
         
         private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
@@ -133,7 +133,7 @@ namespace BH.SDK.Models.Objects
                          && EqualsEffectObject(other);
             return result;
         }
-        public override bool Equals(Object other)
+        public override bool Equals(RectObject other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
