@@ -146,7 +146,7 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMin.Add(new AlignmentKey());
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
-            textureObject.Colors.Add(new ColorKey());
+            textureObject.Colors.Add(new Color2Key());
             level.Game.Objects.Add(1, textureObject);
 
             var textObject = new TextObject()
@@ -249,7 +249,7 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMin.Add(new AlignmentKey());
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
-            textureObject.Colors.Add(new ColorKey());
+            textureObject.Colors.Add(new Color2Key());
             level.Game.Objects.Add(1, textureObject);
 
             var textObject = new TextObject()

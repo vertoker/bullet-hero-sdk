@@ -38,8 +38,8 @@ namespace BH.SDK.Generators
             textureObject1.AnchorsMin.Add(AlignmentKey.GetCenterMiddle(90));
             textureObject1.AnchorsMax.Add(AlignmentKey.GetCenterMiddle(90));
             textureObject1.Pivots.Add(AlignmentKey.GetLeftMiddle(0));
-            textureObject1.Colors.Add(new ColorKey(new ColorValue(1f, 1f, 0f, 1f), 0));
-            textureObject1.Colors.Add(new ColorKey(new ColorValue(1f, 0f, 0f, 1f), 90));
+            textureObject1.Colors.Add(new Color2Key(new ColorValue(1f, 1f, 0f, 1f), 0));
+            textureObject1.Colors.Add(new Color2Key(new ColorValue(1f, 0f, 0f, 1f), 90));
             
             var textureObject2 = new TextureObject
             {

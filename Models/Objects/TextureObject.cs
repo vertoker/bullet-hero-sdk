@@ -28,7 +28,7 @@ namespace BH.SDK.Models.Objects
         [RuleCollectionSorted(nameof(ColorKey.Frame))]
         [RuleCollectionUnique(nameof(ColorKey.Frame))]
         [JsonProperty(Names.Color)]
-        public List<ColorKey> Colors { get; set; }
+        public List<Color2Key> Colors { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionSorted(nameof(UVKey.Frame))]
@@ -43,7 +43,7 @@ namespace BH.SDK.Models.Objects
         {
             Collider = true;
             ColliderId = 0;
-            Colors = new List<ColorKey>();
+            Colors = new List<Color2Key>();
             UVs = new List<UVKey>();
             TextureResourceId = 0;
         }
@@ -51,7 +51,7 @@ namespace BH.SDK.Models.Objects
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
             List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            bool collider, int colliderId, List<ColorKey> colors, List<UVKey> uvs, int textureResourceId)
+            bool collider, int colliderId, List<Color2Key> colors, List<UVKey> uvs, int textureResourceId)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
                 positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {

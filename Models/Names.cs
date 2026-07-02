@@ -85,6 +85,8 @@
         public const string Curve = "curve";
         public const string Gradient = "gradient";
         public const string Color = "clr";
+        public const string Color1 = "clr1";
+        public const string Color2 = "clr2";
         public const string Alpha = "alpha";
         public const string AlphaShort = "a";
         
