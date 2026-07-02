@@ -202,6 +202,7 @@
         public const string Resource = "resource";
         public const string Res = "res";
         public const string UV = "uv";
+        public const string Tilling = "tilling";
         
         public const string Loop = "loop";
         public const string Particle = "particle";

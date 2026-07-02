@@ -30,6 +30,12 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.Color)]
         public List<ColorKey> Colors { get; set; }
         
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
+        [RuleCollectionSorted(nameof(UVKey.Frame))]
+        [RuleCollectionUnique(nameof(UVKey.Frame))]
+        [JsonProperty(Names.UV)]
+        public List<UVKey> UVs { get; set; }
+        
         [JsonProperty(Names.TextureResourceId)]
         public int TextureResourceId { get; set; }
         
@@ -38,19 +44,21 @@ namespace BH.SDK.Models.Objects
             Collider = true;
             ColliderId = 0;
             Colors = new List<ColorKey>();
+            UVs = new List<UVKey>();
             TextureResourceId = 0;
         }
 
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
             List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            bool collider, int colliderId, List<ColorKey> colors, int textureResourceId)
+            bool collider, int colliderId, List<ColorKey> colors, List<UVKey> uvs, int textureResourceId)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
                 positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             Collider = collider;
             ColliderId = colliderId;
             Colors = colors;
+            UVs = uvs;
             TextureResourceId = textureResourceId;
         }
         
@@ -61,7 +69,7 @@ namespace BH.SDK.Models.Objects
         private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
             Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
-            Collider, ColliderId, Colors.CopyList(), TextureResourceId);
+            Collider, ColliderId, Colors.CopyList(), UVs.CopyList(), TextureResourceId);
 
         public void Update(TextureObject src)
         {
@@ -70,12 +78,13 @@ namespace BH.SDK.Models.Objects
             Collider = src.Collider;
             ColliderId = src.ColliderId;
             Colors = src.Colors.CopyList();
+            UVs = src.UVs.CopyList();
             TextureResourceId = src.TextureResourceId;
         }
 
         public override bool Equals(object obj) => obj is TextureObject value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
-            Collider, ColliderId, Colors.GetListHashCode(), TextureResourceId);
+            Collider, ColliderId, Colors.GetListHashCode(), UVs.GetListHashCode(), TextureResourceId);
 
         public bool Equals(TextureObject other)
         {
@@ -112,6 +121,7 @@ namespace BH.SDK.Models.Objects
             var result = Collider == other.Collider
                          && ColliderId.Equals(other.ColliderId)
                          && Colors.ListEquals(other.Colors)
+                         && UVs.ListEquals(other.UVs)
                          && TextureResourceId.Equals(other.TextureResourceId);
             return result;
         }
