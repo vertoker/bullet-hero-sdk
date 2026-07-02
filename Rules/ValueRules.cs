@@ -49,10 +49,10 @@
         public const float DefaultZoomX = 1f;
         public const float DefaultZoomY = 1f;
         
-        public const float DefaultUvX = 0f;
-        public const float DefaultUvY = 0f;
-        public const float DefaultUvZ = 1f;
-        public const float DefaultUvW = 1f;
+        public const float DefaultUvX = 1f; // tilling x
+        public const float DefaultUvY = 1f; // tilling y
+        public const float DefaultUvZ = 0f; // offset x
+        public const float DefaultUvW = 0f; // offset y
         
         public const int MinThemeIndex = 0;
         public const int MaxThemeIndex = 63;

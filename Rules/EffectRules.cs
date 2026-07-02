@@ -36,10 +36,10 @@ namespace BH.SDK.Rules
             public const int TextureResourceId_Default = 1; // circle (atlas + uv)
             
             // circle uv, it's more simple to use it
-            public const float TextureResourceUV_X_Default = 0.0625f;
-            public const float TextureResourceUV_Y_Default = 0.0625f;
-            public const float TextureResourceUV_Z_Default = 0.0625f;
-            public const float TextureResourceUV_W_Default = 0.9375f;
+            public const float TextureResourceUV_X_Default = 0.0625f; // tilling x
+            public const float TextureResourceUV_Y_Default = 0.0625f; // tilling y
+            public const float TextureResourceUV_Z_Default = 0.0625f; // offset x
+            public const float TextureResourceUV_W_Default = 0.9375f; // offset y
         }
         public static class Forces
         {
