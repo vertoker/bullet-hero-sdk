@@ -37,7 +37,7 @@ namespace BH.SDK.Generators
                 var pos = new PosKey(posVec, parameters.StartFrame);
                 var pivot = new AlignmentKey(parameters.PixelPivot.Value.Copy(), parameters.StartFrame);
                 var sca = new ScaKey(parameters.PixelSca.Copy(), parameters.StartFrame);
-                var clr = new Color2Key(pixel.ToColorValue(), parameters.StartFrame);
+                var clr = new Color4X4Key(pixel.ToColorValue(), parameters.StartFrame);
                 var layer = new LayerKey(new IntValue(parameters.Layer), parameters.StartFrame);
                 
                 textureObj.Positions.Add(pos);

@@ -85,8 +85,6 @@
         public const string Curve = "curve";
         public const string Gradient = "gradient";
         public const string Color = "clr";
-        public const string Color1 = "clr1";
-        public const string Color2 = "clr2";
         public const string Alpha = "alpha";
         public const string AlphaShort = "a";
         
@@ -112,6 +110,19 @@
         public const string Num7 = "7";
         public const string Num8 = "8";
         public const string Num9 = "9";
+        public const string AlignmentB = "B"; // bottom
+        public const string AlignmentT = "T"; // top
+        public const string AlignmentL = "L"; // left
+        public const string AlignmentR = "R"; // right
+        public const string AlignmentBL = "BL"; // bottom-left
+        public const string AlignmentBM = "BM"; // bottom-middle
+        public const string AlignmentBR = "BR"; // bottom-right
+        public const string AlignmentCL = "CL"; // center-left
+        public const string AlignmentCM = "CM"; // center-middle
+        public const string AlignmentCR = "CR"; // center-right
+        public const string AlignmentTL = "TL"; // top-left
+        public const string AlignmentTM = "TM"; // top-middle
+        public const string AlignmentTR = "TR"; // top-right
         
         public const string Speed = "speed";
         public const string Range = "range";
@@ -488,6 +499,20 @@
         public const string CurveY = Curve + _ + CoordY;
         public const string ScaleX = Scale + _ + CoordX;
         public const string ScaleY = Scale + _ + CoordY;
+        
+        public const string ColorBottom = Color + _ + AlignmentB;
+        public const string ColorTop = Color + _ + AlignmentT;
+        public const string ColorLeft = Color + _ + AlignmentL;
+        public const string ColorRight = Color + _ + AlignmentR;
+        public const string ColorBL = Color + _ + AlignmentBL;
+        public const string ColorBM = Color + _ + AlignmentBM;
+        public const string ColorBR = Color + _ + AlignmentBR;
+        public const string ColorCL = Color + _ + AlignmentCL;
+        public const string ColorCM = Color + _ + AlignmentCM;
+        public const string ColorCR = Color + _ + AlignmentCR;
+        public const string ColorTL = Color + _ + AlignmentTL;
+        public const string ColorTM = Color + _ + AlignmentTM;
+        public const string ColorTR = Color + _ + AlignmentTR;
         
         public const string MinR = Min + ChannelR;
         public const string MinG = Min + ChannelG;

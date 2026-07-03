@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Keyframes;
+using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -25,10 +27,10 @@ namespace BH.SDK.Models.Objects
         public int ColliderId { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(ColorKey.Frame))]
-        [RuleCollectionUnique(nameof(ColorKey.Frame))]
+        [RuleCollectionSorted(nameof(IColor4X4Key.Frame))]
+        [RuleCollectionUnique(nameof(IColor4X4Key.Frame))]
         [JsonProperty(Names.Color)]
-        public List<Color2Key> Colors { get; set; }
+        public List<IColor4X4Key> Colors { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionSorted(nameof(UVKey.Frame))]
@@ -43,7 +45,7 @@ namespace BH.SDK.Models.Objects
         {
             Collider = true;
             ColliderId = 0;
-            Colors = new List<Color2Key>();
+            Colors = new List<IColor4X4Key>();
             UVs = new List<UVKey>();
             TextureResourceId = 0;
         }
@@ -51,7 +53,7 @@ namespace BH.SDK.Models.Objects
         public TextureObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
             List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            bool collider, int colliderId, List<Color2Key> colors, List<UVKey> uvs, int textureResourceId)
+            bool collider, int colliderId, List<IColor4X4Key> colors, List<UVKey> uvs, int textureResourceId)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
                 positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {

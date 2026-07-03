@@ -1,6 +1,8 @@
 ﻿using System;
 using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enum.Keyframes;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Keyframes;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules.Attributes;
@@ -11,28 +13,32 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class ColorKey : Keyframe, ICopyable<ColorKey>, IEquatable<ColorKey>
+    public class Color4Key : Keyframe, IColor4X4Key, ICopyable<Color4Key>, IEquatable<Color4Key>
     {
         [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.Color)]
         public IColor Value { get; set; }
 
-        public ColorKey()
+        public Color4Key()
         {
             Value = ColorValue.white;
         }
-        public ColorKey(IColor value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public Color4Key(IColor value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Value = value;
         }
+        
+        public Color4X4KeyType GetModelType() => Color4X4KeyType.Value;
 
         public object Clone() => Copy();
-        public ColorKey Copy() => new(Value.Copy(), Frame, Ease);
+        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => Copy();
+        public Color4Key Copy() => new(Value.Copy(), Frame, Ease);
 
-        public override bool Equals(object obj) => obj is ColorKey value && Equals(value);
+        public override bool Equals(object obj) => obj is Color4Key value && Equals(value);
+        public bool Equals(IColor4X4Key other) => other is Color4Key value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);
 
-        public bool Equals(ColorKey other)
+        public bool Equals(Color4Key other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

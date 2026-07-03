@@ -109,7 +109,7 @@ namespace BH.SDK.Tests
             level.Settings.Framerate = 61;
             level.Settings.ScreenLimit = new ScreenLimitBounds();
             
-            level.Game.Events.Backgrounds.Add(new ColorKey());
+            level.Game.Events.Backgrounds.Add(new Color4Key());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
             level.Game.Events.Themes.Add(new ThemeKeyframe());
@@ -146,14 +146,14 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMin.Add(new AlignmentKey());
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
-            textureObject.Colors.Add(new Color2Key());
+            textureObject.Colors.Add(new Color4X4Key());
             level.Game.Objects.Add(1, textureObject);
 
             var textObject = new TextObject()
             {
                 ObjectId = 2,
             };
-            textObject.Colors.Add(new ColorKey());
+            textObject.Colors.Add(new Color4Key());
             level.Game.Objects.Add(2, textObject);
 
             var effectObject = new EffectObject()
@@ -212,7 +212,7 @@ namespace BH.SDK.Tests
             level.Settings.Framerate = -15;
             level.Settings.ScreenLimit = null;
             
-            level.Game.Events.Backgrounds.Add(new ColorKey());
+            level.Game.Events.Backgrounds.Add(new Color4Key());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
             level.Game.Events.Themes.Add(new ThemeKeyframe());
@@ -249,14 +249,14 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMin.Add(new AlignmentKey());
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
-            textureObject.Colors.Add(new Color2Key());
+            textureObject.Colors.Add(new Color4X4Key());
             level.Game.Objects.Add(1, textureObject);
 
             var textObject = new TextObject()
             {
                 ObjectId = 2,
             };
-            textObject.Colors.Add(new ColorKey());
+            textObject.Colors.Add(new Color4Key());
             level.Game.Objects.Add(2, textObject);
 
             var effectObject = new EffectObject()

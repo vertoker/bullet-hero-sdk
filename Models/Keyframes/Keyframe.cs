@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public abstract class Keyframe : IFrame, IEquatable<Keyframe>
+    public abstract class Keyframe : IKeyframe, IEquatable<Keyframe>
     {
         public const int DefaultFrame = 0;
         public const EaseType DefaultEase = EaseType.Linear;

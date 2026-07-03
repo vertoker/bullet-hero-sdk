@@ -27,10 +27,10 @@ namespace BH.SDK.Models.Game
         public List<Checkpoint> Checkpoints { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxBackgroundEvents)]
-        [RuleCollectionSorted(nameof(ColorKey.Frame))]
-        [RuleCollectionUnique(nameof(ColorKey.Frame))]
+        [RuleCollectionSorted(nameof(Color4Key.Frame))]
+        [RuleCollectionUnique(nameof(Color4Key.Frame))]
         [JsonProperty(Names.Backgrounds)]
-        public List<ColorKey> Backgrounds { get; set; }
+        public List<Color4Key> Backgrounds { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemeEvents)]
         [RuleCollectionSorted(nameof(ThemeKeyframe.Frame))]
@@ -42,11 +42,11 @@ namespace BH.SDK.Models.Game
         {
             Markers = new List<Marker>();
             Checkpoints = new List<Checkpoint>();
-            Backgrounds = new List<ColorKey>();
+            Backgrounds = new List<Color4Key>();
             Themes = new List<ThemeKeyframe>();
         }
         public GameEvents(List<Marker> markers, List<Checkpoint> checkpoints, 
-            List<ColorKey> backgrounds, List<ThemeKeyframe> themes)
+            List<Color4Key> backgrounds, List<ThemeKeyframe> themes)
         {
             Markers = markers;
             Checkpoints = checkpoints;

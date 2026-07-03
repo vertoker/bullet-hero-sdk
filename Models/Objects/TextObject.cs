@@ -32,10 +32,10 @@ namespace BH.SDK.Models.Objects
         public int FontResourceId { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(ColorKey.Frame))]
-        [RuleCollectionUnique(nameof(ColorKey.Frame))]
+        [RuleCollectionSorted(nameof(Color4Key.Frame))]
+        [RuleCollectionUnique(nameof(Color4Key.Frame))]
         [JsonProperty(Names.Color)]
-        public List<ColorKey> Colors { get; set; }
+        public List<Color4Key> Colors { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionSorted(nameof(FloatKey.Frame))]
@@ -56,7 +56,7 @@ namespace BH.SDK.Models.Objects
         {
             Text = new StringValue();
             FontResourceId = 0;
-            Colors = new List<ColorKey>();
+            Colors = new List<Color4Key>();
             FontSizes = new List<FloatKey>();
             
             WordWrap = TextRules.WordWrap_Default;
@@ -66,7 +66,7 @@ namespace BH.SDK.Models.Objects
         public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
             List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            IString text, int fontResourceId, List<ColorKey> colors, List<FloatKey> fontSizes, bool wordWrap,
+            IString text, int fontResourceId, List<Color4Key> colors, List<FloatKey> fontSizes, bool wordWrap,
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
                 positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
