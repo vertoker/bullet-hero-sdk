@@ -25,7 +25,7 @@ namespace BH.SDK.Rules.Attributes
 
             if (themeIndex < 0 || themeIndex >= level.Game.Themes.Count)
             {
-                themeIndex = MathUtils.Clamp(themeIndex, 0, level.Game.Themes.Count);
+                themeIndex = BHSDKMath.Clamp(themeIndex, 0, level.Game.Themes.Count);
                 property.SetValue(target, themeIndex);
             }
         }

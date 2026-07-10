@@ -36,7 +36,7 @@ namespace BH.SDK.Models.Values
         {
             var minAspect = MinAspect.GetAspect();
             var maxAspect = MaxAspect.GetAspect();
-            return MathUtils.Clamp(currentAspect, minAspect, maxAspect);
+            return BHSDKMath.Clamp(currentAspect, minAspect, maxAspect);
         }
 
         public ScreenLimitBounds()

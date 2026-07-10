@@ -60,7 +60,7 @@ namespace BH.SDK.Rules.Attributes
                 {
                     var floatValue = (FloatValue)value;
                     if (floatValue.Value > Max)
-                        floatValue.Value = MathUtils.Min(floatValue.Value, Max);
+                        floatValue.Value = BHSDKMath.Min(floatValue.Value, Max);
                     break;
                 }
                 case FloatType.RandomMinMax:

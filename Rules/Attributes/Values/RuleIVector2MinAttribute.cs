@@ -76,8 +76,8 @@ namespace BH.SDK.Rules.Attributes
                 case VectorType.Value:
                 {
                     var valueVec = (Vector2Value)value;
-                    if (valueVec.X < MinX) valueVec.X = MathUtils.Max(valueVec.X, MinX);
-                    if (valueVec.Y < MinY) valueVec.Y = MathUtils.Max(valueVec.Y, MinY);
+                    if (valueVec.X < MinX) valueVec.X = BHSDKMath.Max(valueVec.X, MinX);
+                    if (valueVec.Y < MinY) valueVec.Y = BHSDKMath.Max(valueVec.Y, MinY);
                     break;
                 }
                 case VectorType.RandomRect:

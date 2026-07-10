@@ -35,7 +35,7 @@ namespace BH.SDK.Models.Resources
 
         public static Pixel Lerp(in Pixel a, in Pixel b, float t)
         {
-            t = MathUtils.Clamp01(t);
+            t = BHSDKMath.Clamp01(t);
             return new Pixel
             {
                 r = (byte)(a.r + (b.r - a.r) * t),

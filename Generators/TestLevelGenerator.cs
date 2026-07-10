@@ -84,7 +84,7 @@ namespace BH.SDK.Generators
                     OrbitalVelocity = new Vector3Value(1f, 1f, 0f),
                 },
                 EffectColor = new EffectColorGradientOverLife(),
-                EffectShape = new EffectShapeCircle(new FloatValue(1f), new FloatValue(0f), new FloatValue(MathUtils.PI2),
+                EffectShape = new EffectShapeCircle(new FloatValue(1f), new FloatValue(0f), new FloatValue(BHSDKMath.PI2),
                     new EffectShapeSpreadLoop(0f, 1f)),
                 EffectScale = new EffectScaleValue(new Vector2Value(5f, 5f)),
             };

@@ -18,7 +18,7 @@ namespace BH.SDK.Models.Values
         public ScreenAspect Aspect { get; set; }
         
         public ScreenLimitType GetModelType() => ScreenLimitType.Fixed;
-        public bool IsValid(float currentAspect) => MathUtils.Approximately(Aspect.GetAspect(), currentAspect);
+        public bool IsValid(float currentAspect) => BHSDKMath.Approximately(Aspect.GetAspect(), currentAspect);
         public float GetValid(float currentAspect) => Aspect.GetAspect();
 
         public ScreenLimitFixed()

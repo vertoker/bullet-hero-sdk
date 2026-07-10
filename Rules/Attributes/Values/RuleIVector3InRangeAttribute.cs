@@ -105,9 +105,9 @@ namespace BH.SDK.Rules.Attributes
                 case VectorType.Value:
                 {
                     var valueVec = (Vector3Value)value;
-                    if (valueVec.X < MinX || valueVec.X > MaxX) valueVec.X = MathUtils.Clamp(valueVec.X, MinX, MaxX);
-                    if (valueVec.Y < MinY || valueVec.Y > MaxY) valueVec.Y = MathUtils.Clamp(valueVec.Y, MinY, MaxY);
-                    if (valueVec.Z < MinZ || valueVec.Z > MaxZ) valueVec.Z = MathUtils.Clamp(valueVec.Y, MinZ, MaxZ);
+                    if (valueVec.X < MinX || valueVec.X > MaxX) valueVec.X = BHSDKMath.Clamp(valueVec.X, MinX, MaxX);
+                    if (valueVec.Y < MinY || valueVec.Y > MaxY) valueVec.Y = BHSDKMath.Clamp(valueVec.Y, MinY, MaxY);
+                    if (valueVec.Z < MinZ || valueVec.Z > MaxZ) valueVec.Z = BHSDKMath.Clamp(valueVec.Y, MinZ, MaxZ);
                     break;
                 }
                 case VectorType.RandomRect:

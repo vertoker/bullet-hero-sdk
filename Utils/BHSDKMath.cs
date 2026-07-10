@@ -3,7 +3,7 @@
 namespace BH.SDK.Utils
 {
     // Mixed functions from UnityEngine.Mathf and Unity.Collections.math
-    public static class MathUtils
+    public static class BHSDKMath
     {
         public const float PI = 3.1415927f;
         public const float PI2 = PI * 2f;

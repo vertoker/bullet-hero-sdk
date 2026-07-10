@@ -90,10 +90,10 @@ namespace BH.SDK.Rules.Attributes
                 case VectorType.Value:
                 {
                     var valueVec = (Vector4Value)value;
-                    if (valueVec.X < MinX) valueVec.X = MathUtils.Max(valueVec.X, MinX);
-                    if (valueVec.Y < MinY) valueVec.Y = MathUtils.Max(valueVec.Y, MinY);
-                    if (valueVec.Z < MinZ) valueVec.Z = MathUtils.Max(valueVec.Y, MinZ);
-                    if (valueVec.W < MinW) valueVec.W = MathUtils.Max(valueVec.W, MinW);
+                    if (valueVec.X < MinX) valueVec.X = BHSDKMath.Max(valueVec.X, MinX);
+                    if (valueVec.Y < MinY) valueVec.Y = BHSDKMath.Max(valueVec.Y, MinY);
+                    if (valueVec.Z < MinZ) valueVec.Z = BHSDKMath.Max(valueVec.Y, MinZ);
+                    if (valueVec.W < MinW) valueVec.W = BHSDKMath.Max(valueVec.W, MinW);
                     break;
                 }
                 case VectorType.RandomRect:
