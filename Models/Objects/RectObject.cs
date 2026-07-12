@@ -41,6 +41,10 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
         
+        [RuleInRange(ValueRules.MinLayer, ValueRules.MaxLayer)]
+        [JsonProperty(Names.Layer)]
+        public int Layer { get; set; }
+        
         // Rect content
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
@@ -48,11 +52,6 @@ namespace BH.SDK.Models.Objects
         [RuleCollectionUnique(nameof(PosKey.Frame))]
         [JsonProperty(Names.Position)]
         public List<PosKey> Positions { get; set; }
-        
-        [RuleCollectionSorted(nameof(LayerKey.Frame))]
-        [RuleCollectionUnique(nameof(LayerKey.Frame))]
-        [JsonProperty(Names.Layer)]
-        public List<LayerKey> Layers { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionSorted(nameof(AngleKey.Frame))]
@@ -98,9 +97,9 @@ namespace BH.SDK.Models.Objects
             Visible = true;
             StartFrame = FrameRules.MinFrame;
             EndFrame = FrameRules.MinFrame;
+            Layer = ValueRules.DefaultLayer;
             
             Positions = new List<PosKey>();
-            Layers = new List<LayerKey>();
             Rotations = new List<AngleKey>();
             Scales = new List<ScaKey>();
             Sizes = new List<ScaKey>();
@@ -108,8 +107,8 @@ namespace BH.SDK.Models.Objects
             AnchorsMax = new List<AlignmentKey>();
             Pivots = new List<AlignmentKey>();
         }
-        public RectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
-            List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+        public RectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+            List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots)
         {
             ObjectId = objectId;
@@ -118,9 +117,9 @@ namespace BH.SDK.Models.Objects
             Visible = visible;
             StartFrame = startFrame;
             EndFrame = endFrame;
+            Layer = layer;
             
             Positions = positions;
-            Layers = layers;
             Rotations = rotations;
             Scales = scales;
             Sizes = sizes;
@@ -132,8 +131,8 @@ namespace BH.SDK.Models.Objects
         public virtual object Clone() => CopyImpl();
         public virtual RectObject Copy() => CopyImpl();
         
-        private RectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
+        private RectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList());
         
         public void Update(RectObject src)
@@ -144,9 +143,9 @@ namespace BH.SDK.Models.Objects
             Visible = src.Visible;
             StartFrame = src.StartFrame;
             EndFrame = src.EndFrame;
+            Layer = src.Layer;
             
             Positions = src.Positions.CopyList();
-            Layers = src.Layers.CopyList();
             Rotations = src.Rotations.CopyList();
             Scales = src.Scales.CopyList();
             Sizes = src.Sizes.CopyList();
@@ -166,9 +165,9 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(Visible);
             hashCode.Add(StartFrame);
             hashCode.Add(EndFrame);
+            hashCode.Add(Layer);
             
             hashCode.Add(Positions.GetListHashCode());
-            hashCode.Add(Layers.GetListHashCode());
             hashCode.Add(Rotations.GetListHashCode());
             hashCode.Add(Scales.GetListHashCode());
             hashCode.Add(Sizes.GetListHashCode());
@@ -198,7 +197,7 @@ namespace BH.SDK.Models.Objects
                          && EndFrame.Equals(other.EndFrame)
                          // rect content
                          && Positions.ListEquals(other.Positions)
-                         && Layers.ListEquals(other.Layers)
+                         && Layer.Equals(other.Layer)
                          && Rotations.ListEquals(other.Rotations)
                          && Scales.ListEquals(other.Scales)
                          && Sizes.ListEquals(other.Sizes)

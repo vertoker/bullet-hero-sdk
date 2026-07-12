@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Enum.Text;
 using BH.SDK.Models.Interfaces;
@@ -63,13 +62,13 @@ namespace BH.SDK.Models.Objects
             HorizontalAlignment = TextRules.HorizontalAlignment_Default;
             VerticalAlignment = TextRules.VerticalAlignment_Default;
         }
-        public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
-            List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+        public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+            List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
             IString text, int fontResourceId, List<Color4Key> colors, List<FloatKey> fontSizes, bool wordWrap,
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
-                positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
+                positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             Text = text;
             FontResourceId = fontResourceId;
@@ -84,8 +83,8 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         TextObject ICopyable<TextObject>.Copy() => CopyImpl();
         
-        private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
+        private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(), Text.Copy(), FontResourceId,
             Colors.CopyList(), FontSizes.CopyList(), WordWrap, HorizontalAlignment, VerticalAlignment);
         

@@ -139,7 +139,6 @@ namespace BH.SDK.Tests
                 ObjectId = 1,
             };
             textureObject.Positions.Add(new PosKey());
-            textureObject.Layers.Add(new LayerKey());
             textureObject.Rotations.Add(new AngleKey());
             textureObject.Scales.Add(new ScaKey());
             textureObject.Sizes.Add(new ScaKey());
@@ -242,7 +241,6 @@ namespace BH.SDK.Tests
                 ObjectId = 1,
             };
             textureObject.Positions.Add(new PosKey());
-            textureObject.Layers.Add(new LayerKey());
             textureObject.Rotations.Add(new AngleKey());
             textureObject.Scales.Add(new ScaKey());
             textureObject.Sizes.Add(new ScaKey());

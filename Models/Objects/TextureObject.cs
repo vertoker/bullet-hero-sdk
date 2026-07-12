@@ -50,12 +50,12 @@ namespace BH.SDK.Models.Objects
             TextureResourceId = 0;
         }
 
-        public TextureObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
-            List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+        public TextureObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+            List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
             bool collider, int colliderId, List<IColor4X4Key> colors, List<UVKey> uvs, int textureResourceId)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
-                positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
+                positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             Collider = collider;
             ColliderId = colliderId;
@@ -68,8 +68,8 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         TextureObject ICopyable<TextureObject>.Copy() => CopyImpl();
         
-        private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
+        private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
             Collider, ColliderId, Colors.CopyList(), UVs.CopyList(), TextureResourceId);
 

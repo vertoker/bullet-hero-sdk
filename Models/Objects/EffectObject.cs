@@ -66,13 +66,13 @@ namespace BH.SDK.Models.Objects
             EffectScale = new EffectScaleValue();
             EffectColor = new EffectColorValue();
         }
-        public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame,
-            List<PosKey> positions, List<LayerKey> layers, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+        public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+            List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
             bool hasStopLocalFrame, int stopLocalFrame, EffectObjectCore core, EffectObjectForces forces,
             IEffectShape effectShape, IEffectAngle effectAngle, IEffectScale effectScale, IEffectColor effectColor)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame,
-                positions, layers, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
+            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
+                positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             HasStopLocalFrame = hasStopLocalFrame;
             StopLocalFrame = stopLocalFrame;
@@ -88,8 +88,8 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         EffectObject ICopyable<EffectObject>.Copy() => CopyImpl();
         
-        private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame,
-            Positions.CopyList(), Layers.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
+        private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+            Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
             HasStopLocalFrame, StopLocalFrame, Core.Copy(), Forces.Copy(),
             EffectShape.Copy(), EffectAngle.Copy(), EffectScale.Copy(), EffectColor.Copy());
