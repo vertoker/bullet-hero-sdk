@@ -84,6 +84,7 @@ namespace BH.SDK.Serialization
                 new EffectShapeSpreadConverter(innerSerializer),
 
                 new ScreenLimitConverter(innerSerializer),
+                new Color4X4KeyConverter(innerSerializer),
                 new ObjectConverter(innerSerializer),
             };
         }
