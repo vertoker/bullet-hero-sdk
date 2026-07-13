@@ -9,7 +9,16 @@ namespace BH.SDK.Rules
         public const int MinFrame = 0;
         public const int MinFrameLength = 1;
         public const float MinTime = 0f;
+        
         public const int MinFramerate = 1;
+        public const int MaxFramerate = 1000;
+        
+        // Absorbs float32 round-trip error from ToTime (frame -> time -> frame must always
+        // recover the exact original frame). Without it, a time produced by ToTime(frame, ...)
+        // can land a hair below the intended integer (e.g. 18.999998f instead of 19f) and Floor
+        // below would drop it a whole frame early. Tiny relative to a frame (1/framerate), so it
+        // doesn't affect genuine continuous playback time.
+        public const float DeltaFramerate = 1f / MaxFramerate;
         
         public const float MinSpeed = -3f;
         public const float MaxSpeed = 3f;

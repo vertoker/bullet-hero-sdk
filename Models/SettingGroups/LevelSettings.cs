@@ -13,7 +13,7 @@ namespace BH.SDK.Models.SettingGroups
     [RuleContainer]
     public class LevelSettings : ICopyable<LevelSettings>, IEquatable<LevelSettings>
     {
-        [RuleMin(FrameRules.MinFramerate)]
+        [RuleInRange(FrameRules.MinFramerate, FrameRules.MaxFramerate)]
         [JsonProperty(Names.Fps)]
         public int Framerate { get; set; }
         
