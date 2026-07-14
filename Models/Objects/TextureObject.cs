@@ -22,7 +22,6 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.ColliderShort)]
         public bool Collider { get; set; }
         
-        [RuleMax(IdRules.MaxColliderId)]
         [JsonProperty(Names.ColliderId)]
         public int ColliderId { get; set; }
         

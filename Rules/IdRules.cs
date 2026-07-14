@@ -100,7 +100,7 @@ namespace BH.SDK.Rules
         // id for user-defined colliders, allowed only negative (started with -1, 0 is uninitialized)
         // this works like resource, but integrated in model. Works only with TextureObject
         
-        public const int MaxColliderId = 0;
+        public const int MaxUserColliderId = -1;
         public const int NullColliderId = 0;
     }
 }

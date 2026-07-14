@@ -454,6 +454,7 @@
         public const string NextObjectId = Next + _ + Id;
         public const string ObjectIds = Ids;
         public const string ColliderId = ColliderShort + Id;
+        public const string ColliderName = Collider + _ + Name;
         public const string ParentObjectId = ParentShort + ObjectId;
         
         public const string LocalFrame = Local + _ + Frame;
