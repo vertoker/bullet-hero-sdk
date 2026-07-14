@@ -101,6 +101,7 @@ namespace BH.SDK.Rules
         // this works like resource, but integrated in model. Works only with TextureObject
         
         public const int MaxUserColliderId = -1;
-        public const int NullColliderId = 0;
+        public const int MinGameColliderId = 0;
+        public const int DefaultColliderId = 0;
     }
 }

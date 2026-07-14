@@ -18,13 +18,16 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.ColliderName)]
         public string ColliderName { get; set; }
         
+        // TODO (MAYBE) add Pivot for collider and maybe add it into collision process
+        // TODO also most reason for it - extend game editor, because game colliders has it only for visuals
+        
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxColliderTriangles)]
         [JsonProperty(Names.TrianglesShort)]
         public List<TriangleCollider> Triangles { get; set; }
 
         public CompositeCollider()
         {
-            ColliderId = IdRules.NullColliderId;
+            ColliderId = IdRules.DefaultColliderId;
             ColliderName = string.Empty;
             Triangles = new List<TriangleCollider>();
         }
