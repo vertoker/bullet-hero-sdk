@@ -20,6 +20,7 @@ namespace BH.SDK.Models.Values
         
         // TODO (MAYBE) add Pivot for collider and maybe add it into collision process
         // TODO also most reason for it - extend game editor, because game colliders has it only for visuals
+        // TODO or this can be PreferredPivot, it can be used by user in optional pivot in selection
         
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxColliderTriangles)]
         [JsonProperty(Names.TrianglesShort)]
