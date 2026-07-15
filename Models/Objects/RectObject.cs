@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -20,11 +21,11 @@ namespace BH.SDK.Models.Objects
         
         [RuleObjectIdValid]
         [JsonProperty(Names.ObjectId)]
-        public int ObjectId { get; set; }
+        public ObjectId ObjectId { get; set; }
         
-        [RuleMin(IdRules.MinParentObjectId, IdRules.NullObjectId)]
+        [RuleParentObjectIdValid]
         [JsonProperty(Names.ParentObjectId)]
-        public int ParentObjectId { get; set; }
+        public ObjectId ParentObjectId { get; set; }
         
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
@@ -91,8 +92,8 @@ namespace BH.SDK.Models.Objects
 
         public RectObject()
         {
-            ObjectId = IdRules.NullObjectId;
-            ParentObjectId = IdRules.NullObjectId;
+            ObjectId = ObjectId.Null;
+            ParentObjectId = ObjectId.Null;
             Name = string.Empty;
             Visible = true;
             StartFrame = FrameRules.MinFrame;
@@ -107,7 +108,7 @@ namespace BH.SDK.Models.Objects
             AnchorsMax = new List<AlignmentKey>();
             Pivots = new List<AlignmentKey>();
         }
-        public RectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+        public RectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots)
         {

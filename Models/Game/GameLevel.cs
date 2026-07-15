@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -36,7 +37,7 @@ namespace BH.SDK.Models.Game
         // TODO add more contextual checks
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
-        public Dictionary<int, RectObject> Objects { get; set; }
+        public Dictionary<ObjectId, RectObject> Objects { get; set; }
         
         // TODO add more contextual checks
         [RuleNotNull]
@@ -60,14 +61,14 @@ namespace BH.SDK.Models.Game
             PostProcessingEvents = new PostProcessingEvents();
             PlayerEvents = new PlayerEvents();
             
-            Objects = new Dictionary<int, RectObject>();
+            Objects = new Dictionary<ObjectId, RectObject>();
             PrefabObjects = new List<PrefabObject>();
             
             Prefabs = new List<Prefab>();
             Themes = new List<Theme>();
         }
         public GameLevel(GameEvents events, CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents,
-            PlayerEvents playerEvents, Dictionary<int, RectObject> objects, List<PrefabObject> prefabObjects,
+            PlayerEvents playerEvents, Dictionary<ObjectId, RectObject> objects, List<PrefabObject> prefabObjects,
             List<Prefab> prefabs, List<Theme> themes)
         {
             Events = events;

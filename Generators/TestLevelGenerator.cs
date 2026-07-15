@@ -11,9 +11,10 @@ using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Meta;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Resources;
+using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.SettingGroups;
 using BH.SDK.Models.Values;
-using BH.SDK.Rules;
 using BH.SDK.Utils;
 
 namespace BH.SDK.Generators
@@ -24,12 +25,12 @@ namespace BH.SDK.Generators
         {
             var settings = new LevelSettings(45, 4500, new ScreenLimitFixed(new ScreenAspect(1, 1)), 0);
             
-            // TODO add object for IdRules.LocalPlayerObjectId
-            
+            // TODO add object for ObjectId.LocalPlayer
+
             var textureObject1 = new TextureObject
             {
-                ObjectId = 1, ParentObjectId = IdRules.CameraObjectId, StartFrame = 30, EndFrame = 120,
-                TextureResourceId = 27, Collider = false, ColliderId = 27, Name = "TexObj1",
+                ObjectId = new ObjectId(1), ParentObjectId = ObjectId.Camera, StartFrame = 30, EndFrame = 120,
+                TextureResourceId = new TextureResourceId(27), ColliderId = ColliderId.Null, Name = "TexObj1",
             };
             textureObject1.Positions.Add(new PosKey(new Vector2Value(0, 0), 0));
             textureObject1.Positions.Add(new PosKey(new Vector2Value(1, 1), 90));
@@ -43,8 +44,8 @@ namespace BH.SDK.Generators
             
             var textureObject2 = new TextureObject
             {
-                ObjectId = 2, ParentObjectId = 1, StartFrame = 60, EndFrame = 90,
-                TextureResourceId = 0, ColliderId = 0, Name = "TexObj2",
+                ObjectId = new ObjectId(2), ParentObjectId = new ObjectId(1), StartFrame = 60, EndFrame = 90,
+                TextureResourceId = TextureResourceId.Square, ColliderId = ColliderId.Square, Name = "TexObj2",
             };
             textureObject2.Positions.Add(new PosKey(new Vector2Value(-1, 0), 0));
             textureObject2.Positions.Add(new PosKey(new Vector2Value(1, 0), 30));
@@ -53,8 +54,8 @@ namespace BH.SDK.Generators
             
             var textureObject3 = new TextureObject
             {
-                ObjectId = 3, ParentObjectId = IdRules.NullObjectId, StartFrame = 60, EndFrame = 90,
-                TextureResourceId = 0, ColliderId = 0,
+                ObjectId = new ObjectId(3), ParentObjectId = ObjectId.Null, StartFrame = 60, EndFrame = 90,
+                TextureResourceId = TextureResourceId.Square, ColliderId = ColliderId.Square,
             };
             textureObject2.Positions.Add(new PosKey(new Vector2Value(1, 0), 0));
             textureObject2.Positions.Add(new PosKey(new Vector2Value(1, 0), 30));
@@ -63,7 +64,7 @@ namespace BH.SDK.Generators
 
             var effectObject1 = new EffectObject
             {
-                ObjectId = 4, ParentObjectId = IdRules.NullObjectId, StartFrame = 60, EndFrame = 660,
+                ObjectId = new ObjectId(4), ParentObjectId = ObjectId.Null, StartFrame = 60, EndFrame = 660,
                 HasStopLocalFrame = true, StopLocalFrame = 300,
                 Core = new EffectObjectCore
                 {
@@ -105,8 +106,8 @@ namespace BH.SDK.Generators
             
             var textObject1 = new TextObject
             {
-                ObjectId = 5, ParentObjectId = IdRules.NullObjectId, StartFrame = 90, EndFrame = 120,
-                FontResourceId = 0, // -1
+                ObjectId = new ObjectId(5), ParentObjectId = ObjectId.Null, StartFrame = 90, EndFrame = 120,
+                FontResourceId = FontResourceId.Default, // -1
                 Text = new StringValue(allText),
             };
             textObject1.Sizes.Add(new ScaKey(new Vector2Value(10f, 2f), 0));
@@ -117,7 +118,7 @@ namespace BH.SDK.Generators
             
             var track1 = new LevelTrack
             {
-                AudioId = 1, AudioResourceId = -2,
+                AudioId = new AudioId(1), AudioResourceId = new AudioResourceId(-2),
                 StartFrame = 0, EndFrame = 10000, OffsetLocalTime = 0f,
                 Effects = new LevelTrackEffects
                 {
@@ -134,7 +135,7 @@ namespace BH.SDK.Generators
             };
             var track2 = new LevelTrack
             {
-                AudioId = 2, AudioResourceId = -3,
+                AudioId = new AudioId(2), AudioResourceId = new AudioResourceId(-3),
                 StartFrame = 500, EndFrame = 1000, OffsetLocalTime = 0f,
                 Effects = new LevelTrackEffects
                 {
@@ -147,7 +148,7 @@ namespace BH.SDK.Generators
             };
             var track3 = new LevelTrack
             {
-                AudioId = 3, AudioResourceId = -4,
+                AudioId = new AudioId(3), AudioResourceId = new AudioResourceId(-4),
                 StartFrame = 580, EndFrame = 800, OffsetLocalTime = 0f,
                 Effects = new LevelTrackEffects
                 {
@@ -160,7 +161,7 @@ namespace BH.SDK.Generators
             };
             var track4 = new LevelTrack
             {
-                AudioId = 5, AudioResourceId = -1,
+                AudioId = new AudioId(5), AudioResourceId = new AudioResourceId(-1),
                 StartFrame = 200, EndFrame = 700, OffsetLocalTime = 0f,
                 Effects = new LevelTrackEffects
                 {
@@ -172,29 +173,29 @@ namespace BH.SDK.Generators
                 },
             };
 
-            var textureResource = new TextureResource(-1, new List<ResourceKey>
+            var textureResource = new TextureResource(new TextureResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl,
                     "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"),
             });
-            /*var fontResource = new FontResource(-1, new List<ResourceKey>
+            /*var fontResource = new FontResource(new FontResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.LevelPath, "RubikStorm-Regular.ttf"),
             });*/
-            var audioResource = new AudioResource(-1, new List<ResourceKey>
+            var audioResource = new AudioResource(new AudioResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl,
                     "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
             });
-            var audioResource2 = new AudioResource(-2, new List<ResourceKey>
+            var audioResource2 = new AudioResource(new AudioResourceId(-2), new List<ResourceKey>
             {
                 new(ResourceUriType.LevelPath, "Spider Dance.mp3"),
             });
-            var audioResource3 = new AudioResource(-3, new List<ResourceKey>
+            var audioResource3 = new AudioResource(new AudioResourceId(-3), new List<ResourceKey>
             {
                 new(ResourceUriType.LevelPath, "amogus.wav"),
             });
-            var audioResource4 = new AudioResource(-4, new List<ResourceKey>
+            var audioResource4 = new AudioResource(new AudioResourceId(-4), new List<ResourceKey>
             {
                 new(ResourceUriType.LevelPath, "sugoma.wav"),
             });
@@ -205,20 +206,20 @@ namespace BH.SDK.Generators
             var prefab1 = new Prefab
             {
                 PrefabGuid = prefabGuid1,
-                Objects = new Dictionary<int, RectObject>()
+                Objects = new Dictionary<ObjectId, RectObject>()
                 {
                     {
-                        1, new TextureObject
+                        new ObjectId(1), new TextureObject
                         {
-                            ObjectId = 1, ParentObjectId = IdRules.NullObjectId, TextureResourceId = 78,
-                            ColliderId = 78,
+                            ObjectId = new ObjectId(1), ParentObjectId = ObjectId.Null, TextureResourceId = new TextureResourceId(78),
+                            ColliderId = new ColliderId(78),
                             StartFrame = 150, EndFrame = 210, Name = "Prefab 1",
                         }
                     },
                     {
-                        2, new TextureObject
+                        new ObjectId(2), new TextureObject
                         {
-                            ObjectId = 2, ParentObjectId = 1, TextureResourceId = 79, ColliderId = 79,
+                            ObjectId = new ObjectId(2), ParentObjectId = new ObjectId(1), TextureResourceId = new TextureResourceId(79), ColliderId = new ColliderId(79),
                             StartFrame = 150, EndFrame = 210, Name = "Prefab 2",
                             Positions = new List<PosKey>
                             {
@@ -238,8 +239,8 @@ namespace BH.SDK.Generators
                         PrefabGuid = prefabGuid1,
                         ObjectIds = new List<ObjectIdModification>
                         {
-                            new(1, 11),
-                            new(2, 12),
+                            new(new ObjectId(1), new ObjectId(11)),
+                            new(new ObjectId(2), new ObjectId(12)),
                         },
                         Modifications = new List<Modification>(),
                     }
@@ -251,8 +252,8 @@ namespace BH.SDK.Generators
                 PrefabGuid = prefabGuid1,
                 ObjectIds = new List<ObjectIdModification>
                 {
-                    new(1, 21),
-                    new(2, 22),
+                    new(new ObjectId(1), new ObjectId(21)),
+                    new(new ObjectId(2), new ObjectId(22)),
                 },
                 Modifications = new List<Modification>(),
             };
@@ -261,8 +262,8 @@ namespace BH.SDK.Generators
                 PrefabGuid = prefabGuid2,
                 ObjectIds = new List<ObjectIdModification>
                 {
-                    new(11, 23),
-                    new(12, 24),
+                    new(new ObjectId(11), new ObjectId(23)),
+                    new(new ObjectId(12), new ObjectId(24)),
                 },
                 Modifications = new List<Modification>(),
             };

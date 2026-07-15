@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Rules;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -14,17 +14,17 @@ namespace BH.SDK.Models.Resources
     [RuleContainer]
     public class TextResource : Resource, ICopyable<TextResource>, IEquatable<TextResource>
     {
-        [RuleMax(IdRules.MaxUserTypedResourceId)]
+        [RuleIPrimitiveIntMax(TextResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.TextResourceId)]
-        public int TextResourceId { get; set; }
-        
+        public TextResourceId TextResourceId { get; set; }
+
         public override ResourceType Type => ResourceType.Text;
 
         public TextResource()
         {
-            TextResourceId = IdRules.UninitializedUserTypedResourceId;
+            TextResourceId = TextResourceId.Null;
         }
-        public TextResource(int textResourceId, List<ResourceKey> sources) : base(sources)
+        public TextResource(TextResourceId textResourceId, List<ResourceKey> sources) : base(sources)
         {
             TextResourceId = textResourceId;
         }

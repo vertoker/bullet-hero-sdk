@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Rules;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -14,17 +14,17 @@ namespace BH.SDK.Models.Resources
     [RuleContainer]
     public class FontResource : Resource, ICopyable<FontResource>, IEquatable<FontResource>
     {
-        [RuleMax(IdRules.MaxUserTypedResourceId)]
+        [RuleIPrimitiveIntMax(FontResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.FontResourceId)]
-        public int FontResourceId { get; set; }
-        
+        public FontResourceId FontResourceId { get; set; }
+
         public override ResourceType Type => ResourceType.Font;
 
         public FontResource()
         {
-            FontResourceId = IdRules.UninitializedUserTypedResourceId;
+            FontResourceId = FontResourceId.Null;
         }
-        public FontResource(int fontResourceId, List<ResourceKey> sources) : base(sources)
+        public FontResource(FontResourceId fontResourceId, List<ResourceKey> sources) : base(sources)
         {
             FontResourceId = fontResourceId;
         }

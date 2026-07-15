@@ -13,6 +13,8 @@ using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Meta;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.PostProcessing;
+using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Serialization;
@@ -136,7 +138,7 @@ namespace BH.SDK.Tests
 
             var textureObject = new TextureObject()
             {
-                ObjectId = 1,
+                ObjectId = new ObjectId(1),
             };
             textureObject.Positions.Add(new PosKey());
             textureObject.Rotations.Add(new AngleKey());
@@ -146,64 +148,64 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
             textureObject.Colors.Add(new Color4X4Key());
-            level.Game.Objects.Add(1, textureObject);
+            level.Game.Objects.Add(new ObjectId(1), textureObject);
 
             var textObject = new TextObject()
             {
-                ObjectId = 2,
+                ObjectId = new ObjectId(2),
             };
             textObject.Colors.Add(new Color4Key());
-            level.Game.Objects.Add(2, textObject);
+            level.Game.Objects.Add(new ObjectId(2), textObject);
 
             var effectObject = new EffectObject()
             {
-                ObjectId = 3,
+                ObjectId = new ObjectId(3),
             };
-            level.Game.Objects.Add(3, effectObject);
+            level.Game.Objects.Add(new ObjectId(3), effectObject);
 
             var prefab = new Prefab()
             {
                 PrefabGuid = Guid.NewGuid(),
             };
-            prefab.Objects.Add(1, new TextureObject()
+            prefab.Objects.Add(new ObjectId(1), new TextureObject()
             {
-                ObjectId = 1,
+                ObjectId = new ObjectId(1),
             });
-            prefab.Objects.Add(2, new TextObject()
+            prefab.Objects.Add(new ObjectId(2), new TextObject()
             {
-                ObjectId = 2,
+                ObjectId = new ObjectId(2),
             });
-            prefab.Objects.Add(3, new EffectObject()
+            prefab.Objects.Add(new ObjectId(3), new EffectObject()
             {
-                ObjectId = 3,
+                ObjectId = new ObjectId(3),
             });
             level.Game.Prefabs.Add(prefab);
-            
+
             var prefabObject = new PrefabObject { PrefabGuid = Guid.NewGuid() };
             level.Game.PrefabObjects.Add(prefabObject);
-            
+
             level.Game.Themes.Add(new Theme());
-            
-            level.Resources.Textures.Add(new TextureResource(-1, new List<ResourceKey>
+
+            level.Resources.Textures.Add(new TextureResource(new TextureResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png")
             }));
-            level.Resources.Fonts.Add(new FontResource(-1, new List<ResourceKey>
+            level.Resources.Fonts.Add(new FontResource(new FontResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://github.com/google/fonts/raw/refs/heads/main/ofl/dekko/Dekko-Regular.ttf"),
             }));
-            level.Resources.Audios.Add(new AudioResource(-1, new List<ResourceKey>
+            level.Resources.Audios.Add(new AudioResource(new AudioResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(1, 0, 10, 0f, 0, trackEffects);
+            var track = new LevelTrack(new AudioId(1), 0, 10, 0f, new AudioResourceId(0), trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;
         }
-        
+
         public static Level CreateInvalidTestLevel()
         {
             var level = new Level();
@@ -238,7 +240,7 @@ namespace BH.SDK.Tests
 
             var textureObject = new TextureObject()
             {
-                ObjectId = 1,
+                ObjectId = new ObjectId(1),
             };
             textureObject.Positions.Add(new PosKey());
             textureObject.Rotations.Add(new AngleKey());
@@ -248,52 +250,52 @@ namespace BH.SDK.Tests
             textureObject.AnchorsMax.Add(new AlignmentKey());
             textureObject.Pivots.Add(new AlignmentKey());
             textureObject.Colors.Add(new Color4X4Key());
-            level.Game.Objects.Add(1, textureObject);
+            level.Game.Objects.Add(new ObjectId(1), textureObject);
 
             var textObject = new TextObject()
             {
-                ObjectId = 2,
+                ObjectId = new ObjectId(2),
             };
             textObject.Colors.Add(new Color4Key());
-            level.Game.Objects.Add(2, textObject);
+            level.Game.Objects.Add(new ObjectId(2), textObject);
 
             var effectObject = new EffectObject()
             {
-                ObjectId = 3,
+                ObjectId = new ObjectId(3),
             };
-            level.Game.Objects.Add(3, effectObject);
+            level.Game.Objects.Add(new ObjectId(3), effectObject);
 
             var prefab = new Prefab();
-            prefab.Objects.Add(4, new TextureObject() { ObjectId = 4, });
-            prefab.Objects.Add(5, new TextObject() { ObjectId = 5, });
-            prefab.Objects.Add(6, new EffectObject() { ObjectId = 6, });
+            prefab.Objects.Add(new ObjectId(4), new TextureObject() { ObjectId = new ObjectId(4), });
+            prefab.Objects.Add(new ObjectId(5), new TextObject() { ObjectId = new ObjectId(5), });
+            prefab.Objects.Add(new ObjectId(6), new EffectObject() { ObjectId = new ObjectId(6), });
             level.Game.Prefabs.Add(prefab);
-            
+
             var prefabObject = new PrefabObject();
             level.Game.PrefabObjects.Add(prefabObject);
-            
+
             level.Game.Themes.Add(new Theme());
-            
-            level.Resources.Textures.Add(new TextureResource(0, new List<ResourceKey>
+
+            level.Resources.Textures.Add(new TextureResource(new TextureResourceId(0), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png")
             }));
-            level.Resources.Fonts.Add(new FontResource(0, new List<ResourceKey>
+            level.Resources.Fonts.Add(new FontResource(new FontResourceId(0), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://github.com/google/fonts/raw/refs/heads/main/ofl/dekko/Dekko-Regular.ttf"),
             }));
-            level.Resources.Audios.Add(new AudioResource(0, new List<ResourceKey>
+            level.Resources.Audios.Add(new AudioResource(new AudioResourceId(0), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(1, 0, 1000, 0f, 0, trackEffects);
+            var track = new LevelTrack(new AudioId(1), 0, 1000, 0f, new AudioResourceId(0), trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;
         }
-        
+
         [Test]
         [Author(Metadata.Author.Vertoker)]
         public void TestLevelMetaSerialization()
@@ -386,9 +388,9 @@ namespace BH.SDK.Tests
         public static Prefab CreateTestPrefab()
         {
             var prefab = new Prefab();
-            prefab.Objects.Add(1, new TextureObject() { ObjectId = 1, });
-            prefab.Objects.Add(2, new TextObject() { ObjectId = 2, });
-            prefab.Objects.Add(3, new EffectObject() { ObjectId = 3, });
+            prefab.Objects.Add(new ObjectId(1), new TextureObject() { ObjectId = new ObjectId(1), });
+            prefab.Objects.Add(new ObjectId(2), new TextObject() { ObjectId = new ObjectId(2), });
+            prefab.Objects.Add(new ObjectId(3), new EffectObject() { ObjectId = new ObjectId(3), });
             
             var prefabObject = new PrefabObject
             {
@@ -396,7 +398,7 @@ namespace BH.SDK.Tests
             };
             var modification = new Modification
             {
-                ObjectId = 123,
+                ObjectId = new ObjectId(123),
                 Path = "sf",
                 Value = 321
             };

@@ -6,6 +6,7 @@ using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Effects;
 using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
@@ -66,7 +67,7 @@ namespace BH.SDK.Models.Objects
             EffectScale = new EffectScaleValue();
             EffectColor = new EffectColorValue();
         }
-        public EffectObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+        public EffectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
             bool hasStopLocalFrame, int stopLocalFrame, EffectObjectCore core, EffectObjectForces forces,

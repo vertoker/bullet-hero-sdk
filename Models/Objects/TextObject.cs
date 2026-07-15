@@ -5,6 +5,8 @@ using BH.SDK.Models.Enum.Text;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -28,7 +30,7 @@ namespace BH.SDK.Models.Objects
         // more about resourceId and how it works, read in Resource.cs file
         
         [JsonProperty(Names.FontResourceId)]
-        public int FontResourceId { get; set; }
+        public FontResourceId FontResourceId { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionSorted(nameof(Color4Key.Frame))]
@@ -54,7 +56,7 @@ namespace BH.SDK.Models.Objects
         public TextObject()
         {
             Text = new StringValue();
-            FontResourceId = 0;
+            FontResourceId = FontResourceId.Default;
             Colors = new List<Color4Key>();
             FontSizes = new List<FloatKey>();
             
@@ -62,10 +64,10 @@ namespace BH.SDK.Models.Objects
             HorizontalAlignment = TextRules.HorizontalAlignment_Default;
             VerticalAlignment = TextRules.VerticalAlignment_Default;
         }
-        public TextObject(int objectId, int parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+        public TextObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            IString text, int fontResourceId, List<Color4Key> colors, List<FloatKey> fontSizes, bool wordWrap,
+            IString text, FontResourceId fontResourceId, List<Color4Key> colors, List<FloatKey> fontSizes, bool wordWrap,
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)

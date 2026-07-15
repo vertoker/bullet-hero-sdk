@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
@@ -11,9 +12,9 @@ namespace BH.SDK.Models.Values
     [RuleContainer]
     public class CompositeCollider : ICopyable<CompositeCollider>, IEquatable<CompositeCollider>
     {
-        [RuleMax(IdRules.MaxUserColliderId)]
+        [RuleIPrimitiveIntMax(ColliderId.MaxUserDefinedValue)]
         [JsonProperty(Names.ColliderId)]
-        public int ColliderId { get; set; }
+        public ColliderId ColliderId { get; set; }
         
         [JsonProperty(Names.ColliderName)]
         public string ColliderName { get; set; }
@@ -28,11 +29,11 @@ namespace BH.SDK.Models.Values
 
         public CompositeCollider()
         {
-            ColliderId = IdRules.DefaultColliderId;
+            ColliderId = ColliderId.Null;
             ColliderName = string.Empty;
             Triangles = new List<TriangleCollider>();
         }
-        public CompositeCollider(int colliderId, string colliderName, List<TriangleCollider> triangles)
+        public CompositeCollider(ColliderId colliderId, string colliderName, List<TriangleCollider> triangles)
         {
             ColliderId = colliderId;
             ColliderName = colliderName;

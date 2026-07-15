@@ -1,6 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -27,20 +28,18 @@ namespace BH.SDK.Models.SettingGroups
         public IScreenLimit ScreenLimit { get; set; }
         // limitations for screen will be chosen by mappers
         
-        [RuleMin(IdRules.MinUserObjectIdCounter)]
+        [RuleMin(ObjectId.MinLevelValue)]
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
         
-        // TODO add other counters (audio, resources, colliders)
-        
-        public int GetNextObjectId() => ObjectIdCounter++;
+        public ObjectId GetNextObjectId() => new(ObjectIdCounter++);
 
         public LevelSettings()
         {
             Framerate = 60;
             FrameLength = Framerate * 10;
             ScreenLimit = new ScreenLimitNone();
-            ObjectIdCounter = IdRules.MinUserObjectIdCounter;
+            ObjectIdCounter = ObjectId.MinLevelValue;
         }
         public LevelSettings(int framerate, int frameLength, IScreenLimit screenLimit, int objectIdCounter)
         {

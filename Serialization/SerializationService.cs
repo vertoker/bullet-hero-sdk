@@ -69,6 +69,9 @@ namespace BH.SDK.Serialization
                 new ThemeDataConverter(compatibilityService),
                 new UserSettingsDataConverter(compatibilityService),
                 
+                new PrimitiveIntConverter(),
+                new PrimitiveFloatConverter(),
+
                 new IntConverter(innerSerializer),
                 new FloatConverter(innerSerializer),
                 new StringConverter(innerSerializer),

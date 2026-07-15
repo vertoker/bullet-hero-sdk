@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace BH.SDK.Models.Objects
         // TODO add more contextual checks
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
-        public Dictionary<int, RectObject> Objects { get; set; }
+        public Dictionary<ObjectId, RectObject> Objects { get; set; }
         
         // TODO add more contextual checks
         [RuleNotNull]
@@ -33,10 +34,10 @@ namespace BH.SDK.Models.Objects
         public Prefab()
         {
             PrefabGuid = Guid.NewGuid();
-            Objects = new Dictionary<int, RectObject>();
+            Objects = new Dictionary<ObjectId, RectObject>();
             PrefabObjects = new List<PrefabObject>();
         }
-        public Prefab(Guid prefabGuid, Dictionary<int, RectObject> objects, List<PrefabObject> prefabObjects)
+        public Prefab(Guid prefabGuid, Dictionary<ObjectId, RectObject> objects, List<PrefabObject> prefabObjects)
         {
             PrefabGuid = prefabGuid;
             Objects = objects;

@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
@@ -13,18 +14,18 @@ namespace BH.SDK.Models.Objects
     {
         [RuleObjectIdValid]
         [JsonProperty(Names.PrevObjectId)]
-        public int PrevObjectId { get; set; }
+        public ObjectId PrevObjectId { get; set; }
         
         [RuleObjectIdValid]
         [JsonProperty(Names.NextObjectId)]
-        public int NextObjectId { get; set; }
+        public ObjectId NextObjectId { get; set; }
 
         public ObjectIdModification()
         {
-            PrevObjectId = IdRules.NullObjectId;
-            NextObjectId = IdRules.NullObjectId;
+            PrevObjectId = ObjectId.Null;
+            NextObjectId = ObjectId.Null;
         }
-        public ObjectIdModification(int prevObjectId, int nextObjectId)
+        public ObjectIdModification(ObjectId prevObjectId, ObjectId nextObjectId)
         {
             PrevObjectId = prevObjectId;
             NextObjectId = nextObjectId;

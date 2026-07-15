@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -15,28 +16,28 @@ namespace BH.SDK.Models.Resources
     [RuleContainer]
     public class TextureResource : Resource, ICopyable<TextureResource>, IEquatable<TextureResource>
     {
-        [RuleMax(IdRules.MaxUserTypedResourceId)]
+        [RuleIPrimitiveIntMax(TextureResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.TextureResourceId)]
-        public int TextureResourceId { get; set; }
-        
+        public TextureResourceId TextureResourceId { get; set; }
+
         [JsonProperty(Names.TextureResourceUV)]
         public Vector4Value TextureResourceUV { get; set; }
-        
+
         public override ResourceType Type => ResourceType.Texture;
 
         public TextureResource()
         {
-            TextureResourceId = IdRules.UninitializedUserTypedResourceId;
+            TextureResourceId = TextureResourceId.Null;
             TextureResourceUV = new Vector4Value(ValueRules.DefaultUvX,
                 ValueRules.DefaultUvY, ValueRules.DefaultUvZ, ValueRules.DefaultUvW);
         }
-        public TextureResource(int textureResourceId, List<ResourceKey> sources) : base(sources)
+        public TextureResource(TextureResourceId textureResourceId, List<ResourceKey> sources) : base(sources)
         {
             TextureResourceId = textureResourceId;
             TextureResourceUV = new Vector4Value(ValueRules.DefaultUvX,
                 ValueRules.DefaultUvY, ValueRules.DefaultUvZ, ValueRules.DefaultUvW);
         }
-        public TextureResource(int textureResourceId, Vector4Value textureResourceUV, List<ResourceKey> sources) : base(sources)
+        public TextureResource(TextureResourceId textureResourceId, Vector4Value textureResourceUV, List<ResourceKey> sources) : base(sources)
         {
             TextureResourceId = textureResourceId;
             TextureResourceUV = textureResourceUV;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Rules;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -14,17 +14,17 @@ namespace BH.SDK.Models.Resources
     [RuleContainer]
     public class BytesResource : Resource, ICopyable<BytesResource>, IEquatable<BytesResource>
     {
-        [RuleMax(IdRules.MaxUserTypedResourceId)]
+        [RuleIPrimitiveIntMax(BytesResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.ByteResourceId)]
-        public int ByteResourceId { get; set; }
-        
+        public BytesResourceId ByteResourceId { get; set; }
+
         public override ResourceType Type => ResourceType.Bytes;
 
         public BytesResource()
         {
-            ByteResourceId = IdRules.UninitializedUserTypedResourceId;
+            ByteResourceId = BytesResourceId.Null;
         }
-        public BytesResource(int byteResourceId, List<ResourceKey> sources) : base(sources)
+        public BytesResource(BytesResourceId byteResourceId, List<ResourceKey> sources) : base(sources)
         {
             ByteResourceId = byteResourceId;
         }

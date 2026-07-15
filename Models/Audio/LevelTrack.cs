@@ -1,5 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -15,9 +17,9 @@ namespace BH.SDK.Models.Audio
         // 1, 2, 3... - user-defined audio
         // negative space IS BANNED for consistency
         
-        [RuleMin(1)]
+        [RuleIPrimitiveIntMin(AudioId.MinValue)]
         [JsonProperty(Names.AudioId)]
-        public int AudioId { get; set; }
+        public AudioId AudioId { get; set; }
         
         public const int UndefinedAudioId = 0;
         
@@ -32,11 +34,11 @@ namespace BH.SDK.Models.Audio
         [JsonProperty(Names.OffsetLocalTime)]
         public float OffsetLocalTime { get; set; }
         
-        // positive with 0 - game-defined (0 is silence), negative - user-defined
-        // more about resourceId and how it works, read in Resource.cs file
+        // 0 - Null (no audio resource assigned), 1+ - game-defined, negative - user-defined
+        // more about resourceId and how it works, read in TypedResourceId.cs file
         
         [JsonProperty(Names.AudioResourceId)]
-        public int AudioResourceId { get; set; }
+        public AudioResourceId AudioResourceId { get; set; }
         
         [RuleNotNull]
         [JsonProperty(Names.Effects)]
@@ -44,15 +46,15 @@ namespace BH.SDK.Models.Audio
         
         public LevelTrack()
         {
-            AudioId = 0;
+            AudioId = AudioId.Null;
             StartFrame = 0;
             EndFrame = 0;
             OffsetLocalTime = 0f;
-            AudioResourceId = 0;
+            AudioResourceId = AudioResourceId.Null;
             Effects = new LevelTrackEffects();
         }
-        public LevelTrack(int audioId, int startFrame, int endFrame,
-            float offsetLocalTime, int audioResourceId, LevelTrackEffects effects)
+        public LevelTrack(AudioId audioId, int startFrame, int endFrame,
+            float offsetLocalTime, AudioResourceId audioResourceId, LevelTrackEffects effects)
         {
             AudioId = audioId;
             StartFrame = startFrame;

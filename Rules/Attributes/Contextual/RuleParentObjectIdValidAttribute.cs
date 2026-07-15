@@ -5,18 +5,17 @@ using BH.SDK.Models.Primitives;
 
 namespace BH.SDK.Rules.Attributes
 {
-    // Validates a "regular" ObjectId reference (RectObject.ObjectId, ObjectIdModification.Prev/NextObjectId, ...):
-    // must be in the level/user-space range (ObjectId.IsValid(), value >= ObjectId.MinLevelValue).
-    // Does not allow the special negative public game objects (Camera, LocalPlayer) -
-    // use RuleParentObjectIdValid for properties that may reference those.
+    // Validates a ParentObjectId reference (RectObject.ParentObjectId): unlike a regular ObjectId,
+    // this also allows Null (no parent) and the special public game objects (Camera, LocalPlayer),
+    // i.e. value >= ObjectId.MinLevelParentValue (see ObjectId.IsValidParent()).
     [AttributeUsage(PropertyTarget)]
-    public class RuleObjectIdValidAttribute : BaseRuleAttribute
+    public class RuleParentObjectIdValidAttribute : BaseRuleAttribute
     {
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(ObjectId).IsAssignableFrom(property.PropertyType);
 
         protected override bool IsValidInternal(object value, object context)
-            => value is ObjectId objectId && objectId.IsValid()
+            => value is ObjectId objectId && objectId.IsValidParent()
                && context is Level; // TODO add complex check for parenting and ids uniqueness
 
         protected override void FixInternal(object target, PropertyInfo property, object context)
@@ -24,8 +23,8 @@ namespace BH.SDK.Rules.Attributes
             if (context is not Level) return;
             if (property.GetValue(target) is not ObjectId objectId) return;
 
-            if (!objectId.IsValid())
-                property.SetValue(target, ObjectId.MinLevel);
+            if (!objectId.IsValidParent())
+                property.SetValue(target, ObjectId.Null);
         }
     }
 }

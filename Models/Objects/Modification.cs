@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -21,7 +22,7 @@ namespace BH.SDK.Models.Objects
     public class Modification : ICopyable<Modification>, IEquatable<Modification>
     {
         [JsonProperty(Names.ObjectId)]
-        public int ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
+        public ObjectId ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
 
         [RuleNotNull]
         [JsonProperty(Names.PathShort)]
@@ -33,11 +34,11 @@ namespace BH.SDK.Models.Objects
 
         public Modification()
         {
-            ObjectId = 0;
+            ObjectId = ObjectId.Null;
             Path = string.Empty;
             Value = null;
         }
-        public Modification(int objectId, string path, object value)
+        public Modification(ObjectId objectId, string path, object value)
         {
             ObjectId = objectId;
             Path = path;
