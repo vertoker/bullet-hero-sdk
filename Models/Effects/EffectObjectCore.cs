@@ -1,6 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
@@ -32,7 +33,7 @@ namespace BH.SDK.Models.Effects
         // Same logic as TextureObject.TextureId
         
         [JsonProperty(Names.TextureResourceId)]
-        public int TextureResourceId { get; set; }
+        public TextureResourceId TextureResourceId { get; set; }
         
         [RuleNotNull]
         [JsonProperty(Names.ParticlePivot)]
@@ -52,7 +53,7 @@ namespace BH.SDK.Models.Effects
                 EffectRules.Core.Pivot_Y_Default));
         }
         public EffectObjectCore(bool render, bool loop, uint particleCount,
-            IVector2 lifetimeBounds, int textureResourceId, Alignment particlePivot)
+            IVector2 lifetimeBounds, TextureResourceId textureResourceId, Alignment particlePivot)
         {
             Render = render;
             Loop = loop;

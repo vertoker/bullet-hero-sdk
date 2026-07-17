@@ -72,7 +72,7 @@ namespace BH.SDK.Generators
                     ParticleCount = 25,
                     LifetimeBounds = new Vector2Value(3f, 15f),
                     ParticlePivot = Alignment.Equilateral3,
-                    TextureResourceId = 1,
+                    TextureResourceId = TextureResourceId.Circle,
                 },
                 Forces = new EffectObjectForces
                 {

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Utils;
 
@@ -33,7 +34,7 @@ namespace BH.SDK.Rules
             public const float GravityConstraint_X_Default = 0f;
             public const float GravityConstraint_Y_Default = -9.81f;
             
-            public const int TextureResourceId_Default = 1; // circle (atlas + uv)
+            public static readonly TextureResourceId TextureResourceId_Default = TextureResourceId.Circle; // circle (atlas + uv)
             
             // circle uv, it's more simple to use it
             public const float TextureResourceUV_X_Default = 0.0625f; // tilling x
