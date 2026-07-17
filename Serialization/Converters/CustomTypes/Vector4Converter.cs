@@ -3,17 +3,11 @@ using BH.SDK.Models.Enum.Values;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Values;
 using BH.SDK.Serialization.Converters.Base;
-using Newtonsoft.Json;
 
 namespace BH.SDK.Serialization.Converters.CustomTypes
 {
     public class Vector4Converter : JsonConverterCustomType<IVector4, VectorType>
     {
-        public Vector4Converter(JsonSerializer serializerDefault) : base(serializerDefault)
-        {
-            
-        }
-
         public override VectorType GetCustomType(IVector4 value) => value.GetModelType();
         public override Type GetType(VectorType customType)
         {

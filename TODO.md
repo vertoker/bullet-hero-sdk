@@ -1,4 +1,9 @@
-﻿Features after alpha release
+﻿Serialization
+- verify SerializationService stability/correctness across all keyframe/value/effect type combinations (round-trip tests + real saved level files), especially after the IRequiresDefaultSerializer refactor
+- add binary (BSON) serialization via Newtonsoft, alongside the existing JSON path
+- definitely sort out model versioning (CompatibilityService's per-type Version -> Type mapping only covers the top-level SaveData<T> types right now - nested/polymorphic model versioning across breaking model changes is unresolved)
+
+Features after alpha release
 - add difficulty metadata (watch OSU for more info)
 - create trigger/event system (like PA, but more like GD)
   - first of all - see guide for gd editor

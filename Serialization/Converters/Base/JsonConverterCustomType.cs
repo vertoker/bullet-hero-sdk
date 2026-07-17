@@ -1,18 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using BH.SDK.Models;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Serialization.Converters.Base
 {
-    public abstract class JsonConverterCustomType<T, TType> : JsonConverter<T>
+    public abstract class JsonConverterCustomType<T, TType> : JsonConverter<T>, IRequiresDefaultSerializer
     {
-        public JsonSerializer SerializerDefault { get; }
-        
-        protected JsonConverterCustomType(JsonSerializer serializerDefault)
-        {
-            SerializerDefault = serializerDefault;
-        }
-        
+        public JsonSerializer SerializerDefault { get; private set; }
+
+        void IRequiresDefaultSerializer.SetDefaultSerializer(JsonSerializer serializer) => SerializerDefault = serializer;
+
+        // Only this converter itself needs excluding: it's the one that would otherwise re-wrap the
+        // resolved concrete type's plain member JSON (e.g. Color4Key's own fields) as another [type, value] array.
+        IEnumerable<JsonConverter> IRequiresDefaultSerializer.GetExcludedConverters(IReadOnlyList<JsonConverter> allConverters) =>
+            new JsonConverter[] { this };
+
         public override void WriteJson(JsonWriter writer, T value, JsonSerializer serializer)
         {
             if (value == null)
