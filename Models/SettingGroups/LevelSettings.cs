@@ -31,8 +31,13 @@ namespace BH.SDK.Models.SettingGroups
         [RuleMin(ObjectId.MinLevelValue)]
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
-        
+
+        [RuleMin(AudioId.MinValue)]
+        [JsonProperty(Names.AudioIdCounter)]
+        public int AudioIdCounter { get; set; }
+
         public ObjectId GetNextObjectId() => new(ObjectIdCounter++);
+        public AudioId GetNextAudioId() => new(AudioIdCounter++);
 
         public LevelSettings()
         {
@@ -40,20 +45,22 @@ namespace BH.SDK.Models.SettingGroups
             FrameLength = Framerate * 10;
             ScreenLimit = new ScreenLimitNone();
             ObjectIdCounter = ObjectId.MinLevelValue;
+            AudioIdCounter = AudioId.MinValue;
         }
-        public LevelSettings(int framerate, int frameLength, IScreenLimit screenLimit, int objectIdCounter)
+        public LevelSettings(int framerate, int frameLength, IScreenLimit screenLimit, int objectIdCounter, int audioIdCounter)
         {
             Framerate = framerate;
             FrameLength = frameLength;
             ScreenLimit = screenLimit;
             ObjectIdCounter = objectIdCounter;
+            AudioIdCounter = audioIdCounter;
         }
 
         public object Clone() => Copy();
-        public LevelSettings Copy() => new(Framerate, FrameLength, ScreenLimit.Copy(), ObjectIdCounter);
+        public LevelSettings Copy() => new(Framerate, FrameLength, ScreenLimit.Copy(), ObjectIdCounter, AudioIdCounter);
 
         public override bool Equals(object obj) => obj is LevelSettings value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ScreenLimit, ObjectIdCounter);
+        public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ScreenLimit, ObjectIdCounter, AudioIdCounter);
 
         public bool Equals(LevelSettings other)
         {
@@ -62,7 +69,8 @@ namespace BH.SDK.Models.SettingGroups
             var result = Framerate.Equals(other.Framerate)
                           && FrameLength.Equals(other.FrameLength)
                           && ScreenLimit.Equals(other.ScreenLimit)
-                          && ObjectIdCounter.Equals(other.ObjectIdCounter);
+                          && ObjectIdCounter.Equals(other.ObjectIdCounter)
+                          && AudioIdCounter.Equals(other.AudioIdCounter);
             return result;
         }
     }

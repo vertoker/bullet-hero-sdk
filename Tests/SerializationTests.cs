@@ -200,7 +200,8 @@ namespace BH.SDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(new AudioId(1), 0, 10, 0f, new AudioResourceId(0), trackEffects);
+            var track = new LevelTrack(new AudioId(1), 0, 10,
+                0f, 0, "", new AudioResourceId(0), trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;
@@ -290,7 +291,8 @@ namespace BH.SDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(new AudioId(1), 0, 1000, 0f, new AudioResourceId(0), trackEffects);
+            var track = new LevelTrack(new AudioId(1), 0, 1000,
+                0f, 0, "track", new AudioResourceId(0), trackEffects);
             level.Audio.Tracks.Add(track);
 
             return level;

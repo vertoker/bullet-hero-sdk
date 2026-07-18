@@ -23,7 +23,7 @@ namespace BH.SDK.Generators
     {
         public override Level GenerateLevel(InputParameters parameters)
         {
-            var settings = new LevelSettings(45, 4500, new ScreenLimitFixed(new ScreenAspect(1, 1)), 0);
+            var settings = new LevelSettings(45, 4500, new ScreenLimitFixed(new ScreenAspect(1, 1)), 0, 0);
             
             // TODO add object for ObjectId.LocalPlayer
 
@@ -119,7 +119,7 @@ namespace BH.SDK.Generators
             var track1 = new LevelTrack
             {
                 AudioId = new AudioId(1), AudioResourceId = new AudioResourceId(-2),
-                StartFrame = 0, EndFrame = 10000, OffsetLocalTime = 0f,
+                StartFrame = 0, EndFrame = 10000, OffsetTime = 0f,
                 Effects = new LevelTrackEffects
                 {
                     Volumes = new List<FloatKey>
@@ -136,7 +136,7 @@ namespace BH.SDK.Generators
             var track2 = new LevelTrack
             {
                 AudioId = new AudioId(2), AudioResourceId = new AudioResourceId(-3),
-                StartFrame = 500, EndFrame = 1000, OffsetLocalTime = 0f,
+                StartFrame = 500, EndFrame = 1000, OffsetTime = 0f,
                 Effects = new LevelTrackEffects
                 {
                     Volumes = new List<FloatKey>
@@ -149,7 +149,7 @@ namespace BH.SDK.Generators
             var track3 = new LevelTrack
             {
                 AudioId = new AudioId(3), AudioResourceId = new AudioResourceId(-4),
-                StartFrame = 580, EndFrame = 800, OffsetLocalTime = 0f,
+                StartFrame = 580, EndFrame = 800, OffsetTime = 0f,
                 Effects = new LevelTrackEffects
                 {
                     Volumes = new List<FloatKey>
@@ -162,7 +162,7 @@ namespace BH.SDK.Generators
             var track4 = new LevelTrack
             {
                 AudioId = new AudioId(5), AudioResourceId = new AudioResourceId(-1),
-                StartFrame = 200, EndFrame = 700, OffsetLocalTime = 0f,
+                StartFrame = 200, EndFrame = 700, OffsetTime = 0f,
                 Effects = new LevelTrackEffects
                 {
                     Volumes = new List<FloatKey>

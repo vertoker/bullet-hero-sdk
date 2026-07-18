@@ -5,6 +5,10 @@ namespace BH.SDK.Rules
     {
         // public static readonly float Core_PitchDefault = 1f; // 0.01f - 10f, 0.01f, %
 
+        public const int MaxFrameCount = 16;
+        public const int MinAudioLayer = 0;
+        public const int MaxAudioLayer = MaxFrameCount - 1;
+        
         // -80f - 0f, 0.1f, dB;
         public const float MixLevel_Enabled = 0f;
         public const float MixLevel_Disabled = -80f;

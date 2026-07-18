@@ -450,6 +450,7 @@
         public const string AudioId = AudioShort + Id;
         public const string ObjectId = Id;
         public const string ObjectIdCounter = Id + _ + Counter;
+        public const string AudioIdCounter = AudioShort + Id + _ + Counter;
         public const string PrevObjectId = Prev + _ + Id;
         public const string NextObjectId = Next + _ + Id;
         public const string ObjectIds = Ids;
@@ -463,7 +464,8 @@
         public const string EndFrameShort = EndShort + FrameShort;
         public const string StopLocalFrame = Stop + _ + LocalFrame;
         public const string HasStopLocalFrame = Has + _ + StopLocalFrame;
-        public const string OffsetLocalTime = Offset + _ + Local + _ + Time;
+        public const string OffsetTime = Offset + _ + Time;
+        public const string AudioLayer = Audio + _ + Layer;
         
         public const string EffShape = Eff + _ + Shape;
         public const string EffAngle = Eff + _ + Angle;
