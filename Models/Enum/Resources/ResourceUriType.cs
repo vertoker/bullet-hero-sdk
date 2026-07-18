@@ -7,7 +7,6 @@
         AbsolutePath = 2,
         DirectUrl = 3,
         AddressableKey = 4, // for build-in levels
-        
-        // TODO add other sources
+        StreamingAssets = 5,
     }
 }

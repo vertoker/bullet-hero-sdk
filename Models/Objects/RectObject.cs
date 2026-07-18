@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class RectObject : ICopyable<RectObject>, IEquatable<RectObject>, IUpdatable<RectObject>
+    public class RectObject : IFrameBounds, INameable, ICopyable<RectObject>, IEquatable<RectObject>, IUpdatable<RectObject>
     {
         public virtual ObjectType GetModelType() => ObjectType.RectObject;
         

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Audio
 {
     [RuleContainer]
-    public class LevelTrack : ICopyable<LevelTrack>, IEquatable<LevelTrack>
+    public class LevelTrack : IFrameBounds, INameable, ICopyable<LevelTrack>, IEquatable<LevelTrack>
     {
         // Same logic as RectObject.ObjectId, but only for audio and much simpler
         // 0 - undefined
@@ -30,6 +30,8 @@ namespace BH.SDK.Models.Audio
         [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
         
+        // Offset for audio clip itself. Frames tells where boundaries of track in level,
+        // OffsetTime tells from which time starts clip itself
         [JsonProperty(Names.OffsetTime)]
         public float OffsetTime { get; set; }
         
