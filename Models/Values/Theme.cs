@@ -1,6 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.SaveData;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
@@ -15,7 +16,10 @@ namespace BH.SDK.Models.Values
     {
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
-        
+
+        [JsonProperty(Names.ThemeId)]
+        public ThemeId ThemeId { get; set; }
+
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
@@ -42,27 +46,37 @@ namespace BH.SDK.Models.Values
         
         public Theme()
         {
+            ThemeId = ThemeId.Null;
             Name = string.Empty;
             Matrix = new ColorValue[ValueRules.ThemeCount];
             Array.Fill(Matrix, ColorValue.white);
         }
-        public Theme(string name, ColorValue[] matrix)
+        public Theme(ThemeId themeId, string name = "")
         {
+            ThemeId = themeId;
+            Name = name;
+            Matrix = new ColorValue[ValueRules.ThemeCount];
+            Array.Fill(Matrix, ColorValue.white);
+        }
+        public Theme(ThemeId themeId, string name, ColorValue[] matrix)
+        {
+            ThemeId = themeId;
             Name = name;
             Matrix = matrix;
         }
 
         public object Clone() => Copy();
-        public Theme Copy() => new(Name, Matrix.CopyArray());
+        public Theme Copy() => new(ThemeId, Name, Matrix.CopyArray());
 
         public override bool Equals(object obj) => obj is Theme value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Name, Matrix.GetArrayHashCode());
+        public override int GetHashCode() => HashCode.Combine(ThemeId, Name, Matrix.GetArrayHashCode());
 
         public bool Equals(Theme other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Name.Equals(other.Name)
+            var result = ThemeId.Equals(other.ThemeId)
+                         && Name.Equals(other.Name)
                          && Matrix.ArrayEquals(other.Matrix);
             return result;
         }

@@ -14,8 +14,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
-    public class GameLevel : IObjectScope,
-        ICopyable<GameLevel>, IEquatable<GameLevel>
+    public class GameLevel : IObjectScope, ICopyable<GameLevel>, IEquatable<GameLevel>
     {
         [RuleNotNull]
         [JsonProperty(Names.Events)]
@@ -33,7 +32,6 @@ namespace BH.SDK.Models.Game
         [JsonProperty(Names.PlayerEvents)]
         public PlayerEvents PlayerEvents { get; set; }
         
-        
         // TODO add more contextual checks
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
@@ -44,16 +42,6 @@ namespace BH.SDK.Models.Game
         [JsonProperty(Names.ParentObjects)]
         public List<PrefabObject> PrefabObjects { get; set; }
         
-        
-        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemes)]
-        [JsonProperty(Names.Themes)]
-        public List<Theme> Themes { get; set; }
-        
-        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPrefabs)]
-        [RuleCollectionUnique(nameof(PrefabObject.PrefabGuid))]
-        [JsonProperty(Names.Prefabs)]
-        public List<Prefab> Prefabs { get; set; }
-        
         public GameLevel()
         {
             Events = new GameEvents();
@@ -63,13 +51,9 @@ namespace BH.SDK.Models.Game
             
             Objects = new Dictionary<ObjectId, RectObject>();
             PrefabObjects = new List<PrefabObject>();
-            
-            Prefabs = new List<Prefab>();
-            Themes = new List<Theme>();
         }
         public GameLevel(GameEvents events, CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents,
-            PlayerEvents playerEvents, Dictionary<ObjectId, RectObject> objects, List<PrefabObject> prefabObjects,
-            List<Prefab> prefabs, List<Theme> themes)
+            PlayerEvents playerEvents, Dictionary<ObjectId, RectObject> objects, List<PrefabObject> prefabObjects)
         {
             Events = events;
             CameraEvents = cameraEvents;
@@ -78,16 +62,15 @@ namespace BH.SDK.Models.Game
             
             Objects = objects;
             PrefabObjects = prefabObjects;
-            
-            Prefabs = prefabs;
-            Themes = themes;
         }
 
         public object Clone() => Copy();
-        public GameLevel Copy() => new(Events.Copy(), CameraEvents.Copy(),
-            PostProcessingEvents.Copy(), PlayerEvents.Copy(),
-            Objects.CopyDictionary(), PrefabObjects.CopyList(),
-            Prefabs.CopyList(), Themes.CopyList());
+        public GameLevel Copy() => new(Events.Copy(), CameraEvents.Copy(), PostProcessingEvents.Copy(),
+            PlayerEvents.Copy(), Objects.CopyDictionary(), PrefabObjects.CopyList());
+
+        public override bool Equals(object obj) => obj is GameLevel value && Equals(value);
+        public override int GetHashCode() => HashCode.Combine(Events, CameraEvents, PostProcessingEvents, PlayerEvents,
+            Objects.GetDictionaryHashCode(), PrefabObjects.GetListHashCode());
 
         public bool Equals(GameLevel other)
         {
@@ -98,14 +81,8 @@ namespace BH.SDK.Models.Game
                          && PostProcessingEvents.Equals(other.PostProcessingEvents)
                          && PlayerEvents.Equals(other.PlayerEvents)
                          && Objects.DictionaryEquals(other.Objects)
-                         && PrefabObjects.ListEquals(other.PrefabObjects)
-                         && Themes.ListEquals(other.Themes)
-                         && Prefabs.ListEquals(other.Prefabs);
+                         && PrefabObjects.ListEquals(other.PrefabObjects);
             return result;
         }
-
-        public override bool Equals(object obj) => obj is GameLevel value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Events, CameraEvents, PostProcessingEvents, PlayerEvents,
-            Objects.GetDictionaryHashCode(), PrefabObjects.GetListHashCode(), Themes.GetListHashCode(), Prefabs.GetListHashCode());
     }
 }

@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Events;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Keyframes;
+using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
@@ -25,10 +28,15 @@ namespace BH.SDK.Models.Game
         [JsonProperty(Names.Checkpoints)]
         public List<Checkpoint> Checkpoints { get; set; }
         
+        // limitations for screen will be chosen by mappers
+        [RuleNotNull(typeof(ScreenLimitFixed))]
+        [JsonProperty(Names.ScreenLimits)]
+        public List<ScreenLimitKey> ScreenLimits { get; set; }
+        
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxBackgroundEvents)]
         [RuleCollectionUnique(nameof(Color4Key.Frame))]
         [JsonProperty(Names.Backgrounds)]
-        public List<Color4Key> Backgrounds { get; set; }
+        public List<IColor4X4Key> Backgrounds { get; set; } // TODO implement
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemeEvents)]
         [RuleCollectionUnique(nameof(ThemeKeyframe.Frame))]
@@ -39,20 +47,23 @@ namespace BH.SDK.Models.Game
         {
             Markers = new List<Marker>();
             Checkpoints = new List<Checkpoint>();
-            Backgrounds = new List<Color4Key>();
+            ScreenLimits = new List<ScreenLimitKey>();
+            Backgrounds = new List<IColor4X4Key>();
             Themes = new List<ThemeKeyframe>();
         }
         public GameEvents(List<Marker> markers, List<Checkpoint> checkpoints, 
-            List<Color4Key> backgrounds, List<ThemeKeyframe> themes)
+            List<ScreenLimitKey> screenLimits, List<IColor4X4Key> backgrounds, List<ThemeKeyframe> themes)
         {
             Markers = markers;
             Checkpoints = checkpoints;
+            ScreenLimits = screenLimits;
             Backgrounds = backgrounds;
             Themes = themes;
         }
 
         public object Clone() => Copy();
-        public GameEvents Copy() => new(Markers.CopyList(), Checkpoints.CopyList(), Backgrounds.CopyList(), Themes.CopyList());
+        public GameEvents Copy() => new(Markers.CopyList(), Checkpoints.CopyList(),
+            ScreenLimits.CopyList(), Backgrounds.CopyList(), Themes.CopyList());
 
         public override bool Equals(object obj) => obj is CameraEvents value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Markers.GetListHashCode(),

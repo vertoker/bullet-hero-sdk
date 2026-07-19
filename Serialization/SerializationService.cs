@@ -59,6 +59,14 @@ namespace BH.SDK.Serialization
                 new VersionConverter(),
 
                 new DictionaryObjectsConverter(),
+                new DictionaryAudiosConverter(),
+                
+                new DictionaryTextureResourcesConverter(),
+                new DictionaryFontResourcesConverter(),
+                new DictionaryAudioResourcesConverter(),
+                new DictionaryCompositeColliderResourcesConverter(),
+                new DictionaryThemesConverter(),
+                new DictionaryPrefabsConverter(),
 
                 new EffectDataConverter(compatibilityService),
 

@@ -23,7 +23,7 @@ namespace BH.SDK.Generators
     {
         public override Level GenerateLevel(InputParameters parameters)
         {
-            var settings = new LevelSettings(45, 4500, new ScreenLimitFixed(new ScreenAspect(1, 1)), 0, 0);
+            var settings = new LevelSettings(45, 4500, 0, 0);
             
             // TODO add object for ObjectId.LocalPlayer
 
@@ -200,12 +200,12 @@ namespace BH.SDK.Generators
                 new(ResourceUriType.LevelPath, "sugoma.wav"),
             });
 
-            var prefabGuid1 = new Guid("aaaa0001-0000-0000-0000-000000000000");
-            var prefabGuid2 = new Guid("aaaa0002-0000-0000-0000-000000000000");
+            var prefabGuid1 = new PrefabId("aaaa0001-0000-0000-0000-000000000000");
+            var prefabGuid2 = new PrefabId("aaaa0002-0000-0000-0000-000000000000");
             
             var prefab1 = new Prefab
             {
-                PrefabGuid = prefabGuid1,
+                PrefabId = prefabGuid1,
                 Objects = new Dictionary<ObjectId, RectObject>()
                 {
                     {
@@ -231,12 +231,12 @@ namespace BH.SDK.Generators
             };
             var prefab2 = new Prefab
             {
-                PrefabGuid = prefabGuid2,
+                PrefabId = prefabGuid2,
                 PrefabObjects = new List<PrefabObject>
                 {
                     new()
                     {
-                        PrefabGuid = prefabGuid1,
+                        PrefabId = prefabGuid1,
                         ObjectIds = new List<ObjectIdModification>
                         {
                             new(new ObjectId(1), new ObjectId(11)),
@@ -249,7 +249,7 @@ namespace BH.SDK.Generators
             
             var prefabObject1 = new PrefabObject
             {
-                PrefabGuid = prefabGuid1,
+                PrefabId = prefabGuid1,
                 ObjectIds = new List<ObjectIdModification>
                 {
                     new(new ObjectId(1), new ObjectId(21)),
@@ -259,7 +259,7 @@ namespace BH.SDK.Generators
             };
             var prefabObject2 = new PrefabObject
             {
-                PrefabGuid = prefabGuid2,
+                PrefabId = prefabGuid2,
                 ObjectIds = new List<ObjectIdModification>
                 {
                     new(new ObjectId(11), new ObjectId(23)),
@@ -278,9 +278,10 @@ namespace BH.SDK.Generators
             level.Game.Objects.Add(effectObject1.ObjectId, effectObject1);
             level.Game.Objects.Add(textureObject1.ObjectId, textureObject1);
             level.Game.Objects.Add(textObject1.ObjectId, textObject1);
+            level.Game.Events.ScreenLimits.Add(new ScreenLimitKey(new ScreenLimitFixed(new ScreenAspect(1, 1)), 0));
             
-            level.Game.Prefabs.Add(prefab1);
-            level.Game.Prefabs.Add(prefab2);
+            level.Resources.Prefabs.Add(prefab1.PrefabId, prefab1);
+            level.Resources.Prefabs.Add(prefab2.PrefabId, prefab2);
             level.Game.PrefabObjects.Add(prefabObject1);
             level.Game.PrefabObjects.Add(prefabObject2);
             
@@ -290,17 +291,17 @@ namespace BH.SDK.Generators
             level.Game.CameraEvents.Shakes.Add(new ShakeKey(1f, 100f, 120));
             level.Game.CameraEvents.Shakes.Add(new ShakeKey(0f, 1f, 180));
             
-            level.Audio.Tracks.Add(track1);
-            level.Audio.Tracks.Add(track2);
-            level.Audio.Tracks.Add(track3);
-            level.Audio.Tracks.Add(track4);
+            level.Audio.Tracks.Add(track1.AudioId, track1);
+            level.Audio.Tracks.Add(track2.AudioId, track2);
+            level.Audio.Tracks.Add(track3.AudioId, track3);
+            level.Audio.Tracks.Add(track4.AudioId, track4);
             
-            level.Resources.Textures.Add(textureResource);
+            level.Resources.Textures.Add(textureResource.TextureResourceId, textureResource);
             // level.Resources.Fonts.Add(fontResource);
-            level.Resources.Audios.Add(audioResource);
-            level.Resources.Audios.Add(audioResource2);
-            level.Resources.Audios.Add(audioResource3);
-            level.Resources.Audios.Add(audioResource4);
+            level.Resources.Audios.Add(audioResource.AudioResourceId, audioResource);
+            level.Resources.Audios.Add(audioResource2.AudioResourceId, audioResource2);
+            level.Resources.Audios.Add(audioResource3.AudioResourceId, audioResource3);
+            level.Resources.Audios.Add(audioResource4.AudioResourceId, audioResource4);
             
             return level;
         }

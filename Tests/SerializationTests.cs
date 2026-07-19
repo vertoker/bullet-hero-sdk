@@ -109,8 +109,8 @@ namespace BH.SDK.Tests
             var level = new Level();
 
             level.Settings.Framerate = 61;
-            level.Settings.ScreenLimit = new ScreenLimitBounds();
             
+            level.Game.Events.ScreenLimits.Add(new ScreenLimitKey(new ScreenLimitBounds(), 0));
             level.Game.Events.Backgrounds.Add(new Color4Key());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
@@ -165,7 +165,7 @@ namespace BH.SDK.Tests
 
             var prefab = new Prefab()
             {
-                PrefabGuid = Guid.NewGuid(),
+                PrefabId = PrefabId.NewGuid(),
             };
             prefab.Objects.Add(new ObjectId(1), new TextureObject()
             {
@@ -179,22 +179,22 @@ namespace BH.SDK.Tests
             {
                 ObjectId = new ObjectId(3),
             });
-            level.Game.Prefabs.Add(prefab);
+            level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 
-            var prefabObject = new PrefabObject { PrefabGuid = Guid.NewGuid() };
+            var prefabObject = new PrefabObject { PrefabId = PrefabId.NewGuid() };
             level.Game.PrefabObjects.Add(prefabObject);
 
-            level.Game.Themes.Add(new Theme());
+            level.Resources.Themes.Add(new ThemeId(1), new Theme(new ThemeId(1)));
 
-            level.Resources.Textures.Add(new TextureResource(new TextureResourceId(-1), new List<ResourceKey>
+            level.Resources.Textures.Add(new TextureResourceId(-1), new TextureResource(new TextureResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png")
             }));
-            level.Resources.Fonts.Add(new FontResource(new FontResourceId(-1), new List<ResourceKey>
+            level.Resources.Fonts.Add(new FontResourceId(-1), new FontResource(new FontResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://github.com/google/fonts/raw/refs/heads/main/ofl/dekko/Dekko-Regular.ttf"),
             }));
-            level.Resources.Audios.Add(new AudioResource(new AudioResourceId(-1), new List<ResourceKey>
+            level.Resources.Audios.Add(new AudioResourceId(-1), new AudioResource(new AudioResourceId(-1), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
             }));
@@ -202,7 +202,7 @@ namespace BH.SDK.Tests
             var trackEffects = new LevelTrackEffects();
             var track = new LevelTrack(new AudioId(1), 0, 10,
                 0f, 0, "", new AudioResourceId(0), trackEffects);
-            level.Audio.Tracks.Add(track);
+            level.Audio.Tracks.Add(track.AudioId, track);
 
             return level;
         }
@@ -212,7 +212,6 @@ namespace BH.SDK.Tests
             var level = new Level();
 
             level.Settings.Framerate = -15;
-            level.Settings.ScreenLimit = null;
             
             level.Game.Events.Backgrounds.Add(new Color4Key());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
@@ -270,22 +269,22 @@ namespace BH.SDK.Tests
             prefab.Objects.Add(new ObjectId(4), new TextureObject() { ObjectId = new ObjectId(4), });
             prefab.Objects.Add(new ObjectId(5), new TextObject() { ObjectId = new ObjectId(5), });
             prefab.Objects.Add(new ObjectId(6), new EffectObject() { ObjectId = new ObjectId(6), });
-            level.Game.Prefabs.Add(prefab);
+            level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 
             var prefabObject = new PrefabObject();
             level.Game.PrefabObjects.Add(prefabObject);
 
-            level.Game.Themes.Add(new Theme());
+            level.Resources.Themes.Add(new ThemeId(1), new Theme(new ThemeId(1)));
 
-            level.Resources.Textures.Add(new TextureResource(new TextureResourceId(0), new List<ResourceKey>
+            level.Resources.Textures.Add(new TextureResourceId(0), new TextureResource(new TextureResourceId(0), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png")
             }));
-            level.Resources.Fonts.Add(new FontResource(new FontResourceId(0), new List<ResourceKey>
+            level.Resources.Fonts.Add(new FontResourceId(0), new FontResource(new FontResourceId(0), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://github.com/google/fonts/raw/refs/heads/main/ofl/dekko/Dekko-Regular.ttf"),
             }));
-            level.Resources.Audios.Add(new AudioResource(new AudioResourceId(0), new List<ResourceKey>
+            level.Resources.Audios.Add(new AudioResourceId(0), new AudioResource(new AudioResourceId(0), new List<ResourceKey>
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
             }));
@@ -293,7 +292,7 @@ namespace BH.SDK.Tests
             var trackEffects = new LevelTrackEffects();
             var track = new LevelTrack(new AudioId(1), 0, 1000,
                 0f, 0, "track", new AudioResourceId(0), trackEffects);
-            level.Audio.Tracks.Add(track);
+            level.Audio.Tracks.Add(track.AudioId, track);
 
             return level;
         }
@@ -396,7 +395,7 @@ namespace BH.SDK.Tests
             
             var prefabObject = new PrefabObject
             {
-                PrefabGuid = Guid.NewGuid(),
+                PrefabId = PrefabId.NewId(),
             };
             var modification = new Modification
             {

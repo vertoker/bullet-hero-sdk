@@ -283,6 +283,7 @@
         public const string Midtone = "mtn";
         public const string Highlight = "hlt";
         public const string Limit = "limit";
+        public const string Limits = "limits";
         public const string LimitShort = "lmt";
         public const string Smoothness = "smt";
         public const string Rounded = "rnd";
@@ -403,6 +404,7 @@
         public const string IsLocal = Is + _ + Local;
         public const string FrameLengthShort = FrameShort + _ + LengthShort;
         public const string ScreenLimit = Screen + _ + Limit;
+        public const string ScreenLimits = Screen + _ + Limits;
         
         public const string AutosaveRate = Autosave + _ + Rate;
         public const string MaxAutosaveFiles = Max + _ + Autosave + _ + Files;
@@ -437,6 +439,7 @@
         public const string RenderDigitalGlitch = Render + _ + DigitalGlitchShort;
         
         public const string ThemeIndex = Theme + _ + Index;
+        public const string ThemeId = Theme + _ + Id;
         
         public const string CameraEvents = Camera + _ + Events;
         public const string PostProcessingEvents = Post + Processing + _ + Events;
@@ -446,7 +449,7 @@
         // Instances
         
         public const string LevelGuid = Level + _ + Guid;
-        public const string PrefabGuid = Prefab + _ + Guid;
+        public const string PrefabId = Prefab + _ + Id;
         public const string AudioId = AudioShort + Id;
         public const string ObjectId = Id;
         public const string ObjectIdCounter = Id + _ + Counter;

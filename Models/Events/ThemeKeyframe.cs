@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -12,32 +13,31 @@ namespace BH.SDK.Models.Events
     [RuleContainer]
     public class ThemeKeyframe : Keyframe, ICopyable<ThemeKeyframe>, IEquatable<ThemeKeyframe>
     {
-        [RuleThemeIndex]
-        [JsonProperty(Names.ThemeIndex)]
-        public int ThemeIndex { get; set; } // reference to all level Themes list
+        [JsonProperty(Names.ThemeId)]
+        public ThemeId ThemeId { get; set; }
 
         public ThemeKeyframe()
         {
-            ThemeIndex = 0;
+            ThemeId = ThemeId.Null;
         }
-        public ThemeKeyframe(int themeIndex, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ThemeKeyframe(ThemeId themeId, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
-            ThemeIndex = themeIndex;
+            ThemeId = themeId;
         }
 
         public object Clone() => Copy();
-        public ThemeKeyframe Copy() => new(ThemeIndex, Frame, Ease);
+        public ThemeKeyframe Copy() => new(ThemeId, Frame, Ease);
 
         public bool Equals(ThemeKeyframe other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = base.Equals(other)
-                         && ThemeIndex.Equals(other.ThemeIndex);
+                         && ThemeId.Equals(other.ThemeId);
             return result;
         }
 
         public override bool Equals(object obj) => obj is ThemeKeyframe value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ThemeIndex);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ThemeId);
     }
 }

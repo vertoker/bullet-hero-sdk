@@ -22,12 +22,6 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
         
-        // TODO make List of keyframes
-        [RuleNotNull(typeof(ScreenLimitFixed))]
-        [JsonProperty(Names.ScreenLimit)]
-        public IScreenLimit ScreenLimit { get; set; }
-        // limitations for screen will be chosen by mappers
-        
         [RuleMin(ObjectId.MinLevelValue)]
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
@@ -43,24 +37,22 @@ namespace BH.SDK.Models.SettingGroups
         {
             Framerate = 60;
             FrameLength = Framerate * 10;
-            ScreenLimit = new ScreenLimitNone();
             ObjectIdCounter = ObjectId.MinLevelValue;
             AudioIdCounter = AudioId.MinValue;
         }
-        public LevelSettings(int framerate, int frameLength, IScreenLimit screenLimit, int objectIdCounter, int audioIdCounter)
+        public LevelSettings(int framerate, int frameLength, int objectIdCounter, int audioIdCounter)
         {
             Framerate = framerate;
             FrameLength = frameLength;
-            ScreenLimit = screenLimit;
             ObjectIdCounter = objectIdCounter;
             AudioIdCounter = audioIdCounter;
         }
 
         public object Clone() => Copy();
-        public LevelSettings Copy() => new(Framerate, FrameLength, ScreenLimit.Copy(), ObjectIdCounter, AudioIdCounter);
+        public LevelSettings Copy() => new(Framerate, FrameLength, ObjectIdCounter, AudioIdCounter);
 
         public override bool Equals(object obj) => obj is LevelSettings value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ScreenLimit, ObjectIdCounter, AudioIdCounter);
+        public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ObjectIdCounter, AudioIdCounter);
 
         public bool Equals(LevelSettings other)
         {
@@ -68,7 +60,6 @@ namespace BH.SDK.Models.SettingGroups
             if (ReferenceEquals(this, other)) return true;
             var result = Framerate.Equals(other.Framerate)
                           && FrameLength.Equals(other.FrameLength)
-                          && ScreenLimit.Equals(other.ScreenLimit)
                           && ObjectIdCounter.Equals(other.ObjectIdCounter)
                           && AudioIdCounter.Equals(other.AudioIdCounter);
             return result;
