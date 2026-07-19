@@ -49,43 +49,36 @@ namespace BH.SDK.Models.Objects
         // Rect content
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(PosKey.Frame))]
         [RuleCollectionUnique(nameof(PosKey.Frame))]
         [JsonProperty(Names.Position)]
         public List<PosKey> Positions { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(AngleKey.Frame))]
         [RuleCollectionUnique(nameof(AngleKey.Frame))]
         [JsonProperty(Names.Rotation)]
         public List<AngleKey> Rotations { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(ScaKey.Frame))]
         [RuleCollectionUnique(nameof(ScaKey.Frame))]
         [JsonProperty(Names.Scale)]
         public List<ScaKey> Scales { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(ScaKey.Frame))]
         [RuleCollectionUnique(nameof(ScaKey.Frame))]
         [JsonProperty(Names.Size)]
         public List<ScaKey> Sizes { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(AlignmentKey.Frame))]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.AnchorMin)]
         public List<AlignmentKey> AnchorsMin { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(AlignmentKey.Frame))]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.AnchorMax)]
         public List<AlignmentKey> AnchorsMax { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(AlignmentKey.Frame))]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.Pivot)]
         public List<AlignmentKey> Pivots { get; set; }

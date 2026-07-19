@@ -26,31 +26,26 @@ namespace BH.SDK.Models.Game
         // Pivot - unchanged
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
-        [RuleCollectionSorted(nameof(PosKey.Frame))]
         [RuleCollectionUnique(nameof(PosKey.Frame))]
         [JsonProperty(Names.Position)]
         public List<PosKey> Positions { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
-        [RuleCollectionSorted(nameof(AngleKey.Frame))]
         [RuleCollectionUnique(nameof(AngleKey.Frame))]
         [JsonProperty(Names.Rotation)]
         public List<AngleKey> Rotations { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
-        [RuleCollectionSorted(nameof(ZoomKey.Frame))]
         [RuleCollectionUnique(nameof(ZoomKey.Frame))]
         [JsonProperty(Names.Zoom)]
         public List<ZoomKey> Zooms { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(AlignmentKey.Frame))]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.Pivot)]
         public List<AlignmentKey> Pivots { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
-        [RuleCollectionSorted(nameof(ShakeKey.Frame))]
         [RuleCollectionUnique(nameof(ShakeKey.Frame))]
         [JsonProperty(Names.Shake)]
         public List<ShakeKey> Shakes { get; set; }

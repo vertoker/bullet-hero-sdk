@@ -33,13 +33,11 @@ namespace BH.SDK.Models.Objects
         public FontResourceId FontResourceId { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(Color4Key.Frame))]
         [RuleCollectionUnique(nameof(Color4Key.Frame))]
         [JsonProperty(Names.Color)]
         public List<Color4Key> Colors { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(FloatKey.Frame))]
         [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }

@@ -16,24 +16,21 @@ namespace BH.SDK.Models.Game
     public class GameEvents : ICopyable<GameEvents>, IEquatable<GameEvents>
     {
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxMarkerEvents)]
-        [RuleCollectionSorted(nameof(Marker.Frame))]
+        [RuleCollectionUnique(nameof(Checkpoint.Frame))]
         [JsonProperty(Names.Markers)]
         public List<Marker> Markers { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCheckpointEvents)]
-        [RuleCollectionSorted(nameof(Checkpoint.Frame))]
         [RuleCollectionUnique(nameof(Checkpoint.Frame))]
         [JsonProperty(Names.Checkpoints)]
         public List<Checkpoint> Checkpoints { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxBackgroundEvents)]
-        [RuleCollectionSorted(nameof(Color4Key.Frame))]
         [RuleCollectionUnique(nameof(Color4Key.Frame))]
         [JsonProperty(Names.Backgrounds)]
         public List<Color4Key> Backgrounds { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemeEvents)]
-        [RuleCollectionSorted(nameof(ThemeKeyframe.Frame))]
         [RuleCollectionUnique(nameof(ThemeKeyframe.Frame))]
         [JsonProperty(Names.Themes)]
         public List<ThemeKeyframe> Themes { get; set; }

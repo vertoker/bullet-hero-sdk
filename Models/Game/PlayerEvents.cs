@@ -21,19 +21,16 @@ namespace BH.SDK.Models.Game
         // public List<VelocityPoint> VelocityPoints { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPlayerKeys)]
-        [RuleCollectionSorted(nameof(BoolKey.Frame))]
         [RuleCollectionUnique(nameof(BoolKey.Frame))]
         [JsonProperty(Names.Visibles)]
         public List<BoolKey> Visibles { get; set; } // player can see himself
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPlayerKeys)]
-        [RuleCollectionSorted(nameof(BoolKey.Frame))]
         [RuleCollectionUnique(nameof(BoolKey.Frame))]
         [JsonProperty(Names.Controls)]
         public List<BoolKey> Controls { get; set; } // player can control himself
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPlayerKeys)]
-        [RuleCollectionSorted(nameof(BoolKey.Frame))]
         [RuleCollectionUnique(nameof(BoolKey.Frame))]
         [JsonProperty(Names.Collisions)]
         public List<BoolKey> Collisions { get; set; } // active collision detection system for player

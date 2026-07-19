@@ -25,13 +25,11 @@ namespace BH.SDK.Models.Objects
         public ColliderId ColliderId { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(IColor4X4Key.Frame))]
         [RuleCollectionUnique(nameof(IColor4X4Key.Frame))]
         [JsonProperty(Names.Color)]
         public List<IColor4X4Key> Colors { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionSorted(nameof(UVKey.Frame))]
         [RuleCollectionUnique(nameof(UVKey.Frame))]
         [JsonProperty(Names.UV)]
         public List<UVKey> UVs { get; set; }
