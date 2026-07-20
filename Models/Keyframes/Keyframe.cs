@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public abstract class Keyframe : IKeyframe, IEquatable<Keyframe>
+    public class Keyframe : IKeyframe, IModel<Keyframe>
     {
         public const int DefaultFrame = 0;
         public const EaseType DefaultEase = EaseType.Linear;
@@ -31,6 +31,16 @@ namespace BH.SDK.Models.Keyframes
             Frame = frame;
             Ease = ease;
         }
+        public virtual void Reset()
+        {
+            Frame = DefaultFrame;
+            Ease = DefaultEase;
+        }
+
+        public virtual object Clone() => CopyImpl();
+        public virtual Keyframe Copy() => CopyImpl();
+        
+        private Keyframe CopyImpl() => new(Frame, Ease);
 
         public override bool Equals(object obj) => obj is Keyframe value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Frame, (int)Ease);

@@ -448,7 +448,7 @@
         
         // Instances
         
-        public const string LevelGuid = Level + _ + Guid;
+        public const string LevelId = Level + _ + Id;
         public const string PrefabId = Prefab + _ + Id;
         public const string AudioId = AudioShort + Id;
         public const string ObjectId = Id;

@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Color4X4Key : Keyframe, IColor4X4Key, ICopyable<Color4X4Key>, IEquatable<Color4X4Key>
+    public class Color4X4Key : Keyframe, IColor4X4Key, IModel<Color4X4Key>
     {
         [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.ColorBL)]
@@ -53,12 +53,23 @@ namespace BH.SDK.Models.Keyframes
             ColorTL = colorTL;
             ColorTR = colorTR;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            ColorBL = ColorValue.white;
+            ColorBR = ColorValue.white;
+            ColorTL = ColorValue.white;
+            ColorTR = ColorValue.white;
+        }
         
         public Color4X4KeyType GetModelType() => Color4X4KeyType.BariCentrical;
-
-        public object Clone() => Copy();
-        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => Copy();
-        public Color4X4Key Copy() => new(ColorBL.Copy(), ColorBR.Copy(), ColorTL.Copy(), ColorTR.Copy(), Frame, Ease);
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        Color4X4Key ICopyable<Color4X4Key>.Copy() => CopyImpl();
+        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => CopyImpl();
+        
+        private Color4X4Key CopyImpl() => new(ColorBL.Copy(), ColorBR.Copy(), ColorTL.Copy(), ColorTR.Copy(), Frame, Ease);
         
         public override bool Equals(object obj) => obj is Color4X4Key value && Equals(value);
         public bool Equals(IColor4X4Key other) => other is Color4X4Key value && Equals(value);

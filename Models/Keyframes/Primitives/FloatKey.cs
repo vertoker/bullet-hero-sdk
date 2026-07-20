@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class FloatKey : Keyframe, ICopyable<FloatKey>, IEquatable<FloatKey>
+    public class FloatKey : Keyframe, IModel<FloatKey>
     {
         [RuleNotNull(typeof(FloatValue))]
         [JsonProperty(Names.Float)]
@@ -25,9 +25,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Value = value;
         }
-
-        public object Clone() => Copy();
-        public FloatKey Copy() => new(Value.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Value = new FloatValue();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        FloatKey ICopyable<FloatKey>.Copy() => CopyImpl();
+        
+        private FloatKey CopyImpl() => new(Value.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is FloatKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);

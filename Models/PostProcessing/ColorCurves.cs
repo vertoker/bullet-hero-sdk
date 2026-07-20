@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ColorCurves : Keyframe,
-        ICopyable<ColorCurves>, IEquatable<ColorCurves>
+    public class ColorCurves : Keyframe, IModel<ColorCurves>
     {
         [RuleInRange(PostProcessingRules.ColorCurves.HueVsHueMin,
             PostProcessingRules.ColorCurves.HueVsHueMax)]
@@ -37,9 +36,18 @@ namespace BH.SDK.Models.PostProcessing
             HueVsHue = hueVsHue;
             SatVsSat = satVsSat;
         }
-
-        public object Clone() => Copy();
-        public ColorCurves Copy() => new(HueVsHue, SatVsSat, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            HueVsHue = 0.5f;
+            SatVsSat = 0.5f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ColorCurves ICopyable<ColorCurves>.Copy() => CopyImpl();
+        
+        private ColorCurves CopyImpl() => new(HueVsHue, SatVsSat, Frame, Ease);
 
         public override bool Equals(object obj) => obj is ColorCurves value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), HueVsHue, SatVsSat);

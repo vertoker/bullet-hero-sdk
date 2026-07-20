@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class FilmGrain : Keyframe,
-        ICopyable<FilmGrain>, IEquatable<FilmGrain>
+    public class FilmGrain : Keyframe, IModel<FilmGrain>
     {
         [JsonProperty(Names.Type)]
         public FilmGrainType Type { get; set; }
@@ -33,9 +32,18 @@ namespace BH.SDK.Models.PostProcessing
             Type = type;
             Intensity = intensity;
         }
-
-        public object Clone() => Copy();
-        public FilmGrain Copy() => new(Type, Intensity, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Type = FilmGrainType.Medium1;
+            Intensity = 1.0f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        FilmGrain ICopyable<FilmGrain>.Copy() => CopyImpl();
+        
+        private FilmGrain CopyImpl() => new(Type, Intensity, Frame, Ease);
 
         public override bool Equals(object obj) => obj is FilmGrain value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), (int)Type, Intensity);

@@ -1,11 +1,12 @@
 ﻿using System;
+using BH.SDK.Models.Interfaces;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
     [RuleContainer]
-    public abstract class BaseGraphicsSettings : IEquatable<BaseGraphicsSettings>
+    public abstract class BaseGraphicsSettings : IModel<BaseGraphicsSettings>
     {
         [JsonProperty(Names.Render)]
         public bool Render { get; set; }
@@ -18,6 +19,13 @@ namespace BH.SDK.Models.SettingGroups.Graphics
         {
             Render = render;
         }
+        public virtual void Reset()
+        {
+            Render = true;
+        }
+
+        public abstract object Clone();
+        public abstract BaseGraphicsSettings Copy();
 
         public override bool Equals(object obj) => obj is BaseGraphicsSettings value && Equals(value);
         public override int GetHashCode() => Render.GetHashCode();

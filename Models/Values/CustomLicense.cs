@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class CustomLicense : ILicense, ICopyable<CustomLicense>, IEquatable<CustomLicense>
+    public class CustomLicense : ILicense, IModel<CustomLicense>
     {
         [RuleNotNull]
         [JsonProperty(Names.Name)]
@@ -73,6 +73,19 @@ namespace BH.SDK.Models.Values
             RequiresAttribution = requiresAttribution;
             RequiresSourceDisclosure = requiresSourceDisclosure;
             RequiresSameLicense = requiresSameLicense;
+        }
+        public void Reset()
+        {
+            LicenseName = string.Empty;
+            LicenseUrl = string.Empty;
+            LicenseText = string.Empty;
+            Aggressive = false;
+            AllowsDistribution = false;
+            AllowsModification = false;
+            AllowsCommercialUse = false;
+            RequiresAttribution = false;
+            RequiresSourceDisclosure = false;
+            RequiresSameLicense = false;
         }
         
         public LicenseType GetModelType() => LicenseType.Custom;

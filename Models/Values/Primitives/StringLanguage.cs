@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class StringLanguage : ICopyable<StringLanguage>, IEquatable<StringLanguage>
+    public class StringLanguage : IModel<StringLanguage>
     {
         [JsonProperty(Names.Language)]
         public string LanguageCode { get; set; }
@@ -27,6 +27,11 @@ namespace BH.SDK.Models.Values
         {
             LanguageCode = languageCode;
             Value = value;
+        }
+        public void Reset()
+        {
+            LanguageCode = ValueRules.DefaultLanguageCode;
+            Value = string.Empty;
         }
 
         public object Clone() => Copy();

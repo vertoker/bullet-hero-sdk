@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class ColorValue : IColor, ICopyable<ColorValue>, IEquatable<ColorValue>
+    public class ColorValue : IColor, IModel<ColorValue>
     {
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelR)]
@@ -34,10 +34,10 @@ namespace BH.SDK.Models.Values
 
         public ColorValue()
         {
-            R = 1f;
-            G = 1f;
-            B = 1f;
-            A = 1f;
+            R = ValueRules.MaxColor;
+            G = ValueRules.MaxColor;
+            B = ValueRules.MaxColor;
+            A = ValueRules.MaxColor;
         }
         public ColorValue(float r, float g, float b, float a)
         {
@@ -45,6 +45,13 @@ namespace BH.SDK.Models.Values
             G = g;
             B = b;
             A = a;
+        }
+        public void Reset()
+        {
+            R = ValueRules.MaxColor;
+            G = ValueRules.MaxColor;
+            B = ValueRules.MaxColor;
+            A = ValueRules.MaxColor;
         }
 
         public ColorType GetModelType() => ColorType.Value;

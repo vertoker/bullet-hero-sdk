@@ -12,8 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectAngleCurvesOverLife : IEffectAngle,
-        ICopyable<EffectAngleCurvesOverLife>, IEquatable<EffectAngleCurvesOverLife>
+    public class EffectAngleCurvesOverLife : IEffectAngle, IModel<EffectAngleCurvesOverLife>
     {
         [RuleNotNull]
         [JsonProperty(Names.Curve)]
@@ -28,6 +27,10 @@ namespace BH.SDK.Models.Effects
         public EffectAngleCurvesOverLife(CurveValue curve)
         {
             Curve = curve;
+        }
+        public void Reset()
+        {
+            Curve = EffectRules.GetCurve_Default();
         }
 
         public object Clone() => Copy();

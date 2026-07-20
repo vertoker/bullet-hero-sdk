@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioNormalize : AudioEffect, ICopyable<AudioNormalize>, IEquatable<AudioNormalize>
+    public class AudioNormalize : AudioEffect, IModel<AudioNormalize>
     {
         [RuleInRange(AudioRules.Normalize.FadeInTime_Min, AudioRules.Normalize.FadeInTime_Max)]
         [JsonProperty(Names.FadeInTime)]
@@ -36,9 +36,19 @@ namespace BH.SDK.Models.AudioEffects
             LowestVolume = lowestVolume;
             MaximumAmp = maximumAmp;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            FadeInTime = AudioRules.Normalize.FadeInTime_Default;
+            LowestVolume = AudioRules.Normalize.LowestVolume_Default;
+            MaximumAmp = AudioRules.Normalize.MaximumAmp_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioNormalize Copy() => new(MixLevel, FadeInTime, LowestVolume, MaximumAmp);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioNormalize ICopyable<AudioNormalize>.Copy() => CopyImpl();
+
+        private AudioNormalize CopyImpl() => new(MixLevel, FadeInTime, LowestVolume, MaximumAmp);
 
         public override bool Equals(object obj) => obj is AudioNormalize value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), FadeInTime, LowestVolume, MaximumAmp);

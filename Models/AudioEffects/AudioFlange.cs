@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioFlange : AudioEffect, ICopyable<AudioFlange>, IEquatable<AudioFlange>
+    public class AudioFlange : AudioEffect, IModel<AudioFlange>
     {
         [RuleInRange(AudioRules.Flange.DryMix_Min, AudioRules.Flange.DryMix_Max)]
         [JsonProperty(Names.DryMix)]
@@ -42,9 +42,20 @@ namespace BH.SDK.Models.AudioEffects
             Depth = depth;
             Rate = rate;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            DryMix = AudioRules.Flange.DryMix_Default;
+            WetMix = AudioRules.Flange.WetMix_Default;
+            Depth = AudioRules.Flange.Depth_Default;
+            Rate = AudioRules.Flange.Rate_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioFlange Copy() => new(MixLevel, DryMix, WetMix, Depth, Rate);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioFlange ICopyable<AudioFlange>.Copy() => CopyImpl();
+
+        private AudioFlange CopyImpl() => new(MixLevel, DryMix, WetMix, Depth, Rate);
 
         public override bool Equals(object obj) => obj is AudioFlange value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), DryMix, WetMix, Depth, Rate);

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class ScreenLimitKey : Keyframe, ICopyable<ScreenLimitKey>, IEquatable<ScreenLimitKey>
+    public class ScreenLimitKey : Keyframe, IModel<ScreenLimitKey>
     {
         // Same default-fix target as GameEvents.ScreenLimit (the single-value predecessor this
         // keyframe track replaces) - mappers choose limitations for the screen themselves.
@@ -25,9 +25,17 @@ namespace BH.SDK.Models.Keyframes
         {
             ScreenLimit = screenLimit;
         }
-
-        public object Clone() => Copy();
-        public ScreenLimitKey Copy() => new(ScreenLimit.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            ScreenLimit = new ScreenLimitNone();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ScreenLimitKey ICopyable<ScreenLimitKey>.Copy() => CopyImpl();
+        
+        private ScreenLimitKey CopyImpl() => new(ScreenLimit.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is ScreenLimitKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ScreenLimit);

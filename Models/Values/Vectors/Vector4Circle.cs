@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector4Circle : IVector4, ICopyable<Vector4Circle>, IEquatable<Vector4Circle>
+    public class Vector4Circle : IVector4, IModel<Vector4Circle>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
@@ -29,17 +29,17 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.CoordW)]
         public float W { get; set; }
         
-        [RuleInRange(ValueRules.ZeroFloat, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Radius)]
         public float Radius { get; set; }
         
         public Vector4Circle()
         {
-            X = 0f;
-            Y = 0f;
-            Z = 0f;
-            W = 0f;
-            Radius = 1f;
+            X = ValueRules.FloatZero;
+            Y = ValueRules.FloatZero;
+            Z = ValueRules.FloatZero;
+            W = ValueRules.FloatZero;
+            Radius = ValueRules.FloatOne;
         }
         public Vector4Circle(float x, float y, float z, float w, float radius)
         {
@@ -48,6 +48,14 @@ namespace BH.SDK.Models.Values
             Z = z;
             W = w;
             Radius = radius;
+        }
+        public void Reset()
+        {
+            X = ValueRules.FloatZero;
+            Y = ValueRules.FloatZero;
+            Z = ValueRules.FloatZero;
+            W = ValueRules.FloatZero;
+            Radius = ValueRules.FloatOne;
         }
 
         public VectorType GetModelType() => VectorType.RandomCircle;

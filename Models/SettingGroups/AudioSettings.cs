@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class AudioSettings : IResetable, ICopyable<AudioSettings>, IMoveable<AudioSettings>, IEquatable<AudioSettings>
+    public class AudioSettings : IModel<AudioSettings>, IMoveable<AudioSettings>
     {
         [JsonProperty(Names.Volume)]
         [RuleInRange(0f, 1f)]

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class ZoomKey : Keyframe, ICopyable<ZoomKey>, IEquatable<ZoomKey>
+    public class ZoomKey : Keyframe, IModel<ZoomKey>
     {
         [RuleNotNull(typeof(FloatValue)), RuleIFloatInRange(ValueRules.MinZoom, ValueRules.MaxZoom)]
         [JsonProperty(Names.Float)]
@@ -24,9 +24,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Zoom = zoom;
         }
-
-        public object Clone() => Copy();
-        public ZoomKey Copy() => new(Zoom.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Zoom = new FloatValue();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ZoomKey ICopyable<ZoomKey>.Copy() => CopyImpl();
+        
+        private ZoomKey CopyImpl() => new(Zoom.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is ZoomKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Zoom);

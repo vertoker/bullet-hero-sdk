@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class IntMinMaxStep : IInt, ICopyable<IntMinMaxStep>, IEquatable<IntMinMaxStep>
+    public class IntMinMaxStep : IInt, IModel<IntMinMaxStep>
     {
         [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Min)]
@@ -21,21 +21,27 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.Max)]
         public int Max { get; set; }
         
-        [RuleInRange(ValueRules.ZeroInt, ValueRules.MaxIntValue)]
+        [RuleInRange(ValueRules.IntZero, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Step)]
         public int Step { get; set; }
 
         public IntMinMaxStep()
         {
-            Min = 0;
-            Max = 1;
-            Step = 1;
+            Min = ValueRules.IntZero;
+            Max = ValueRules.IntOne;
+            Step = ValueRules.IntOne;
         }
         public IntMinMaxStep(int min, int max, int step)
         {
             Min = min;
             Max = max;
             Step = step;
+        }
+        public void Reset()
+        {
+            Min = ValueRules.IntZero;
+            Max = ValueRules.IntOne;
+            Step = ValueRules.IntOne;
         }
 
         public IntType GetModelType() => IntType.RandomMinMaxStep;

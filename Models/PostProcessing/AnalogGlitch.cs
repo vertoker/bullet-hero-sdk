@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class AnalogGlitch : Keyframe, // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
-        ICopyable<AnalogGlitch>, IEquatable<AnalogGlitch>
+    public class AnalogGlitch : Keyframe, IModel<AnalogGlitch> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         [RuleInRange(PostProcessingRules.AnalogGlitch.ScanLineJitterMin,
             PostProcessingRules.AnalogGlitch.ScanLineJitterMax)]
@@ -49,9 +48,20 @@ namespace BH.SDK.Models.PostProcessing
             HorizontalShake = horizontalShake;
             ColorDrift = colorDrift;
         }
-
-        public object Clone() => Copy();
-        public AnalogGlitch Copy() => new(ScanLineJitter, VerticalJump, HorizontalShake, ColorDrift, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            ScanLineJitter = 0.5f;
+            VerticalJump = 0f;
+            HorizontalShake = 0f;
+            ColorDrift = 0f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        AnalogGlitch ICopyable<AnalogGlitch>.Copy() => CopyImpl();
+        
+        private AnalogGlitch CopyImpl() => new(ScanLineJitter, VerticalJump, HorizontalShake, ColorDrift, Frame, Ease);
 
         public override bool Equals(object obj) => obj is AnalogGlitch value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),

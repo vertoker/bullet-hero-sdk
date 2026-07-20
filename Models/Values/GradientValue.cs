@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class GradientValue : ICopyable<GradientValue>, IEquatable<GradientValue>
+    public class GradientValue : IModel<GradientValue>
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
         [JsonProperty(Names.ColorKeys)]
@@ -42,6 +42,13 @@ namespace BH.SDK.Models.Values
             AlphaKeys = alphaKeys;
             Mode = mode;
             ColorSpace = colorSpace;
+        }
+        public void Reset()
+        {
+            ColorKeys.Clear();
+            AlphaKeys.Clear();
+            Mode = GradientInterpolationMode.PerceptualBlend;
+            ColorSpace = GradientColorSpace.Linear;
         }
 
         public object Clone() => Copy();

@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
     [RuleContainer]
-    public class EffectsGraphicsSettings : BaseGraphicsSettings, IFrameable, IResetable,
-        ICopyable<EffectsGraphicsSettings>, IMoveable<EffectsGraphicsSettings>, IEquatable<EffectsGraphicsSettings>
+    public class EffectsGraphicsSettings : BaseGraphicsSettings, IFrameable,
+        IModel<EffectsGraphicsSettings>, IMoveable<EffectsGraphicsSettings>
     {
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
@@ -35,17 +35,21 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             FixedFramerate = fixedFramerate;
             MaxScrubTime = maxScrubTime;
         }
-        public void Reset()
+        public override void Reset()
         {
+            base.Reset();
             Render = true;
             FramerateTarget = FramerateTarget.Fixed;
             FixedFramerate = 50;
             MaxScrubTime = 0.5f;
         }
-
-        public object Clone() => Copy();
-        public EffectsGraphicsSettings Copy() => new(Render, FramerateTarget, FixedFramerate, MaxScrubTime);
-
+        
+        public override object Clone() => CopyImpl();
+        public override BaseGraphicsSettings Copy() => CopyImpl();
+        EffectsGraphicsSettings ICopyable<EffectsGraphicsSettings>.Copy() => CopyImpl();
+        
+        private EffectsGraphicsSettings CopyImpl() => new(Render, FramerateTarget, FixedFramerate, MaxScrubTime);
+        
         public void Pull(EffectsGraphicsSettings source)
         {
             Render = source.Render;

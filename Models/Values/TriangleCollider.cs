@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class TriangleCollider : ICopyable<TriangleCollider>, IEquatable<TriangleCollider>
+    public class TriangleCollider : IModel<TriangleCollider>
     {
         [RuleNotNull, RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Point1)]
@@ -40,6 +40,12 @@ namespace BH.SDK.Models.Values
             Point1 = point1;
             Point2 = point2;
             Point3 = point3;
+        }
+        public void Reset()
+        {
+            Point1 = new Vector2Value(-0.5f, -0.5f);
+            Point2 = new Vector2Value(0.5f, -0.5f);
+            Point3 = new Vector2Value(0.5f, 0.5f);
         }
 
         public object Clone() => Copy();

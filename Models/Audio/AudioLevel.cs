@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
@@ -11,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Audio
 {
     [RuleContainer]
-    public class AudioLevel : ICopyable<AudioLevel>, IEquatable<AudioLevel>
+    public class AudioLevel : IModel<AudioLevel>
     {
         [RuleNotNull]
         [JsonProperty(Names.Tracks)]
@@ -24,6 +23,10 @@ namespace BH.SDK.Models.Audio
         public AudioLevel(Dictionary<AudioId, LevelTrack> tracks)
         {
             Tracks = tracks;
+        }
+        public void Reset()
+        {
+            Tracks.Clear();
         }
 
         public object Clone() => Copy();

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class FloatMinMaxStep : IFloat, ICopyable<FloatMinMaxStep>, IEquatable<FloatMinMaxStep>
+    public class FloatMinMaxStep : IFloat, IModel<FloatMinMaxStep>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Min)]
@@ -21,21 +21,27 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.Max)]
         public float Max { get; set; }
         
-        [RuleInRange(ValueRules.ZeroFloat, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }
 
         public FloatMinMaxStep()
         {
-            Min = 0f;
-            Max = 1f;
-            Step = 1f;
+            Min = ValueRules.FloatZero;
+            Max = ValueRules.FloatOne;
+            Step = ValueRules.FloatOne;
         }
         public FloatMinMaxStep(float min, float max, float step)
         {
             Min = min;
             Max = max;
             Step = step;
+        }
+        public void Reset()
+        {
+            Min = ValueRules.FloatZero;
+            Max = ValueRules.FloatOne;
+            Step = ValueRules.FloatOne;
         }
 
         public FloatType GetModelType() => FloatType.RandomMinMaxStep;

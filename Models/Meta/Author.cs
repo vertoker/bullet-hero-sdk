@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Meta
 {
     [RuleContainer]
-    public class Author : ICopyable<Author>, IEquatable<Author>
+    public class Author : IModel<Author>
     {
         [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
@@ -19,7 +19,7 @@ namespace BH.SDK.Models.Meta
         [JsonProperty(Names.Url)]
         public string Url { get; set; }
         
-        // TODO add comment
+        // TODO add comment metadata
 
         public Author()
         {
@@ -30,6 +30,11 @@ namespace BH.SDK.Models.Meta
         {
             Name = name;
             Url = url;
+        }
+        public void Reset()
+        {
+            Name = new StringValue();
+            Url = string.Empty;
         }
 
         public object Clone() => Copy();

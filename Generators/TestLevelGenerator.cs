@@ -91,8 +91,8 @@ namespace BH.SDK.Generators
             };
             effectObject1.Positions.Add(new PosKey(new Vector2Value(2f, 0f), 0));
             effectObject1.Positions.Add(new PosKey(new Vector2Value(3f, 2f), 600));
-            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[0].ColorHDR = ColorValue.red;
-            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[1].ColorHDR = ColorValue.blue;
+            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[0].Color = ColorValue.red;
+            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[1].Color = ColorValue.blue;
 
             var allText = "\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz" +
                           "{|}~ ¡¢£¤¥¦§¨©ª«¬-®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóô" +
@@ -310,7 +310,7 @@ namespace BH.SDK.Generators
             var author = new Author(new StringLocalized(new StringLanguage("en", "vertoker"),
                 new StringLanguage("ru", "вертокер")), "vertoker.com");
             
-            var textureResourceMeta = new ResourceMeta(ResourceType.Texture, -1, 
+            var textureResourceMeta = new ResourceMeta(ResourceType.Texture, new TypedResourceId(-1), 
                 new StringValue("some texture"), new StringValue(), 
                 "https://commons.wikimedia.org/wiki/File:PNG_transparency_demonstration_1.png", 
                 new TypicalLicense(TypicalLicenseType.CC_BY_SA_3_0),
@@ -331,7 +331,7 @@ namespace BH.SDK.Generators
                     new(new StringValue("NaN"), string.Empty),
                     new(new StringValue("Luke Prowse"), string.Empty),
                 });*/
-            var audioResourceMeta = new ResourceMeta(ResourceType.Audio, -1,
+            var audioResourceMeta = new ResourceMeta(ResourceType.Audio, new TypedResourceId(-1),
                 new StringValue("six-seven"), new StringValue(),
                 "https://commons.wikimedia.org/wiki/File:%22six-seven%22.ogg",
                 new TypicalLicense(TypicalLicenseType.CC_BY_SA_4_0),
@@ -340,7 +340,7 @@ namespace BH.SDK.Generators
                 {
                     new(new StringValue("WhatADrag07"), "https://commons.wikimedia.org/wiki/User:WhatADrag07"),
                 });
-            var audioResource2Meta = new ResourceMeta(ResourceType.Audio, -2,
+            var audioResource2Meta = new ResourceMeta(ResourceType.Audio, new TypedResourceId(-2),
                 new StringValue("Spider Dance"), new StringValue(),
                 "https://www.youtube.com/watch?v=NH-GAwLAO30",
                 new TypicalLicense(TypicalLicenseType.Proprietary),
@@ -349,7 +349,7 @@ namespace BH.SDK.Generators
                 {
                     new(new StringValue("Toby Fox"), "https://x.com/tobyfox"),
                 });
-            var audioResource3Meta = new ResourceMeta(ResourceType.Audio, -3, 
+            var audioResource3Meta = new ResourceMeta(ResourceType.Audio, new TypedResourceId(-3), 
                 new StringValue("amogus"), 
                 new StringValue("Popular meme for "),
                 "https://www.youtube.com/watch?v=_dCvuaJEn5A",
@@ -362,7 +362,7 @@ namespace BH.SDK.Generators
                 {
                     new(new StringValue("MenesSlavos"), string.Empty),
                 });
-            var audioResource4Meta = new ResourceMeta(ResourceType.Audio, -4, 
+            var audioResource4Meta = new ResourceMeta(ResourceType.Audio, new TypedResourceId(-4), 
                 new StringValue("sugoma"), 
                 new StringValue(),
                 "https://www.youtube.com/watch?v=nFLjYnEba9E",
@@ -378,7 +378,7 @@ namespace BH.SDK.Generators
 
             var meta = new LevelMeta
             {
-                LevelGuid = Guid.NewGuid(),
+                LevelId = LevelId.NewGuid(),
                 LevelName = parameters.LevelName.Copy(),
                 LevelDescription = parameters.LevelDescription.Copy(),
                 LevelVersion = new Version(1, 0),

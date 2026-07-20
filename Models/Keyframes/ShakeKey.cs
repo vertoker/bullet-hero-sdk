@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class ShakeKey : Keyframe, ICopyable<ShakeKey>, IEquatable<ShakeKey>
+    public class ShakeKey : Keyframe, IModel<ShakeKey>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Intensity)]
@@ -51,9 +51,20 @@ namespace BH.SDK.Models.Keyframes
             IntensityX = intensityX;
             IntensityY = intensityY;
         }
-
-        public object Clone() => Copy();
-        public ShakeKey Copy() => new(Intensity, Speed, IntensityX, IntensityY, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Intensity = 1f;
+            Speed = 1f;
+            IntensityX = 1f;
+            IntensityY = 1f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ShakeKey ICopyable<ShakeKey>.Copy() => CopyImpl();
+        
+        private ShakeKey CopyImpl() => new(Intensity, Speed, IntensityX, IntensityY, Frame, Ease);
 
         public override bool Equals(object obj) => obj is ShakeKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),

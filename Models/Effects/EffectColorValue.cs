@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectColorValue : IEffectColor,
-        ICopyable<EffectColorValue>, IEquatable<EffectColorValue>
+    public class EffectColorValue : IEffectColor, IModel<EffectColorValue>
     {
         [RuleNotNull]
         [JsonProperty(Names.Color)]
@@ -33,6 +32,14 @@ namespace BH.SDK.Models.Effects
         public EffectColorValue(IColor color)
         {
             Color = color;
+        }
+        public void Reset()
+        {
+            Color = new ColorValue(
+                EffectRules.Color.A_R_Default,
+                EffectRules.Color.A_G_Default,
+                EffectRules.Color.A_B_Default,
+                EffectRules.Color.A_A_Default);
         }
 
         public object Clone() => Copy();

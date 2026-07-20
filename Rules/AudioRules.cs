@@ -9,6 +9,8 @@ namespace BH.SDK.Rules
         public const int MinAudioLayer = 0;
         public const int MaxAudioLayer = MaxFrameCount - 1;
         
+        public const float OffsetTimeDefault = 0f;
+        
         // -80f - 0f, 0.1f, dB;
         public const float MixLevel_Enabled = 0f;
         public const float MixLevel_Disabled = -80f;

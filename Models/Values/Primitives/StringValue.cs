@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class StringValue : IString, ICopyable<StringValue>, IEquatable<StringValue>
+    public class StringValue : IString, IModel<StringValue>
     {
         [RuleNotNull, RuleStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.ValueShort)]
@@ -24,6 +24,10 @@ namespace BH.SDK.Models.Values
         public StringValue(string value)
         {
             Value = value;
+        }
+        public void Reset()
+        {
+            Value = string.Empty;
         }
 
         public StringType GetModelType() => StringType.Value;

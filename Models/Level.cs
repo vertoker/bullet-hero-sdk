@@ -10,11 +10,11 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
-    // TODO allow null objects, this will save many space on serialization (don't forget about rules)
-    // TODO add IResetable
+    // TODO allow null objects, this will save many space on serialization
+    // TODO add MORE rules
     
     [RuleContainer]
-    public class Level : ILevel, ICopyable<Level>, IEquatable<Level>
+    public class Level : ILevel, IModel<Level>
     {
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
@@ -42,13 +42,19 @@ namespace BH.SDK.Models
             Audio = new AudioLevel();
             Resources = new LevelResources();
         }
-
         public Level(LevelSettings settings, GameLevel game, AudioLevel audio, LevelResources resources)
         {
             Settings = settings;
             Game = game;
             Audio = audio;
             Resources = resources;
+        }
+        public void Reset()
+        {
+            Settings.Reset();
+            Game.Reset();
+            Audio.Reset();
+            Resources.Reset();
         }
 
         public object Clone() => Copy();

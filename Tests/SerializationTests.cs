@@ -200,8 +200,8 @@ namespace BH.SDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(new AudioId(1), 0, 10,
-                0f, 0, "", new AudioResourceId(0), trackEffects);
+            var track = new LevelTrack(new AudioId(1), new AudioResourceId(0), 0, 10,
+                0f, 0, "", trackEffects);
             level.Audio.Tracks.Add(track.AudioId, track);
 
             return level;
@@ -290,8 +290,8 @@ namespace BH.SDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(new AudioId(1), 0, 1000,
-                0f, 0, "track", new AudioResourceId(0), trackEffects);
+            var track = new LevelTrack(new AudioId(1), new AudioResourceId(0), 0, 1000,
+                0f, 0, "track", trackEffects);
             level.Audio.Tracks.Add(track.AudioId, track);
 
             return level;
@@ -315,7 +315,7 @@ namespace BH.SDK.Tests
         public static LevelMeta CreateTestLevelMeta()
         {
             var meta = new LevelMeta();
-            meta.LevelGuid = Guid.NewGuid();
+            meta.LevelId = LevelId.NewGuid();
             meta.LevelVersion = new Version(1, 0);
             meta.LevelName = new StringValue("cool level");
             meta.LevelDescription = new StringValue("cool description");
@@ -329,7 +329,7 @@ namespace BH.SDK.Tests
                 new()
                 {
                     ResourceType = ResourceType.Audio,
-                    ResourceId = -1,
+                    ResourceId = new TypedResourceId(-1),
                     ResourceTitle = new StringValue("Spider Dance"),
                     ResourceDescription = new StringValue("Cool boss track from Undertale"),
                     ResourceUrl = "https://www.youtube.com/watch?v=NH-GAwLAO30",
@@ -353,7 +353,7 @@ namespace BH.SDK.Tests
                 new()
                 {
                     ResourceType = ResourceType.Audio,
-                    ResourceId = -1,
+                    ResourceId = new TypedResourceId(-1),
                     ResourceTitle = null,
                     ResourceDescription = null,
                     ResourceUrl = null,

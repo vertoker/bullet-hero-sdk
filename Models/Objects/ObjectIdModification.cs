@@ -1,7 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
-using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -10,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class ObjectIdModification : ICopyable<ObjectIdModification>, IEquatable<ObjectIdModification>
+    public class ObjectIdModification : IModel<ObjectIdModification>
     {
         [RuleObjectIdValid]
         [JsonProperty(Names.PrevObjectId)]
@@ -29,6 +28,11 @@ namespace BH.SDK.Models.Objects
         {
             PrevObjectId = prevObjectId;
             NextObjectId = nextObjectId;
+        }
+        public void Reset()
+        {
+            PrevObjectId = ObjectId.Null;
+            NextObjectId = ObjectId.Null;
         }
 
         public object Clone() => Copy();

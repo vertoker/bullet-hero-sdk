@@ -14,6 +14,10 @@ namespace BH.SDK.Models.Primitives
         {
             this.value = value;
         }
+        public void Reset()
+        {
+            value = NullValue;
+        }
         
         // ObjectId - stable identifier for saving.
         // Unique only inside each object scope. Can be referred (as pid) only in scope.

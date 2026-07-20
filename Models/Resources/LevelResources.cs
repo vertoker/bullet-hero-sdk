@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
-    public class LevelResources : ICopyable<LevelResources>, IEquatable<LevelResources>
+    public class LevelResources : IModel<LevelResources>
     {
         [RuleNotNull]
         [JsonProperty(Names.Textures)]
@@ -64,6 +64,15 @@ namespace BH.SDK.Models.Resources
             CompositeShapes = compositeShapes;
             Themes = themes;
             Prefabs = prefabs;
+        }
+        public void Reset()
+        {
+            Textures.Clear();
+            Fonts.Clear();
+            Audios.Clear();
+            CompositeShapes.Clear();
+            Themes.Clear();
+            Prefabs.Clear();
         }
 
         public object Clone() => Copy();

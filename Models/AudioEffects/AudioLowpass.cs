@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioLowpass : AudioEffect, ICopyable<AudioLowpass>, IEquatable<AudioLowpass>
+    public class AudioLowpass : AudioEffect, IModel<AudioLowpass>
     {
         [RuleInRange(AudioRules.Lowpass.CutoffFreq_Min, AudioRules.Lowpass.CutoffFreq_Max)]
         [JsonProperty(Names.CutoffFreq)]
@@ -23,9 +23,17 @@ namespace BH.SDK.Models.AudioEffects
         {
             CutoffFreq = cutoffFreq;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            CutoffFreq = AudioRules.Lowpass.CutoffFreq_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioLowpass Copy() => new(MixLevel, CutoffFreq);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioLowpass ICopyable<AudioLowpass>.Copy() => CopyImpl();
+
+        private AudioLowpass CopyImpl() => new(MixLevel, CutoffFreq);
 
         public override bool Equals(object obj) => obj is AudioLowpass value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), CutoffFreq);

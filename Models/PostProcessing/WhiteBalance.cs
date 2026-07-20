@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class WhiteBalance : Keyframe,
-        ICopyable<WhiteBalance>, IEquatable<WhiteBalance>
+    public class WhiteBalance : Keyframe, IModel<WhiteBalance>
     {
         [RuleInRange(PostProcessingRules.WhiteBalance.TemperatureMin,
             PostProcessingRules.WhiteBalance.TemperatureMax)]
@@ -35,9 +34,18 @@ namespace BH.SDK.Models.PostProcessing
             Temperature = temperature;
             Tint = tint;
         }
-
-        public object Clone() => Copy();
-        public WhiteBalance Copy() => new(Temperature, Tint, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Temperature = 0f;
+            Tint = 0f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        WhiteBalance ICopyable<WhiteBalance>.Copy() => CopyImpl();
+        
+        private WhiteBalance CopyImpl() => new(Temperature, Tint, Frame, Ease);
 
         public override bool Equals(object obj) => obj is WhiteBalance value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Temperature, Tint);

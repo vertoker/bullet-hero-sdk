@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class CompositeCollider : ICopyable<CompositeCollider>, IEquatable<CompositeCollider>
+    public class CompositeCollider : IModel<CompositeCollider>
     {
         [RuleIPrimitiveIntMax(ColliderId.MaxUserDefinedValue)]
         [JsonProperty(Names.ColliderId)]
@@ -38,6 +38,12 @@ namespace BH.SDK.Models.Values
             ColliderId = colliderId;
             ColliderName = colliderName;
             Triangles = triangles;
+        }
+        public void Reset()
+        {
+            ColliderId = ColliderId.Null;
+            ColliderName = string.Empty;
+            Triangles.Clear();
         }
 
         public object Clone() => Copy();

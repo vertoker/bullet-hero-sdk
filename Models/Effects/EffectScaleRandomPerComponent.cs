@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectScaleRandomPerComponent : IEffectScale,
-        ICopyable<EffectScaleRandomPerComponent>, IEquatable<EffectScaleRandomPerComponent>
+    public class EffectScaleRandomPerComponent : IEffectScale, IModel<EffectScaleRandomPerComponent>
     {
         [RuleNotNull]
         [JsonProperty(Names.ScaleX)]
@@ -39,6 +38,15 @@ namespace BH.SDK.Models.Effects
         {
             ScaleA = scaleA;
             ScaleB = scaleB;
+        }
+        public void Reset()
+        {
+            ScaleA = new Vector2Value(
+                EffectRules.Scale.A_X_Default, 
+                EffectRules.Scale.A_Y_Default);
+            ScaleB = new Vector2Value(
+                EffectRules.Scale.B_X_Default, 
+                EffectRules.Scale.B_Y_Default);
         }
 
         public object Clone() => Copy();

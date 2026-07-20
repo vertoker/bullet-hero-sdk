@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectAngleValue : IEffectAngle,
-        ICopyable<EffectAngleValue>, IEquatable<EffectAngleValue>
+    public class EffectAngleValue : IEffectAngle, IModel<EffectAngleValue>
     {
         [RuleNotNull]
         [JsonProperty(Names.Angle)]
@@ -33,6 +32,10 @@ namespace BH.SDK.Models.Effects
         public EffectAngleValue(IFloat angle)
         {
             Angle = angle;
+        }
+        public void Reset()
+        {
+            Angle = new FloatValue(EffectRules.Angle.A_Default);
         }
 
         public object Clone() => Copy();

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class LayerKey : Keyframe, ICopyable<LayerKey>, IEquatable<LayerKey>
+    public class LayerKey : Keyframe, IModel<LayerKey>
     {
         [RuleNotNull(typeof(IntValue)), RuleIIntInRange(ValueRules.MinLayer, ValueRules.MaxLayer)]
         [JsonProperty(Names.Int)]
@@ -24,9 +24,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Layer = value;
         }
-
-        public object Clone() => Copy();
-        public LayerKey Copy() => new(Layer.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Layer = new IntValue();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        LayerKey ICopyable<LayerKey>.Copy() => CopyImpl();
+        
+        private LayerKey CopyImpl() => new(Layer.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is LayerKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Layer);

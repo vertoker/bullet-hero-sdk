@@ -6,8 +6,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class GameEditorSettings : IResetable,
-        ICopyable<GameEditorSettings>, IMoveable<GameEditorSettings>, IEquatable<GameEditorSettings>
+    public class GameEditorSettings : IModel<GameEditorSettings>, IMoveable<GameEditorSettings>
     {
         // Savings
         

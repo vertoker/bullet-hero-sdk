@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
-    public class PostProcessingEvents : ICopyable<PostProcessingEvents>, IEquatable<PostProcessingEvents>
+    public class PostProcessingEvents : IModel<PostProcessingEvents>
     {
         // General
         
@@ -88,12 +88,10 @@ namespace BH.SDK.Models.Game
             Lenses = new List<LensDistortion>();
             Grains = new List<FilmGrain>();
             MotionBlurs = new List<MotionBlur>();
-            
             ColorCurveses = new List<ColorCurves>();
             LiftGammaGains = new List<LiftGammaGain>();
             ShadowsMidtonesHighlightses = new List<ShadowsMidtonesHighlights>();
             WhiteBalances = new List<WhiteBalance>();
-            
             AnalogGlitches = new List<AnalogGlitch>();
             DigitalGlitches = new List<DigitalGlitch>();
         }
@@ -122,6 +120,21 @@ namespace BH.SDK.Models.Game
             WhiteBalances = whiteBalances;
             AnalogGlitches = analogGlitches;
             DigitalGlitches = digitalGlitches;
+        }
+        public void Reset()
+        {
+            Blooms.Clear();
+            Chromas.Clear();
+            Vignettes.Clear();
+            Lenses.Clear();
+            Grains.Clear();
+            MotionBlurs.Clear();
+            ColorCurveses.Clear();
+            LiftGammaGains.Clear();
+            ShadowsMidtonesHighlightses.Clear();
+            WhiteBalances.Clear();
+            AnalogGlitches.Clear();
+            DigitalGlitches.Clear();
         }
 
         public object Clone() => Copy();

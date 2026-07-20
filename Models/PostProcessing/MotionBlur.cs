@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class MotionBlur : Keyframe, // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
-        ICopyable<MotionBlur>, IEquatable<MotionBlur>
+    public class MotionBlur : Keyframe, IModel<MotionBlur> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Quality (client settings variable, he set it himself)
         
@@ -27,14 +26,21 @@ namespace BH.SDK.Models.PostProcessing
         {
             Intensity = 1f;
         }
-        public MotionBlur(float intensity,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public MotionBlur(float intensity, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Intensity = intensity;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            Intensity = 1f;
+        }
 
-        public object Clone() => Copy();
-        public MotionBlur Copy() => new(Intensity, Frame, Ease);
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        MotionBlur ICopyable<MotionBlur>.Copy() => CopyImpl();
+        
+        private MotionBlur CopyImpl() => new(Intensity, Frame, Ease);
 
         public override bool Equals(object obj) => obj is MotionBlur value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity);

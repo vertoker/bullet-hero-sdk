@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class GradientAlphaKeyValue : ICopyable<GradientAlphaKeyValue>, IEquatable<GradientAlphaKeyValue>
+    public class GradientAlphaKeyValue : IModel<GradientAlphaKeyValue>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.AlphaShort)]
@@ -21,13 +21,18 @@ namespace BH.SDK.Models.Values
         
         public GradientAlphaKeyValue()
         {
-            Alpha = 1f;
-            Time = 0f;
+            Alpha = ValueRules.FloatOne;
+            Time = ValueRules.FloatZero;
         }
         public GradientAlphaKeyValue(float alpha, float time)
         {
             Alpha = alpha;
             Time = time;
+        }
+        public void Reset()
+        {
+            Alpha = ValueRules.FloatOne;
+            Time = ValueRules.FloatZero;
         }
 
         public object Clone() => Copy();

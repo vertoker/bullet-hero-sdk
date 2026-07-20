@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector4Value : IVector4, ICopyable<Vector4Value>, IEquatable<Vector4Value>
+    public class Vector4Value : IVector4, IModel<Vector4Value>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
@@ -34,10 +34,10 @@ namespace BH.SDK.Models.Values
         
         public Vector4Value()
         {
-            X = 0f;
-            Y = 0f;
-            Z = 0f;
-            W = 0f;
+            X = ValueRules.FloatZero;
+            Y = ValueRules.FloatZero;
+            Z = ValueRules.FloatZero;
+            W = ValueRules.FloatZero;
         }
         public Vector4Value(float x, float y, float z, float w)
         {
@@ -45,6 +45,13 @@ namespace BH.SDK.Models.Values
             Y = y;
             Z = z;
             W = w;
+        }
+        public void Reset()
+        {
+            X = ValueRules.FloatZero;
+            Y = ValueRules.FloatZero;
+            Z = ValueRules.FloatZero;
+            W = ValueRules.FloatZero;
         }
 
         public VectorType GetModelType() => VectorType.Value;

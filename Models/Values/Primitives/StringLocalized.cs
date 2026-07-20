@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class StringLocalized : IString, ICopyable<StringLocalized>, IEquatable<StringLocalized>
+    public class StringLocalized : IString, IModel<StringLocalized>
     {
         [RuleNotNull, RuleCollectionUnique(nameof(StringLanguage.LanguageCode))]
         [JsonProperty(Names.Strings)]
@@ -28,6 +28,10 @@ namespace BH.SDK.Models.Values
         public StringLocalized(List<StringLanguage> strings)
         {
             Strings = strings;
+        }
+        public void Reset()
+        {
+            Strings.Clear();
         }
 
         public StringType GetModelType() => StringType.Localized;

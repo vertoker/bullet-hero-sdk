@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioParamEQ : AudioEffect, ICopyable<AudioParamEQ>, IEquatable<AudioParamEQ>
+    public class AudioParamEQ : AudioEffect, IModel<AudioParamEQ>
     {
         [RuleInRange(AudioRules.ParamEQ.CenterFreq_Min, AudioRules.ParamEQ.CenterFreq_Max)]
         [JsonProperty(Names.CenterFreq)]
@@ -36,9 +36,19 @@ namespace BH.SDK.Models.AudioEffects
             OctaveRange = octaveRange;
             FrequencyGain = frequencyGain;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            CenterFreq = AudioRules.ParamEQ.CenterFreq_Default;
+            OctaveRange = AudioRules.ParamEQ.OctaveRange_Default;
+            FrequencyGain = AudioRules.ParamEQ.FrequencyGain_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioParamEQ Copy() => new(MixLevel, CenterFreq, OctaveRange, FrequencyGain);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioParamEQ ICopyable<AudioParamEQ>.Copy() => CopyImpl();
+
+        private AudioParamEQ CopyImpl() => new(MixLevel, CenterFreq, OctaveRange, FrequencyGain);
 
         public override bool Equals(object obj) => obj is AudioParamEQ value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), CenterFreq, OctaveRange, FrequencyGain);

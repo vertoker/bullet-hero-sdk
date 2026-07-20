@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector4RectStep : IVector4, ICopyable<Vector4RectStep>, IEquatable<Vector4RectStep>
+    public class Vector4RectStep : IVector4, IModel<Vector4RectStep>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
@@ -45,23 +45,23 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.MaxW)]
         public float MaxW { get; set; }
         
-        [RuleInRange(ValueRules.ZeroFloat, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }
 
         public Vector4RectStep()
         {
-            MinX = 0f;
-            MinY = 0f;
-            MinZ = 0f;
-            MinW = 0f;
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
+            MinW = ValueRules.FloatZero;
             
-            MaxX = 1f;
-            MaxY = 1f;
-            MaxZ = 1f;
-            MaxW = 1f;
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
+            MaxW = ValueRules.FloatOne;
             
-            Step = 1f;
+            Step = ValueRules.FloatOne;
         }
         public Vector4RectStep(float minX, float minY, float minZ, float minW, 
             float maxX, float maxY, float maxZ, float maxW, float step)
@@ -77,6 +77,20 @@ namespace BH.SDK.Models.Values
             MaxW = maxW;
             
             Step = step;
+        }
+        public void Reset()
+        {
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
+            MinW = ValueRules.FloatZero;
+            
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
+            MaxW = ValueRules.FloatOne;
+            
+            Step = ValueRules.FloatOne;
         }
 
         public VectorType GetModelType() => VectorType.RandomRectStep;

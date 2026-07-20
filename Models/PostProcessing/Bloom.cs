@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class Bloom : Keyframe, // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
-        ICopyable<Bloom>, IEquatable<Bloom>
+    public class Bloom : Keyframe, IModel<Bloom> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Threshold - 0 (always, not a parameter)
         
@@ -47,9 +46,19 @@ namespace BH.SDK.Models.PostProcessing
             Scatter = scatter;
             Color = color;
         }
-
-        public object Clone() => Copy();
-        public Bloom Copy() => new(Intensity, Scatter, Color.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Intensity = 0.5f;
+            Scatter = 0.5f;
+            Color = ColorValue.red;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        Bloom ICopyable<Bloom>.Copy() => CopyImpl();
+        
+        private Bloom CopyImpl() => new(Intensity, Scatter, Color.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is Bloom value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Scatter, Color);

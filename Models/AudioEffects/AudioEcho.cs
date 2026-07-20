@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioEcho : AudioEffect, ICopyable<AudioEcho>, IEquatable<AudioEcho>
+    public class AudioEcho : AudioEffect, IModel<AudioEcho>
     {
         [RuleInRange(AudioRules.Echo.Delay_Min, AudioRules.Echo.Delay_Max)]
         [JsonProperty(Names.Delay)]
@@ -48,9 +48,21 @@ namespace BH.SDK.Models.AudioEffects
             DryMix = dryMix;
             WetMix = wetMix;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            Delay = AudioRules.Echo.Delay_Default;
+            Decay = AudioRules.Echo.Decay_Default;
+            MaxChannels = AudioRules.Echo.MaxChannels_Default;
+            DryMix = AudioRules.Echo.DryMix_Default;
+            WetMix = AudioRules.Echo.WetMix_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioEcho Copy() => new(MixLevel, Delay, Decay, MaxChannels, DryMix, WetMix);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioEcho ICopyable<AudioEcho>.Copy() => CopyImpl();
+
+        private AudioEcho CopyImpl() => new(MixLevel, Delay, Decay, MaxChannels, DryMix, WetMix);
 
         public override bool Equals(object obj) => obj is AudioEcho value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Delay, Decay, MaxChannels, DryMix, WetMix);

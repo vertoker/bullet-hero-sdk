@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeLine : IEffectShape,
-        ICopyable<EffectShapeLine>, IEquatable<EffectShapeLine>
+    public class EffectShapeLine : IEffectShape, IModel<EffectShapeLine>
     {
         [RuleNotNull]
         [JsonProperty(Names.Start)]
@@ -45,6 +44,16 @@ namespace BH.SDK.Models.Effects
             Start = start;
             End = end;
             Spread = spread;
+        }
+        public void Reset()
+        {
+            Start = new Vector2Value(
+                EffectRules.Shape.LineStart_X_Default,
+                EffectRules.Shape.LineStart_Y_Default);
+            End = new Vector2Value(
+                EffectRules.Shape.LineEnd_X_Default,
+                EffectRules.Shape.LineEnd_Y_Default);
+            Spread = new EffectShapeSpreadRandom();
         }
 
         public object Clone() => Copy();

@@ -12,8 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectColorGradientOverLife : IEffectColor,
-        ICopyable<EffectColorGradientOverLife>, IEquatable<EffectColorGradientOverLife>
+    public class EffectColorGradientOverLife : IEffectColor, IModel<EffectColorGradientOverLife>
     {
         [RuleNotNull]
         [JsonProperty(Names.Gradient)]
@@ -28,6 +27,10 @@ namespace BH.SDK.Models.Effects
         public EffectColorGradientOverLife(GradientValue gradient)
         {
             Gradient = gradient;
+        }
+        public void Reset()
+        {
+            Gradient = EffectRules.GetGradient_Default();
         }
 
         public object Clone() => Copy();

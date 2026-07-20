@@ -6,6 +6,7 @@ using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Meta;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
@@ -18,14 +19,14 @@ namespace BH.SDK.Models
     // TODO add IResetable (and tests)
     
     [RuleContainer]
-    public class LevelMeta : ILevelMeta, ICopyable<LevelMeta>, IEquatable<LevelMeta>
+    public class LevelMeta : ILevelMeta, IModel<LevelMeta>
     {
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
         
         [RuleGuidNotEmpty]
-        [JsonProperty(Names.LevelGuid)]
-        public Guid LevelGuid { get; set; }
+        [JsonProperty(Names.LevelId)]
+        public LevelId LevelId { get; set; }
         
         [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Name)]
@@ -61,7 +62,7 @@ namespace BH.SDK.Models
 
         public LevelMeta()
         {
-            LevelGuid = Guid.NewGuid();
+            LevelId = LevelId.NewId();
             LevelName = new StringValue();
             LevelDescription = new StringValue();
             LevelLogo = new ResourceKey(ResourceUriType.LevelPath, FileNames.LogoFileNamePng);
@@ -70,10 +71,10 @@ namespace BH.SDK.Models
             LevelAuthors = new List<Author>();
             ResourcesMeta = new List<ResourceMeta>();
         }
-        public LevelMeta(Guid levelGuid, IString levelName, IString levelDescription, ResourceKey levelLogo,
+        public LevelMeta(LevelId levelId, IString levelName, IString levelDescription, ResourceKey levelLogo,
             Version levelVersion, ILicense levelLicense, List<Author> levelAuthors, List<ResourceMeta> resourcesMeta)
         {
-            LevelGuid = levelGuid;
+            LevelId = levelId;
             LevelName = levelName;
             LevelDescription = levelDescription;
             LevelLogo = levelLogo;
@@ -82,14 +83,25 @@ namespace BH.SDK.Models
             LevelAuthors = levelAuthors;
             ResourcesMeta = resourcesMeta;
         }
+        public void Reset()
+        {
+            LevelId = LevelId.NewId();
+            LevelName = new StringValue();
+            LevelDescription = new StringValue();
+            LevelLogo = new ResourceKey(ResourceUriType.LevelPath, FileNames.LogoFileNamePng);
+            LevelVersion = new Version(1, 0);
+            LevelLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
+            LevelAuthors = new List<Author>();
+            ResourcesMeta = new List<ResourceMeta>();
+        }
 
         public object Clone() => Copy();
-        public LevelMeta Copy() => new(LevelGuid, LevelName.Copy(), LevelDescription.Copy(),
+        public LevelMeta Copy() => new(LevelId, LevelName.Copy(), LevelDescription.Copy(),
             LevelLogo.Copy(), (Version)LevelVersion.Clone(), LevelLicense.Copy(),
             LevelAuthors.CopyList(), ResourcesMeta.CopyList());
 
         public override bool Equals(object obj) => obj is LevelMeta value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(LevelGuid, LevelName.Copy(), LevelDescription.Copy(),
+        public override int GetHashCode() => HashCode.Combine(LevelId, LevelName.Copy(), LevelDescription.Copy(),
             LevelLogo.Copy(), LevelVersion, LevelLicense.Copy(),
             LevelAuthors.GetListHashCode(), ResourcesMeta.GetListHashCode());
 
@@ -97,7 +109,7 @@ namespace BH.SDK.Models
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = LevelGuid.Equals(other.LevelGuid) 
+            var result = LevelId.Equals(other.LevelId) 
                          && LevelName.Equals(other.LevelName)
                          && LevelDescription.Equals(other.LevelDescription)
                          && LevelLogo.Equals(other.LevelLogo)

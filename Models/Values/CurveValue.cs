@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class CurveValue : ICopyable<CurveValue>, IEquatable<CurveValue>
+    public class CurveValue : IModel<CurveValue>
     {
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCurveKeys)]
         [JsonProperty(Names.Keys)]
@@ -35,6 +35,12 @@ namespace BH.SDK.Models.Values
             KeyFrames = keyFrames;
             PreWrapMode = preWrapMode;
             PostWrapMode = postWrapMode;
+        }
+        public void Reset()
+        {
+            KeyFrames.Clear();
+            PreWrapMode = CurveWrapMode.Default;
+            PostWrapMode = CurveWrapMode.Default;
         }
         
         public object Clone() => Copy();

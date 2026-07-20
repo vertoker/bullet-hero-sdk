@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class PrefabObject : ICopyable<PrefabObject>, IEquatable<PrefabObject>
+    public class PrefabObject : IModel<PrefabObject>
     {
         // In build process, this PrefabObject converted to RectObject
         // 1. Loaded SourcePrefab to runtime model
@@ -38,6 +38,12 @@ namespace BH.SDK.Models.Objects
             PrefabId = prefabId;
             ObjectIds = objectIds;
             Modifications = modifications;
+        }
+        public void Reset()
+        {
+            PrefabId = PrefabId.Null;
+            ObjectIds.Clear();
+            Modifications.Clear();
         }
 
         public object Clone() => Copy();

@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class ColorHorizontalKey : Keyframe, IColor4X4Key, ICopyable<ColorHorizontalKey>, IEquatable<ColorHorizontalKey>
+    public class ColorHorizontalKey : Keyframe, IColor4X4Key, IModel<ColorHorizontalKey>
     {
         [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.ColorLeft)]
@@ -38,12 +38,21 @@ namespace BH.SDK.Models.Keyframes
             ColorLeft = colorLeft;
             ColorRight = colorRight;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            ColorLeft = ColorValue.white;
+            ColorRight = ColorValue.white;
+        }
         
         public Color4X4KeyType GetModelType() => Color4X4KeyType.Horizontal;
-
-        public object Clone() => Copy();
-        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => Copy();
-        public ColorHorizontalKey Copy() => new(ColorLeft.Copy(), ColorRight.Copy(), Frame, Ease);
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ColorHorizontalKey ICopyable<ColorHorizontalKey>.Copy() => CopyImpl();
+        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => CopyImpl();
+        
+        private ColorHorizontalKey CopyImpl() => new(ColorLeft.Copy(), ColorRight.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is ColorHorizontalKey value && Equals(value);
         public bool Equals(IColor4X4Key other) => other is ColorHorizontalKey value && Equals(value);

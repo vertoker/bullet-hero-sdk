@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class ScreenLimitFixed : IScreenLimit, ICopyable<ScreenLimitFixed>, IEquatable<ScreenLimitFixed>
+    public class ScreenLimitFixed : IScreenLimit, IModel<ScreenLimitFixed>
     {
         [RuleNotNull]
         [JsonProperty(Names.Aspect)]
@@ -28,6 +28,10 @@ namespace BH.SDK.Models.Values
         public ScreenLimitFixed(ScreenAspect aspect)
         {
             Aspect = aspect;
+        }
+        public void Reset()
+        {
+            Aspect.Reset();
         }
 
         public object Clone() => Copy();

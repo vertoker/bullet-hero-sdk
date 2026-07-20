@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
-    public class TextResource : Resource, ICopyable<TextResource>, IEquatable<TextResource>
+    public class TextResource : Resource, IModel<TextResource>
     {
         [RuleIPrimitiveIntMax(TextResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.TextResourceId)]
@@ -28,9 +28,17 @@ namespace BH.SDK.Models.Resources
         {
             TextResourceId = textResourceId;
         }
-
-        public object Clone() => Copy();
-        public TextResource Copy() => new(TextResourceId, Sources.CopyList());
+        public override void Reset()
+        {
+            base.Reset();
+            TextResourceId.Reset();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Resource Copy() => CopyImpl();
+        TextResource ICopyable<TextResource>.Copy() => CopyImpl();
+        
+        private TextResource CopyImpl() => new(TextResourceId, Sources.CopyList());
 
         public override bool Equals(object obj) => obj is TextResource value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), TextResourceId);

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector4Rect : IVector4, ICopyable<Vector4Rect>, IEquatable<Vector4Rect>
+    public class Vector4Rect : IVector4, IModel<Vector4Rect>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
@@ -47,15 +47,15 @@ namespace BH.SDK.Models.Values
 
         public Vector4Rect()
         {
-            MinX = 0f;
-            MinY = 0f;
-            MinZ = 0f;
-            MinW = 0f;
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
+            MinW = ValueRules.FloatZero;
             
-            MaxX = 1f;
-            MaxY = 1f;
-            MaxZ = 1f;
-            MaxW = 1f;
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
+            MaxW = ValueRules.FloatOne;
         }
         public Vector4Rect(float minX, float minY, float minZ, float minW, 
             float maxX, float maxY, float maxZ, float maxW)
@@ -69,6 +69,18 @@ namespace BH.SDK.Models.Values
             MaxY = maxY;
             MaxZ = maxZ;
             MaxW = maxW;
+        }
+        public void Reset()
+        {
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
+            MinW = ValueRules.FloatZero;
+            
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
+            MaxW = ValueRules.FloatOne;
         }
 
         public VectorType GetModelType() => VectorType.RandomRect;

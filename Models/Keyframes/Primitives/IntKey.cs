@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class IntKey : Keyframe, ICopyable<IntKey>, IEquatable<IntKey>
+    public class IntKey : Keyframe, IModel<IntKey>
     {
         [RuleNotNull(typeof(IntValue))]
         [JsonProperty(Names.Int)]
@@ -25,9 +25,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Value = value;
         }
-
-        public object Clone() => Copy();
-        public IntKey Copy() => new(Value.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Value = new IntValue();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        IntKey ICopyable<IntKey>.Copy() => CopyImpl();
+        
+        private IntKey CopyImpl() => new(Value.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is IntKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);

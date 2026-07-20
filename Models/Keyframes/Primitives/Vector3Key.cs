@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Vector3Key : Keyframe, ICopyable<Vector3Key>, IEquatable<Vector3Key>
+    public class Vector3Key : Keyframe, IModel<Vector3Key>
     {
         [RuleNotNull(typeof(Vector3Value))]
         [JsonProperty(Names.Vector3)]
@@ -24,9 +24,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Value = value;
         }
-
-        public object Clone() => Copy();
-        public Vector3Key Copy() => new(Value.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Value = new Vector3Value();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        Vector3Key ICopyable<Vector3Key>.Copy() => CopyImpl();
+        
+        private Vector3Key CopyImpl() => new(Value.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is Vector3Key value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);

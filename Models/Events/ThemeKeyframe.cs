@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Events
 {
     [RuleContainer]
-    public class ThemeKeyframe : Keyframe, ICopyable<ThemeKeyframe>, IEquatable<ThemeKeyframe>
+    public class ThemeKeyframe : Keyframe, IModel<ThemeKeyframe>
     {
         [JsonProperty(Names.ThemeId)]
         public ThemeId ThemeId { get; set; }
@@ -24,10 +24,18 @@ namespace BH.SDK.Models.Events
         {
             ThemeId = themeId;
         }
-
-        public object Clone() => Copy();
-        public ThemeKeyframe Copy() => new(ThemeId, Frame, Ease);
-
+        public override void Reset()
+        {
+            base.Reset();
+            ThemeId.Reset();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ThemeKeyframe ICopyable<ThemeKeyframe>.Copy() => CopyImpl();
+        
+        private ThemeKeyframe CopyImpl() => new(ThemeId, Frame, Ease);
+        
         public bool Equals(ThemeKeyframe other)
         {
             if (other is null) return false;

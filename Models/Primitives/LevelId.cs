@@ -5,16 +5,16 @@ using BH.SDK.Models.Interfaces.Primitives;
 namespace BH.SDK.Models.Primitives
 {
     [Serializable]
-    public struct PrefabId : IEquatable<PrefabId>, IPrimitiveGuid
+    public struct LevelId : IEquatable<LevelId>, IPrimitiveGuid
     {
         public Guid value;
         Guid IPrimitiveGuid.Value => value;
 
-        public PrefabId(Guid value)
+        public LevelId(Guid value)
         {
             this.value = value;
         }
-        public PrefabId(string str)
+        public LevelId(string str)
         {
             value = new Guid(str);
         }
@@ -23,15 +23,14 @@ namespace BH.SDK.Models.Primitives
             value = NullValue;
         }
 
-        // Prefab ids are a stable identifier for a Prefab entry (Level.Resources.Prefabs) - what
-        // PrefabObject.PrefabGuid references back to. Unlike the int-based ids (ColliderId,
-        // ThemeId, ...) there is no game-defined/user-defined range split - prefabs are always
-        // per-level authored data, and a Guid has no meaningful "positive/negative" ordering to
-        // split on anyway. Guid.Empty is the only reserved/Null value.
+        // Level ids are a stable identifier for a Level (replaces LevelMeta.LevelGuid). Unlike the
+        // int-based ids (ColliderId, ThemeId, ...) there is no game-defined/user-defined range
+        // split - levels are always standalone authored data, and a Guid has no meaningful
+        // "positive/negative" ordering to split on anyway. Guid.Empty is the only reserved/Null value.
 
         public static readonly Guid NullValue = Guid.Empty;
-        
-        public static readonly PrefabId Null = new(NullValue);
+
+        public static readonly LevelId Null = new(NullValue);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEnabled() => value != NullValue;
@@ -40,28 +39,28 @@ namespace BH.SDK.Models.Primitives
         public static bool IsEnabled(Guid value) => value != NullValue;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PrefabId NewId() => new(Guid.NewGuid());
+        public static LevelId NewId() => new(Guid.NewGuid());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PrefabId NewGuid() => new(Guid.NewGuid());
+        public static LevelId NewGuid() => new(Guid.NewGuid());
 
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(PrefabId a, PrefabId b) => a.value == b.value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(PrefabId a, PrefabId b) => a.value != b.value;
+        public static bool operator ==(LevelId a, LevelId b) => a.value == b.value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(PrefabId other) => value == other.value;
+        public static bool operator !=(LevelId a, LevelId b) => a.value != b.value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool Equals(object obj) => obj is PrefabId other && Equals(other);
+        public bool Equals(LevelId other) => value == other.value;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj) => obj is LevelId other && Equals(other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode() => value.GetHashCode();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override string ToString() => $"{nameof(PrefabId)}={value}";
+        public override string ToString() => $"{nameof(LevelId)}={value}";
     }
 }

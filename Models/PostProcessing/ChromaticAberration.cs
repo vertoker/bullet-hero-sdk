@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ChromaticAberration : Keyframe,
-        ICopyable<ChromaticAberration>, IEquatable<ChromaticAberration>
+    public class ChromaticAberration : Keyframe, IModel<ChromaticAberration>
     {
         [RuleInRange(PostProcessingRules.ChromaticAberration.IntensityMin,
             PostProcessingRules.ChromaticAberration.IntensityMax)]
@@ -28,9 +27,17 @@ namespace BH.SDK.Models.PostProcessing
         {
             Intensity = intensity;
         }
-
-        public object Clone() => Copy();
-        public ChromaticAberration Copy() => new(Intensity, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Intensity = 1.0f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ChromaticAberration ICopyable<ChromaticAberration>.Copy() => CopyImpl();
+        
+        private ChromaticAberration CopyImpl() => new(Intensity, Frame, Ease);
 
         public override bool Equals(object obj) => obj is ChromaticAberration value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity);

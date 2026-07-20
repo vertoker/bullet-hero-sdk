@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class ColorVerticalKey : Keyframe, IColor4X4Key, ICopyable<ColorVerticalKey>, IEquatable<ColorVerticalKey>
+    public class ColorVerticalKey : Keyframe, IColor4X4Key, IModel<ColorVerticalKey>
     {
         [RuleNotNull(typeof(ColorValue))]
         [JsonProperty(Names.ColorBottom)]
@@ -38,12 +38,21 @@ namespace BH.SDK.Models.Keyframes
             ColorBottom = colorBottom;
             ColorTop = colorTop;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            ColorBottom = ColorValue.white;
+            ColorTop = ColorValue.white;
+        }
         
         public Color4X4KeyType GetModelType() => Color4X4KeyType.Vertical;
-
-        public object Clone() => Copy();
-        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => Copy();
-        public ColorVerticalKey Copy() => new(ColorBottom.Copy(), ColorTop.Copy(), Frame, Ease);
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ColorVerticalKey ICopyable<ColorVerticalKey>.Copy() => CopyImpl();
+        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => CopyImpl();
+        
+        private ColorVerticalKey CopyImpl() => new(ColorBottom.Copy(), ColorTop.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is ColorVerticalKey value && Equals(value);
         public bool Equals(IColor4X4Key other) => other is ColorVerticalKey value && Equals(value);

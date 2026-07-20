@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
-    public class PostProcessingGraphicsSettings : BaseGraphicsSettings, IResetable,
-        ICopyable<PostProcessingGraphicsSettings>, IMoveable<PostProcessingGraphicsSettings>, IEquatable<PostProcessingGraphicsSettings>
+    public class PostProcessingGraphicsSettings : BaseGraphicsSettings,
+        IModel<PostProcessingGraphicsSettings>, IMoveable<PostProcessingGraphicsSettings>
     {
         [JsonProperty(Names.RenderBloom)]
         public bool RenderBloom { get; set; }
@@ -77,8 +77,9 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = renderAnalogGlitch;
             RenderDigitalGlitch = renderDigitalGlitch;
         }
-        public void Reset() // PresetAll
+        public override void Reset() // PresetAll
         {
+            base.Reset();
             Render = true;
             RenderBloom = true;
             RenderChroma = true;
@@ -93,6 +94,14 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = true;
             RenderDigitalGlitch = true;
         }
+        
+        public override object Clone() => CopyImpl();
+        public override BaseGraphicsSettings Copy() => CopyImpl();
+        PostProcessingGraphicsSettings ICopyable<PostProcessingGraphicsSettings>.Copy() => CopyImpl();
+        
+        private PostProcessingGraphicsSettings CopyImpl() => new(Render, RenderBloom, RenderChroma, RenderVignette,
+            RenderLens, RenderGrain, RenderMotionBlur, RenderColorCurves, RenderLiftGammaGain,
+            RenderShadowsMidtonesHighlights, RenderWhiteBalance, RenderAnalogGlitch, RenderDigitalGlitch);
 
         public PostProcessingGraphicsSettings GetPresetNone() => new()
         {
@@ -142,11 +151,6 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             RenderAnalogGlitch = true,
             RenderDigitalGlitch = true,
         };
-
-        public object Clone() => Copy();
-        public PostProcessingGraphicsSettings Copy() => new(Render, RenderBloom, RenderChroma, RenderVignette,
-            RenderLens, RenderGrain, RenderMotionBlur, RenderColorCurves, RenderLiftGammaGain,
-            RenderShadowsMidtonesHighlights, RenderWhiteBalance, RenderAnalogGlitch, RenderDigitalGlitch);
 
         public void Pull(PostProcessingGraphicsSettings source)
         {

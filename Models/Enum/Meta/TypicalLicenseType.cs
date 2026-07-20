@@ -10,7 +10,7 @@ namespace BH.SDK.Models.Enum.Meta
         /// <summary> All rights reserved </summary>
         Proprietary = 0,
         /// <summary> No rights reserved, full freedom of usage (https://choosealicense.com/licenses/unlicense/) </summary>
-        PublicDomain = 1,
+        Unlicensed = 1,
         
         /// <summary> MIT License (Massachusetts Institute of Technology)
         /// (https://choosealicense.com/licenses/mit/) </summary> 
@@ -42,7 +42,7 @@ namespace BH.SDK.Models.Enum.Meta
         // Creative Commons Family
         // https://creativecommons.org/cc-licenses/
         
-        /// <summary> Creative Commons Zero v4.0 - public domain
+        /// <summary> Creative Commons Zero v1.0 - public domain
         /// (https://creativecommons.org/publicdomain/zero/1.0/) </summary>
         CC0_1_0 = 100,
         

@@ -2,8 +2,10 @@
 {
     public static class ValueRules
     {
-        public const int ZeroInt = 0;
-        public const float ZeroFloat = 0f;
+        public const int IntZero = 0;
+        public const int IntOne = 0;
+        public const float FloatZero = 0f;
+        public const float FloatOne = 0f;
         
         // default value limits without type specification.
         // Choose it because Max * Max => close to int.MaxValue 

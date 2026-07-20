@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectScaleCurvesBySpeed : IEffectScale,
-        ICopyable<EffectScaleCurvesBySpeed>, IEquatable<EffectScaleCurvesBySpeed>
+    public class EffectScaleCurvesBySpeed : IEffectScale, IModel<EffectScaleCurvesBySpeed>
     {
         [RuleNotNull]
         [JsonProperty(Names.CurveX)]
@@ -43,6 +42,14 @@ namespace BH.SDK.Models.Effects
             CurveX = curveX;
             CurveY = curveY;
             SpeedRange = speedRange;
+        }
+        public void Reset()
+        {
+            CurveX = EffectRules.GetCurve_Default();
+            CurveY = EffectRules.GetCurve_Default();
+            SpeedRange = new Vector2Value(
+                EffectRules.Scale.BySpeedRange_X_Default,
+                EffectRules.Scale.BySpeedRange_Y_Default);
         }
 
         public object Clone() => Copy();

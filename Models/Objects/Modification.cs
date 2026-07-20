@@ -19,7 +19,7 @@ namespace BH.SDK.Models.Objects
     // No deep inheritance of changes
 
     [RuleContainer]
-    public class Modification : ICopyable<Modification>, IEquatable<Modification>
+    public class Modification : IModel<Modification>
     {
         [JsonProperty(Names.ObjectId)]
         public ObjectId ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
@@ -43,6 +43,12 @@ namespace BH.SDK.Models.Objects
             ObjectId = objectId;
             Path = path;
             Value = value;
+        }
+        public void Reset()
+        {
+            ObjectId = ObjectId.Null;
+            Path = string.Empty;
+            Value = null;
         }
 
         public object Clone() => Copy();

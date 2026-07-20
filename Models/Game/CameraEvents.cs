@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
-    public class CameraEvents : ICopyable<CameraEvents>, IEquatable<CameraEvents>
+    public class CameraEvents : IModel<CameraEvents>
     {
         // Camera - is a unique form of default RectObject. It cut some data, here's all
         // Positions - unchanged
@@ -66,6 +66,14 @@ namespace BH.SDK.Models.Game
             Zooms = zooms;
             Pivots = pivots;
             Shakes = shakes;
+        }
+        public void Reset()
+        {
+            Positions.Clear();
+            Rotations.Clear();
+            Zooms.Clear();
+            Pivots.Clear();
+            Shakes.Clear();
         }
 
         public object Clone() => Copy();

@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeTorus : IEffectShape,
-        ICopyable<EffectShapeTorus>, IEquatable<EffectShapeTorus>
+    public class EffectShapeTorus : IEffectShape, IModel<EffectShapeTorus>
     {
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.TorusRadiusMinor_Min)]
         [JsonProperty(Names.RadiusMinor)]
@@ -54,6 +53,13 @@ namespace BH.SDK.Models.Effects
             RadiusMajor = radiusMajor;
             Arc = arc;
             Spread = spread;
+        }
+        public void Reset()
+        {
+            RadiusMinor = new FloatValue(EffectRules.Shape.TorusRadiusMinor_Default);
+            RadiusMajor = new FloatValue(EffectRules.Shape.TorusRadiusMajor_Default);
+            Arc = new FloatValue(EffectRules.Shape.Arc_Default);
+            Spread = new EffectShapeSpreadRandom();
         }
 
         public object Clone() => Copy();

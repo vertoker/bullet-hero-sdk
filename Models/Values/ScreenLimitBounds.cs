@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class ScreenLimitBounds : IScreenLimit, ICopyable<ScreenLimitBounds>, IEquatable<ScreenLimitBounds>
+    public class ScreenLimitBounds : IScreenLimit, IModel<ScreenLimitBounds>
     {
         [RuleNotNull]
         [JsonProperty(Names.MinAspect)]
@@ -48,6 +48,11 @@ namespace BH.SDK.Models.Values
         {
             MinAspect = minAspect;
             MaxAspect = maxAspect;
+        }
+        public void Reset()
+        {
+            MinAspect.Reset();
+            MaxAspect.Reset();
         }
 
         public object Clone() => Copy();

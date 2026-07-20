@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class ScreenAspect : ICopyable<ScreenAspect>, IEquatable<ScreenAspect>
+    public class ScreenAspect : IModel<ScreenAspect>
     {
         [RuleInRange(ValueRules.MinAspectWidth, ValueRules.MaxAspectWidth)]
         [JsonProperty(Names.WidthShort)]
@@ -32,6 +32,11 @@ namespace BH.SDK.Models.Values
         {
             Width = width;
             Height = height;
+        }
+        public void Reset()
+        {
+            Width = ValueRules.DefaultAspectWidth;
+            Height = ValueRules.DefaultAspectHeight;
         }
 
         public object Clone() => Copy();

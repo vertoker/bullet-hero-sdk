@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioEffect : ICopyable<AudioEffect>, IEquatable<AudioEffect>
+    public class AudioEffect : IModel<AudioEffect>
     {
         [RuleInRange(AudioRules.MixLevel_Disabled, AudioRules.MixLevel_Enabled)]
         [JsonProperty(Names.MixLevel)]
@@ -23,9 +23,15 @@ namespace BH.SDK.Models.AudioEffects
         {
             MixLevel = mixLevel;
         }
+        public virtual void Reset()
+        {
+            MixLevel = AudioRules.MixLevel_Default;
+        }
 
-        public object Clone() => Copy();
-        public AudioEffect Copy() => new(MixLevel);
+        public virtual object Clone() => CopyImpl();
+        public virtual AudioEffect Copy() => CopyImpl();
+        
+        private AudioEffect CopyImpl() => new(MixLevel);
 
         public override bool Equals(object obj) => obj is AudioEffect value && Equals(value);
         public override int GetHashCode() => MixLevel.GetHashCode();

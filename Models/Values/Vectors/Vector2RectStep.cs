@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector2RectStep : IVector2, ICopyable<Vector2RectStep>
+    public class Vector2RectStep : IVector2, IModel<Vector2RectStep>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
@@ -29,19 +29,19 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.MaxY)]
         public float MaxY { get; set; }
         
-        [RuleInRange(ValueRules.ZeroFloat, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }
 
         public Vector2RectStep()
         {
-            MinX = 0f;
-            MinY = 0f;
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
             
-            MaxX = 1f;
-            MaxY = 1f;
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
             
-            Step = 1f;
+            Step = ValueRules.FloatOne;
         }
         public Vector2RectStep(float minX, float minY, float maxX, float maxY, float step)
         {
@@ -52,6 +52,16 @@ namespace BH.SDK.Models.Values
             MaxY = maxY;
             
             Step = step;
+        }
+        public void Reset()
+        {
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            
+            Step = ValueRules.FloatOne;
         }
 
         public VectorType GetModelType() => VectorType.RandomRectStep;

@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -8,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class BoolKey : IFrame, ICopyable<BoolKey>, IEquatable<BoolKey>
+    public class BoolKey : IFrame, IModel<BoolKey>
     {
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
@@ -19,13 +20,18 @@ namespace BH.SDK.Models.Keyframes
 
         public BoolKey()
         {
-            Frame = 0;
+            Frame = FrameRules.MinFrame;
             Value = false;
         }
         public BoolKey(bool value, int frame)
         {
             Frame = frame;
             Value = value;
+        }
+        public void Reset()
+        {
+            Frame = FrameRules.MinFrame;
+            Value = false;
         }
 
         public object Clone() => Copy();

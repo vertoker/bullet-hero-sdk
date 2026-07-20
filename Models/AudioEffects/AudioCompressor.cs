@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioCompressor : AudioEffect, ICopyable<AudioCompressor>, IEquatable<AudioCompressor>
+    public class AudioCompressor : AudioEffect, IModel<AudioCompressor>
     {
         [RuleInRange(AudioRules.Compressor.Threshold_Min, AudioRules.Compressor.Threshold_Max)]
         [JsonProperty(Names.Threshold)]
@@ -42,9 +42,20 @@ namespace BH.SDK.Models.AudioEffects
             Release = release;
             MakeUpGain = makeUpGain;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            Threshold = AudioRules.Compressor.Threshold_Default;
+            Attack = AudioRules.Compressor.Attack_Default;
+            Release = AudioRules.Compressor.Release_Default;
+            MakeUpGain = AudioRules.Compressor.MakeUpGain_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioCompressor Copy() => new(MixLevel, Threshold, Attack, Release, MakeUpGain);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioCompressor ICopyable<AudioCompressor>.Copy() => CopyImpl();
+
+        private AudioCompressor CopyImpl() => new(MixLevel, Threshold, Attack, Release, MakeUpGain);
 
         public override bool Equals(object obj) => obj is AudioCompressor value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Threshold, Attack, Release, MakeUpGain);

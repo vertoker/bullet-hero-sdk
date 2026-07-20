@@ -14,6 +14,10 @@ namespace BH.SDK.Models.Primitives
         {
             this.value = value;
         }
+        public void Reset()
+        {
+            value = NullValue;
+        }
 
         // Theme ids are a stable identifier for a Theme entry (Level.Resources.Themes), replacing
         // positional ThemeIndex - a theme's position in the list can change (reorder/delete),

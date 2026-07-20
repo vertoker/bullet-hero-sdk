@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectAngleCurvesBySpeed : IEffectAngle,
-        ICopyable<EffectAngleCurvesBySpeed>, IEquatable<EffectAngleCurvesBySpeed>
+    public class EffectAngleCurvesBySpeed : IEffectAngle, IModel<EffectAngleCurvesBySpeed>
     {
         [RuleNotNull]
         [JsonProperty(Names.Curve)]
@@ -37,6 +36,13 @@ namespace BH.SDK.Models.Effects
         {
             Curve = curve;
             SpeedRange = speedRange;
+        }
+        public void Reset()
+        {
+            Curve = EffectRules.GetCurve_Default();
+            SpeedRange = new Vector2Value(
+                EffectRules.Angle.BySpeedRange_X_Default,
+                EffectRules.Angle.BySpeedRange_Y_Default);
         }
 
         public object Clone() => Copy();

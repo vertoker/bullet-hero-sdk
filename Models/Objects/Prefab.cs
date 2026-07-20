@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class Prefab : IObjectScope, IPrefab, ICopyable<Prefab>, IEquatable<Prefab>
+    public class Prefab : IObjectScope, IPrefab, IModel<Prefab>
     {
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
@@ -41,6 +41,12 @@ namespace BH.SDK.Models.Objects
             PrefabId = prefabId;
             Objects = objects;
             PrefabObjects = prefabObjects;
+        }
+        public void Reset()
+        {
+            PrefabId = PrefabId.Null;
+            Objects.Clear();
+            PrefabObjects.Clear();
         }
 
         public object Clone() => Copy();

@@ -34,6 +34,10 @@ namespace BH.SDK.Models.Primitives.Resources
         {
             value = fontResourceId.value;
         }
+        public void Reset()
+        {
+            value = NullValue;
+        }
         
         // ------------------------------------------------------------------------------------------------------------
         // TypedResourceId

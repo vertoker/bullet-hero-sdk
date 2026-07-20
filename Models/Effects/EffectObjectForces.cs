@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectObjectForces : ICopyable<EffectObjectForces>, IEquatable<EffectObjectForces>, IUpdatable<EffectObjectForces>
+    public class EffectObjectForces : IModel<EffectObjectForces>, IUpdatable<EffectObjectForces>
     {
         [RuleNotNull]
         [JsonProperty(Names.GravityMin)]
@@ -101,6 +101,33 @@ namespace BH.SDK.Models.Effects
             OrbitalCenterOffset = orbitalCenterOffset;
             VelocitySpeed = velocitySpeed;
             LinearForce = linearForce;
+        }
+        public void Reset()
+        {
+            StartGravityMin = new FloatValue(EffectRules.Forces.StartGravityMin_Default);
+            StartGravityMax = new FloatValue(EffectRules.Forces.StartGravityMax_Default);
+            StartVelocityMin = new Vector2Value(
+                EffectRules.Forces.StartVelocityMin_X_Default,
+                EffectRules.Forces.StartVelocityMin_Y_Default);
+            StartVelocityMax = new Vector2Value(
+                EffectRules.Forces.StartVelocityMax_X_Default,
+                EffectRules.Forces.StartVelocityMax_Y_Default);
+            StartAngularVelocityMin = new FloatValue(EffectRules.Forces.StartAngularVelocityMin_Default);
+            StartAngularVelocityMax = new FloatValue(EffectRules.Forces.StartAngularVelocityMax_Default);
+            LinearVelocity = new Vector2Value(EffectRules.Forces.LinearVelocity_X_Default,
+                EffectRules.Forces.LinearVelocity_Y_Default);
+            OrbitalVelocity = new Vector3Value(
+                EffectRules.Forces.OrbitalVelocity_X_Default,
+                EffectRules.Forces.OrbitalVelocity_Y_Default,
+                EffectRules.Forces.OrbitalVelocity_Z_Default);
+            OrbitalCenterOffset = new Vector3Value(
+                EffectRules.Forces.OrbitalCenterOffset_X_Default,
+                EffectRules.Forces.OrbitalCenterOffset_Y_Default,
+                EffectRules.Forces.OrbitalCenterOffset_Z_Default);
+            VelocitySpeed = new FloatValue(EffectRules.Forces.VelocitySpeed_Default);
+            LinearForce = new Vector2Value(
+                EffectRules.Forces.LinearForce_X_Default,
+                EffectRules.Forces.LinearForce_Y_Default);
         }
 
         public object Clone() => Copy();

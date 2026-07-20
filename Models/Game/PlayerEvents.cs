@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
-    public class PlayerEvents : ICopyable<PlayerEvents>, IEquatable<PlayerEvents>
+    public class PlayerEvents : IModel<PlayerEvents>
     {
         // TODO add in the future with events
         // [JsonProperty(ModelNames.Velocity)]
@@ -46,6 +46,12 @@ namespace BH.SDK.Models.Game
             Visibles = visibles;
             Controls = controls;
             Collisions = collisions;
+        }
+        public void Reset()
+        {
+            Visibles.Clear();
+            Controls.Clear();
+            Collisions.Clear();
         }
 
         public object Clone() => Copy();

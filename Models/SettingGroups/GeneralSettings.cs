@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class GeneralSettings : IResetable, ICopyable<GeneralSettings>, IMoveable<GeneralSettings>, IEquatable<GeneralSettings>
+    public class GeneralSettings : IModel<GeneralSettings>, IMoveable<GeneralSettings>
     {
         [RuleInRange(1, 8)]
         [JsonProperty(Names.ResourceParallelLoadCount)]

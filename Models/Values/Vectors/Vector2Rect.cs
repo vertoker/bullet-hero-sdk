@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector2Rect : IVector2, ICopyable<Vector2Rect>, IEquatable<Vector2Rect>
+    public class Vector2Rect : IVector2, IModel<Vector2Rect>
     {
         // TODO add rule check for Min and Max, must be always Min < Max
         
@@ -33,11 +33,11 @@ namespace BH.SDK.Models.Values
 
         public Vector2Rect()
         {
-            MinX = 0f;
-            MinY = 0f;
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
             
-            MaxX = 1f;
-            MaxY = 1f;
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
         }
         public Vector2Rect(float minX, float minY, float maxX, float maxY)
         {
@@ -46,6 +46,14 @@ namespace BH.SDK.Models.Values
             
             MaxX = maxX;
             MaxY = maxY;
+        }
+        public void Reset()
+        {
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
         }
 
         public VectorType GetModelType() => VectorType.RandomRect;

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Theme : ITheme, ICopyable<Theme>, IEquatable<Theme>
+    public class Theme : ITheme, IModel<Theme>
     {
         public static readonly Version Version = new(1, 0);
         public Version GetVersion() => Version;
@@ -63,6 +63,12 @@ namespace BH.SDK.Models.Values
             ThemeId = themeId;
             Name = name;
             Matrix = matrix;
+        }
+        public void Reset()
+        {
+            ThemeId = ThemeId.Null;
+            Name = string.Empty;
+            Array.Fill(Matrix, ColorValue.white);
         }
 
         public object Clone() => Copy();

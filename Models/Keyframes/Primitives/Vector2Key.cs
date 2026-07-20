@@ -3,14 +3,13 @@ using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Values;
-using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Vector2Key : Keyframe, ICopyable<Vector2Key>, IEquatable<Vector2Key>
+    public class Vector2Key : Keyframe, IModel<Vector2Key>
     {
         [RuleNotNull(typeof(Vector2Value))]
         [JsonProperty(Names.Vector2)]
@@ -24,9 +23,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Value = value;
         }
-
-        public object Clone() => Copy();
-        public Vector2Key Copy() => new(Value.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Value = new Vector2Value();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        Vector2Key ICopyable<Vector2Key>.Copy() => CopyImpl();
+        
+        private Vector2Key CopyImpl() => new(Value.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is Vector2Key value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);

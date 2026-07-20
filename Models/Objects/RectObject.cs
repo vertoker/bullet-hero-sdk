@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class RectObject : IFrameBounds, INameable, ICopyable<RectObject>, IEquatable<RectObject>, IUpdatable<RectObject>
+    public class RectObject : IFrameBounds, INameable, IModel<RectObject>, IUpdatable<RectObject>
     {
         public virtual ObjectType GetModelType() => ObjectType.RectObject;
         
@@ -120,6 +120,24 @@ namespace BH.SDK.Models.Objects
             AnchorsMin = anchorsMin;
             AnchorsMax = anchorsMax;
             Pivots = pivots;
+        }
+        public virtual void Reset()
+        {
+            ObjectId = ObjectId.Null;
+            ParentObjectId = ObjectId.Null;
+            Name = string.Empty;
+            Visible = true;
+            StartFrame = FrameRules.MinFrame;
+            EndFrame = FrameRules.MinFrame;
+            Layer = ValueRules.DefaultLayer;
+            
+            Positions.Clear();
+            Rotations.Clear();
+            Scales.Clear();
+            Sizes.Clear();
+            AnchorsMin.Clear();
+            AnchorsMax.Clear();
+            Pivots.Clear();
         }
 
         public virtual object Clone() => CopyImpl();

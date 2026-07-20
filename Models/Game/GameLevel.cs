@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
-using BH.SDK.Models.Values;
-using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -14,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
-    public class GameLevel : IObjectScope, ICopyable<GameLevel>, IEquatable<GameLevel>
+    public class GameLevel : IObjectScope, IModel<GameLevel>
     {
         [RuleNotNull]
         [JsonProperty(Names.Events)]
@@ -62,6 +60,16 @@ namespace BH.SDK.Models.Game
             
             Objects = objects;
             PrefabObjects = prefabObjects;
+        }
+        public void Reset()
+        {
+            Events.Reset();
+            CameraEvents.Reset();
+            PostProcessingEvents.Reset();
+            PlayerEvents.Reset();
+            
+            Objects.Clear();
+            PrefabObjects.Clear();
         }
 
         public object Clone() => Copy();

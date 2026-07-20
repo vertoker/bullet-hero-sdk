@@ -14,6 +14,10 @@ namespace BH.SDK.Models.Primitives
         {
             this.value = value;
         }
+        public void Reset()
+        {
+            value = NullValue;
+        }
 
         // Collider ids are not a separate top-level resource list, they are embedded directly
         // on TextureObject/CompositeCollider. What each number means:

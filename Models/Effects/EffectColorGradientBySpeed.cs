@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectColorGradientBySpeed : IEffectColor,
-        ICopyable<EffectColorGradientBySpeed>, IEquatable<EffectColorGradientBySpeed>
+    public class EffectColorGradientBySpeed : IEffectColor, IModel<EffectColorGradientBySpeed>
     {
         [JsonProperty(Names.Gradient)]
         public GradientValue Gradient { get; set; }
@@ -35,6 +34,13 @@ namespace BH.SDK.Models.Effects
         {
             Gradient = gradient;
             SpeedRange = speedRange;
+        }
+        public void Reset()
+        {
+            Gradient = EffectRules.GetGradient_Default();
+            SpeedRange = new Vector2Value(
+                EffectRules.Color.BySpeedRange_X_Default,
+                EffectRules.Color.BySpeedRange_Y_Default);
         }
 
         public object Clone() => Copy();

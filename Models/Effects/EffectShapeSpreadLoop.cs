@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeSpreadLoop : IEffectShapeSpread,
-        ICopyable<EffectShapeSpreadLoop>, IEquatable<EffectShapeSpreadLoop>
+    public class EffectShapeSpreadLoop : IEffectShapeSpread, IModel<EffectShapeSpreadLoop>
     {
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
@@ -40,6 +39,11 @@ namespace BH.SDK.Models.Effects
         {
             Spread = spread;
             Speed = speed;
+        }
+        public void Reset()
+        {
+            Spread = new FloatValue(EffectRules.ShapeSpread.Spread_Default);
+            Speed = new FloatValue(EffectRules.ShapeSpread.Speed_Default);
         }
 
         public object Clone() => Copy();

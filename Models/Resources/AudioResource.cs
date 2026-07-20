@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
-    public class AudioResource : Resource, ICopyable<AudioResource>, IEquatable<AudioResource>
+    public class AudioResource : Resource, IModel<AudioResource>
     {
         [RuleIPrimitiveIntMax(AudioResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.AudioResourceId)]
@@ -28,9 +28,17 @@ namespace BH.SDK.Models.Resources
         {
             AudioResourceId = audioResourceId;
         }
-
-        public object Clone() => Copy();
-        public AudioResource Copy() => new(AudioResourceId, Sources.CopyList());
+        public override void Reset()
+        {
+            base.Reset();
+            AudioResourceId.Reset();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Resource Copy() => CopyImpl();
+        AudioResource ICopyable<AudioResource>.Copy() => CopyImpl();
+        
+        private AudioResource CopyImpl() => new(AudioResourceId, Sources.CopyList());
 
         public override bool Equals(object obj) => obj is AudioResource value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), AudioResourceId);

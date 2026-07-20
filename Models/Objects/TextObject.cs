@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class TextObject : RectObject, ICopyable<TextObject>, IEquatable<TextObject>, IUpdatable<TextObject>
+    public class TextObject : RectObject, IModel<TextObject>, IUpdatable<TextObject>
     {
         public override ObjectType GetModelType() => ObjectType.TextObject;
         
@@ -77,6 +77,18 @@ namespace BH.SDK.Models.Objects
             WordWrap = wordWrap;
             HorizontalAlignment = horizontalAlignment;
             VerticalAlignment = verticalAlignment;
+        }
+        public override void Reset()
+        {
+            base.Reset();
+            Text = new StringValue();
+            FontResourceId = FontResourceId.Default;
+            Colors.Clear();
+            FontSizes.Clear();
+            
+            WordWrap = TextRules.WordWrap_Default;
+            HorizontalAlignment = TextRules.HorizontalAlignment_Default;
+            VerticalAlignment = TextRules.VerticalAlignment_Default;
         }
         
         public override object Clone() => CopyImpl();

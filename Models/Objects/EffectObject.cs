@@ -17,8 +17,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class EffectObject : RectObject, IEffect,
-        ICopyable<EffectObject>, IEquatable<EffectObject>, IUpdatable<EffectObject>
+    public class EffectObject : RectObject, IEffect, IModel<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.EffectObject;
 
@@ -83,6 +82,18 @@ namespace BH.SDK.Models.Objects
             EffectAngle = effectAngle;
             EffectScale = effectScale;
             EffectColor = effectColor;
+        }
+        public override void Reset()
+        {
+            base.Reset();
+            HasStopLocalFrame = EffectRules.HasStopLocalFrame_Default;
+            StopLocalFrame = EffectRules.StopLocalFrame_Default;
+            Core.Reset();
+            Forces.Reset();
+            EffectShape = new EffectShapePoint();
+            EffectAngle = new EffectAngleValue();
+            EffectScale = new EffectScaleValue();
+            EffectColor = new EffectColorValue();
         }
 
         public override object Clone() => CopyImpl();

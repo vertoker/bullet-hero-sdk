@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class ColorThemeRef : IColor, ICopyable<ColorThemeRef>, IEquatable<ColorThemeRef>
+    public class ColorThemeRef : IColor, IModel<ColorThemeRef>
     {
         [RuleInRange(ValueRules.MinThemeIndex, ValueRules.MaxThemeIndex)]
         [JsonProperty(Names.ThemeIndex)]
@@ -26,6 +26,10 @@ namespace BH.SDK.Models.Values
         public ColorThemeRef(int themeColorIndex)
         {
             ThemeColorIndex = themeColorIndex;
+        }
+        public void Reset()
+        {
+            ThemeColorIndex = ValueRules.MinThemeIndex;
         }
         
         public object Clone() => Copy();

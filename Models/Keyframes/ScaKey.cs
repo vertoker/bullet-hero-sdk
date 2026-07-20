@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class ScaKey : Keyframe, ICopyable<ScaKey>, IEquatable<ScaKey>
+    public class ScaKey : Keyframe, IModel<ScaKey>
     {
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinSca, ValueRules.MaxSca)]
         [JsonProperty(Names.Vector2)]
@@ -24,9 +24,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Scale = scale;
         }
-
-        public object Clone() => Copy();
-        public ScaKey Copy() => new(Scale.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Scale = new Vector2Value();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ScaKey ICopyable<ScaKey>.Copy() => CopyImpl();
+        
+        private ScaKey CopyImpl() => new(Scale.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is ScaKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Scale);

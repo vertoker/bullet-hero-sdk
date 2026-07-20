@@ -2,19 +2,18 @@
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
-using Keyframes_Keyframe = BH.SDK.Models.Keyframes.Keyframe;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ShadowsMidtonesHighlights : Keyframes_Keyframe,
-        ICopyable<ShadowsMidtonesHighlights>, IEquatable<ShadowsMidtonesHighlights>
+    public class ShadowsMidtonesHighlights : Keyframe, IModel<ShadowsMidtonesHighlights>
     {
         [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
@@ -80,11 +79,27 @@ namespace BH.SDK.Models.PostProcessing
             ShadowLimits = shadowLimits;
             HighlightLimits = highlightLimits;
         }
-
-        public object Clone() => Copy();
-        public ShadowsMidtonesHighlights Copy() => new(Shadows, ShadowsColor.Copy(), Midtones, MidtonesColor.Copy(),
+        public override void Reset()
+        {
+            base.Reset();
+            Shadows = false;
+            ShadowsColor = ColorValue.white;
+            Midtones = false;
+            MidtonesColor = ColorValue.white;
+            Highlights = false;
+            HighlightsColor = ColorValue.white;
+            
+            ShadowLimits = new Vector2Value(0f, 0.3f);
+            HighlightLimits = new Vector2Value(0.55f, 1f);
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        ShadowsMidtonesHighlights ICopyable<ShadowsMidtonesHighlights>.Copy() => CopyImpl();
+        
+        private ShadowsMidtonesHighlights CopyImpl() => new(Shadows, ShadowsColor.Copy(), Midtones, MidtonesColor.Copy(),
             Highlights, HighlightsColor.Copy(), ShadowLimits.Copy(), HighlightLimits.Copy(), Frame, Ease);
-
+        
         public override bool Equals(object obj) => obj is ShadowsMidtonesHighlights value && Equals(value);
         public override int GetHashCode()
         {

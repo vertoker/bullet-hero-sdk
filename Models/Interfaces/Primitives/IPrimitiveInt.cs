@@ -1,6 +1,6 @@
 namespace BH.SDK.Models.Interfaces.Primitives
 {
-    public interface IPrimitiveInt
+    public interface IPrimitiveInt : IResetable
     {
         public int Value { get; }
     }

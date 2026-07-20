@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class ColorMinMax : IColor, ICopyable<ColorMinMax>, IEquatable<ColorMinMax>
+    public class ColorMinMax : IColor, IModel<ColorMinMax>
     {
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinR)]
@@ -69,6 +69,18 @@ namespace BH.SDK.Models.Values
             MaxG = maxG;
             MaxB = maxB;
             MaxA = maxA;
+        }
+        public void Reset()
+        {
+            MinR = ValueRules.MinColor;
+            MinG = ValueRules.MinColor;
+            MinB = ValueRules.MinColor;
+            MinA = ValueRules.MinColor;
+            
+            MaxR = ValueRules.MaxColor;
+            MaxG = ValueRules.MaxColor;
+            MaxB = ValueRules.MaxColor;
+            MaxA = ValueRules.MaxColor;
         }
 
         public ColorType GetModelType() => ColorType.RandomMinMax;

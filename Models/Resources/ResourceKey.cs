@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
-    public class ResourceKey : ICopyable<ResourceKey>, IEquatable<ResourceKey>
+    public class ResourceKey : IModel<ResourceKey>
     {
         // URI - Universal Resource Identifier, either for paths, urls or keys
         
@@ -29,6 +29,11 @@ namespace BH.SDK.Models.Resources
         {
             UriType = uriType;
             Uri = uri;
+        }
+        public void Reset()
+        {
+            UriType = ResourceUriType.Undefined;
+            Uri = string.Empty;
         }
 
         public object Clone() => Copy();

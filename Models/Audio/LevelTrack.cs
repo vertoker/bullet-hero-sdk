@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Audio
 {
     [RuleContainer]
-    public class LevelTrack : IFrameBounds, INameable, ICopyable<LevelTrack>, IEquatable<LevelTrack>
+    public class LevelTrack : IFrameBounds, INameable, IModel<LevelTrack>
     {
         // Same logic as RectObject.ObjectId, but only for audio and much simpler
         // 0 - undefined
@@ -21,6 +21,12 @@ namespace BH.SDK.Models.Audio
         [RuleIPrimitiveIntMin(AudioId.MinValue)]
         [JsonProperty(Names.AudioId)]
         public AudioId AudioId { get; set; }
+        
+        // 0 - Null (no audio resource assigned), 1+ - game-defined, negative - user-defined
+        // more about resourceId and how it works, read in TypedResourceId.cs file
+        
+        [JsonProperty(Names.AudioResourceId)]
+        public AudioResourceId AudioResourceId { get; set; }
         
         [RuleLevelFrame]
         [JsonProperty(Names.StartFrameShort)]
@@ -43,12 +49,6 @@ namespace BH.SDK.Models.Audio
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
         
-        // 0 - Null (no audio resource assigned), 1+ - game-defined, negative - user-defined
-        // more about resourceId and how it works, read in TypedResourceId.cs file
-        
-        [JsonProperty(Names.AudioResourceId)]
-        public AudioResourceId AudioResourceId { get; set; }
-        
         [RuleNotNull]
         [JsonProperty(Names.Effects)]
         public LevelTrackEffects Effects { get; set; }
@@ -56,30 +56,41 @@ namespace BH.SDK.Models.Audio
         public LevelTrack()
         {
             AudioId = AudioId.Null;
-            StartFrame = 0;
-            EndFrame = 0;
-            OffsetTime = 0f;
+            AudioResourceId = AudioResourceId.Null;
+            StartFrame = FrameRules.MinFrame;
+            EndFrame = FrameRules.MinFrame;
+            OffsetTime = AudioRules.OffsetTimeDefault;
             AudioLayer = AudioRules.MinAudioLayer;
             Name = string.Empty;
-            AudioResourceId = AudioResourceId.Null;
             Effects = new LevelTrackEffects();
         }
-        public LevelTrack(AudioId audioId, int startFrame, int endFrame, float offsetTime,
-            int audioLayer, string name, AudioResourceId audioResourceId, LevelTrackEffects effects)
+        public LevelTrack(AudioId audioId, AudioResourceId audioResourceId, int startFrame, int endFrame,
+            float offsetTime, int audioLayer, string name, LevelTrackEffects effects)
         {
             AudioId = audioId;
+            AudioResourceId = audioResourceId;
             StartFrame = startFrame;
             EndFrame = endFrame;
             OffsetTime = offsetTime;
             AudioLayer = audioLayer;
             Name = name;
-            AudioResourceId = audioResourceId;
             Effects = effects;
+        }
+        public void Reset()
+        {
+            AudioId = AudioId.Null;
+            AudioResourceId = AudioResourceId.Null;
+            StartFrame = FrameRules.MinFrame;
+            EndFrame = FrameRules.MinFrame;
+            OffsetTime = AudioRules.OffsetTimeDefault;
+            AudioLayer = AudioRules.MinAudioLayer;
+            Name = string.Empty;
+            Effects.Reset();
         }
 
         public object Clone() => Copy();
-        public LevelTrack Copy() => new(AudioId, StartFrame, EndFrame,
-            OffsetTime, AudioLayer, Name, AudioResourceId, Effects.Copy());
+        public LevelTrack Copy() => new(AudioId, AudioResourceId, StartFrame, EndFrame,
+            OffsetTime, AudioLayer, Name, Effects.Copy());
 
         public override bool Equals(object obj) => obj is LevelTrack value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(AudioId,

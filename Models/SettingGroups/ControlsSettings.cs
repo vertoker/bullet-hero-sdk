@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class ControlsSettings : IResetable, ICopyable<ControlsSettings>, IMoveable<ControlsSettings>, IEquatable<ControlsSettings>
+    public class ControlsSettings : IModel<ControlsSettings>, IMoveable<ControlsSettings>
     {
         [JsonProperty(Names.ClassicControlsType)]
         public ClassicControlsType ClassicControlsType { get; set; }

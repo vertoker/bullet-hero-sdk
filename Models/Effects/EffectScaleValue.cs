@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectScaleValue : IEffectScale,
-        ICopyable<EffectScaleValue>, IEquatable<EffectScaleValue>
+    public class EffectScaleValue : IEffectScale, IModel<EffectScaleValue>
     {
         [RuleNotNull]
         [JsonProperty(Names.Scale)]
@@ -31,6 +30,12 @@ namespace BH.SDK.Models.Effects
         public EffectScaleValue(IVector2 scale)
         {
             Scale = scale;
+        }
+        public void Reset()
+        {
+            Scale = new Vector2Value(
+                EffectRules.Scale.A_X_Default, 
+                EffectRules.Scale.A_Y_Default);
         }
 
         public object Clone() => Copy();

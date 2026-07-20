@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Interfaces;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -10,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
-    public abstract class Resource : IEquatable<Resource>
+    public abstract class Resource : IModel<Resource>
     {
         public const int MaxSourcesCount = 4;
         
@@ -28,6 +29,13 @@ namespace BH.SDK.Models.Resources
         {
             Sources = sources;
         }
+        public virtual void Reset()
+        {
+            Sources.Clear();
+        }
+
+        public abstract object Clone();
+        public abstract Resource Copy();
 
         public bool Equals(Resource other)
         {

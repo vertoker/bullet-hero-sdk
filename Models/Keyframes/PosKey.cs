@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class PosKey : Keyframe, ICopyable<PosKey>, IEquatable<PosKey>
+    public class PosKey : Keyframe, IModel<PosKey>
     {
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Vector2)]
@@ -24,9 +24,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Pos = vector2;
         }
-
-        public object Clone() => Copy();
-        public PosKey Copy() => new(Pos.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Pos = new Vector2Value();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        PosKey ICopyable<PosKey>.Copy() => CopyImpl();
+        
+        private PosKey CopyImpl() => new(Pos.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is PosKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Pos);

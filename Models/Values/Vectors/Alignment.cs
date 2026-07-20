@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Alignment : ICopyable<Alignment>, IEquatable<Alignment>
+    public class Alignment : IModel<Alignment>
     {
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinAlignment, ValueRules.MaxAlignment)]
         [JsonProperty(Names.ValueShort)]
@@ -55,6 +55,10 @@ namespace BH.SDK.Models.Values
         public Alignment(IVector2 value)
         {
             Value = value;
+        }
+        public void Reset()
+        {
+            Value = DefaultValue;
         }
 
         public object Clone() => Copy();

@@ -15,6 +15,10 @@ namespace BH.SDK.Models.Primitives
         {
             this.value = value;
         }
+        public void Reset()
+        {
+            value = NullValue;
+        }
 
         // Same idea as ObjectId, but scoped to a single level's audio tracks and much simpler:
         // unlike ColliderId/TypedResourceId, there is no negative (game-defined) range here -

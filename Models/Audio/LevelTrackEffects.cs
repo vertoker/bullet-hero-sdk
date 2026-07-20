@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Audio
 {
     [RuleContainer]
-    public class LevelTrackEffects : ICopyable<LevelTrackEffects>, IEquatable<LevelTrackEffects>
+    public class LevelTrackEffects : IModel<LevelTrackEffects>
     {
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxAudioKeys)]
         [RuleCollectionUnique(nameof(FloatKey.Frame))]
@@ -94,7 +94,6 @@ namespace BH.SDK.Models.Audio
             Normalize = new AudioNormalize();
             ParamEQ = new AudioParamEQ();
         }
-
         public LevelTrackEffects(List<FloatKey> volumes, List<FloatKey> stereoPans, bool active, 
             AudioLowpass lowpass, AudioHighpass highpass, AudioEcho echo, AudioReverb reverb, 
             AudioChorus chorus, AudioPitchShifter pitchShifter, AudioDistortion distortion, 
@@ -116,12 +115,31 @@ namespace BH.SDK.Models.Audio
             Normalize = normalize;
             ParamEQ = paramEQ;
         }
+        public void Reset()
+        {
+            Volumes.Clear();
+            StereoPans.Clear();
+            Active = AudioRules.ActiveDefault;
+            
+            Lowpass.Reset();
+            Highpass.Reset();
+            Echo.Reset();
+            Reverb.Reset();
+            Chorus.Reset();
+            PitchShifter.Reset();
+            Distortion.Reset();
+            Flange.Reset();
+            Compressor.Reset();
+            Normalize.Reset();
+            ParamEQ.Reset();
+        }
 
         public object Clone() => Copy();
         public LevelTrackEffects Copy() => new(Volumes.CopyList(), StereoPans.CopyList(), Active,
-            Lowpass.Copy(), Highpass.Copy(), Echo.Copy(), Reverb.Copy(),
-            Chorus.Copy(), PitchShifter.Copy(), Distortion.Copy(),
-            Flange.Copy(), Compressor.Copy(), Normalize.Copy(), ParamEQ.Copy());
+            (AudioLowpass)Lowpass.Clone(), (AudioHighpass)Highpass.Clone(), (AudioEcho)Echo.Clone(),
+            (AudioReverb)Reverb.Clone(), (AudioChorus)Chorus.Clone(), (AudioPitchShifter)PitchShifter.Clone(),
+            (AudioDistortion)Distortion.Clone(), (AudioFlange)Flange.Clone(), (AudioCompressor)Compressor.Clone(),
+            (AudioNormalize)Normalize.Clone(), (AudioParamEQ)ParamEQ.Clone());
 
         public override bool Equals(object obj) => obj is LevelTrackEffects value && Equals(value);
         public override int GetHashCode()

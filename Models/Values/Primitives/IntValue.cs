@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class IntValue : IInt, ICopyable<IntValue>, IEquatable<IntValue>
+    public class IntValue : IInt, IModel<IntValue>
     {
         [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.ValueShort)]
@@ -19,11 +19,15 @@ namespace BH.SDK.Models.Values
 
         public IntValue()
         {
-            Value = ValueRules.ZeroInt;
+            Value = ValueRules.IntZero;
         }
         public IntValue(int value)
         {
             Value = value;
+        }
+        public void Reset()
+        {
+            Value = ValueRules.IntZero;
         }
 
         public IntType GetModelType() => IntType.Value;
@@ -34,7 +38,7 @@ namespace BH.SDK.Models.Values
 
         public override bool Equals(object obj) => obj is IntValue value && Equals(value);
         public override int GetHashCode() => Value;
-        
+
         public bool Equals(IInt other) => other is IntValue value && Equals(value);
         public bool Equals(IntValue other)
         {

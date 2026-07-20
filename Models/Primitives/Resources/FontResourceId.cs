@@ -18,8 +18,11 @@ namespace BH.SDK.Models.Primitives.Resources
         {
             value = typedResourceId.value;
         }
+        public void Reset()
+        {
+            value = NullValue;
+        }
         
-
         // Same range semantics as TypedResourceId, narrowed to font resources
 
         public const int NullValue = 0;

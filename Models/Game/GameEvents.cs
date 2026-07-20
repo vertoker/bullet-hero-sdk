@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using BH.SDK.Models.Events;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Keyframes;
-using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
@@ -16,7 +15,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
-    public class GameEvents : ICopyable<GameEvents>, IEquatable<GameEvents>
+    public class GameEvents : IModel<GameEvents>
     {
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxMarkerEvents)]
         [RuleCollectionUnique(nameof(Checkpoint.Frame))]
@@ -59,6 +58,14 @@ namespace BH.SDK.Models.Game
             ScreenLimits = screenLimits;
             Backgrounds = backgrounds;
             Themes = themes;
+        }
+        public void Reset()
+        {
+            Markers.Clear();
+            Checkpoints.Clear();
+            ScreenLimits.Clear();
+            Backgrounds.Clear();
+            Themes.Clear();
         }
 
         public object Clone() => Copy();

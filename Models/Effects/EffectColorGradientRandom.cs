@@ -12,8 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectColorGradientRandom : IEffectColor,
-        ICopyable<EffectColorGradientRandom>, IEquatable<EffectColorGradientRandom>
+    public class EffectColorGradientRandom : IEffectColor, IModel<EffectColorGradientRandom>
     {
         [RuleNotNull]
         [JsonProperty(Names.Gradient)]
@@ -28,6 +27,10 @@ namespace BH.SDK.Models.Effects
         public EffectColorGradientRandom(GradientValue gradient)
         {
             Gradient = gradient;
+        }
+        public void Reset()
+        {
+            Gradient = EffectRules.GetGradient_Default();
         }
 
         public object Clone() => Copy();

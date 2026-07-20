@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioPitchShifter : AudioEffect, ICopyable<AudioPitchShifter>, IEquatable<AudioPitchShifter>
+    public class AudioPitchShifter : AudioEffect, IModel<AudioPitchShifter>
     {
         [RuleInRange(AudioRules.PitchShifter.Pitch_Min, AudioRules.PitchShifter.Pitch_Max)]
         [JsonProperty(Names.Pitch)]
@@ -42,9 +42,20 @@ namespace BH.SDK.Models.AudioEffects
             Overlap = overlap;
             MaxChannels = maxChannels;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            Pitch = AudioRules.PitchShifter.Pitch_Default;
+            FFTSize = AudioRules.PitchShifter.FFTSize_Default;
+            Overlap = AudioRules.PitchShifter.Overlap_Default;
+            MaxChannels = AudioRules.PitchShifter.MaxChannels_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioPitchShifter Copy() => new(MixLevel, Pitch, FFTSize, Overlap, MaxChannels);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioPitchShifter ICopyable<AudioPitchShifter>.Copy() => CopyImpl();
+
+        private AudioPitchShifter CopyImpl() => new(MixLevel, Pitch, FFTSize, Overlap, MaxChannels);
 
         public override bool Equals(object obj) => obj is AudioPitchShifter value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Pitch, FFTSize, Overlap, MaxChannels);

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Events
 {
     [RuleContainer]
-    public class Marker : IFrame, ICopyable<Marker>, IEquatable<Marker>
+    public class Marker : IFrame, IModel<Marker>
     {
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
@@ -31,8 +31,7 @@ namespace BH.SDK.Models.Events
 
         public Marker()
         {
-            Frame = 0;
-            
+            Frame = FrameRules.MinFrame;
             Name = string.Empty;
             Description = string.Empty;
             Color = new ColorValue();
@@ -40,10 +39,16 @@ namespace BH.SDK.Models.Events
         public Marker(string name, string description, IColor color, int frame)
         {
             Frame = frame;
-            
             Name = name;
             Description = description;
             Color = color;
+        }
+        public void Reset()
+        {
+            Frame = FrameRules.MinFrame;
+            Name = string.Empty;
+            Description = string.Empty;
+            Color = new ColorValue();
         }
 
         public object Clone() => Copy();

@@ -7,12 +7,14 @@ using BH.SDK.Rules.Attributes;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class ScreenLimitNone : IScreenLimit, ICopyable<ScreenLimitNone>, IEquatable<ScreenLimitNone>
+    public class ScreenLimitNone : IScreenLimit, IModel<ScreenLimitNone>
     {
         public ScreenLimitType GetModelType() => ScreenLimitType.None;
         public bool IsValid(float currentAspect) => true;
         public float GetValid(float currentAspect) => currentAspect;
 
+        public void Reset() { }
+        
         public object Clone() => Copy();
         IScreenLimit ICopyable<IScreenLimit>.Copy() => Copy();
         public ScreenLimitNone Copy() => new();

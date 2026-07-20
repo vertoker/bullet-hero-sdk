@@ -14,7 +14,7 @@ namespace BH.SDK.Models.Keyframes
     // TODO activate for player when add events
     
     [RuleContainer]
-    public class VelocityPoint : Keyframe, ICopyable<VelocityPoint>, IEquatable<VelocityPoint>
+    public class VelocityPoint : Keyframe, IModel<VelocityPoint>
     {
         [RuleNotNull(typeof(Vector2Value))]
         [JsonProperty(Names.Center)]
@@ -27,16 +27,25 @@ namespace BH.SDK.Models.Keyframes
         public VelocityPoint()
         {
             Center = new Vector2Value();
-            Force = 1;
+            Force = 1f;
         }
         public VelocityPoint(IVector2 center, float force, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Center = center;
             Force = force;
         }
-
-        public object Clone() => Copy();
-        public VelocityPoint Copy() => new(Center.Copy(), Force, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Center = new Vector2Value();
+            Force = 1f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        VelocityPoint ICopyable<VelocityPoint>.Copy() => CopyImpl();
+        
+        private VelocityPoint CopyImpl() => new(Center.Copy(), Force, Frame, Ease);
 
         public override bool Equals(object obj) => obj is VelocityPoint value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Center, Force);

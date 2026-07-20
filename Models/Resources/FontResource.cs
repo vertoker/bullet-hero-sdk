@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
-    public class FontResource : Resource, ICopyable<FontResource>, IEquatable<FontResource>
+    public class FontResource : Resource, IModel<FontResource>
     {
         [RuleIPrimitiveIntMax(FontResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.FontResourceId)]
@@ -28,9 +28,17 @@ namespace BH.SDK.Models.Resources
         {
             FontResourceId = fontResourceId;
         }
-
-        public object Clone() => Copy();
-        public FontResource Copy() => new(FontResourceId, Sources.CopyList());
+        public override void Reset()
+        {
+            base.Reset();
+            FontResourceId.Reset();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Resource Copy() => CopyImpl();
+        FontResource ICopyable<FontResource>.Copy() => CopyImpl();
+        
+        private FontResource CopyImpl() => new(FontResourceId, Sources.CopyList());
 
         public override bool Equals(object obj) => obj is FontResource value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), FontResourceId);

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class UVKey : Keyframe, ICopyable<UVKey>, IEquatable<UVKey>
+    public class UVKey : Keyframe, IModel<UVKey>
     {
         [RuleNotNull]
         [JsonProperty(Names.Tilling)]
@@ -29,9 +29,18 @@ namespace BH.SDK.Models.Keyframes
             Tilling = tilling;
             Offset = offset;
         }
-
-        public object Clone() => Copy();
-        public UVKey Copy() => new(Tilling.Copy(), Offset.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Tilling = new Vector2Value(ValueRules.DefaultUvX, ValueRules.DefaultUvY);
+            Offset = new Vector2Value(ValueRules.DefaultUvZ, ValueRules.DefaultUvW);
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        UVKey ICopyable<UVKey>.Copy() => CopyImpl();
+        
+        private UVKey CopyImpl() => new(Tilling.Copy(), Offset.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is UVKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Tilling, Offset);

@@ -7,10 +7,11 @@ using BH.SDK.Rules.Attributes;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeSpreadSine : IEffectShapeSpread,
-        ICopyable<EffectShapeSpreadSine>, IEquatable<EffectShapeSpreadSine>
+    public class EffectShapeSpreadSine : IEffectShapeSpread, IModel<EffectShapeSpreadSine>
     {
         public EffectShapeSpreadType GetModelType() => EffectShapeSpreadType.Sine;
+        
+        public void Reset() { }
         
         public object Clone() => Copy();
         IEffectShapeSpread ICopyable<IEffectShapeSpread>.Copy() => new EffectShapeSpreadSine();

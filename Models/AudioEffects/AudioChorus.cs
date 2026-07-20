@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioChorus : AudioEffect, ICopyable<AudioChorus>, IEquatable<AudioChorus>
+    public class AudioChorus : AudioEffect, IModel<AudioChorus>
     {
         [RuleInRange(AudioRules.Chorus.DryMix_Min, AudioRules.Chorus.DryMix_Max)]
         [JsonProperty(Names.DryMix)]
@@ -68,9 +68,24 @@ namespace BH.SDK.Models.AudioEffects
             Depth = depth;
             Feedback = feedback;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            DryMix = AudioRules.Chorus.DryMix_Default;
+            WetMixTap1 = AudioRules.Chorus.WetMixTap1_Default;
+            WetMixTap2 = AudioRules.Chorus.WetMixTap2_Default;
+            WetMixTap3 = AudioRules.Chorus.WetMixTap3_Default;
+            Delay = AudioRules.Chorus.Delay_Default;
+            Rate = AudioRules.Chorus.Rate_Default;
+            Depth = AudioRules.Chorus.Depth_Default;
+            Feedback = AudioRules.Chorus.Feedback_Default;
+        }
 
-        public new object Clone() => Copy();
-        public new AudioChorus Copy() => new(MixLevel, DryMix, WetMixTap1, WetMixTap2, WetMixTap3, Delay, Rate, Depth, Feedback);
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioChorus ICopyable<AudioChorus>.Copy() => CopyImpl();
+
+        private AudioChorus CopyImpl() => new(MixLevel, DryMix, WetMixTap1, WetMixTap2, WetMixTap3, Delay, Rate, Depth, Feedback);
 
         public override bool Equals(object obj) => obj is AudioChorus value && Equals(value);
         public override int GetHashCode()

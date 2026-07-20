@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
-    public class TypicalLicense : ILicense, ICopyable<TypicalLicense>, IEquatable<TypicalLicense>
+    public class TypicalLicense : ILicense, IModel<TypicalLicense>
     {
         [JsonProperty(Names.LicenseType)]
         public TypicalLicenseType Type { get; set; }
@@ -18,6 +18,10 @@ namespace BH.SDK.Models.Values
         public TypicalLicense(TypicalLicenseType type)
         {
             Type = type;
+        }
+        public void Reset()
+        {
+            Type = TypicalLicenseType.CC_BY_NC_4_0;
         }
 
         public LicenseType GetModelType() => LicenseType.Typical;

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class AngleKey : Keyframe, ICopyable<AngleKey>, IEquatable<AngleKey>
+    public class AngleKey : Keyframe, IModel<AngleKey>
     {
         [RuleNotNull(typeof(FloatValue))]
         [JsonProperty(Names.Float)]
@@ -25,9 +25,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Angle = value;
         }
-
-        public object Clone() => Copy();
-        public AngleKey Copy() => new(Angle.Copy(), Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Angle = new FloatValue();
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        AngleKey ICopyable<AngleKey>.Copy() => CopyImpl();
+        
+        private AngleKey CopyImpl() => new(Angle.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is AngleKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Angle);

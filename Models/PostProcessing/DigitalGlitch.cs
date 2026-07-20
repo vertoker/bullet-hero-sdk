@@ -11,8 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class DigitalGlitch : Keyframe, // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
-        ICopyable<DigitalGlitch>, IEquatable<DigitalGlitch>
+    public class DigitalGlitch : Keyframe, IModel<DigitalGlitch> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         [RuleInRange(PostProcessingRules.DigitalGlitch.IntensityMin,
             PostProcessingRules.DigitalGlitch.IntensityMax)]
@@ -28,9 +27,17 @@ namespace BH.SDK.Models.PostProcessing
         {
             Intensity = intensity;
         }
-
-        public object Clone() => Copy();
-        public DigitalGlitch Copy() => new(Intensity, Frame, Ease);
+        public override void Reset()
+        {
+            base.Reset();
+            Intensity = 0.1f;
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        DigitalGlitch ICopyable<DigitalGlitch>.Copy() => CopyImpl();
+        
+        private DigitalGlitch CopyImpl() => new(Intensity, Frame, Ease);
 
         public override bool Equals(object obj) => obj is DigitalGlitch value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity);

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class AlignmentKey : Keyframe, ICopyable<AlignmentKey>, IEquatable<AlignmentKey>
+    public class AlignmentKey : Keyframe, IModel<AlignmentKey>
     {
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinAlignment, ValueRules.MaxAlignment)]
         [JsonProperty(Names.Vector2)]
@@ -24,9 +24,17 @@ namespace BH.SDK.Models.Keyframes
         {
             Value = value;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            Value = Alignment.DefaultValue;
+        }
 
-        public object Clone() => Copy();
-        public AlignmentKey Copy() => new(Value.Copy(), Frame, Ease);
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        AlignmentKey ICopyable<AlignmentKey>.Copy() => CopyImpl();
+        
+        private AlignmentKey CopyImpl() => new(Value.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is AlignmentKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Frame, Value);

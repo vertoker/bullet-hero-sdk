@@ -7,12 +7,13 @@ using BH.SDK.Rules.Attributes;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapePoint : IEffectShape,
-        ICopyable<EffectShapePoint>, IEquatable<EffectShapePoint>
+    public class EffectShapePoint : IEffectShape, IModel<EffectShapePoint>
     {
         // None, inherit TRS from RectObject
         
         public EffectShapeType GetModelType() => EffectShapeType.Point;
+        
+        public void Reset() { }
         
         public object Clone() => Copy();
         IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapePoint();

@@ -1,8 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Primitives;
-using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
@@ -12,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
-    public class LevelSettings : ICopyable<LevelSettings>, IEquatable<LevelSettings>
+    public class LevelSettings : IModel<LevelSettings>
     {
         [RuleInRange(FrameRules.MinFramerate, FrameRules.MaxFramerate)]
         [JsonProperty(Names.Fps)]
@@ -53,6 +51,14 @@ namespace BH.SDK.Models.SettingGroups
 
         public override bool Equals(object obj) => obj is LevelSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ObjectIdCounter, AudioIdCounter);
+        
+        public void Reset()
+        {
+            Framerate = 60;
+            FrameLength = Framerate * 10;
+            ObjectIdCounter = ObjectId.MinLevelValue;
+            AudioIdCounter = AudioId.MinValue;
+        }
 
         public bool Equals(LevelSettings other)
         {

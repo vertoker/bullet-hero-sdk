@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.AudioEffects
 {
     [RuleContainer]
-    public class AudioReverb : AudioEffect, ICopyable<AudioReverb>, IEquatable<AudioReverb>
+    public class AudioReverb : AudioEffect, IModel<AudioReverb>
     {
         [RuleInRange(AudioRules.Reverb.DryLevel_Min, AudioRules.Reverb.DryLevel_Max)]
         [JsonProperty(Names.DryLevel)]
@@ -104,9 +104,30 @@ namespace BH.SDK.Models.AudioEffects
             HFReference = hfReference;
             LFReference = lfReference;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            DryLevel = AudioRules.Reverb.DryLevel_Default;
+            Room = AudioRules.Reverb.Room_Default;
+            RoomHF = AudioRules.Reverb.RoomHF_Default;
+            RoomLF = AudioRules.Reverb.RoomLF_Default;
+            DecayTime = AudioRules.Reverb.DecayTime_Default;
+            DecayHFRatio = AudioRules.Reverb.DecayHFRatio_Default;
+            Reflections = AudioRules.Reverb.Reflections_Default;
+            ReflectDelay = AudioRules.Reverb.ReflectDelay_Default;
+            Reverb = AudioRules.Reverb.Reverb_Default;
+            ReverbDelay = AudioRules.Reverb.ReverbDelay_Default;
+            Diffusion = AudioRules.Reverb.Diffusion_Default;
+            Density = AudioRules.Reverb.Density_Default;
+            HFReference = AudioRules.Reverb.HFReference_Default;
+            LFReference = AudioRules.Reverb.LFReference_Default; 
+        }
 
-        public new object Clone() => Copy();
-        public new AudioReverb Copy() => new(MixLevel, DryLevel, Room, RoomHF, RoomLF,
+        public override object Clone() => CopyImpl();
+        public override AudioEffect Copy() => CopyImpl();
+        AudioReverb ICopyable<AudioReverb>.Copy() => CopyImpl();
+
+        private AudioReverb CopyImpl() => new(MixLevel, DryLevel, Room, RoomHF, RoomLF,
             DecayTime, DecayHFRatio, Reflections, ReflectDelay, Reverb,
             ReverbDelay, Diffusion, Density, HFReference, LFReference);
 

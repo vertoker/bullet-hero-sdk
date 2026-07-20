@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector3Rect : IVector3, ICopyable<Vector3Rect>, IEquatable<Vector3Rect>
+    public class Vector3Rect : IVector3, IModel<Vector3Rect>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
@@ -39,13 +39,13 @@ namespace BH.SDK.Models.Values
 
         public Vector3Rect()
         {
-            MinX = 0f;
-            MinY = 0f;
-            MinZ = 0f;
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
             
-            MaxX = 1f;
-            MaxY = 1f;
-            MaxZ = 1f;
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
         }
         public Vector3Rect(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
         {
@@ -56,6 +56,16 @@ namespace BH.SDK.Models.Values
             MaxX = maxX;
             MaxY = maxY;
             MaxZ = maxZ;
+        }
+        public void Reset()
+        {
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
+            
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
         }
 
         public VectorType GetModelType() => VectorType.RandomRect;

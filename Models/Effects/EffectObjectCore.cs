@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectObjectCore : ICopyable<EffectObjectCore>, IEquatable<EffectObjectCore>, IUpdatable<EffectObjectCore>
+    public class EffectObjectCore : IModel<EffectObjectCore>, IUpdatable<EffectObjectCore>
     {
         [JsonProperty(Names.Render)]
         public bool Render { get; set; }
@@ -61,6 +61,19 @@ namespace BH.SDK.Models.Effects
             LifetimeBounds = lifetimeBounds;
             TextureResourceId = textureResourceId;
             ParticlePivot = particlePivot;
+        }
+        public void Reset()
+        {
+            Render = EffectRules.Core.Render_Default;
+            Loop = EffectRules.Core.Loop_Default;
+            ParticleCount = EffectRules.Core.ParticleCount_Default;
+            LifetimeBounds = new Vector2Value(
+                EffectRules.Core.LifetimeBounds_X_Default,
+                EffectRules.Core.LifetimeBounds_Y_Default);
+            TextureResourceId = EffectRules.Core.TextureResourceId_Default;
+            ParticlePivot = new Alignment(new Vector2Value(
+                EffectRules.Core.Pivot_X_Default,
+                EffectRules.Core.Pivot_Y_Default));
         }
 
         public void Update(EffectObjectCore src)

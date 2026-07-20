@@ -5,9 +5,11 @@ using BH.SDK.Models.Interfaces.Values;
 
 namespace BH.SDK.Models.Values
 {
-    public class NoSpecifiedLicense : ILicense, ICopyable<NoSpecifiedLicense>, IEquatable<NoSpecifiedLicense>
+    public class NoSpecifiedLicense : ILicense, IModel<NoSpecifiedLicense>
     {
         public LicenseType GetModelType() => LicenseType.NoSpecified;
+        
+        public void Reset() { }
 
         public object Clone() => Copy();
         ILicense ICopyable<ILicense>.Copy() => Copy();

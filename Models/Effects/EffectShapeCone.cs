@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeCone : IEffectShape,
-        ICopyable<EffectShapeCone>, IEquatable<EffectShapeCone>
+    public class EffectShapeCone : IEffectShape, IModel<EffectShapeCone>
     {
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeTopRadius_Min)]
         [JsonProperty(Names.TopRadius)]
@@ -53,6 +52,14 @@ namespace BH.SDK.Models.Effects
             Arc = arc;
             Height = height;
             Spread = spread;
+        }
+        public void Reset()
+        {
+            TopRadius = new FloatValue(EffectRules.Shape.ConeTopRadius_Default);
+            BaseRadius = new FloatValue(EffectRules.Shape.ConeBaseRadius_Default);
+            Arc = new FloatValue(EffectRules.Shape.Arc_Default);
+            Height = new FloatValue(EffectRules.Shape.ConeHeight_Default);
+            Spread = new EffectShapeSpreadRandom();
         }
 
         public object Clone() => Copy();

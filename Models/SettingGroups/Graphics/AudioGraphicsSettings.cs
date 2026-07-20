@@ -5,8 +5,8 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
-    public class AudioGraphicsSettings : BaseGraphicsSettings, IResetable,
-        ICopyable<AudioGraphicsSettings>, IMoveable<AudioGraphicsSettings>, IEquatable<AudioGraphicsSettings>
+    public class AudioGraphicsSettings : BaseGraphicsSettings,
+        IModel<AudioGraphicsSettings>, IMoveable<AudioGraphicsSettings>
     {
         [JsonProperty(Names.RenderEffects)]
         public bool RenderEffects { get; set; }
@@ -38,18 +38,22 @@ namespace BH.SDK.Models.SettingGroups.Graphics
             UseScrub = useScrub;
             ScrubTime = scrubTime;
         }
-        public void Reset()
+        public override void Reset()
         {
+            base.Reset();
             Render = true;
             RenderEffects = true;
             MaxDiffTime = 0.2f;
             UseScrub = true;
             ScrubTime = 0.1f;
         }
-
-        public object Clone() => Copy();
-        public AudioGraphicsSettings Copy() => new(Render, RenderEffects, MaxDiffTime, UseScrub, ScrubTime);
-
+        
+        public override object Clone() => CopyImpl();
+        public override BaseGraphicsSettings Copy() => CopyImpl();
+        AudioGraphicsSettings ICopyable<AudioGraphicsSettings>.Copy() => CopyImpl();
+        
+        private AudioGraphicsSettings CopyImpl() => new(Render, RenderEffects, MaxDiffTime, UseScrub, ScrubTime);
+        
         public void Pull(AudioGraphicsSettings source)
         {
             Render = source.Render;

@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LensDistortion : Keyframe,
-        ICopyable<LensDistortion>, IEquatable<LensDistortion>
+    public class LensDistortion : Keyframe, IModel<LensDistortion>
     {
         [RuleInRange(PostProcessingRules.LensDistortion.IntensityMin,
             PostProcessingRules.LensDistortion.IntensityMax)]
@@ -51,9 +50,20 @@ namespace BH.SDK.Models.PostProcessing
             Center = center;
             Scale = scale;
         }
+        public override void Reset()
+        {
+            base.Reset();
+            Intensity = 0.5f;
+            Multiplier = new Vector2Value(1f, 1f);
+            Center = new Vector2Value(0.5f, 0.5f);
+            Scale = 1f;
+        }
 
-        public object Clone() => Copy();
-        public LensDistortion Copy() => new(Intensity, Multiplier.Copy(), Center.Copy(), Scale, Frame, Ease);
+        public override object Clone() => CopyImpl();
+        public override Keyframe Copy() => CopyImpl();
+        LensDistortion ICopyable<LensDistortion>.Copy() => CopyImpl();
+        
+        private LensDistortion CopyImpl() => new(Intensity, Multiplier.Copy(), Center.Copy(), Scale, Frame, Ease);
 
         public override bool Equals(object obj) => obj is LensDistortion value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Multiplier, Center, Scale);

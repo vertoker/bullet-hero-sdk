@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Events
 {
     [RuleContainer]
-    public class Checkpoint : IFrame, ICopyable<Checkpoint>, IEquatable<Checkpoint>
+    public class Checkpoint : IFrame, IModel<Checkpoint>
     {
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
@@ -30,8 +30,7 @@ namespace BH.SDK.Models.Events
 
         public Checkpoint()
         {
-            Frame = 0;
-            
+            Frame = FrameRules.MinFrame;
             Name = string.Empty;
             Active = true;
             Color = ColorValue.white;
@@ -39,10 +38,16 @@ namespace BH.SDK.Models.Events
         public Checkpoint(string name, bool active, IColor color, int frame)
         {
             Frame = frame;
-            
             Name = name;
             Active = active;
             Color = color;
+        }
+        public void Reset()
+        {
+            Frame = FrameRules.MinFrame;
+            Name = string.Empty;
+            Active = true;
+            Color = ColorValue.white;
         }
 
         public object Clone() => Copy();

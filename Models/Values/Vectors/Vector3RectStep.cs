@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Vector3RectStep : IVector3, ICopyable<Vector3RectStep>, IEquatable<Vector3RectStep>
+    public class Vector3RectStep : IVector3, IModel<Vector3RectStep>
     {
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
@@ -37,21 +37,21 @@ namespace BH.SDK.Models.Values
         [JsonProperty(Names.MaxZ)]
         public float MaxZ { get; set; }
         
-        [RuleInRange(ValueRules.ZeroFloat, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }
 
         public Vector3RectStep()
         {
-            MinX = 0f;
-            MinY = 0f;
-            MinZ = 0f;
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
             
-            MaxX = 1f;
-            MaxY = 1f;
-            MaxZ = 1f;
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
             
-            Step = 1f;
+            Step = ValueRules.FloatOne;
         }
         public Vector3RectStep(float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float step)
         {
@@ -64,6 +64,18 @@ namespace BH.SDK.Models.Values
             MaxZ = maxZ;
             
             Step = step;
+        }
+        public void Reset()
+        {
+            MinX = ValueRules.FloatZero;
+            MinY = ValueRules.FloatZero;
+            MinZ = ValueRules.FloatZero;
+            
+            MaxX = ValueRules.FloatOne;
+            MaxY = ValueRules.FloatOne;
+            MaxZ = ValueRules.FloatOne;
+            
+            Step = ValueRules.FloatOne;
         }
 
         public VectorType GetModelType() => VectorType.RandomRectStep;

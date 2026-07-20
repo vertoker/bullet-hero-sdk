@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
-    public class TextureResource : Resource, ICopyable<TextureResource>, IEquatable<TextureResource>
+    public class TextureResource : Resource, IModel<TextureResource>
     {
         [RuleIPrimitiveIntMax(TextureResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.TextureResourceId)]
@@ -42,9 +42,19 @@ namespace BH.SDK.Models.Resources
             TextureResourceId = textureResourceId;
             TextureResourceUV = textureResourceUV;
         }
-
-        public object Clone() => Copy();
-        public TextureResource Copy() => new(TextureResourceId, TextureResourceUV.Copy(), Sources.CopyList());
+        public override void Reset()
+        {
+            base.Reset();
+            TextureResourceId = TextureResourceId.Null;
+            TextureResourceUV = new Vector4Value(ValueRules.DefaultUvX,
+                ValueRules.DefaultUvY, ValueRules.DefaultUvZ, ValueRules.DefaultUvW);
+        }
+        
+        public override object Clone() => CopyImpl();
+        public override Resource Copy() => CopyImpl();
+        TextureResource ICopyable<TextureResource>.Copy() => CopyImpl();
+        
+        private TextureResource CopyImpl() => new(TextureResourceId, TextureResourceUV.Copy(), Sources.CopyList());
 
         public override bool Equals(object obj) => obj is TextureResource value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), TextureResourceId, TextureResourceUV);

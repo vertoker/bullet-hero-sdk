@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Effects
 {
     [RuleContainer]
-    public class EffectShapeRectangle : IEffectShape,
-        ICopyable<EffectShapeRectangle>, IEquatable<EffectShapeRectangle>
+    public class EffectShapeRectangle : IEffectShape, IModel<EffectShapeRectangle>
     {
         [RuleNotNull, RuleIVector2Min(EffectRules.Shape.BoxSize_Min)]
         [JsonProperty(Names.Size)]
@@ -29,6 +28,12 @@ namespace BH.SDK.Models.Effects
         public EffectShapeRectangle(IVector2 size)
         {
             Size = size;
+        }
+        public void Reset()
+        {
+            Size = new Vector2Value(
+                EffectRules.Shape.BoxSize_X_Default,
+                EffectRules.Shape.BoxSize_Y_Default);
         }
 
         public object Clone() => Copy();

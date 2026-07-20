@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class CurveKeyframeValue : ICopyable<CurveKeyframeValue>, IEquatable<CurveKeyframeValue>
+    public class CurveKeyframeValue : IModel<CurveKeyframeValue>
     {
         // TODO maybe replace FloatValue to IFloat (in editor step)
         
@@ -47,14 +47,14 @@ namespace BH.SDK.Models.Values
         
         public CurveKeyframeValue()
         {
-            Time = 0f;
-            Value = 0f;
+            Time = ValueRules.FloatZero;
+            Value = ValueRules.FloatZero;
             WeightedMode = CurveWeightedMode.None;
             TangentMode = CurveTangentMode.Free;
-            InTangent = 0f;
-            OutTangent = 0f;
-            InWeight = 0f;
-            OutWeight = 0f;
+            InTangent = ValueRules.FloatZero;
+            OutTangent = ValueRules.FloatZero;
+            InWeight = ValueRules.FloatZero;
+            OutWeight = ValueRules.FloatZero;
         }
         public CurveKeyframeValue(float time, float value)
         {
@@ -62,10 +62,10 @@ namespace BH.SDK.Models.Values
             Value = value;
             WeightedMode = CurveWeightedMode.None;
             TangentMode = CurveTangentMode.Free;
-            InTangent = 0f;
-            OutTangent = 0f;
-            InWeight = 0f;
-            OutWeight = 0f;
+            InTangent = ValueRules.FloatZero;
+            OutTangent = ValueRules.FloatZero;
+            InWeight = ValueRules.FloatZero;
+            OutWeight = ValueRules.FloatZero;
         }
         public CurveKeyframeValue(float time, float value, 
             float inTangent, float outTangent, float inWeight, float outWeight)
@@ -91,6 +91,17 @@ namespace BH.SDK.Models.Values
             OutTangent = outTangent;
             InWeight = inWeight;
             OutWeight = outWeight;
+        }
+        public void Reset()
+        {
+            Time = ValueRules.FloatZero;
+            Value = ValueRules.FloatZero;
+            WeightedMode = CurveWeightedMode.None;
+            TangentMode = CurveTangentMode.Free;
+            InTangent = ValueRules.FloatZero;
+            OutTangent = ValueRules.FloatZero;
+            InWeight = ValueRules.FloatZero;
+            OutWeight = ValueRules.FloatZero;
         }
 
         public object Clone() => Copy();

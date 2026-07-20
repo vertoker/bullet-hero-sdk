@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Meta
 {
     [RuleContainer]
-    public class ResourceMeta : ICopyable<ResourceMeta>, IEquatable<ResourceMeta>
+    public class ResourceMeta : IModel<ResourceMeta>
     {
         [JsonProperty(Names.ResourceType)]
         public ResourceType ResourceType { get; set; }
@@ -22,7 +22,7 @@ namespace BH.SDK.Models.Meta
         // Abstract resId, it cast to dedicated ids (audioResId, texResId...)
         [RuleMax(TypedResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.ResourceId)]
-        public int ResourceId { get; set; }
+        public TypedResourceId ResourceId { get; set; }
         
         [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Title)]
@@ -53,14 +53,14 @@ namespace BH.SDK.Models.Meta
         public ResourceMeta()
         {
             ResourceType = ResourceType.Bytes;
-            ResourceId = TypedResourceId.NullValue;
+            ResourceId = TypedResourceId.Null;
             ResourceTitle = new StringValue();
             ResourceDescription = new StringValue();
             ResourceLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
             ResourceSources = new List<IString>();
             ResourceAuthors = new List<Author>();
         }
-        public ResourceMeta(ResourceType resourceType, int resourceId, IString resourceTitle,
+        public ResourceMeta(ResourceType resourceType, TypedResourceId resourceId, IString resourceTitle,
             IString resourceDescription, string resourceUrl, ILicense resourceLicense,
             List<IString> resourceSources, List<Author> resourceAuthors)
         {
@@ -72,6 +72,16 @@ namespace BH.SDK.Models.Meta
             ResourceLicense = resourceLicense;
             ResourceSources = resourceSources;
             ResourceAuthors = resourceAuthors;
+        }
+        public void Reset()
+        {
+            ResourceType = ResourceType.Bytes;
+            ResourceId = TypedResourceId.Null;
+            ResourceTitle = new StringValue();
+            ResourceDescription = new StringValue();
+            ResourceLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
+            ResourceSources.Clear();
+            ResourceAuthors.Clear();
         }
 
         public object Clone() => Copy();
