@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class Bloom : Keyframe, IModel<Bloom> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class BloomKey : PostProcessingKeyframe, IModel<BloomKey> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Threshold - 0 (always, not a parameter)
         
@@ -33,14 +33,14 @@ namespace BH.SDK.Models.PostProcessing
         
         // Filter (player choose in settings: high - Gaussian, mid - Dual, low - Kawase)
 
-        public Bloom()
+        public BloomKey()
         {
             Intensity = 0.5f;
             Scatter = 0.5f;
             Color = ColorValue.red;
         }
-        public Bloom(float intensity, float scatter, IColor color,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public BloomKey(float intensity, float scatter, IColor color,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Intensity = intensity;
             Scatter = scatter;
@@ -55,15 +55,15 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        Bloom ICopyable<Bloom>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        BloomKey ICopyable<BloomKey>.Copy() => CopyImpl();
         
-        private Bloom CopyImpl() => new(Intensity, Scatter, Color.Copy(), Frame, Ease);
+        private BloomKey CopyImpl() => new(Intensity, Scatter, Color.Copy(), Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is Bloom value && Equals(value);
+        public override bool Equals(object obj) => obj is BloomKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Scatter, Color);
 
-        public bool Equals(Bloom other)
+        public bool Equals(BloomKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

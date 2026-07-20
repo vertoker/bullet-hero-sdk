@@ -21,12 +21,12 @@ namespace BH.SDK.Models.Keyframes
         [JsonProperty(Names.Ease)]
         public EaseType Ease { get; set; }
 
-        protected Keyframe()
+        public Keyframe()
         {
             Frame = DefaultFrame;
             Ease = DefaultEase;
         }
-        protected Keyframe(int frame, EaseType ease = DefaultEase)
+        public Keyframe(int frame, EaseType ease = DefaultEase)
         {
             Frame = frame;
             Ease = ease;

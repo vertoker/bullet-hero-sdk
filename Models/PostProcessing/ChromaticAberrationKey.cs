@@ -11,19 +11,19 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ChromaticAberration : Keyframe, IModel<ChromaticAberration>
+    public class ChromaticAberrationKey : PostProcessingKeyframe, IModel<ChromaticAberrationKey>
     {
         [RuleInRange(PostProcessingRules.ChromaticAberration.IntensityMin,
             PostProcessingRules.ChromaticAberration.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
 
-        public ChromaticAberration()
+        public ChromaticAberrationKey()
         {
             Intensity = 1.0f;
         }
-        public ChromaticAberration(float intensity,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ChromaticAberrationKey(float intensity,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Intensity = intensity;
         }
@@ -34,15 +34,15 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        ChromaticAberration ICopyable<ChromaticAberration>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        ChromaticAberrationKey ICopyable<ChromaticAberrationKey>.Copy() => CopyImpl();
         
-        private ChromaticAberration CopyImpl() => new(Intensity, Frame, Ease);
+        private ChromaticAberrationKey CopyImpl() => new(Intensity, Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is ChromaticAberration value && Equals(value);
+        public override bool Equals(object obj) => obj is ChromaticAberrationKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity);
 
-        public bool Equals(ChromaticAberration other)
+        public bool Equals(ChromaticAberrationKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

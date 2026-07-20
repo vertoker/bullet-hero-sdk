@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class AnalogGlitch : Keyframe, IModel<AnalogGlitch> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class AnalogGlitchKey : PostProcessingKeyframe, IModel<AnalogGlitchKey> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         [RuleInRange(PostProcessingRules.AnalogGlitch.ScanLineJitterMin,
             PostProcessingRules.AnalogGlitch.ScanLineJitterMax)]
@@ -33,15 +33,15 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.ColorDrift)]
         public float ColorDrift { get; set; }
 
-        public AnalogGlitch()
+        public AnalogGlitchKey()
         {
             ScanLineJitter = 0.5f;
             VerticalJump = 0f;
             HorizontalShake = 0f;
             ColorDrift = 0f;
         }
-        public AnalogGlitch(float scanLineJitter, float verticalJump, float horizontalShake, float colorDrift,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public AnalogGlitchKey(float scanLineJitter, float verticalJump, float horizontalShake, float colorDrift,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             ScanLineJitter = scanLineJitter;
             VerticalJump = verticalJump;
@@ -58,16 +58,16 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        AnalogGlitch ICopyable<AnalogGlitch>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        AnalogGlitchKey ICopyable<AnalogGlitchKey>.Copy() => CopyImpl();
         
-        private AnalogGlitch CopyImpl() => new(ScanLineJitter, VerticalJump, HorizontalShake, ColorDrift, Frame, Ease);
+        private AnalogGlitchKey CopyImpl() => new(ScanLineJitter, VerticalJump, HorizontalShake, ColorDrift, Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is AnalogGlitch value && Equals(value);
+        public override bool Equals(object obj) => obj is AnalogGlitchKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
             ScanLineJitter, VerticalJump, HorizontalShake, ColorDrift);
 
-        public bool Equals(AnalogGlitch other)
+        public bool Equals(AnalogGlitchKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

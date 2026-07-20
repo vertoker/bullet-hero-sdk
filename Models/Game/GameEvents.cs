@@ -17,6 +17,7 @@ namespace BH.SDK.Models.Game
     [RuleContainer]
     public class GameEvents : IModel<GameEvents>
     {
+        // only for editor
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxMarkerEvents)]
         [RuleCollectionUnique(nameof(Checkpoint.Frame))]
         [JsonProperty(Names.Markers)]
@@ -35,7 +36,7 @@ namespace BH.SDK.Models.Game
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxBackgroundEvents)]
         [RuleCollectionUnique(nameof(Color4Key.Frame))]
         [JsonProperty(Names.Backgrounds)]
-        public List<IColor4X4Key> Backgrounds { get; set; } // TODO implement
+        public List<Color4Key> Backgrounds { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemeEvents)]
         [RuleCollectionUnique(nameof(ThemeKeyframe.Frame))]
@@ -47,11 +48,11 @@ namespace BH.SDK.Models.Game
             Markers = new List<Marker>();
             Checkpoints = new List<Checkpoint>();
             ScreenLimits = new List<ScreenLimitKey>();
-            Backgrounds = new List<IColor4X4Key>();
+            Backgrounds = new List<Color4Key>();
             Themes = new List<ThemeKeyframe>();
         }
         public GameEvents(List<Marker> markers, List<Checkpoint> checkpoints, 
-            List<ScreenLimitKey> screenLimits, List<IColor4X4Key> backgrounds, List<ThemeKeyframe> themes)
+            List<ScreenLimitKey> screenLimits, List<Color4Key> backgrounds, List<ThemeKeyframe> themes)
         {
             Markers = markers;
             Checkpoints = checkpoints;

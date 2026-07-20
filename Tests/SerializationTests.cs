@@ -120,18 +120,18 @@ namespace BH.SDK.Tests
             level.Game.CameraEvents.Shakes.Add(new ShakeKey());
             level.Game.CameraEvents.Zooms.Add(new ZoomKey());
 
-            level.Game.PostProcessingEvents.Blooms.Add(new Bloom());
-            level.Game.PostProcessingEvents.Chromas.Add(new ChromaticAberration());
-            level.Game.PostProcessingEvents.Vignettes.Add(new Vignette());
-            level.Game.PostProcessingEvents.Lenses.Add(new LensDistortion());
-            level.Game.PostProcessingEvents.Grains.Add(new FilmGrain());
-            level.Game.PostProcessingEvents.MotionBlurs.Add(new MotionBlur());
-            level.Game.PostProcessingEvents.ColorCurveses.Add(new ColorCurves());
-            level.Game.PostProcessingEvents.LiftGammaGains.Add(new LiftGammaGain());
-            level.Game.PostProcessingEvents.ShadowsMidtonesHighlightses.Add(new ShadowsMidtonesHighlights());
-            level.Game.PostProcessingEvents.WhiteBalances.Add(new WhiteBalance());
-            level.Game.PostProcessingEvents.AnalogGlitches.Add(new AnalogGlitch());
-            level.Game.PostProcessingEvents.DigitalGlitches.Add(new DigitalGlitch());
+            level.Game.PostProcessingEvents.Blooms.Add(new BloomKey());
+            level.Game.PostProcessingEvents.Chromatics.Add(new ChromaticAberrationKey());
+            level.Game.PostProcessingEvents.Vignettes.Add(new VignetteKey());
+            level.Game.PostProcessingEvents.Lenses.Add(new LensDistortionKey());
+            level.Game.PostProcessingEvents.Grains.Add(new FilmGrainKey());
+            level.Game.PostProcessingEvents.MotionBlurs.Add(new MotionBlurKey());
+            level.Game.PostProcessingEvents.ColorCurveses.Add(new ColorCurvesKey());
+            level.Game.PostProcessingEvents.LiftGammaGains.Add(new LiftGammaGainKey());
+            level.Game.PostProcessingEvents.ShadowsMidtonesHighlightses.Add(new ShadowsMidtonesHighlightsKey());
+            level.Game.PostProcessingEvents.WhiteBalances.Add(new WhiteBalanceKey());
+            level.Game.PostProcessingEvents.AnalogGlitches.Add(new AnalogGlitchKey());
+            level.Game.PostProcessingEvents.DigitalGlitches.Add(new DigitalGlitchKey());
 
             level.Game.PlayerEvents.Visibles.Add(new BoolKey());
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());
@@ -222,18 +222,18 @@ namespace BH.SDK.Tests
             level.Game.CameraEvents.Shakes.Add(new ShakeKey());
             level.Game.CameraEvents.Zooms.Add(new ZoomKey());
 
-            level.Game.PostProcessingEvents.Blooms.Add(new Bloom());
-            level.Game.PostProcessingEvents.Chromas.Add(new ChromaticAberration());
-            level.Game.PostProcessingEvents.Vignettes.Add(new Vignette());
-            level.Game.PostProcessingEvents.Lenses.Add(new LensDistortion());
-            level.Game.PostProcessingEvents.Grains.Add(new FilmGrain());
-            level.Game.PostProcessingEvents.MotionBlurs.Add(new MotionBlur());
-            level.Game.PostProcessingEvents.ColorCurveses.Add(new ColorCurves());
-            level.Game.PostProcessingEvents.LiftGammaGains.Add(new LiftGammaGain());
-            level.Game.PostProcessingEvents.ShadowsMidtonesHighlightses.Add(new ShadowsMidtonesHighlights());
-            level.Game.PostProcessingEvents.WhiteBalances.Add(new WhiteBalance());
-            level.Game.PostProcessingEvents.AnalogGlitches.Add(new AnalogGlitch());
-            level.Game.PostProcessingEvents.DigitalGlitches.Add(new DigitalGlitch());
+            level.Game.PostProcessingEvents.Blooms.Add(new BloomKey());
+            level.Game.PostProcessingEvents.Chromatics.Add(new ChromaticAberrationKey());
+            level.Game.PostProcessingEvents.Vignettes.Add(new VignetteKey());
+            level.Game.PostProcessingEvents.Lenses.Add(new LensDistortionKey());
+            level.Game.PostProcessingEvents.Grains.Add(new FilmGrainKey());
+            level.Game.PostProcessingEvents.MotionBlurs.Add(new MotionBlurKey());
+            level.Game.PostProcessingEvents.ColorCurveses.Add(new ColorCurvesKey());
+            level.Game.PostProcessingEvents.LiftGammaGains.Add(new LiftGammaGainKey());
+            level.Game.PostProcessingEvents.ShadowsMidtonesHighlightses.Add(new ShadowsMidtonesHighlightsKey());
+            level.Game.PostProcessingEvents.WhiteBalances.Add(new WhiteBalanceKey());
+            level.Game.PostProcessingEvents.AnalogGlitches.Add(new AnalogGlitchKey());
+            level.Game.PostProcessingEvents.DigitalGlitches.Add(new DigitalGlitchKey());
 
             level.Game.PlayerEvents.Visibles.Add(new BoolKey());
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());

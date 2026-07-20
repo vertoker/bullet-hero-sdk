@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LiftGammaGain : Keyframe, IModel<LiftGammaGain>
+    public class LiftGammaGainKey : PostProcessingKeyframe, IModel<LiftGammaGainKey>
     {
         [JsonProperty(Names.Lift)]
         public bool Lift { get; set; }
@@ -35,7 +35,7 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.GainColor)]
         public IColor GainColor { get; set; }
 
-        public LiftGammaGain()
+        public LiftGammaGainKey()
         {
             Lift = false;
             LiftColor = ColorValue.white;
@@ -44,11 +44,11 @@ namespace BH.SDK.Models.PostProcessing
             Gain = false;
             GainColor = ColorValue.white;
         }
-        public LiftGammaGain(
+        public LiftGammaGainKey(
             bool lift, IColor liftColor,
             bool gamma, IColor gammaColor,
             bool gain, IColor gainColor,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Lift = lift;
             LiftColor = liftColor;
@@ -69,16 +69,16 @@ namespace BH.SDK.Models.PostProcessing
         }
 
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        LiftGammaGain ICopyable<LiftGammaGain>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        LiftGammaGainKey ICopyable<LiftGammaGainKey>.Copy() => CopyImpl();
         
-        private LiftGammaGain CopyImpl() => new(Lift, LiftColor.Copy(), Gamma, GammaColor.Copy(), Gain, GainColor.Copy(), Frame, Ease);
+        private LiftGammaGainKey CopyImpl() => new(Lift, LiftColor.Copy(), Gamma, GammaColor.Copy(), Gain, GainColor.Copy(), Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is LiftGammaGain value && Equals(value);
+        public override bool Equals(object obj) => obj is LiftGammaGainKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
             Lift, LiftColor, Gamma, GammaColor, Gain, GainColor);
 
-        public bool Equals(LiftGammaGain other)
+        public bool Equals(LiftGammaGainKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

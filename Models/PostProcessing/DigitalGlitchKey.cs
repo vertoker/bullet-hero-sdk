@@ -11,41 +11,38 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class MotionBlur : Keyframe, IModel<MotionBlur> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
+    public class DigitalGlitchKey : PostProcessingKeyframe, IModel<DigitalGlitchKey> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
-        // Quality (client settings variable, he set it himself)
-        
-        [RuleInRange(PostProcessingRules.MotionBlur.IntensityMin,
-            PostProcessingRules.MotionBlur.IntensityMax)]
+        [RuleInRange(PostProcessingRules.DigitalGlitch.IntensityMin,
+            PostProcessingRules.DigitalGlitch.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
-        
-        // Clamp (0.2f, predefined)
 
-        public MotionBlur()
+        public DigitalGlitchKey()
         {
-            Intensity = 1f;
+            Intensity = 0.1f;
         }
-        public MotionBlur(float intensity, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public DigitalGlitchKey(float intensity,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Intensity = intensity;
         }
         public override void Reset()
         {
             base.Reset();
-            Intensity = 1f;
+            Intensity = 0.1f;
         }
-
-        public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        MotionBlur ICopyable<MotionBlur>.Copy() => CopyImpl();
         
-        private MotionBlur CopyImpl() => new(Intensity, Frame, Ease);
+        public override object Clone() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        DigitalGlitchKey ICopyable<DigitalGlitchKey>.Copy() => CopyImpl();
+        
+        private DigitalGlitchKey CopyImpl() => new(Intensity, Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is MotionBlur value && Equals(value);
+        public override bool Equals(object obj) => obj is DigitalGlitchKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity);
 
-        public bool Equals(MotionBlur other)
+        public bool Equals(DigitalGlitchKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

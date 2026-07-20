@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class WhiteBalance : Keyframe, IModel<WhiteBalance>
+    public class WhiteBalanceKey : PostProcessingKeyframe, IModel<WhiteBalanceKey>
     {
         [RuleInRange(PostProcessingRules.WhiteBalance.TemperatureMin,
             PostProcessingRules.WhiteBalance.TemperatureMax)]
@@ -23,13 +23,13 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.Tint)]
         public float Tint { get; set; }
 
-        public WhiteBalance()
+        public WhiteBalanceKey()
         {
             Temperature = 0f;
             Tint = 0f;
         }
-        public WhiteBalance(float temperature, float tint,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public WhiteBalanceKey(float temperature, float tint,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Temperature = temperature;
             Tint = tint;
@@ -42,15 +42,15 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        WhiteBalance ICopyable<WhiteBalance>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        WhiteBalanceKey ICopyable<WhiteBalanceKey>.Copy() => CopyImpl();
         
-        private WhiteBalance CopyImpl() => new(Temperature, Tint, Frame, Ease);
+        private WhiteBalanceKey CopyImpl() => new(Temperature, Tint, Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is WhiteBalance value && Equals(value);
+        public override bool Equals(object obj) => obj is WhiteBalanceKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Temperature, Tint);
 
-        public bool Equals(WhiteBalance other)
+        public bool Equals(WhiteBalanceKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

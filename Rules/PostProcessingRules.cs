@@ -2,6 +2,8 @@
 {
     public static class PostProcessingRules
     {
+        public const bool ActiveDefault = true;
+        
         public static class Bloom
         {
             public const float IntensityMin = 0f;

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ColorCurves : Keyframe, IModel<ColorCurves>
+    public class ColorCurvesKey : PostProcessingKeyframe, IModel<ColorCurvesKey>
     {
         [RuleInRange(PostProcessingRules.ColorCurves.HueVsHueMin,
             PostProcessingRules.ColorCurves.HueVsHueMax)]
@@ -25,13 +25,13 @@ namespace BH.SDK.Models.PostProcessing
         
         // TODO add more values, especially for curves
 
-        public ColorCurves()
+        public ColorCurvesKey()
         {
             HueVsHue = 0.5f;
             SatVsSat = 0.5f;
         }
-        public ColorCurves(float hueVsHue, float satVsSat,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ColorCurvesKey(float hueVsHue, float satVsSat,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             HueVsHue = hueVsHue;
             SatVsSat = satVsSat;
@@ -44,15 +44,15 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        ColorCurves ICopyable<ColorCurves>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        ColorCurvesKey ICopyable<ColorCurvesKey>.Copy() => CopyImpl();
         
-        private ColorCurves CopyImpl() => new(HueVsHue, SatVsSat, Frame, Ease);
+        private ColorCurvesKey CopyImpl() => new(HueVsHue, SatVsSat, Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is ColorCurves value && Equals(value);
+        public override bool Equals(object obj) => obj is ColorCurvesKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), HueVsHue, SatVsSat);
 
-        public bool Equals(ColorCurves other)
+        public bool Equals(ColorCurvesKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

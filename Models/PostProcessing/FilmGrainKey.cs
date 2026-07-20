@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class FilmGrain : Keyframe, IModel<FilmGrain>
+    public class FilmGrainKey : PostProcessingKeyframe, IModel<FilmGrainKey>
     {
         [JsonProperty(Names.Type)]
         public FilmGrainType Type { get; set; }
@@ -21,13 +21,13 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
 
-        public FilmGrain()
+        public FilmGrainKey()
         {
             Type = FilmGrainType.Medium1;
             Intensity = 1.0f;
         }
-        public FilmGrain(FilmGrainType type, float intensity,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public FilmGrainKey(FilmGrainType type, float intensity,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Type = type;
             Intensity = intensity;
@@ -40,15 +40,15 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        FilmGrain ICopyable<FilmGrain>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        FilmGrainKey ICopyable<FilmGrainKey>.Copy() => CopyImpl();
         
-        private FilmGrain CopyImpl() => new(Type, Intensity, Frame, Ease);
+        private FilmGrainKey CopyImpl() => new(Type, Intensity, Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is FilmGrain value && Equals(value);
+        public override bool Equals(object obj) => obj is FilmGrainKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), (int)Type, Intensity);
 
-        public bool Equals(FilmGrain other)
+        public bool Equals(FilmGrainKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

@@ -14,102 +14,108 @@ namespace BH.SDK.Models.Game
     [RuleContainer]
     public class PostProcessingEvents : IModel<PostProcessingEvents>
     {
+        [JsonProperty(Names.ActiveShort)]
+        public bool Active { get; set; }
+        
         // General
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(Bloom.Frame))]
+        [RuleCollectionUnique(nameof(BloomKey.Frame))]
         [JsonProperty(Names.BloomShort)]
-        public List<Bloom> Blooms { get; set; }
+        public List<BloomKey> Blooms { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(ChromaticAberration.Frame))]
-        [JsonProperty(Names.ChromaShort)]
-        public List<ChromaticAberration> Chromas { get; set; }
+        [RuleCollectionUnique(nameof(ChromaticAberrationKey.Frame))]
+        [JsonProperty(Names.ChromaticShort)]
+        public List<ChromaticAberrationKey> Chromatics { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(Vignette.Frame))]
+        [RuleCollectionUnique(nameof(VignetteKey.Frame))]
         [JsonProperty(Names.VignetteShort)]
-        public List<Vignette> Vignettes { get; set; }
+        public List<VignetteKey> Vignettes { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(LensDistortion.Frame))]
+        [RuleCollectionUnique(nameof(LensDistortionKey.Frame))]
         [JsonProperty(Names.LensShort)]
-        public List<LensDistortion> Lenses { get; set; }
+        public List<LensDistortionKey> Lenses { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(FilmGrain.Frame))]
+        [RuleCollectionUnique(nameof(FilmGrainKey.Frame))]
         [JsonProperty(Names.GrainShort)]
-        public List<FilmGrain> Grains { get; set; }
+        public List<FilmGrainKey> Grains { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(MotionBlur.Frame))]
+        [RuleCollectionUnique(nameof(MotionBlurKey.Frame))]
         [JsonProperty(Names.MotionBlurShort)]
-        public List<MotionBlur> MotionBlurs { get; set; }
+        public List<MotionBlurKey> MotionBlurs { get; set; }
         
         // Colors
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(ColorCurves.Frame))]
+        [RuleCollectionUnique(nameof(ColorCurvesKey.Frame))]
         [JsonProperty(Names.ColorCurvesShort)]
-        public List<ColorCurves> ColorCurveses { get; set; }
+        public List<ColorCurvesKey> ColorCurveses { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(LiftGammaGain.Frame))]
+        [RuleCollectionUnique(nameof(LiftGammaGainKey.Frame))]
         [JsonProperty(Names.LiftGammaGainShort)]
-        public List<LiftGammaGain> LiftGammaGains { get; set; }
+        public List<LiftGammaGainKey> LiftGammaGains { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(ShadowsMidtonesHighlights.Frame))]
+        [RuleCollectionUnique(nameof(ShadowsMidtonesHighlightsKey.Frame))]
         [JsonProperty(Names.ShadowsMidtonesHighlightsShort)]
-        public List<ShadowsMidtonesHighlights> ShadowsMidtonesHighlightses { get; set; }
+        public List<ShadowsMidtonesHighlightsKey> ShadowsMidtonesHighlightses { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(WhiteBalance.Frame))]
+        [RuleCollectionUnique(nameof(WhiteBalanceKey.Frame))]
         [JsonProperty(Names.WhiteBalanceShort)]
-        public List<WhiteBalance> WhiteBalances { get; set; }
+        public List<WhiteBalanceKey> WhiteBalances { get; set; }
         
         // Glitches
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(AnalogGlitch.Frame))]
+        [RuleCollectionUnique(nameof(AnalogGlitchKey.Frame))]
         [JsonProperty(Names.AnalogGlitchShort)]
-        public List<AnalogGlitch> AnalogGlitches { get; set; }
+        public List<AnalogGlitchKey> AnalogGlitches { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPostProcessingKeys)]
-        [RuleCollectionUnique(nameof(DigitalGlitch.Frame))]
+        [RuleCollectionUnique(nameof(DigitalGlitchKey.Frame))]
         [JsonProperty(Names.DigitalGlitchShort)]
-        public List<DigitalGlitch> DigitalGlitches { get; set; }
+        public List<DigitalGlitchKey> DigitalGlitches { get; set; }
 
         public PostProcessingEvents()
         {
-            Blooms = new List<Bloom>();
-            Chromas = new List<ChromaticAberration>();
-            Vignettes = new List<Vignette>();
-            Lenses = new List<LensDistortion>();
-            Grains = new List<FilmGrain>();
-            MotionBlurs = new List<MotionBlur>();
-            ColorCurveses = new List<ColorCurves>();
-            LiftGammaGains = new List<LiftGammaGain>();
-            ShadowsMidtonesHighlightses = new List<ShadowsMidtonesHighlights>();
-            WhiteBalances = new List<WhiteBalance>();
-            AnalogGlitches = new List<AnalogGlitch>();
-            DigitalGlitches = new List<DigitalGlitch>();
+            Active = PostProcessingRules.ActiveDefault;
+            Blooms = new List<BloomKey>();
+            Chromatics = new List<ChromaticAberrationKey>();
+            Vignettes = new List<VignetteKey>();
+            Lenses = new List<LensDistortionKey>();
+            Grains = new List<FilmGrainKey>();
+            MotionBlurs = new List<MotionBlurKey>();
+            ColorCurveses = new List<ColorCurvesKey>();
+            LiftGammaGains = new List<LiftGammaGainKey>();
+            ShadowsMidtonesHighlightses = new List<ShadowsMidtonesHighlightsKey>();
+            WhiteBalances = new List<WhiteBalanceKey>();
+            AnalogGlitches = new List<AnalogGlitchKey>();
+            DigitalGlitches = new List<DigitalGlitchKey>();
         }
-        public PostProcessingEvents(List<Bloom> blooms, 
-            List<ChromaticAberration> chromas, 
-            List<Vignette> vignettes, 
-            List<LensDistortion> lenses, 
-            List<FilmGrain> grains, 
-            List<MotionBlur> motionBlurs, 
-            List<ColorCurves> colorCurveses, 
-            List<LiftGammaGain> liftGammaGains, 
-            List<ShadowsMidtonesHighlights> shadowsMidtonesHighlightses, 
-            List<WhiteBalance> whiteBalances, 
-            List<AnalogGlitch> analogGlitches, 
-            List<DigitalGlitch> digitalGlitches)
+        public PostProcessingEvents(bool active,
+            List<BloomKey> blooms, 
+            List<ChromaticAberrationKey> chromatics, 
+            List<VignetteKey> vignettes, 
+            List<LensDistortionKey> lenses, 
+            List<FilmGrainKey> grains, 
+            List<MotionBlurKey> motionBlurs, 
+            List<ColorCurvesKey> colorCurveses, 
+            List<LiftGammaGainKey> liftGammaGains, 
+            List<ShadowsMidtonesHighlightsKey> shadowsMidtonesHighlightses, 
+            List<WhiteBalanceKey> whiteBalances, 
+            List<AnalogGlitchKey> analogGlitches, 
+            List<DigitalGlitchKey> digitalGlitches)
         {
+            Active = active;
             Blooms = blooms;
-            Chromas = chromas;
+            Chromatics = chromatics;
             Vignettes = vignettes;
             Lenses = lenses;
             Grains = grains;
@@ -123,8 +129,9 @@ namespace BH.SDK.Models.Game
         }
         public void Reset()
         {
+            Active = PostProcessingRules.ActiveDefault;
             Blooms.Clear();
-            Chromas.Clear();
+            Chromatics.Clear();
             Vignettes.Clear();
             Lenses.Clear();
             Grains.Clear();
@@ -138,7 +145,7 @@ namespace BH.SDK.Models.Game
         }
 
         public object Clone() => Copy();
-        public PostProcessingEvents Copy() => new(Blooms.CopyList(), Chromas.CopyList(), Vignettes.CopyList(),
+        public PostProcessingEvents Copy() => new(Active, Blooms.CopyList(), Chromatics.CopyList(), Vignettes.CopyList(),
             Lenses.CopyList(), Grains.CopyList(), MotionBlurs.CopyList(), ColorCurveses.CopyList(),
             LiftGammaGains.CopyList(), ShadowsMidtonesHighlightses.CopyList(), WhiteBalances.CopyList(),
             AnalogGlitches.CopyList(), DigitalGlitches.CopyList());
@@ -147,8 +154,9 @@ namespace BH.SDK.Models.Game
         public override int GetHashCode()
         {
             var hashCode = new HashCode();
+            hashCode.Add(Active.GetHashCode());
             hashCode.Add(Blooms.GetListHashCode());
-            hashCode.Add(Chromas.GetListHashCode());
+            hashCode.Add(Chromatics.GetListHashCode());
             hashCode.Add(Vignettes.GetListHashCode());
             hashCode.Add(Lenses.GetListHashCode());
             hashCode.Add(Grains.GetListHashCode());
@@ -166,8 +174,9 @@ namespace BH.SDK.Models.Game
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Blooms.ListEquals(other.Blooms)
-                         && Chromas.ListEquals(other.Chromas)
+            var result = Active == other.Active
+                         && Blooms.ListEquals(other.Blooms)
+                         && Chromatics.ListEquals(other.Chromatics)
                          && Vignettes.ListEquals(other.Vignettes)
                          && Lenses.ListEquals(other.Lenses)
                          && Grains.ListEquals(other.Grains)

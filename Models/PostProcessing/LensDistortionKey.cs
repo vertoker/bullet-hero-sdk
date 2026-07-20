@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class LensDistortion : Keyframe, IModel<LensDistortion>
+    public class LensDistortionKey : PostProcessingKeyframe, IModel<LensDistortionKey>
     {
         [RuleInRange(PostProcessingRules.LensDistortion.IntensityMin,
             PostProcessingRules.LensDistortion.IntensityMax)]
@@ -35,15 +35,15 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.Scale)]
         public float Scale { get; set; }
 
-        public LensDistortion()
+        public LensDistortionKey()
         {
             Intensity = 0.5f;
             Multiplier = new Vector2Value(1f, 1f);
             Center = new Vector2Value(0.5f, 0.5f);
             Scale = 1f;
         }
-        public LensDistortion(float intensity, IVector2 multiplier, IVector2 center, float scale,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public LensDistortionKey(float intensity, IVector2 multiplier, IVector2 center, float scale,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Intensity = intensity;
             Multiplier = multiplier;
@@ -60,15 +60,15 @@ namespace BH.SDK.Models.PostProcessing
         }
 
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        LensDistortion ICopyable<LensDistortion>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        LensDistortionKey ICopyable<LensDistortionKey>.Copy() => CopyImpl();
         
-        private LensDistortion CopyImpl() => new(Intensity, Multiplier.Copy(), Center.Copy(), Scale, Frame, Ease);
+        private LensDistortionKey CopyImpl() => new(Intensity, Multiplier.Copy(), Center.Copy(), Scale, Active, Frame, Ease);
 
-        public override bool Equals(object obj) => obj is LensDistortion value && Equals(value);
+        public override bool Equals(object obj) => obj is LensDistortionKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Multiplier, Center, Scale);
 
-        public bool Equals(LensDistortion other)
+        public bool Equals(LensDistortionKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

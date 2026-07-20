@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class ShadowsMidtonesHighlights : Keyframe, IModel<ShadowsMidtonesHighlights>
+    public class ShadowsMidtonesHighlightsKey : PostProcessingKeyframe, IModel<ShadowsMidtonesHighlightsKey>
     {
         [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
@@ -51,7 +51,7 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.HighlightLimit)]
         public IVector2 HighlightLimits { get; set; }
 
-        public ShadowsMidtonesHighlights()
+        public ShadowsMidtonesHighlightsKey()
         {
             Shadows = false;
             ShadowsColor = ColorValue.white;
@@ -63,12 +63,12 @@ namespace BH.SDK.Models.PostProcessing
             ShadowLimits = new Vector2Value(0f, 0.3f);
             HighlightLimits = new Vector2Value(0.55f, 1f);
         }
-        public ShadowsMidtonesHighlights(
+        public ShadowsMidtonesHighlightsKey(
             bool shadows, IColor shadowsColor,
             bool midtones, IColor midtonesColor, 
             bool highlights, IColor highlightsColor, 
             IVector2 shadowLimits, IVector2 highlightLimits,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Shadows = shadows;
             ShadowsColor = shadowsColor;
@@ -94,13 +94,13 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        ShadowsMidtonesHighlights ICopyable<ShadowsMidtonesHighlights>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        ShadowsMidtonesHighlightsKey ICopyable<ShadowsMidtonesHighlightsKey>.Copy() => CopyImpl();
         
-        private ShadowsMidtonesHighlights CopyImpl() => new(Shadows, ShadowsColor.Copy(), Midtones, MidtonesColor.Copy(),
-            Highlights, HighlightsColor.Copy(), ShadowLimits.Copy(), HighlightLimits.Copy(), Frame, Ease);
+        private ShadowsMidtonesHighlightsKey CopyImpl() => new(Shadows, ShadowsColor.Copy(), Midtones, MidtonesColor.Copy(),
+            Highlights, HighlightsColor.Copy(), ShadowLimits.Copy(), HighlightLimits.Copy(), Active, Frame, Ease);
         
-        public override bool Equals(object obj) => obj is ShadowsMidtonesHighlights value && Equals(value);
+        public override bool Equals(object obj) => obj is ShadowsMidtonesHighlightsKey value && Equals(value);
         public override int GetHashCode()
         {
             var hashCode = new HashCode();
@@ -116,7 +116,7 @@ namespace BH.SDK.Models.PostProcessing
             return hashCode.ToHashCode();
         }
 
-        public bool Equals(ShadowsMidtonesHighlights other)
+        public bool Equals(ShadowsMidtonesHighlightsKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

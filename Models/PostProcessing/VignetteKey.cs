@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.PostProcessing
 {
     [RuleContainer]
-    public class Vignette : Keyframe, IModel<Vignette>
+    public class VignetteKey : PostProcessingKeyframe, IModel<VignetteKey>
     {
         [RuleNotNull(typeof(ColorValue))] // TODO add extra part for checking HDR part
         [JsonProperty(Names.Color)]
@@ -37,7 +37,7 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.Rounded)]
         public bool Rounded { get; set; }
 
-        public Vignette()
+        public VignetteKey()
         {
             Color = ColorValue.black;
             Center = new Vector2Value(0.5f, 0.5f);
@@ -45,8 +45,8 @@ namespace BH.SDK.Models.PostProcessing
             Smoothness = 0.5f;
             Rounded = false;
         }
-        public Vignette(IColor color, IVector2 center, float intensity, float smoothness, bool rounded,
-            int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public VignetteKey(IColor color, IVector2 center, float intensity, float smoothness, bool rounded,
+            bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Color = color;
             Center = center;
@@ -65,16 +65,16 @@ namespace BH.SDK.Models.PostProcessing
         }
         
         public override object Clone() => CopyImpl();
-        public override Keyframe Copy() => CopyImpl();
-        Vignette ICopyable<Vignette>.Copy() => CopyImpl();
+        public override PostProcessingKeyframe Copy() => CopyImpl();
+        VignetteKey ICopyable<VignetteKey>.Copy() => CopyImpl();
         
-        private Vignette CopyImpl() => new(Color.Copy(), Center.Copy(), Intensity, Smoothness, Rounded, Frame, Ease);
+        private VignetteKey CopyImpl() => new(Color.Copy(), Center.Copy(), Intensity, Smoothness, Rounded, Active, Frame, Ease);
         
-        public override bool Equals(object obj) => obj is Vignette value && Equals(value);
+        public override bool Equals(object obj) => obj is VignetteKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
             Color, Center, Intensity, Smoothness, Rounded);
 
-        public bool Equals(Vignette other)
+        public bool Equals(VignetteKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

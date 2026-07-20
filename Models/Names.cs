@@ -177,7 +177,7 @@
         public const string ParentShort = "p";
         
         public const string BloomShort = "blm";
-        public const string ChromaShort = "chr";
+        public const string ChromaticShort = "chr";
         public const string VignetteShort = "vgn";
         public const string LensShort = "lns";
         public const string GrainShort = "grn";
@@ -426,7 +426,7 @@
         
         public const string PostProcessing = Post + Processing;
         public const string RenderBloom = Render + _ + BloomShort;
-        public const string RenderChroma = Render + _ + ChromaShort;
+        public const string RenderChroma = Render + _ + ChromaticShort;
         public const string RenderVignette = Render + _ + VignetteShort;
         public const string RenderLens = Render + _ + LensShort;
         public const string RenderGrain = Render + _ + GrainShort;
