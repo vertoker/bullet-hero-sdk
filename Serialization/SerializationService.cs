@@ -83,6 +83,7 @@ namespace BH.SDK.Serialization
                 new FloatConverter(),
                 new StringConverter(),
                 new ColorConverter(),
+                new Color3Converter(),
                 new Vector2Converter(),
                 new Vector3Converter(),
                 new Vector4Converter(),

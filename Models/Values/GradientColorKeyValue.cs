@@ -15,7 +15,7 @@ namespace BH.SDK.Models.Values
         
         [RuleNotNull]
         [JsonProperty(Names.Color)]
-        public ColorValue Color { get; set; }
+        public Color4Value Color4 { get; set; }
         
         [RuleInRange(ValueRules.MinGradientTime, ValueRules.MaxGradientTime)]
         [JsonProperty(Names.TimeShort)]
@@ -23,31 +23,31 @@ namespace BH.SDK.Models.Values
         
         public GradientColorKeyValue()
         {
-            Color = ColorValue.white;
+            Color4 = Color4Value.white;
             Time = ValueRules.FloatZero;
         }
-        public GradientColorKeyValue(ColorValue color, float time)
+        public GradientColorKeyValue(Color4Value color4, float time)
         {
-            Color = color;
+            Color4 = color4;
             Time = time;
         }
         public void Reset()
         {
-            Color = ColorValue.white;
+            Color4 = Color4Value.white;
             Time = ValueRules.FloatZero;
         }
 
         public object Clone() => Copy();
-        public GradientColorKeyValue Copy() => new(Color.Copy(), Time);
+        public GradientColorKeyValue Copy() => new(Color4.Copy(), Time);
 
         public override bool Equals(object obj) => obj is GradientColorKeyValue value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Color, Time);
+        public override int GetHashCode() => HashCode.Combine(Color4, Time);
 
         public bool Equals(GradientColorKeyValue other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Color.Equals(other.Color)
+            var result = Color4.Equals(other.Color4)
                          && Time.Equals(other.Time);
             return result;
         }

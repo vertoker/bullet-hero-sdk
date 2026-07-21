@@ -15,34 +15,34 @@ namespace BH.SDK.Models.Keyframes
     [RuleContainer]
     public class ColorHorizontalKey : Keyframe, IColor4X4Key, IModel<ColorHorizontalKey>
     {
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorLeft)]
-        public IColor ColorLeft { get; set; }
+        public IColor4 Color4Left { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorRight)]
-        public IColor ColorRight { get; set; }
+        public IColor4 Color4Right { get; set; }
 
         public ColorHorizontalKey()
         {
-            ColorLeft = ColorValue.white;
-            ColorRight = ColorValue.white;
+            Color4Left = Color4Value.white;
+            Color4Right = Color4Value.white;
         }
-        public ColorHorizontalKey(IColor color, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ColorHorizontalKey(IColor4 color4, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
-            ColorLeft = color.Copy();
-            ColorRight = color.Copy();
+            Color4Left = color4.Copy();
+            Color4Right = color4.Copy();
         }
-        public ColorHorizontalKey(IColor colorLeft, IColor colorRight, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ColorHorizontalKey(IColor4 color4Left, IColor4 color4Right, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
-            ColorLeft = colorLeft;
-            ColorRight = colorRight;
+            Color4Left = color4Left;
+            Color4Right = color4Right;
         }
         public override void Reset()
         {
             base.Reset();
-            ColorLeft = ColorValue.white;
-            ColorRight = ColorValue.white;
+            Color4Left = Color4Value.white;
+            Color4Right = Color4Value.white;
         }
         
         public Color4X4KeyType GetModelType() => Color4X4KeyType.Horizontal;
@@ -52,19 +52,19 @@ namespace BH.SDK.Models.Keyframes
         ColorHorizontalKey ICopyable<ColorHorizontalKey>.Copy() => CopyImpl();
         IColor4X4Key ICopyable<IColor4X4Key>.Copy() => CopyImpl();
         
-        private ColorHorizontalKey CopyImpl() => new(ColorLeft.Copy(), ColorRight.Copy(), Frame, Ease);
+        private ColorHorizontalKey CopyImpl() => new(Color4Left.Copy(), Color4Right.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is ColorHorizontalKey value && Equals(value);
         public bool Equals(IColor4X4Key other) => other is ColorHorizontalKey value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ColorLeft, ColorRight);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Color4Left, Color4Right);
 
         public bool Equals(ColorHorizontalKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = base.Equals(other)
-                         && ColorLeft.Equals(other.ColorLeft)
-                         && ColorRight.Equals(other.ColorRight);
+                         && Color4Left.Equals(other.Color4Left)
+                         && Color4Right.Equals(other.Color4Right);
             return result;
         }
     }

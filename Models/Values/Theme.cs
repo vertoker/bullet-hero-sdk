@@ -26,7 +26,7 @@ namespace BH.SDK.Models.Values
         
         [RuleNotNull, RuleCollectionCount(ValueRules.ThemeCount)]
         [JsonProperty(Names.Matrix)]
-        public ColorValue[] Matrix { get; set; }
+        public Color4Value[] Matrix { get; set; }
         
         // Theme - is map of colors, level can refer to color via index
         // Theme is a predefined array in runtime
@@ -48,17 +48,17 @@ namespace BH.SDK.Models.Values
         {
             ThemeId = ThemeId.Null;
             Name = string.Empty;
-            Matrix = new ColorValue[ValueRules.ThemeCount];
-            Array.Fill(Matrix, ColorValue.white);
+            Matrix = new Color4Value[ValueRules.ThemeCount];
+            Array.Fill(Matrix, Color4Value.white);
         }
         public Theme(ThemeId themeId, string name = "")
         {
             ThemeId = themeId;
             Name = name;
-            Matrix = new ColorValue[ValueRules.ThemeCount];
-            Array.Fill(Matrix, ColorValue.white);
+            Matrix = new Color4Value[ValueRules.ThemeCount];
+            Array.Fill(Matrix, Color4Value.white);
         }
-        public Theme(ThemeId themeId, string name, ColorValue[] matrix)
+        public Theme(ThemeId themeId, string name, Color4Value[] matrix)
         {
             ThemeId = themeId;
             Name = name;
@@ -68,7 +68,7 @@ namespace BH.SDK.Models.Values
         {
             ThemeId = ThemeId.Null;
             Name = string.Empty;
-            Array.Fill(Matrix, ColorValue.white);
+            Array.Fill(Matrix, Color4Value.white);
         }
 
         public object Clone() => Copy();

@@ -111,7 +111,7 @@ namespace BH.SDK.Tests
             level.Settings.Framerate = 61;
             
             level.Game.Events.ScreenLimits.Add(new ScreenLimitKey(new ScreenLimitBounds(), 0));
-            level.Game.Events.Backgrounds.Add(new Color4Key());
+            level.Game.Events.Backgrounds.Add(new Color3Key());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
             level.Game.Events.Themes.Add(new ThemeKeyframe());
@@ -213,7 +213,7 @@ namespace BH.SDK.Tests
 
             level.Settings.Framerate = -15;
             
-            level.Game.Events.Backgrounds.Add(new Color4Key());
+            level.Game.Events.Backgrounds.Add(new Color3Key());
             level.Game.Events.Checkpoints.Add(new Checkpoint());
             level.Game.Events.Markers.Add(new Marker());
             level.Game.Events.Themes.Add(new ThemeKeyframe());
@@ -434,9 +434,9 @@ namespace BH.SDK.Tests
             {
                 Matrix =
                 {
-                    [1] = ColorValue.red,
-                    [2] = ColorValue.green,
-                    [3] = ColorValue.blue,
+                    [1] = Color4Value.red,
+                    [2] = Color4Value.green,
+                    [3] = Color4Value.blue,
                 }
             };
             return theme;

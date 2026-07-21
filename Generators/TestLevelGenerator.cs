@@ -39,8 +39,8 @@ namespace BH.SDK.Generators
             textureObject1.AnchorsMin.Add(AlignmentKey.GetCenterMiddle(90));
             textureObject1.AnchorsMax.Add(AlignmentKey.GetCenterMiddle(90));
             textureObject1.Pivots.Add(AlignmentKey.GetLeftMiddle(0));
-            textureObject1.Colors.Add(new Color4X4Key(new ColorValue(1f, 1f, 0f, 1f), 0));
-            textureObject1.Colors.Add(new Color4X4Key(new ColorValue(1f, 0f, 0f, 1f), 90));
+            textureObject1.Colors.Add(new Color4X4Key(new Color4Value(1f, 1f, 0f, 1f), 0));
+            textureObject1.Colors.Add(new Color4X4Key(new Color4Value(1f, 0f, 0f, 1f), 90));
             
             var textureObject2 = new TextureObject
             {
@@ -91,8 +91,8 @@ namespace BH.SDK.Generators
             };
             effectObject1.Positions.Add(new PosKey(new Vector2Value(2f, 0f), 0));
             effectObject1.Positions.Add(new PosKey(new Vector2Value(3f, 2f), 600));
-            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[0].Color = ColorValue.red;
-            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[1].Color = ColorValue.blue;
+            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[0].Color4 = Color4Value.red;
+            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[1].Color4 = Color4Value.blue;
 
             var allText = "\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz" +
                           "{|}~ ¡¢£¤¥¦§¨©ª«¬-®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóô" +
@@ -111,8 +111,8 @@ namespace BH.SDK.Generators
                 Text = new StringValue(allText),
             };
             textObject1.Sizes.Add(new ScaKey(new Vector2Value(10f, 2f), 0));
-            textObject1.Colors.Add(new Color4Key(ColorValue.white, 0));
-            textObject1.Colors.Add(new Color4Key(ColorValue.red, 30));
+            textObject1.Colors.Add(new Color4Key(Color4Value.white, 0));
+            textObject1.Colors.Add(new Color4Key(Color4Value.red, 30));
             textObject1.FontSizes.Add(new FloatKey(new FloatValue(2f), 0));
             textObject1.FontSizes.Add(new FloatKey(new FloatValue(0.3f), 30));
             

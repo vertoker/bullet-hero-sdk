@@ -25,37 +25,37 @@ namespace BH.SDK.Models.Events
         [JsonProperty(Names.Description)]
         public string Description { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull]
         [JsonProperty(Names.Color)]
-        public IColor Color { get; set; }
+        public Color4Value Color4 { get; set; }
 
         public Marker()
         {
             Frame = FrameRules.MinFrame;
             Name = string.Empty;
             Description = string.Empty;
-            Color = new ColorValue();
+            Color4 = new Color4Value();
         }
-        public Marker(string name, string description, IColor color, int frame)
+        public Marker(string name, string description, Color4Value color4, int frame)
         {
             Frame = frame;
             Name = name;
             Description = description;
-            Color = color;
+            Color4 = color4;
         }
         public void Reset()
         {
             Frame = FrameRules.MinFrame;
             Name = string.Empty;
             Description = string.Empty;
-            Color = new ColorValue();
+            Color4 = new Color4Value();
         }
 
         public object Clone() => Copy();
-        public Marker Copy() => new(Name, Description, Color.Copy(), Frame);
+        public Marker Copy() => new(Name, Description, Color4.Copy(), Frame);
 
         public override bool Equals(object obj) => obj is Marker value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Frame, Name, Description, Color);
+        public override int GetHashCode() => HashCode.Combine(Frame, Name, Description, Color4);
 
         public bool Equals(Marker other)
         {
@@ -64,7 +64,7 @@ namespace BH.SDK.Models.Events
             var result = Frame.Equals(other.Frame)
                          && Name.Equals(other.Name)
                          && Description.Equals(other.Description)
-                         && Color.Equals(other.Color);
+                         && Color4.Equals(other.Color4);
             return result;
         }
     }

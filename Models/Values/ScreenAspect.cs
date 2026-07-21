@@ -21,7 +21,9 @@ namespace BH.SDK.Models.Values
         
         // TODO add vertical/horizontal metadata (for phones and special modes)
         
-        public float GetAspect() => Width / (float)Height;
+        public float GetAspect() => IsValid() ? Width / (float)Height : 0f;
+
+        public bool IsValid() => Width != 0f && Height != 0f;
 
         public ScreenAspect()
         {

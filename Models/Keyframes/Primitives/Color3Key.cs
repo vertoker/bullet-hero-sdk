@@ -2,7 +2,6 @@
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Enum.Keyframes;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Models.Interfaces.Keyframes;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules.Attributes;
@@ -13,40 +12,36 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     [RuleContainer]
-    public class Color4Key : Keyframe, IColor4X4Key, IModel<Color4Key>
+    public class Color3Key : Keyframe, IModel<Color3Key>
     {
-        [RuleNotNull(typeof(Color4Value))]
+        [RuleNotNull(typeof(Color3Value))]
         [JsonProperty(Names.Color)]
-        public IColor4 Value { get; set; }
+        public IColor3 Value { get; set; }
 
-        public Color4Key()
+        public Color3Key()
         {
-            Value = Color4Value.white;
+            Value = Color3Value.white;
         }
-        public Color4Key(IColor4 value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public Color3Key(IColor3 value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
             Value = value;
         }
         public override void Reset()
         {
             base.Reset();
-            Value = Color4Value.white;
+            Value = Color3Value.white;
         }
-        
-        public Color4X4KeyType GetModelType() => Color4X4KeyType.Value;
         
         public override object Clone() => CopyImpl();
         public override Keyframe Copy() => CopyImpl();
-        Color4Key ICopyable<Color4Key>.Copy() => CopyImpl();
-        IColor4X4Key ICopyable<IColor4X4Key>.Copy() => CopyImpl();
+        Color3Key ICopyable<Color3Key>.Copy() => CopyImpl();
         
-        private Color4Key CopyImpl() => new(Value.Copy(), Frame, Ease);
+        private Color3Key CopyImpl() => new(Value.Copy(), Frame, Ease);
 
-        public override bool Equals(object obj) => obj is Color4Key value && Equals(value);
-        public bool Equals(IColor4X4Key other) => other is Color4Key value && Equals(value);
+        public override bool Equals(object obj) => obj is Color3Key value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);
 
-        public bool Equals(Color4Key other)
+        public bool Equals(Color3Key other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

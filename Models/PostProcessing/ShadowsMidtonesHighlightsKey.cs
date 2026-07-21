@@ -18,25 +18,25 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.ShadowColor)]
-        public IColor ShadowsColor { get; set; }
+        public IColor4 ShadowsColor4 { get; set; }
         
         
         [JsonProperty(Names.Midtone)]
         public bool Midtones { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.MidtoneColor)]
-        public IColor MidtonesColor { get; set; }
+        public IColor4 MidtonesColor4 { get; set; }
         
         
         [JsonProperty(Names.Highlight)]
         public bool Highlights { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))] // TODO add color hdr support for alpha rule (0f-2f)
+        [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.HighlightColor)]
-        public IColor HighlightsColor { get; set; }
+        public IColor4 HighlightsColor4 { get; set; }
         
         
         // TODO graph like in Post Processing menu
@@ -54,28 +54,28 @@ namespace BH.SDK.Models.PostProcessing
         public ShadowsMidtonesHighlightsKey()
         {
             Shadows = false;
-            ShadowsColor = ColorValue.white;
+            ShadowsColor4 = Color4Value.white;
             Midtones = false;
-            MidtonesColor = ColorValue.white;
+            MidtonesColor4 = Color4Value.white;
             Highlights = false;
-            HighlightsColor = ColorValue.white;
+            HighlightsColor4 = Color4Value.white;
             
             ShadowLimits = new Vector2Value(0f, 0.3f);
             HighlightLimits = new Vector2Value(0.55f, 1f);
         }
         public ShadowsMidtonesHighlightsKey(
-            bool shadows, IColor shadowsColor,
-            bool midtones, IColor midtonesColor, 
-            bool highlights, IColor highlightsColor, 
+            bool shadows, IColor4 shadowsColor4,
+            bool midtones, IColor4 midtonesColor4, 
+            bool highlights, IColor4 highlightsColor4, 
             IVector2 shadowLimits, IVector2 highlightLimits,
             bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Shadows = shadows;
-            ShadowsColor = shadowsColor;
+            ShadowsColor4 = shadowsColor4;
             Midtones = midtones;
-            MidtonesColor = midtonesColor;
+            MidtonesColor4 = midtonesColor4;
             Highlights = highlights;
-            HighlightsColor = highlightsColor;
+            HighlightsColor4 = highlightsColor4;
             ShadowLimits = shadowLimits;
             HighlightLimits = highlightLimits;
         }
@@ -83,11 +83,11 @@ namespace BH.SDK.Models.PostProcessing
         {
             base.Reset();
             Shadows = false;
-            ShadowsColor = ColorValue.white;
+            ShadowsColor4 = Color4Value.white;
             Midtones = false;
-            MidtonesColor = ColorValue.white;
+            MidtonesColor4 = Color4Value.white;
             Highlights = false;
-            HighlightsColor = ColorValue.white;
+            HighlightsColor4 = Color4Value.white;
             
             ShadowLimits = new Vector2Value(0f, 0.3f);
             HighlightLimits = new Vector2Value(0.55f, 1f);
@@ -97,8 +97,8 @@ namespace BH.SDK.Models.PostProcessing
         public override PostProcessingKeyframe Copy() => CopyImpl();
         ShadowsMidtonesHighlightsKey ICopyable<ShadowsMidtonesHighlightsKey>.Copy() => CopyImpl();
         
-        private ShadowsMidtonesHighlightsKey CopyImpl() => new(Shadows, ShadowsColor.Copy(), Midtones, MidtonesColor.Copy(),
-            Highlights, HighlightsColor.Copy(), ShadowLimits.Copy(), HighlightLimits.Copy(), Active, Frame, Ease);
+        private ShadowsMidtonesHighlightsKey CopyImpl() => new(Shadows, ShadowsColor4.Copy(), Midtones, MidtonesColor4.Copy(),
+            Highlights, HighlightsColor4.Copy(), ShadowLimits.Copy(), HighlightLimits.Copy(), Active, Frame, Ease);
         
         public override bool Equals(object obj) => obj is ShadowsMidtonesHighlightsKey value && Equals(value);
         public override int GetHashCode()
@@ -106,11 +106,11 @@ namespace BH.SDK.Models.PostProcessing
             var hashCode = new HashCode();
             hashCode.Add(base.GetHashCode());
             hashCode.Add(Shadows);
-            hashCode.Add(ShadowsColor);
+            hashCode.Add(ShadowsColor4);
             hashCode.Add(Midtones);
-            hashCode.Add(MidtonesColor);
+            hashCode.Add(MidtonesColor4);
             hashCode.Add(Highlights);
-            hashCode.Add(HighlightsColor);
+            hashCode.Add(HighlightsColor4);
             hashCode.Add(ShadowLimits);
             hashCode.Add(HighlightLimits);
             return hashCode.ToHashCode();
@@ -122,11 +122,11 @@ namespace BH.SDK.Models.PostProcessing
             if (ReferenceEquals(this, other)) return true;
             var result = base.Equals(other)
                          && Shadows == other.Shadows
-                         && ShadowsColor.Equals(other.ShadowsColor)
+                         && ShadowsColor4.Equals(other.ShadowsColor4)
                          && Midtones == other.Midtones
-                         && MidtonesColor.Equals(other.MidtonesColor)
+                         && MidtonesColor4.Equals(other.MidtonesColor4)
                          && Highlights == other.Highlights
-                         && HighlightsColor.Equals(other.HighlightsColor)
+                         && HighlightsColor4.Equals(other.HighlightsColor4)
                          && ShadowLimits.Equals(other.ShadowLimits)
                          && HighlightLimits.Equals(other.HighlightLimits);
             return result;

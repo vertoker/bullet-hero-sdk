@@ -15,9 +15,9 @@ namespace BH.SDK.Models.PostProcessing
     [RuleContainer]
     public class VignetteKey : PostProcessingKeyframe, IModel<VignetteKey>
     {
-        [RuleNotNull(typeof(ColorValue))] // TODO add extra part for checking HDR part
+        [RuleNotNull(typeof(Color4Value))] // TODO add extra part for checking HDR part
         [JsonProperty(Names.Color)]
-        public IColor Color { get; set; }
+        public IColor4 Color4 { get; set; }
         
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(PostProcessingRules.Vignette.CenterMin,
              PostProcessingRules.Vignette.CenterMax)]
@@ -39,16 +39,16 @@ namespace BH.SDK.Models.PostProcessing
 
         public VignetteKey()
         {
-            Color = ColorValue.black;
+            Color4 = Color4Value.black;
             Center = new Vector2Value(0.5f, 0.5f);
             Intensity = 0.3f;
             Smoothness = 0.5f;
             Rounded = false;
         }
-        public VignetteKey(IColor color, IVector2 center, float intensity, float smoothness, bool rounded,
+        public VignetteKey(IColor4 color4, IVector2 center, float intensity, float smoothness, bool rounded,
             bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
-            Color = color;
+            Color4 = color4;
             Center = center;
             Intensity = intensity;
             Smoothness = smoothness;
@@ -57,7 +57,7 @@ namespace BH.SDK.Models.PostProcessing
         public override void Reset()
         {
             base.Reset();
-            Color = ColorValue.black;
+            Color4 = Color4Value.black;
             Center = new Vector2Value(0.5f, 0.5f);
             Intensity = 0.3f;
             Smoothness = 0.5f;
@@ -68,18 +68,18 @@ namespace BH.SDK.Models.PostProcessing
         public override PostProcessingKeyframe Copy() => CopyImpl();
         VignetteKey ICopyable<VignetteKey>.Copy() => CopyImpl();
         
-        private VignetteKey CopyImpl() => new(Color.Copy(), Center.Copy(), Intensity, Smoothness, Rounded, Active, Frame, Ease);
+        private VignetteKey CopyImpl() => new(Color4.Copy(), Center.Copy(), Intensity, Smoothness, Rounded, Active, Frame, Ease);
         
         public override bool Equals(object obj) => obj is VignetteKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
-            Color, Center, Intensity, Smoothness, Rounded);
+            Color4, Center, Intensity, Smoothness, Rounded);
 
         public bool Equals(VignetteKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = base.Equals(other)
-                         && Color.Equals(other.Color)
+                         && Color4.Equals(other.Color4)
                          && Center.Equals(other.Center)
                          && Intensity.Equals(other.Intensity)
                          && Smoothness.Equals(other.Smoothness)

@@ -17,40 +17,40 @@ namespace BH.SDK.Models.Effects
     {
         [RuleNotNull]
         [JsonProperty(Names.ColorA)]
-        public IColor ColorA { get; set; }
+        public IColor4 Color4A { get; set; }
         
         [RuleNotNull]
         [JsonProperty(Names.ColorB)]
-        public IColor ColorB { get; set; }
+        public IColor4 Color4B { get; set; }
         
         public EffectColorType GetModelType() => EffectColorType.RandomUniform;
 
         public EffectColorRandomUniform()
         {
-            ColorA = new ColorValue(
+            Color4A = new Color4Value(
                 EffectRules.Color.A_R_Default,
                 EffectRules.Color.A_G_Default,
                 EffectRules.Color.A_B_Default,
                 EffectRules.Color.A_A_Default);
-            ColorB = new ColorValue(
+            Color4B = new Color4Value(
                 EffectRules.Color.B_R_Default,
                 EffectRules.Color.B_G_Default,
                 EffectRules.Color.B_B_Default,
                 EffectRules.Color.B_A_Default);
         }
-        public EffectColorRandomUniform(IColor colorA, IColor colorB)
+        public EffectColorRandomUniform(IColor4 color4A, IColor4 color4B)
         {
-            ColorA = colorA;
-            ColorB = colorB;
+            Color4A = color4A;
+            Color4B = color4B;
         }
         public void Reset()
         {
-            ColorA = new ColorValue(
+            Color4A = new Color4Value(
                 EffectRules.Color.A_R_Default,
                 EffectRules.Color.A_G_Default,
                 EffectRules.Color.A_B_Default,
                 EffectRules.Color.A_A_Default);
-            ColorB = new ColorValue(
+            Color4B = new Color4Value(
                 EffectRules.Color.B_R_Default,
                 EffectRules.Color.B_G_Default,
                 EffectRules.Color.B_B_Default,
@@ -58,19 +58,19 @@ namespace BH.SDK.Models.Effects
         }
 
         public object Clone() => Copy();
-        IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorRandomUniform(ColorA.Copy(), ColorB.Copy());
-        public EffectColorRandomUniform Copy() => new(ColorA.Copy(), ColorB.Copy());
+        IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorRandomUniform(Color4A.Copy(), Color4B.Copy());
+        public EffectColorRandomUniform Copy() => new(Color4A.Copy(), Color4B.Copy());
 
         public override bool Equals(object obj) => obj is EffectColorRandomUniform value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(ColorA, ColorB);
+        public override int GetHashCode() => HashCode.Combine(Color4A, Color4B);
         
         public bool Equals(IEffectColor other) => other is EffectColorRandomUniform value && Equals(value);
         public bool Equals(EffectColorRandomUniform other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = ColorA.Equals(other.ColorA)
-                         && ColorB.Equals(other.ColorB);
+            var result = Color4A.Equals(other.Color4A)
+                         && Color4B.Equals(other.Color4B);
             return result;
         }
     }

@@ -24,37 +24,37 @@ namespace BH.SDK.Models.Events
         [JsonProperty(Names.ActiveShort)]
         public bool Active { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.Color)]
-        public IColor Color { get; set; }
+        public IColor4 Color4 { get; set; }
 
         public Checkpoint()
         {
             Frame = FrameRules.MinFrame;
             Name = string.Empty;
             Active = true;
-            Color = ColorValue.white;
+            Color4 = Color4Value.white;
         }
-        public Checkpoint(string name, bool active, IColor color, int frame)
+        public Checkpoint(string name, bool active, IColor4 color4, int frame)
         {
             Frame = frame;
             Name = name;
             Active = active;
-            Color = color;
+            Color4 = color4;
         }
         public void Reset()
         {
             Frame = FrameRules.MinFrame;
             Name = string.Empty;
             Active = true;
-            Color = ColorValue.white;
+            Color4 = Color4Value.white;
         }
 
         public object Clone() => Copy();
-        public Checkpoint Copy() => new(Name, Active, Color.Copy(), Frame);
+        public Checkpoint Copy() => new(Name, Active, Color4.Copy(), Frame);
 
         public override bool Equals(object obj) => obj is Checkpoint value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Frame, Name, Active, Color);
+        public override int GetHashCode() => HashCode.Combine(Frame, Name, Active, Color4);
 
         public bool Equals(Checkpoint other)
         {
@@ -63,7 +63,7 @@ namespace BH.SDK.Models.Events
             var result = Frame.Equals(other.Frame)
                          && Name.Equals(other.Name)
                          && Active == other.Active
-                         && Color.Equals(other.Color);
+                         && Color4.Equals(other.Color4);
             return result;
         }
     }

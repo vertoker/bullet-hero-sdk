@@ -15,34 +15,34 @@ namespace BH.SDK.Models.Keyframes
     [RuleContainer]
     public class ColorVerticalKey : Keyframe, IColor4X4Key, IModel<ColorVerticalKey>
     {
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorBottom)]
-        public IColor ColorBottom { get; set; }
+        public IColor4 Color4Bottom { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorTop)]
-        public IColor ColorTop { get; set; }
+        public IColor4 Color4Top { get; set; }
 
         public ColorVerticalKey()
         {
-            ColorBottom = ColorValue.white;
-            ColorTop = ColorValue.white;
+            Color4Bottom = Color4Value.white;
+            Color4Top = Color4Value.white;
         }
-        public ColorVerticalKey(IColor color, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ColorVerticalKey(IColor4 color4, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
-            ColorBottom = color.Copy();
-            ColorTop = color.Copy();
+            Color4Bottom = color4.Copy();
+            Color4Top = color4.Copy();
         }
-        public ColorVerticalKey(IColor colorBottom, IColor colorTop, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public ColorVerticalKey(IColor4 color4Bottom, IColor4 color4Top, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
-            ColorBottom = colorBottom;
-            ColorTop = colorTop;
+            Color4Bottom = color4Bottom;
+            Color4Top = color4Top;
         }
         public override void Reset()
         {
             base.Reset();
-            ColorBottom = ColorValue.white;
-            ColorTop = ColorValue.white;
+            Color4Bottom = Color4Value.white;
+            Color4Top = Color4Value.white;
         }
         
         public Color4X4KeyType GetModelType() => Color4X4KeyType.Vertical;
@@ -52,19 +52,19 @@ namespace BH.SDK.Models.Keyframes
         ColorVerticalKey ICopyable<ColorVerticalKey>.Copy() => CopyImpl();
         IColor4X4Key ICopyable<IColor4X4Key>.Copy() => CopyImpl();
         
-        private ColorVerticalKey CopyImpl() => new(ColorBottom.Copy(), ColorTop.Copy(), Frame, Ease);
+        private ColorVerticalKey CopyImpl() => new(Color4Bottom.Copy(), Color4Top.Copy(), Frame, Ease);
 
         public override bool Equals(object obj) => obj is ColorVerticalKey value && Equals(value);
         public bool Equals(IColor4X4Key other) => other is ColorVerticalKey value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ColorBottom, ColorTop);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Color4Bottom, Color4Top);
 
         public bool Equals(ColorVerticalKey other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = base.Equals(other)
-                         && ColorBottom.Equals(other.ColorBottom)
-                         && ColorTop.Equals(other.ColorTop);
+                         && Color4Bottom.Equals(other.Color4Bottom)
+                         && Color4Top.Equals(other.Color4Top);
             return result;
         }
     }

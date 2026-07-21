@@ -27,9 +27,9 @@ namespace BH.SDK.Models.PostProcessing
         [JsonProperty(Names.Scatter)]
         public float Scatter { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.Color)]
-        public IColor Color { get; set; }
+        public IColor4 Color4 { get; set; }
         
         // Filter (player choose in settings: high - Gaussian, mid - Dual, low - Kawase)
 
@@ -37,31 +37,31 @@ namespace BH.SDK.Models.PostProcessing
         {
             Intensity = 0.5f;
             Scatter = 0.5f;
-            Color = ColorValue.red;
+            Color4 = Color4Value.red;
         }
-        public BloomKey(float intensity, float scatter, IColor color,
+        public BloomKey(float intensity, float scatter, IColor4 color4,
             bool active, int frame, EaseType ease = Keyframe.DefaultEase) : base(active, frame, ease)
         {
             Intensity = intensity;
             Scatter = scatter;
-            Color = color;
+            Color4 = color4;
         }
         public override void Reset()
         {
             base.Reset();
             Intensity = 0.5f;
             Scatter = 0.5f;
-            Color = ColorValue.red;
+            Color4 = Color4Value.red;
         }
         
         public override object Clone() => CopyImpl();
         public override PostProcessingKeyframe Copy() => CopyImpl();
         BloomKey ICopyable<BloomKey>.Copy() => CopyImpl();
         
-        private BloomKey CopyImpl() => new(Intensity, Scatter, Color.Copy(), Active, Frame, Ease);
+        private BloomKey CopyImpl() => new(Intensity, Scatter, Color4.Copy(), Active, Frame, Ease);
 
         public override bool Equals(object obj) => obj is BloomKey value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Scatter, Color);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Intensity, Scatter, Color4);
 
         public bool Equals(BloomKey other)
         {
@@ -70,7 +70,7 @@ namespace BH.SDK.Models.PostProcessing
             var result = base.Equals(other)
                          && Intensity.Equals(other.Intensity)
                          && Scatter.Equals(other.Scatter)
-                         && Color.Equals(other.Color);
+                         && Color4.Equals(other.Color4);
             return result;
         }
     }

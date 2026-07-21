@@ -17,25 +17,25 @@ namespace BH.SDK.Models.Effects
     {
         [RuleNotNull]
         [JsonProperty(Names.Color)]
-        public IColor Color { get; set; }
+        public IColor4 Color4 { get; set; }
         
         public EffectColorType GetModelType() => EffectColorType.Value;
 
         public EffectColorValue()
         {
-            Color = new ColorValue(
+            Color4 = new Color4Value(
                 EffectRules.Color.A_R_Default,
                 EffectRules.Color.A_G_Default,
                 EffectRules.Color.A_B_Default,
                 EffectRules.Color.A_A_Default);
         }
-        public EffectColorValue(IColor color)
+        public EffectColorValue(IColor4 color4)
         {
-            Color = color;
+            Color4 = color4;
         }
         public void Reset()
         {
-            Color = new ColorValue(
+            Color4 = new Color4Value(
                 EffectRules.Color.A_R_Default,
                 EffectRules.Color.A_G_Default,
                 EffectRules.Color.A_B_Default,
@@ -43,19 +43,19 @@ namespace BH.SDK.Models.Effects
         }
 
         public object Clone() => Copy();
-        IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorValue(Color.Copy());
-        public EffectColorValue Copy() => new(Color.Copy());
+        IEffectColor ICopyable<IEffectColor>.Copy() => new EffectColorValue(Color4.Copy());
+        public EffectColorValue Copy() => new(Color4.Copy());
         
         public bool Equals(IEffectColor other) => other is EffectColorValue value && Equals(value);
 
         public override bool Equals(object obj) => obj is EffectColorValue value && Equals(value);
-        public override int GetHashCode() => Color != null ? Color.GetHashCode() : 0;
+        public override int GetHashCode() => Color4 != null ? Color4.GetHashCode() : 0;
 
         public bool Equals(EffectColorValue other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Color.Equals(other.Color);
+            var result = Color4.Equals(other.Color4);
             return result;
         }
     }

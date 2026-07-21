@@ -175,8 +175,8 @@ namespace BH.SDK.Rules
         {
             var colorKeys = new List<GradientColorKeyValue>
             {
-                new(ColorValue.white, 0f),
-                new(ColorValue.white, 1f),
+                new(Color4Value.white, 0f),
+                new(Color4Value.white, 1f),
             };
             var alphaKeys = new List<GradientAlphaKeyValue>
             {

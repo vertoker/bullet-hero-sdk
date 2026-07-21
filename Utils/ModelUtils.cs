@@ -12,17 +12,17 @@ namespace BH.SDK.Utils
     {
         private const float ByteMaxValue = byte.MaxValue;
         
-        public static ColorValue ToColorValue(this Pixel pixel) => new(
+        public static Color4Value ToColorValue(this Pixel pixel) => new(
             pixel.r / ByteMaxValue, 
             pixel.g / ByteMaxValue, 
             pixel.b / ByteMaxValue, 
             pixel.a / ByteMaxValue);
         
-        public static Pixel ToPixel(this ColorValue colorValue) => new(
-            (byte)(colorValue.R * ByteMaxValue),
-            (byte)(colorValue.G * ByteMaxValue),
-            (byte)(colorValue.B * ByteMaxValue),
-            (byte)(colorValue.A * ByteMaxValue));
+        public static Pixel ToPixel(this Color4Value color4Value) => new(
+            (byte)(color4Value.R * ByteMaxValue),
+            (byte)(color4Value.G * ByteMaxValue),
+            (byte)(color4Value.B * ByteMaxValue),
+            (byte)(color4Value.A * ByteMaxValue));
 
         public static T[] CopyArray<T>(this T[] array) where T : ICopyable<T>
         {

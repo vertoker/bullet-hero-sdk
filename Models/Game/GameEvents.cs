@@ -34,9 +34,9 @@ namespace BH.SDK.Models.Game
         public List<ScreenLimitKey> ScreenLimits { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxBackgroundEvents)]
-        [RuleCollectionUnique(nameof(Color4Key.Frame))]
+        [RuleCollectionUnique(nameof(Color3Key.Frame))]
         [JsonProperty(Names.Backgrounds)]
-        public List<Color4Key> Backgrounds { get; set; }
+        public List<Color3Key> Backgrounds { get; set; }
         
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemeEvents)]
         [RuleCollectionUnique(nameof(ThemeKeyframe.Frame))]
@@ -48,11 +48,11 @@ namespace BH.SDK.Models.Game
             Markers = new List<Marker>();
             Checkpoints = new List<Checkpoint>();
             ScreenLimits = new List<ScreenLimitKey>();
-            Backgrounds = new List<Color4Key>();
+            Backgrounds = new List<Color3Key>();
             Themes = new List<ThemeKeyframe>();
         }
         public GameEvents(List<Marker> markers, List<Checkpoint> checkpoints, 
-            List<ScreenLimitKey> screenLimits, List<Color4Key> backgrounds, List<ThemeKeyframe> themes)
+            List<ScreenLimitKey> screenLimits, List<Color3Key> backgrounds, List<ThemeKeyframe> themes)
         {
             Markers = markers;
             Checkpoints = checkpoints;

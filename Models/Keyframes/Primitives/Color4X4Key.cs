@@ -15,51 +15,51 @@ namespace BH.SDK.Models.Keyframes
     [RuleContainer]
     public class Color4X4Key : Keyframe, IColor4X4Key, IModel<Color4X4Key>
     {
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorBL)]
-        public IColor ColorBL { get; set; }
+        public IColor4 Color4BL { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorBR)]
-        public IColor ColorBR { get; set; }
+        public IColor4 Color4BR { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorTL)]
-        public IColor ColorTL { get; set; }
+        public IColor4 Color4TL { get; set; }
         
-        [RuleNotNull(typeof(ColorValue))]
+        [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorTR)]
-        public IColor ColorTR { get; set; }
+        public IColor4 Color4TR { get; set; }
         
         public Color4X4Key()
         {
-            ColorBL = ColorValue.white;
-            ColorBR = ColorValue.white;
-            ColorTL = ColorValue.white;
-            ColorTR = ColorValue.white;
+            Color4BL = Color4Value.white;
+            Color4BR = Color4Value.white;
+            Color4TL = Color4Value.white;
+            Color4TR = Color4Value.white;
         }
-        public Color4X4Key(IColor value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
+        public Color4X4Key(IColor4 value, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
-            ColorBL = value.Copy();
-            ColorBR = value.Copy();
-            ColorTL = value.Copy();
-            ColorTR = value.Copy();
+            Color4BL = value.Copy();
+            Color4BR = value.Copy();
+            Color4TL = value.Copy();
+            Color4TR = value.Copy();
         }
-        public Color4X4Key(IColor colorBL, IColor colorBR, IColor colorTL, IColor colorTR,
+        public Color4X4Key(IColor4 color4BL, IColor4 color4BR, IColor4 color4TL, IColor4 color4TR,
             int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
-            ColorBL = colorBL;
-            ColorBR = colorBR;
-            ColorTL = colorTL;
-            ColorTR = colorTR;
+            Color4BL = color4BL;
+            Color4BR = color4BR;
+            Color4TL = color4TL;
+            Color4TR = color4TR;
         }
         public override void Reset()
         {
             base.Reset();
-            ColorBL = ColorValue.white;
-            ColorBR = ColorValue.white;
-            ColorTL = ColorValue.white;
-            ColorTR = ColorValue.white;
+            Color4BL = Color4Value.white;
+            Color4BR = Color4Value.white;
+            Color4TL = Color4Value.white;
+            Color4TR = Color4Value.white;
         }
         
         public Color4X4KeyType GetModelType() => Color4X4KeyType.BariCentrical;
@@ -69,21 +69,21 @@ namespace BH.SDK.Models.Keyframes
         Color4X4Key ICopyable<Color4X4Key>.Copy() => CopyImpl();
         IColor4X4Key ICopyable<IColor4X4Key>.Copy() => CopyImpl();
         
-        private Color4X4Key CopyImpl() => new(ColorBL.Copy(), ColorBR.Copy(), ColorTL.Copy(), ColorTR.Copy(), Frame, Ease);
+        private Color4X4Key CopyImpl() => new(Color4BL.Copy(), Color4BR.Copy(), Color4TL.Copy(), Color4TR.Copy(), Frame, Ease);
         
         public override bool Equals(object obj) => obj is Color4X4Key value && Equals(value);
         public bool Equals(IColor4X4Key other) => other is Color4X4Key value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ColorBL, ColorBR, ColorTL, ColorTR);
+        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Color4BL, Color4BR, Color4TL, Color4TR);
 
         public bool Equals(Color4X4Key other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = base.Equals(other)
-                         && ColorBL.Equals(other.ColorBL)
-                         && ColorBR.Equals(other.ColorBR)
-                         && ColorTL.Equals(other.ColorTL)
-                         && ColorTR.Equals(other.ColorTR);
+                         && Color4BL.Equals(other.Color4BL)
+                         && Color4BR.Equals(other.Color4BR)
+                         && Color4TL.Equals(other.Color4TL)
+                         && Color4TR.Equals(other.Color4TR);
             return result;
         }
     }

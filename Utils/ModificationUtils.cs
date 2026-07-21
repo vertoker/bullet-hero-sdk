@@ -45,7 +45,7 @@ namespace BH.SDK.Utils
             AddPropertiesRecursive<Vector3Value, Vector3Circle, Vector3Rect, Vector3RectStep>();
             AddPropertiesRecursive<Vector4Value, Vector4Circle, Vector4Rect, Vector4RectStep>();
             
-            AddPropertiesRecursive<ColorValue, ColorThemeRef, ColorMinMax>();
+            AddPropertiesRecursive<Color4Value, Color4ThemeRef, Color4MinMax>();
             AddPropertiesRecursive<FloatValue, FloatMinMax, FloatMinMaxStep>();
             AddPropertiesRecursive<IntValue, IntMinMax, IntMinMaxStep>();
             AddPropertiesRecursive<StringValue, StringLocalized>();
