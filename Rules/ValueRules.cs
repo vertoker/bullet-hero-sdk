@@ -55,8 +55,7 @@
         
         public const float MinZoom = 0f;
         public const float MaxZoom = 100f;
-        public const float DefaultZoomX = 1f;
-        public const float DefaultZoomY = 1f;
+        public const float DefaultZoom = 10f;
         
         public const float DefaultUvX = 1f; // tilling x
         public const float DefaultUvY = 1f; // tilling y

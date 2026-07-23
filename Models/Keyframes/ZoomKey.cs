@@ -18,7 +18,7 @@ namespace BH.SDK.Models.Keyframes
 
         public ZoomKey()
         {
-            Zoom = new FloatValue();
+            Zoom = new FloatValue(ValueRules.DefaultZoom);
         }
         public ZoomKey(IFloat zoom, int frame, EaseType ease = DefaultEase) : base(frame, ease)
         {
@@ -27,7 +27,7 @@ namespace BH.SDK.Models.Keyframes
         public override void Reset()
         {
             base.Reset();
-            Zoom = new FloatValue();
+            Zoom = new FloatValue(ValueRules.DefaultZoom);
         }
         
         public override object Clone() => CopyImpl();
