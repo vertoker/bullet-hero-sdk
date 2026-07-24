@@ -17,4 +17,6 @@ Icons
   - <a target="_blank" href="https://icons8.com/icon/3VzYsdCiF1RR/more">Other</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - <a target="_blank" href="https://icons8.com/icon/9227/bug">Bug</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - <a target="_blank" href="https://icons8.com/icon/59817/info">Info</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/23545/minimize-window">minimize</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/0YQW0zwuJMmk/post-processing">Post Processing</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - 
