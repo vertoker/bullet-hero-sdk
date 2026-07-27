@@ -1,6 +1,11 @@
 # bullet-hero-sdk
 SDK for game Bullet Hero, for Unity on C#
 
+### Dependencies
+Depends only from Nuget, optional Unity-independent
+- Newtonsoft.Json
+- Newtonsoft.Json.Bson
+
 ### Installation
 
 How to install
