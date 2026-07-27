@@ -5,6 +5,7 @@ using BH.SDK.Models.Keyframes;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
+    [DataVersion(DataDomains.CameraEvents, 1, 0)]
     public class CameraEvents : IModel<CameraEvents>
     {
         // Camera - is a unique form of default RectObject. It cut some data, here's all

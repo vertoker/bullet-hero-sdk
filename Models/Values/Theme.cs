@@ -1,10 +1,10 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -12,11 +12,9 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     [RuleContainer]
-    public class Theme : ITheme, IModel<Theme>
+    [DataVersion(DataDomains.Theme, 1, 0)]
+    public class Theme : IModel<Theme>
     {
-        public static readonly Version Version = new(1, 0);
-        public Version GetVersion() => Version;
-
         [JsonProperty(Names.ThemeId)]
         public ThemeId ThemeId { get; set; }
 

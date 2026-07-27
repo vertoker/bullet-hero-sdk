@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using BH.SDK.Models.Enum.Meta;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Meta;
 using BH.SDK.Models.Primitives;
@@ -12,18 +11,17 @@ using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
     // TODO add IResetable (and tests)
-    
+
     [RuleContainer]
-    public class LevelMeta : ILevelMeta, IModel<LevelMeta>
+    [DataVersion(DataDomains.LevelMeta, 1, 0)]
+    public class LevelMeta : IModel<LevelMeta>
     {
-        public static readonly Version Version = new(1, 0);
-        public Version GetVersion() => Version;
-        
         [RuleGuidNotEmpty]
         [JsonProperty(Names.LevelId)]
         public LevelId LevelId { get; set; }

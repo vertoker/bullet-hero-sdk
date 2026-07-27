@@ -1,20 +1,18 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.SettingGroups;
 using BH.SDK.Rules.Attributes;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
     // TODO Add tests for IResetable
-    
+
     [RuleContainer]
-    public class UserSettings : IUserSettings, IModel<UserSettings>, IMoveable<UserSettings>
+    [DataVersion(DataDomains.UserSettings, 1, 0)]
+    public class UserSettings : IModel<UserSettings>, IMoveable<UserSettings>
     {
-        public static readonly Version Version = new(1, 0);
-        public Version GetVersion() => Version;
-        
         [RuleNotNull]
         [JsonProperty(Names.General)]
         public GeneralSettings General { get; set; }

@@ -5,6 +5,7 @@ using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Game
 {
     [RuleContainer]
+    [DataVersion(DataDomains.GameLevel, 1, 0)]
     public class GameLevel : IObjectScope, IModel<GameLevel>
     {
         [RuleNotNull]

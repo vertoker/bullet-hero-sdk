@@ -3,6 +3,7 @@ using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -10,6 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Audio
 {
     [RuleContainer]
+    [DataVersion(DataDomains.AudioLevel, 1, 0)]
     public class AudioLevel : IModel<AudioLevel>
     {
         [RuleNotNull]

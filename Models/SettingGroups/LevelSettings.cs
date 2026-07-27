@@ -3,6 +3,7 @@ using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -10,6 +11,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
+    [DataVersion(DataDomains.LevelSettings, 1, 0)]
     public class LevelSettings : IModel<LevelSettings>
     {
         [RuleInRange(FrameRules.MinFramerate, FrameRules.MaxFramerate)]

@@ -2,23 +2,21 @@
 using BH.SDK.Models.Audio;
 using BH.SDK.Models.Game;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Resources;
 using BH.SDK.Models.SettingGroups;
 using BH.SDK.Rules.Attributes;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
     // TODO allow null objects, this will save many space on serialization
     // TODO add MORE rules
-    
-    [RuleContainer]
-    public class Level : ILevel, IModel<Level>
-    {
-        public static readonly Version Version = new(1, 0);
-        public Version GetVersion() => Version;
 
+    [RuleContainer]
+    [DataVersion(DataDomains.Level, 1, 0)]
+    public class Level : IModel<Level>
+    {
         [RuleNotNull]
         [JsonProperty(Names.Settings)]
         public LevelSettings Settings { get; set; }

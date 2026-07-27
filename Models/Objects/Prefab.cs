@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
-using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -12,11 +12,9 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class Prefab : IObjectScope, IPrefab, IModel<Prefab>
+    [DataVersion(DataDomains.Prefab, 1, 0)]
+    public class Prefab : IObjectScope, IModel<Prefab>
     {
-        public static readonly Version Version = new(1, 0);
-        public Version GetVersion() => Version;
-        
         [JsonProperty(Names.PrefabId)]
         public PrefabId PrefabId { get; set; }
         

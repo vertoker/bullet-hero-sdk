@@ -8,6 +8,7 @@ using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -15,6 +16,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Resources
 {
     [RuleContainer]
+    [DataVersion(DataDomains.LevelResources, 1, 0)]
     public class LevelResources : IModel<LevelResources>
     {
         [RuleNotNull]

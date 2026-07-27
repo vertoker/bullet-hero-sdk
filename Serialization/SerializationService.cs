@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BH.SDK.Models;
-using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Serialization.Converters;
 using BH.SDK.Serialization.Converters.Base;
 using BH.SDK.Serialization.Converters.CustomTypes;
-using BH.SDK.Serialization.Converters.Data;
 using BH.SDK.Serialization.Converters.Dict;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -16,20 +14,16 @@ namespace BH.SDK.Serialization
 {
     public class SerializationService
     {
-        public readonly CompatibilityService CompatibilityService;
         public readonly JsonSerializer Serializer;
-        
-        public SerializationService() : this(new SerializationSettings(), new CompatibilityService())
+
+        private IDataSerializer _dataSerializer;
+        public IDataSerializer DataSerializer => _dataSerializer ??= new JsonDataSerializer(Serializer);
+
+        public SerializationService() : this(new SerializationSettings())
         {
-            
+
         }
         public SerializationService(SerializationSettings serializationSettings)
-            : this(serializationSettings, new CompatibilityService())
-        {
-            
-        }
-        public SerializationService(SerializationSettings serializationSettings,
-            CompatibilityService compatibilityService)
         {
             var contractResolver = new ContractResolver(serializationSettings);
 
@@ -45,36 +39,27 @@ namespace BH.SDK.Serialization
                 Formatting = serializationSettings.formatting,
                 TypeNameHandling = serializationSettings.typeNameHandling,
                 ContractResolver = contractResolver,
-                Converters = GetConverters(compatibilityService, settingsDefault),
+                Converters = GetConverters(settingsDefault),
             };
             Serializer = JsonSerializer.Create(settings);
-            CompatibilityService = compatibilityService;
         }
-        
-        public static List<JsonConverter> GetConverters(CompatibilityService compatibilityService,
-            JsonSerializerSettings settingsDefault)
+
+        public static List<JsonConverter> GetConverters(JsonSerializerSettings settingsDefault)
         {
             var converters = new List<JsonConverter>
             {
                 new VersionConverter(),
+                new VersionedEnvelopeConverter(),
 
                 new DictionaryObjectsConverter(),
                 new DictionaryAudiosConverter(),
-                
+
                 new DictionaryTextureResourcesConverter(),
                 new DictionaryFontResourcesConverter(),
                 new DictionaryAudioResourcesConverter(),
                 new DictionaryCompositeColliderResourcesConverter(),
                 new DictionaryThemesConverter(),
                 new DictionaryPrefabsConverter(),
-
-                new EffectDataConverter(compatibilityService),
-
-                new LevelDataConverter(compatibilityService),
-                new LevelMetaDataConverter(compatibilityService),
-                new PrefabDataConverter(compatibilityService),
-                new ThemeDataConverter(compatibilityService),
-                new UserSettingsDataConverter(compatibilityService),
 
                 new PrimitiveIntConverter(),
                 new PrimitiveFloatConverter(),
@@ -136,29 +121,37 @@ namespace BH.SDK.Serialization
             }
         }
         
-        public string SerializeData<TValue>(TValue value) where TValue : IData
+        public string SerializeData<TValue>(TValue value)
         {
             if (value == null) return string.Empty;
-            var data = new SaveData<TValue>(value);
             
+            if (!VersionedTypeRegistry.CanConvert(value.GetType()))
+            {
+                throw new ArgumentException(CantConvertMessage<TValue>(nameof(SerializeData)), typeof(TValue).Name);
+            }
+
             using var textWriter = new StringWriter();
-            Serializer.Serialize(textWriter, data);
-            
+            Serializer.Serialize(textWriter, value);
+
             var json = textWriter.ToString();
             return json;
         }
-        public TValue DeserializeData<TValue>(string json) where TValue : IData
+        public TValue DeserializeData<TValue>(string json)
         {
+            if (!VersionedTypeRegistry.CanConvert(typeof(TValue)))
+            {
+                throw new ArgumentException(CantConvertMessage<TValue>(nameof(DeserializeData)), typeof(TValue).Name);
+            }
+
             using var stringReader = new StringReader(json);
             using var jsonTextReader = new JsonTextReader(stringReader);
 
-            var saveDataType = CompatibilityService.GetSaveDataType<TValue>();
-            var data = (ISaveData)Serializer.Deserialize(jsonTextReader, saveDataType);
-            var value = CompatibilityService.Convert<TValue>(data.GetData());
-            
-            return value;
+            return (TValue)Serializer.Deserialize(jsonTextReader, typeof(TValue));
         }
-        
+
+        private static string CantConvertMessage<TValue>(string methodName)
+            => $"Type '{typeof(TValue)}' has no [DataVersion] attribute and cannot be used with {methodName}";
+
         // TODO add BSON serialization (from Newtonsoft of course)
     }
 }

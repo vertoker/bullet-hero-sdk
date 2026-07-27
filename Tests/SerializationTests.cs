@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
+using System.Reflection;
 using BH.SDK.Models;
 using BH.SDK.Models.Audio;
 using BH.SDK.Models.Effects;
@@ -17,7 +18,10 @@ using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Resources;
 using BH.SDK.Models.Values;
+using BH.SDK.Rules;
 using BH.SDK.Serialization;
+using BH.SDK.Validations;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -34,14 +38,11 @@ namespace BH.SDK.Tests
 
             var effect = CreateTestEffect();
 
-            var data = new SaveData<EffectObject>(effect);
-            var textWriter = new StringWriter();
-            serializationService.Serializer.Serialize(textWriter, data);
-            var json = textWriter.ToString();
+            var json = serializationService.SerializeData(effect);
             Cat.Meow($"Effect - <color=green>{json}</color>");
 
-            var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<SaveData<EffectObject>>(reader);
+            var effect2 = serializationService.DeserializeData<EffectObject>(json);
+            Assert.IsTrue(effect.Equals(effect2));
         }
 
         public static EffectObject CreateTestEffect()
@@ -103,7 +104,84 @@ namespace BH.SDK.Tests
             var level2 = serializationService.DeserializeData<Level>(json);
             Assert.IsTrue(level.Equals(level2));
         }
-        
+
+        // IDataSerializer (VERSION-UPDATE.md, "Format-agnosticism") is generic per [DataVersion]
+        // domain, not per concrete type - exercised here against two unrelated domains (Level and
+        // Theme) to prove it isn't hardcoded to either one.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestDataSerializerRoundTrip()
+        {
+            var settings = new SerializationSettings(Formatting.Indented);
+            var serializationService = new SerializationService(settings);
+            var dataSerializer = serializationService.DataSerializer;
+
+            var level = CreateTestLevel();
+            var levelAttribute = level.GetType().GetCustomAttribute<DataVersionAttribute>();
+            var levelBytes = dataSerializer.SerializeEnvelope(levelAttribute.Domain, levelAttribute.Version, level);
+            var (levelVersion, levelPayload) = dataSerializer.DeserializeEnvelope(levelBytes, typeof(Level));
+            Assert.AreEqual(levelAttribute.Version, levelVersion);
+            Assert.IsTrue(level.Equals((Level)levelPayload));
+
+            var theme = CreateTestTheme();
+            var themeAttribute = theme.GetType().GetCustomAttribute<DataVersionAttribute>();
+            var themeBytes = dataSerializer.SerializeEnvelope(themeAttribute.Domain, themeAttribute.Version, theme);
+            var (themeVersion, themePayload) = dataSerializer.DeserializeEnvelope(themeBytes, typeof(Theme));
+            Assert.AreEqual(themeAttribute.Version, themeVersion);
+            Assert.IsTrue(theme.Equals((Theme)themePayload));
+        }
+
+        // Exercises the full recursive migration chain against a hand-written v0.0 fixture
+        // (Versions/V0_0) - Level -> LevelSettings/GameLevel/LevelResources (each independently
+        // versioned, auto-upgraded by VersionedEnvelopeConverter) -> GameEvents (nested one level
+        // deeper inside GameLevel) -> Audio (intentionally NOT independently versioned at v0.0,
+        // migrated by hand inside LevelV0_0ToV1_0 instead). See VERSION-UPDATE.md.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestLevelV0_0Migration()
+        {
+            var settings = new SerializationSettings(Formatting.Indented);
+            var serializationService = new SerializationService(settings);
+
+            const string json = @"{
+                ""version"": ""0.0"",
+                ""value"": {
+                    ""test_settings"": { ""version"": ""0.0"", ""value"": { ""test_fps"": 61 } },
+                    ""test_game"": {
+                        ""version"": ""0.0"",
+                        ""value"": {
+                            ""test_game_events"": { ""version"": ""0.0"", ""value"": {} },
+                            ""test_objects"": []
+                        }
+                    },
+                    ""test_audio"": {},
+                    ""test_resources"": { ""version"": ""0.0"", ""value"": { ""test_resources"": {} } }
+                }
+            }";
+
+            var level = serializationService.DeserializeData<Level>(json);
+
+            Assert.AreEqual(61, level.Settings.Framerate);
+            Assert.AreEqual(610, level.Settings.FrameLength);
+            Assert.IsNotNull(level.Game);
+            Assert.IsNotNull(level.Game.Events);
+            Assert.IsNotNull(level.Game.CameraEvents);
+            Assert.IsNotNull(level.Game.PostProcessingEvents);
+            Assert.IsNotNull(level.Game.PlayerEvents);
+            Assert.AreEqual(0, level.Game.Objects.Count);
+            Assert.AreEqual(0, level.Game.PrefabObjects.Count);
+            Assert.IsNotNull(level.Audio);
+            Assert.IsNotNull(level.Resources);
+
+            // Migration-correctness oracle (see VERSION-UPDATE.md, Rule system section): a migrator's
+            // output must never violate a RuleGroup.Error rule against the current-shape model, even
+            // though Warning/Advice issues are allowed (e.g. a sparse fixture missing recommended data).
+            var validator = new RuleAnalyzer();
+            var issues = validator.Analyze(level, new RuleAnalyzerSettings());
+            var errors = issues.Where(issue => issue.Rule.Group == RuleGroup.Error).ToList();
+            Assert.IsEmpty(errors, string.Join("\n", errors.Select(issue => issue.ToString())));
+        }
+
         public static Level CreateTestLevel()
         {
             var level = new Level();
@@ -376,14 +454,11 @@ namespace BH.SDK.Tests
 
             var prefab = CreateTestPrefab();
 
-            var data = new SaveData<Prefab>(prefab);
-            var textWriter = new StringWriter();
-            serializationService.Serializer.Serialize(textWriter, data);
-            var json = textWriter.ToString();
+            var json = serializationService.SerializeData(prefab);
             Cat.Meow($"Prefab - <color=green>{json}</color>");
 
-            var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<SaveData<Prefab>>(reader);
+            var prefab2 = serializationService.DeserializeData<Prefab>(json);
+            Assert.IsTrue(prefab.Equals(prefab2));
         }
 
         public static Prefab CreateTestPrefab()
@@ -418,14 +493,11 @@ namespace BH.SDK.Tests
 
             var theme = CreateTestTheme();
 
-            var data = new SaveData<Theme>(theme);
-            var textWriter = new StringWriter();
-            serializationService.Serializer.Serialize(textWriter, data);
-            var json = textWriter.ToString();
+            var json = serializationService.SerializeData(theme);
             Cat.Meow($"Theme - <color=green>{json}</color>");
 
-            var reader = new JsonTextReader(new StringReader(json));
-            data = serializationService.Serializer.Deserialize<SaveData<Theme>>(reader);
+            var theme2 = serializationService.DeserializeData<Theme>(json);
+            Assert.IsTrue(theme.Equals(theme2));
         }
 
         public static Theme CreateTestTheme()

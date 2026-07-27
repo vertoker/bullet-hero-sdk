@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BH.SDK.Models;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 
@@ -21,26 +20,37 @@ namespace BH.SDK.Validations
             _nextObjectsPool = new Stack<List<(object, PropertyInfo)>>(16);
             for (var i = 0; i < 16; i++)
                 _nextObjectsPool.Push(new List<(object, PropertyInfo)>(8));
-            
-            CacheRecursively(typeof(Level));
+
+            // Warm the caches for every [RuleContainer] type in the assembly - not just typeof(Level) -
+            // so aggregate roots that aren't reachable from Level's own object graph (UserSettings,
+            // LevelMeta, and any future one) get cached too. Analyze() itself never hardcoded Level;
+            // this was only ever a warm-up gap.
+            var visited = new HashSet<Type>();
+            foreach (var contextType in GetType().Assembly.GetTypes())
+            {
+                if (contextType.GetCustomAttribute<RuleContainerAttribute>() != null)
+                    CacheRecursively(contextType, visited);
+            }
         }
 
-        private void CacheRecursively(Type contextType)
+        private void CacheRecursively(Type contextType, HashSet<Type> visited)
         {
+            if (!visited.Add(contextType)) return;
+
             var ruleContainer = contextType.GetCustomAttribute<RuleContainerAttribute>();
             if (ruleContainer == null) return;
-            
+
             var objProperties = GetObjProperties(contextType);
 
             foreach (var property in objProperties)
             {
                 GetRules(property);
-                
+
                 if (property.PropertyType.IsList())
-                    CacheRecursively(property.PropertyType.GetGenericArguments()[0]);
+                    CacheRecursively(property.PropertyType.GetGenericArguments()[0], visited);
                 else if (property.PropertyType.IsArray)
-                    CacheRecursively(property.PropertyType.GetElementType());
-                else CacheRecursively(property.PropertyType);
+                    CacheRecursively(property.PropertyType.GetElementType(), visited);
+                else CacheRecursively(property.PropertyType, visited);
             }
         }
 

@@ -4,12 +4,12 @@ using BH.SDK.Models.Effects;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Effects;
-using BH.SDK.Models.Interfaces.SaveData;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -17,13 +17,11 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
-    public class EffectObject : RectObject, IEffect, IModel<EffectObject>, IUpdatable<EffectObject>
+    [DataVersion(DataDomains.EffectObject, 1, 0)]
+    public class EffectObject : RectObject, IModel<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.EffectObject;
 
-        public static readonly Version Version = new(1, 0);
-        public Version GetVersion() => Version;
-        
         [JsonProperty(Names.HasStopLocalFrame)]
         public bool HasStopLocalFrame { get; set; }
         
