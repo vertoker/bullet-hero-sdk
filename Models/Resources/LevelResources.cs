@@ -63,19 +63,24 @@ namespace BH.SDK.Models.Resources
 
             CompositeShapes = new Dictionary<ColliderId, CompositeCollider>();
             Themes = new Dictionary<ThemeId, ThemeData>();
+            Effects = new Dictionary<EffectId, EffectData>();
+            
             Prefabs = new Dictionary<PrefabId, Prefab>();
         }
         public LevelResources(Dictionary<TextureResourceId, TextureResource> textures,
             Dictionary<FontResourceId, FontResource> fonts,
             Dictionary<AudioResourceId, AudioResource> audios,
             Dictionary<ColliderId, CompositeCollider> compositeShapes,
-            Dictionary<ThemeId, ThemeData> themes, Dictionary<PrefabId, Prefab> prefabs)
+            Dictionary<ThemeId, ThemeData> themes,
+            Dictionary<EffectId, EffectData> effects,
+            Dictionary<PrefabId, Prefab> prefabs)
         {
             Textures = textures;
             Fonts = fonts;
             Audios = audios;
             CompositeShapes = compositeShapes;
             Themes = themes;
+            Effects = effects;
             Prefabs = prefabs;
         }
         public void Reset()
@@ -85,17 +90,18 @@ namespace BH.SDK.Models.Resources
             Audios.Clear();
             CompositeShapes.Clear();
             Themes.Clear();
+            Effects.Clear();
             Prefabs.Clear();
         }
 
         public object Clone() => Copy();
         public LevelResources Copy() => new(Textures.CopyDictionary(), Fonts.CopyDictionary(), Audios.CopyDictionary(),
-            CompositeShapes.CopyDictionary(), Themes.CopyDictionary(), Prefabs.CopyDictionary());
+            CompositeShapes.CopyDictionary(), Themes.CopyDictionary(), Effects.CopyDictionary(), Prefabs.CopyDictionary());
 
         public override bool Equals(object obj) => obj is LevelResources value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Textures.GetDictionaryHashCode(),
             Fonts.GetDictionaryHashCode(), Audios.GetDictionaryHashCode(), CompositeShapes.GetDictionaryHashCode(),
-            Prefabs.GetDictionaryHashCode(), Themes.GetDictionaryHashCode());
+            Themes.GetDictionaryHashCode(), Effects.GetDictionaryHashCode(), Prefabs.GetDictionaryHashCode());
 
         public bool Equals(LevelResources other)
         {
@@ -106,6 +112,7 @@ namespace BH.SDK.Models.Resources
                           && Audios.DictionaryEquals(other.Audios)
                           && CompositeShapes.DictionaryEquals(other.CompositeShapes)
                           && Themes.DictionaryEquals(other.Themes)
+                          && Effects.DictionaryEquals(other.Effects)
                           && Prefabs.DictionaryEquals(other.Prefabs);
             return result;
         }
