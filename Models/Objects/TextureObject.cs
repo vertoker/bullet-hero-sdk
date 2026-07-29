@@ -20,9 +20,11 @@ namespace BH.SDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.TextureObject;
         
+        [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.ColliderId)]
         public ColliderId ColliderId { get; set; }
-        
+
+        [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
         

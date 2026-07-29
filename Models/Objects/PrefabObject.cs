@@ -18,6 +18,7 @@ namespace BH.SDK.Models.Objects
         // 2. It uses fields and reflection in modifications for finding and replace value in runtime model
         // 3. Play it
         
+        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.PrefabId)]
         public PrefabId PrefabId { get; set; } // reference to all level Prefabs list
         

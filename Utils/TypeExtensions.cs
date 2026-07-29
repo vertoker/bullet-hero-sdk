@@ -13,5 +13,13 @@ namespace BH.SDK.Utils
         {
             return type.IsList() ? type.GetGenericArguments()[0] : null;
         }
+        public static bool IsDictionary(this Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+        }
+        public static Type GetDictionaryValueGenericParameterOrDefault(this Type type)
+        {
+            return type.IsDictionary() ? type.GetGenericArguments()[1] : null;
+        }
     }
 }

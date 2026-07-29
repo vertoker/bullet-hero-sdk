@@ -6,6 +6,7 @@ using BH.SDK.Serialization.Converters;
 using BH.SDK.Serialization.Converters.Base;
 using BH.SDK.Serialization.Converters.CustomTypes;
 using BH.SDK.Serialization.Converters.Dict;
+using BH.SDK.Serialization.Serializers;
 using BH.SDK.Versions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -16,8 +17,21 @@ namespace BH.SDK.Serialization
     {
         public readonly JsonSerializer Serializer;
 
-        private IDataSerializer _dataSerializer;
-        public IDataSerializer DataSerializer => _dataSerializer ??= new JsonDataSerializer(Serializer);
+        private readonly Dictionary<SerializationType, IDataSerializer> _dataSerializers = new();
+
+        public IDataSerializer GetDataSerializer(SerializationType type)
+        {
+            if (_dataSerializers.TryGetValue(type, out var dataSerializer)) return dataSerializer;
+
+            dataSerializer = type switch
+            {
+                SerializationType.Json => new JsonDataSerializer(Serializer),
+                SerializationType.Bson => new BsonDataSerializer(Serializer),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
+            };
+            _dataSerializers[type] = dataSerializer;
+            return dataSerializer;
+        }
 
         public SerializationService() : this(new SerializationSettings())
         {
@@ -32,6 +46,13 @@ namespace BH.SDK.Serialization
                 Formatting = serializationSettings.formatting,
                 TypeNameHandling = serializationSettings.typeNameHandling,
                 ContractResolver = contractResolver,
+                // Without this, Newtonsoft populates (appends into) a non-null nested object/list
+                // property left behind by the parameterless constructor instead of replacing it -
+                // e.g. EffectAngleCurvesBySpeed's ctor seeds Curve with 2 default keyframes, and
+                // deserializing a JSON curve with its own keyframes would append onto those instead
+                // of starting fresh, breaking round-trip equality for any model with a non-empty
+                // constructor default.
+                ObjectCreationHandling = ObjectCreationHandling.Replace,
             };
 
             var settings = new JsonSerializerSettings
@@ -39,6 +60,7 @@ namespace BH.SDK.Serialization
                 Formatting = serializationSettings.formatting,
                 TypeNameHandling = serializationSettings.typeNameHandling,
                 ContractResolver = contractResolver,
+                ObjectCreationHandling = ObjectCreationHandling.Replace,
                 Converters = GetConverters(settingsDefault),
             };
             Serializer = JsonSerializer.Create(settings);
@@ -59,6 +81,7 @@ namespace BH.SDK.Serialization
                 new DictionaryAudioResourcesConverter(),
                 new DictionaryCompositeColliderResourcesConverter(),
                 new DictionaryThemesConverter(),
+                new DictionaryEffectsConverter(),
                 new DictionaryPrefabsConverter(),
 
                 new PrimitiveIntConverter(),
@@ -67,6 +90,7 @@ namespace BH.SDK.Serialization
                 new IntConverter(),
                 new FloatConverter(),
                 new StringConverter(),
+                new LicenseConverter(),
                 new ColorConverter(),
                 new Color3Converter(),
                 new Vector2Converter(),

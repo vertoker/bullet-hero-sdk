@@ -14,6 +14,7 @@ namespace BH.SDK.Models.Audio
     [DataVersion(DataDomains.AudioLevel, 1, 0)]
     public class AudioLevel : IModel<AudioLevel>
     {
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own AudioId)
         [RuleNotNull]
         [JsonProperty(Names.Tracks)]
         public Dictionary<AudioId, LevelTrack> Tracks { get; set; }

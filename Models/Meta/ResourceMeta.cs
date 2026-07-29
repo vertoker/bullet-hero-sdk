@@ -20,7 +20,7 @@ namespace BH.SDK.Models.Meta
         public ResourceType ResourceType { get; set; }
         
         // Abstract resId, it cast to dedicated ids (audioResId, texResId...)
-        [RuleMax(TypedResourceId.MaxUserDefinedValue)]
+        [RuleIPrimitiveIntMax(TypedResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.ResourceId)]
         public TypedResourceId ResourceId { get; set; }
         

@@ -22,7 +22,7 @@ namespace BH.SDK.Models
     [DataVersion(DataDomains.LevelMeta, 1, 0)]
     public class LevelMeta : IModel<LevelMeta>
     {
-        [RuleGuidNotEmpty]
+        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.LevelId)]
         public LevelId LevelId { get; set; }
         

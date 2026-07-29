@@ -23,6 +23,7 @@
         
         public const string Type = "type";
         public const string Value = "value";
+        public const string Data = "data";
         public const string TypeShort = "t";
         public const string ValueShort = "v";
         
@@ -440,6 +441,7 @@
         
         public const string ThemeIndex = Theme + _ + Index;
         public const string ThemeId = Theme + _ + Id;
+        public const string EffectId = Effect + _ + Id;
         
         public const string CameraEvents = Camera + _ + Events;
         public const string PostProcessingEvents = Post + Processing + _ + Events;

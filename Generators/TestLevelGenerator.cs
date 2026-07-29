@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BH.SDK.Models;
 using BH.SDK.Models.Audio;
 using BH.SDK.Models.AudioEffects;
+using BH.SDK.Models.Data;
 using BH.SDK.Models.Effects;
 using BH.SDK.Models.Enum.Meta;
 using BH.SDK.Models.Enum.Resources;
@@ -62,9 +63,8 @@ namespace BH.SDK.Generators
             textureObject2.Scales.Add(new ScaKey(new Vector2Value(0.5f, 0.5f), 15));
             textureObject1.Pivots.Add(AlignmentKey.GetLeftBottom(0));
 
-            var effectObject1 = new EffectObject
+            var effectData1 = new EffectData
             {
-                ObjectId = new ObjectId(4), ParentObjectId = ObjectId.Null, StartFrame = 60, EndFrame = 660,
                 HasStopLocalFrame = true, StopLocalFrame = 300,
                 Core = new EffectObjectCore
                 {
@@ -84,15 +84,21 @@ namespace BH.SDK.Generators
                     StartAngularVelocityMax = new FloatValue(1000f),
                     OrbitalVelocity = new Vector3Value(1f, 1f, 0f),
                 },
-                EffectColor = new EffectColorGradientOverLife(),
-                EffectShape = new EffectShapeCircle(new FloatValue(1f), new FloatValue(0f), new FloatValue(BHSDKMath.PI2),
+                Color = new EffectColorGradientOverLife(),
+                Shape = new EffectShapeCircle(new FloatValue(1f), new FloatValue(0f),
+                    new FloatValue(BHSDKMath.PI2),
                     new EffectShapeSpreadLoop(0f, 1f)),
-                EffectScale = new EffectScaleValue(new Vector2Value(5f, 5f)),
+                Scale = new EffectScaleValue(new Vector2Value(5f, 5f)),
+            };
+            var effectObject1 = new EffectObject
+            {
+                ObjectId = new ObjectId(4), ParentObjectId = ObjectId.Null, StartFrame = 60, EndFrame = 660,
+                EffectId = EffectId.NewGuid(),
             };
             effectObject1.Positions.Add(new PosKey(new Vector2Value(2f, 0f), 0));
             effectObject1.Positions.Add(new PosKey(new Vector2Value(3f, 2f), 600));
-            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[0].Color4 = Color4Value.red;
-            ((EffectColorGradientOverLife)effectObject1.EffectColor).Gradient.ColorKeys[1].Color4 = Color4Value.blue;
+            ((EffectColorGradientOverLife)effectData1.Color).Gradient.ColorKeys[0].Color4 = Color4Value.red;
+            ((EffectColorGradientOverLife)effectData1.Color).Gradient.ColorKeys[1].Color4 = Color4Value.blue;
 
             var allText = "\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz" +
                           "{|}~ ¡¢£¤¥¦§¨©ª«¬-®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóô" +
@@ -280,6 +286,7 @@ namespace BH.SDK.Generators
             level.Game.Objects.Add(textObject1.ObjectId, textObject1);
             level.Game.Events.ScreenLimits.Add(new ScreenLimitKey(new ScreenLimitFixed(new ScreenAspect(1, 1)), 0));
             
+            level.Resources.Effects.Add(effectObject1.EffectId, effectData1);
             level.Resources.Prefabs.Add(prefab1.PrefabId, prefab1);
             level.Resources.Prefabs.Add(prefab2.PrefabId, prefab2);
             level.Game.PrefabObjects.Add(prefabObject1);

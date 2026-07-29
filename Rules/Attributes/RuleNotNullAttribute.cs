@@ -34,6 +34,9 @@ namespace BH.SDK.Rules.Attributes
                 .Select(a => a?.GetType() ?? typeof(object)).ToArray();
         }
 
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => !property.PropertyType.IsValueType || Nullable.GetUnderlyingType(property.PropertyType) != null;
+
         protected override bool IsValidInternal(object value, object context)
         {
             return value != null;

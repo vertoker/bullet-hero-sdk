@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text;
 
 namespace BH.SDK.Validations
@@ -6,31 +6,32 @@ namespace BH.SDK.Validations
     public readonly struct RulePath
     {
         public readonly PropertyInfo Property;
-        public readonly int Index;
-        
-        public bool HasIndex => Index != -1;
+        public readonly object Key;
+
+        public bool HasKey => Key != null;
 
         public RulePath(PropertyInfo property)
         {
             Property = property;
-            Index = -1;
+            Key = null;
         }
-        public RulePath(PropertyInfo property, int index)
+        // key is either a List/array index (int) or a dictionary key (ObjectId, ThemeId, ...)
+        public RulePath(PropertyInfo property, object key)
         {
             Property = property;
-            Index = index;
+            Key = key;
         }
 
         public override string ToString()
         {
-            return HasIndex ? $"{Property.Name}[{Index}]" : Property.Name;
+            return HasKey ? $"{Property.Name}[{Key}]" : Property.Name;
         }
         public void Append(StringBuilder builder)
         {
             builder.Append(Property.Name);
-            if (!HasIndex) return;
+            if (!HasKey) return;
             builder.Append("[");
-            builder.Append(Index);
+            builder.Append(Key);
             builder.Append("]");
         }
     }

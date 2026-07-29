@@ -1,6 +1,5 @@
 ﻿Serialization
 - verify SerializationService stability/correctness across all keyframe/value/effect type combinations (round-trip tests + real saved level files), especially after the IRequiresDefaultSerializer refactor
-- add binary (BSON) serialization via Newtonsoft, alongside the existing JSON path - VersionedTypeRegistry's resolve/migrate logic is already format-agnostic, only the envelope read/write needs a BSON equivalent, see VERSION-UPDATE.md
 - model versioning core is implemented (DataVersionAttribute + VersionedTypeRegistry + VersionedEnvelopeConverter, replacing CompatibilityService/SaveData<T>/JsonConverterData<T>) - see VERSION-UPDATE.md for what's still open: nested/optional aggregates below the six SaveData kinds (e.g. splitting Level into Settings/Game/Audio/Resources envelopes), the first real migrator once a version actually needs to bump, and Project Arrhythmya import
 
 Licensing

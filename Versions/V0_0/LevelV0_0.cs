@@ -18,7 +18,7 @@ namespace BH.SDK.Versions.V0_0
         // properties must be typed using the CURRENT classes, not LevelSettingsV0_0/GameLevelV0_0/
         // LevelResourcesV0_0 - those still exist and are still registered via [DataVersion(...,0,0)],
         // they're just never anyone's actual field type, only VersionedTypeRegistry's resolve target.
-        [JsonProperty("test_settings")]
+        [JsonProperty(NamesV0_0.Settings)]
         public LevelSettings Settings { get; set; }
 
         [JsonProperty("test_game")]

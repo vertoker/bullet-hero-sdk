@@ -4,7 +4,6 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
-    [Serializable]
     public struct LevelId : IEquatable<LevelId>, IPrimitiveGuid
     {
         public Guid value;

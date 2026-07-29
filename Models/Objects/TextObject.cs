@@ -29,6 +29,7 @@ namespace BH.SDK.Models.Objects
         // positive with 0 - game-defined (0 is NotoSans), negative - user-defined
         // more about resourceId and how it works, read in Resource.cs file
         
+        [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.FontResourceId)]
         public FontResourceId FontResourceId { get; set; }
         

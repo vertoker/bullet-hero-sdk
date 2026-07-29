@@ -13,7 +13,7 @@ namespace BH.SDK.Tests
         public void TestValidatorLevel()
         {
             var validator = new RuleAnalyzer();
-            var level = SerializationTests.CreateTestLevel();
+            var level = MockData.CreateTestLevel();
             var issues = validator.Analyze(level, new RuleAnalyzerSettings());
             
             Assert.IsEmpty(issues);
@@ -24,7 +24,7 @@ namespace BH.SDK.Tests
         {
             var fixer = new RuleFixer();
             var validator = new RuleAnalyzer();
-            var level = SerializationTests.CreateInvalidTestLevel();
+            var level = MockData.CreateInvalidTestLevel();
 
             var settings = new RuleAnalyzerSettings(true, true);
             var issues = validator.Analyze(level, settings);
@@ -40,7 +40,7 @@ namespace BH.SDK.Tests
         public void TestValidatorLevelMeta()
         {
             var validator = new RuleAnalyzer();
-            var level = SerializationTests.CreateTestLevelMeta();
+            var level = MockData.CreateTestLevelMeta();
             var issues = validator.Analyze(level, new RuleAnalyzerSettings());
             
             Assert.IsEmpty(issues);
@@ -51,7 +51,7 @@ namespace BH.SDK.Tests
         {
             var fixer = new RuleFixer();
             var validator = new RuleAnalyzer();
-            var level = SerializationTests.CreateInvalidTestLevelMeta();
+            var level = MockData.CreateInvalidTestLevelMeta();
             
             var issues = validator.Analyze(level, new RuleAnalyzerSettings());
             Assert.IsNotEmpty(issues);
@@ -66,7 +66,7 @@ namespace BH.SDK.Tests
         public void TestValidatorSettings()
         {
             var validator = new RuleAnalyzer();
-            var settings = SerializationTests.CreateValidTestSettings();
+            var settings = MockData.CreateValidTestSettings();
             var issues = validator.Analyze(settings, new RuleAnalyzerSettings());
             
             Assert.IsEmpty(issues);
@@ -77,7 +77,7 @@ namespace BH.SDK.Tests
         {
             var fixer = new RuleFixer();
             var validator = new RuleAnalyzer();
-            var settings = SerializationTests.CreateInvalidTestSettings();
+            var settings = MockData.CreateInvalidTestSettings();
             
             var issues = validator.Analyze(settings, new RuleAnalyzerSettings());
             Assert.IsNotEmpty(issues);
@@ -92,7 +92,7 @@ namespace BH.SDK.Tests
         public void TestCopyLevel()
         {
             var validator = new RuleAnalyzer();
-            var level = SerializationTests.CreateTestLevel();
+            var level = MockData.CreateTestLevel();
             var copyLevel = level.Copy();
             
             var issues = validator.Analyze(copyLevel, new RuleAnalyzerSettings());
@@ -102,7 +102,7 @@ namespace BH.SDK.Tests
         [Author(Metadata.Author.Vertoker)]
         public void TestCopyEqualsLevel()
         {
-            var level = SerializationTests.CreateTestLevel();
+            var level = MockData.CreateTestLevel();
             var copyLevel = level.Copy();
             Assert.IsTrue(level.Equals(copyLevel));
         }
@@ -110,7 +110,7 @@ namespace BH.SDK.Tests
         [Author(Metadata.Author.Vertoker)]
         public void TestCopyNotEqualsLevel()
         {
-            var level = SerializationTests.CreateTestLevel();
+            var level = MockData.CreateTestLevel();
             var copyLevel = level.Copy();
             copyLevel.Game.Objects[new ObjectId(1)].AnchorsMin[0].Value = Alignment.LeftBottomValue;
             Assert.IsFalse(level.Equals(copyLevel));
@@ -121,7 +121,7 @@ namespace BH.SDK.Tests
         public void TestCopySettings()
         {
             var validator = new RuleAnalyzer();
-            var settings = SerializationTests.CreateValidTestSettings();
+            var settings = MockData.CreateValidTestSettings();
             var copySettings = settings.Copy();
             
             var issues = validator.Analyze(copySettings, new RuleAnalyzerSettings());
@@ -131,7 +131,7 @@ namespace BH.SDK.Tests
         [Author(Metadata.Author.Vertoker)]
         public void TestCopyEqualsSettings()
         {
-            var settings = SerializationTests.CreateValidTestSettings();
+            var settings = MockData.CreateValidTestSettings();
             var copySettings = settings.Copy();
             Assert.IsTrue(settings.Equals(copySettings));
         }
@@ -139,7 +139,7 @@ namespace BH.SDK.Tests
         [Author(Metadata.Author.Vertoker)]
         public void TestCopyNotEqualsSettings()
         {
-            var settings = SerializationTests.CreateValidTestSettings();
+            var settings = MockData.CreateValidTestSettings();
             var copySettings = settings.Copy();
             copySettings.Audio.Game = 0.123f;
             Assert.IsFalse(settings.Equals(copySettings));

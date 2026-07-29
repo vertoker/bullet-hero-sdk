@@ -25,6 +25,7 @@ namespace BH.SDK.Models.Audio
         // 0 - Null (no audio resource assigned), 1+ - game-defined, negative - user-defined
         // more about resourceId and how it works, read in TypedResourceId.cs file
         
+        [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.AudioResourceId)]
         public AudioResourceId AudioResourceId { get; set; }
         

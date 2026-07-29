@@ -59,6 +59,12 @@ namespace BH.SDK.Versions
                 throw new ArgumentException($"Type '{type}' has no [DataVersion] attribute", nameof(type));
             return attribute.Domain;
         }
+        public static void ThrowIfNoDomain(Type type)
+        {
+            var attribute = type.GetCustomAttribute<DataVersionAttribute>();
+            if (attribute == null)
+                throw new ArgumentException($"Type '{type}' has no [DataVersion] attribute", nameof(type));
+        }
 
         public static DataVersionAttribute GetLatestAttribute(string domain)
         {

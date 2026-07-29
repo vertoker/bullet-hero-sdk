@@ -50,6 +50,8 @@ namespace BH.SDK.Validations
                     CacheRecursively(property.PropertyType.GetGenericArguments()[0], visited);
                 else if (property.PropertyType.IsArray)
                     CacheRecursively(property.PropertyType.GetElementType(), visited);
+                else if (property.PropertyType.IsDictionary())
+                    CacheRecursively(property.PropertyType.GetDictionaryValueGenericParameterOrDefault(), visited);
                 else CacheRecursively(property.PropertyType, visited);
             }
         }
@@ -124,6 +126,15 @@ namespace BH.SDK.Validations
                     {
                         _trace.Add(new RulePath(nextProp, i));
                         AnalyzeRecursive(list[i], settings, result, obj);
+                        _trace.RemoveAt(_trace.Count - 1);
+                    }
+                }
+                else if (nextObj is IDictionary dictionary)
+                {
+                    foreach (DictionaryEntry entry in dictionary)
+                    {
+                        _trace.Add(new RulePath(nextProp, entry.Key));
+                        AnalyzeRecursive(entry.Value, settings, result, obj);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
                 }

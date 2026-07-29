@@ -54,20 +54,29 @@ carry `[DataVersion(Domain, 0, 0)]` — they're just never anyone's actual prope
 generation 0.0), so it's deserialized as a plain nested object with no envelope unwrapping, and
 `LevelV0_0ToV1_0` constructs the current `AudioLevel` by hand instead of relying on the registry.
 
-**Update: format-agnostic `IDataSerializer` (requirement 3) exists now, JSON-only.**
+**Update: format-agnostic `IDataSerializer` (requirement 3) exists now, JSON and BSON both.**
 `Serialization/IDataSerializer.cs` matches the sketch below exactly (`SerializeEnvelope(domain,
 version, payload) -> byte[]`, `DeserializeEnvelope(data, payloadType) -> (version, rawPayload)`).
-`Serialization/JsonDataSerializer.cs` is the only implementation, reachable via
-`SerializationService.DataSerializer`; it's a thin wrapper around the existing `JsonSerializer` (and
-therefore `VersionedEnvelopeConverter`) rather than a reimplementation, so no envelope-parsing logic
-is duplicated. It works uniformly for any `[DataVersion]` domain (proven in
-`Tests/SerializationTests.cs:TestDataSerializerRoundTrip` against both `Level` and `Theme`), not
-hardcoded to one type. `rawPayload` is already upgraded to the domain's current shape (same as
-`SerializeData`/`DeserializeData`) — `VersionedEnvelopeConverter.ReadJson` fuses resolve + deserialize
-+ upgrade into one step, so there's no earlier "pre-migration" object to hand back separately. A
-future BSON/XML implementation would still need to duplicate the version-tag peek + concrete-type
-deserialize steps done here via `JObject`/`JsonSerializer`, since those are JSON-specific; only
-`VersionedTypeRegistry`'s resolve/migrate logic itself is truly shared.
+The envelope logic (domain/version validation on write; version-tag peek via `JObject`, then
+`JsonSerializer.Deserialize` on read) lives once, in `Serialization/NewtonsoftDataSerializer.cs` -
+turned out **not** to need per-format duplication after all: none of the converters in
+`Serialization/Converters/*` (including `VersionedEnvelopeConverter`) touch `JsonTextWriter`/
+`JsonTextReader` specifically, only the abstract `JsonWriter`/`JsonReader`, and `JObject.CreateReader()`
+returns a format-agnostic `JTokenReader` regardless of whether the tree was parsed from JSON or BSON.
+So the same `JsonSerializer` (and therefore the same `VersionedEnvelopeConverter` chain) is reused
+unchanged for both formats - `Serialization/JsonDataSerializer.cs` and
+`Serialization/BsonDataSerializer.cs` (backed by the `Newtonsoft.Json.Bson` package) only override
+`CreateWriter`/`CreateReader` to wrap `JsonTextWriter`/`JsonTextReader` or `BsonDataWriter`/
+`BsonDataReader` around the raw stream. Selected via `Serialization/SerializationType.cs`
+(`Json = 0`, `Bson = 1`) and `SerializationService.GetDataSerializer(SerializationType)`, which
+caches one instance per type; each implementation also exposes its own `IDataSerializer.Type` so a
+caller holding just the interface can still tell which format it is. Proven generic per
+`[DataVersion]` domain, not hardcoded to one type, by
+`Tests/SerializationTests.cs:TestDataSerializerRoundTrip` - a single `[TestCase]`-parametrized test
+over both `SerializationType` values, run against both `Level` and `Theme`.
+`rawPayload` is already upgraded to the domain's current shape (same as `SerializeData`/
+`DeserializeData`) — `VersionedEnvelopeConverter.ReadJson` fuses resolve + deserialize + upgrade into
+one step, so there's no earlier "pre-migration" object to hand back separately.
 
 **Update: `RuleAnalyzer` no longer hardcodes `typeof(Level)`.** Its constructor now scans the
 assembly for every type carrying `[RuleContainer]` and warms the property/rule caches for each
@@ -90,8 +99,9 @@ pattern.
   to change without dragging the others along.
 - Project Arrhythmya import (`IExternalLevelImporter`) — not started, still just the placeholder
   shape described below.
-- BSON/XML `IDataSerializer` implementation — not started; `IDataSerializer` itself exists
-  (JSON-backed via `JsonDataSerializer`), but no binary/XML implementation of it yet.
+- XML `IDataSerializer` implementation — not started; JSON and BSON both exist now
+  (`JsonDataSerializer`/`BsonDataSerializer`), XML is the one format from requirement 3 still
+  unimplemented.
 
 ## Original requirements (verbatim intent)
 

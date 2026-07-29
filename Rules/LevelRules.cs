@@ -15,7 +15,6 @@
         
         // public const int MaxObjects = 100000; // no limit for objects count
         
-        public const int MaxThemes = 32;
         public const int MaxPrefabs = 64;
     }
 }

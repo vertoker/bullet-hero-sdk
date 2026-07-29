@@ -17,16 +17,6 @@ namespace BH.SDK.Serialization.Converters
     // special-casing for "aggregated vs non-aggregated" models.
     public class VersionedEnvelopeConverter : JsonConverter
     {
-        // Domains whose value payload must be (de)serialized through a serializer that excludes
-        // specific converters - e.g. EffectObject : RectObject would otherwise be wrapped a
-        // second time by ObjectConverter's own polymorphic [type, value] handling. Keyed by domain
-        // string (from BH.SDK.Versions.DataDomains) rather than by type, so Models never has to
-        // reference Serialization types directly.
-        private static readonly Dictionary<string, Type[]> ExcludedConverterTypes = new()
-        {
-            [DataDomains.EffectObject] = new[] { typeof(ObjectConverter) },
-        };
-
         private readonly Dictionary<string, JsonSerializer> _valueSerializers = new();
 
         public override bool CanConvert(Type objectType) => VersionedTypeRegistry.CanConvert(objectType);
@@ -39,7 +29,8 @@ namespace BH.SDK.Serialization.Converters
                 return;
             }
 
-            var attribute = value.GetType().GetCustomAttribute<DataVersionAttribute>();
+            var type = value.GetType();
+            var attribute = type.GetCustomAttribute<DataVersionAttribute>();
             var valueSerializer = GetValueSerializer(attribute.Domain, serializer);
 
             writer.WriteStartObject();
@@ -78,9 +69,6 @@ namespace BH.SDK.Serialization.Converters
 
         private JsonSerializer GetValueSerializer(string domain, JsonSerializer serializer)
         {
-            if (!ExcludedConverterTypes.TryGetValue(domain, out var excluded))
-                return serializer;
-
             if (_valueSerializers.TryGetValue(domain, out var cached))
                 return cached;
 
@@ -94,7 +82,6 @@ namespace BH.SDK.Serialization.Converters
             foreach (var converter in serializer.Converters)
             {
                 if (converter == this) continue;
-                if (excluded.Contains(converter.GetType())) continue;
                 valueSerializer.Converters.Add(converter);
             }
 

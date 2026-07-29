@@ -21,6 +21,7 @@ namespace BH.SDK.Models.Objects
     [RuleContainer]
     public class Modification : IModel<Modification>
     {
+        [RuleObjectIdValid]
         [JsonProperty(Names.ObjectId)]
         public ObjectId ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
 

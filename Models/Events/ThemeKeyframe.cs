@@ -13,6 +13,7 @@ namespace BH.SDK.Models.Events
     [RuleContainer]
     public class ThemeKeyframe : Keyframe, IModel<ThemeKeyframe>
     {
+        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ThemeId)]
         public ThemeId ThemeId { get; set; }
 

@@ -4,15 +4,18 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
-    [Serializable]
-    public struct ThemeId : IEquatable<ThemeId>, IPrimitiveInt
+    public struct ThemeId : IEquatable<ThemeId>, IPrimitiveGuid
     {
-        public int value;
-        int IPrimitiveInt.Value => value;
+        public Guid value;
+        Guid IPrimitiveGuid.Value => value;
 
-        public ThemeId(int value)
+        public ThemeId(Guid value)
         {
             this.value = value;
+        }
+        public ThemeId(string str)
+        {
+            value = new Guid(str);
         }
         public void Reset()
         {
@@ -20,37 +23,26 @@ namespace BH.SDK.Models.Primitives
         }
 
         // Theme ids are a stable identifier for a Theme entry (Level.Resources.Themes), replacing
-        // positional ThemeIndex - a theme's position in the list can change (reorder/delete),
-        // an id never does. What each number means:
-        // 0 => Null / not-set
-        // (1 - int.MaxValue) => game-defined themes, built into the game (default presets)
-        // (int.MinValue - -1) => user-defined themes, unique per level
+        // positional ThemeIndex - a theme's position in the list can change (reorder/delete), an
+        // id never does. Unlike the previous int-based id, there is no game-defined/user-defined
+        // range split - a Guid has no meaningful "positive/negative" ordering to split on (see
+        // PrefabId/LevelId for the same reasoning). Guid.Empty is the only reserved/Null value.
 
-        public const int NullValue = 0;
-        public const int MinGameDefinedValue = 1;
-        public const int MaxUserDefinedValue = -1;
+        public static readonly Guid NullValue = Guid.Empty;
 
         public static readonly ThemeId Null = new(NullValue);
-        public static readonly ThemeId MinGameDefined = new(MinGameDefinedValue);
-        public static readonly ThemeId MaxUserDefined = new(MaxUserDefinedValue);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEnabled() => value != NullValue;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsGameDefined() => value >= MinGameDefinedValue;
+        public static bool IsEnabled(Guid value) => value != NullValue;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsUserDefined() => value <= MaxUserDefinedValue;
+        public static ThemeId NewId() => new(Guid.NewGuid());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEnabled(int value) => value != NullValue;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsGameDefined(int value) => value >= MinGameDefinedValue;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsUserDefined(int value) => value <= MaxUserDefinedValue;
+        public static ThemeId NewGuid() => new(Guid.NewGuid());
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -66,7 +58,7 @@ namespace BH.SDK.Models.Primitives
         public override bool Equals(object obj) => obj is ThemeId other && Equals(other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => value;
+        public override int GetHashCode() => value.GetHashCode();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString() => $"{nameof(ThemeId)}={value}";

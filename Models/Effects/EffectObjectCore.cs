@@ -31,7 +31,8 @@ namespace BH.SDK.Models.Effects
         public IVector2 LifetimeBounds { get; set; }
         
         // Same logic as TextureObject.TextureId
-        
+
+        [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
         

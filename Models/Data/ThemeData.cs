@@ -1,6 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
@@ -9,12 +10,13 @@ using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BH.SDK.Models.Values
+namespace BH.SDK.Models.Data
 {
     [RuleContainer]
-    [DataVersion(DataDomains.Theme, 1, 0)]
-    public class Theme : IModel<Theme>
+    [DataVersion(DataDomains.ThemeData, 1, 0)]
+    public class ThemeData : IModel<ThemeData>
     {
+        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ThemeId)]
         public ThemeId ThemeId { get; set; }
 
@@ -42,21 +44,21 @@ namespace BH.SDK.Models.Values
         // 49-57 - effects (PA)
         // 58-64 - free
         
-        public Theme()
+        public ThemeData()
         {
             ThemeId = ThemeId.Null;
             Name = string.Empty;
             Matrix = new Color4Value[ValueRules.ThemeCount];
             Array.Fill(Matrix, Color4Value.white);
         }
-        public Theme(ThemeId themeId, string name = "")
+        public ThemeData(ThemeId themeId, string name = "")
         {
             ThemeId = themeId;
             Name = name;
             Matrix = new Color4Value[ValueRules.ThemeCount];
             Array.Fill(Matrix, Color4Value.white);
         }
-        public Theme(ThemeId themeId, string name, Color4Value[] matrix)
+        public ThemeData(ThemeId themeId, string name, Color4Value[] matrix)
         {
             ThemeId = themeId;
             Name = name;
@@ -70,12 +72,12 @@ namespace BH.SDK.Models.Values
         }
 
         public object Clone() => Copy();
-        public Theme Copy() => new(ThemeId, Name, Matrix.CopyArray());
+        public ThemeData Copy() => new(ThemeId, Name, Matrix.CopyArray());
 
-        public override bool Equals(object obj) => obj is Theme value && Equals(value);
+        public override bool Equals(object obj) => obj is ThemeData value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(ThemeId, Name, Matrix.GetArrayHashCode());
 
-        public bool Equals(Theme other)
+        public bool Equals(ThemeData other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

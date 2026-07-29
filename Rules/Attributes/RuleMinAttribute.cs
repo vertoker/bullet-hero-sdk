@@ -35,7 +35,17 @@ namespace BH.SDK.Rules.Attributes
         public RuleMinAttribute(double min, double defaultValue) { Min = min; DefaultValue = defaultValue; }
         public RuleMinAttribute(decimal min, decimal defaultValue) { Min = min; DefaultValue = defaultValue; }
         public RuleMinAttribute(object min, object defaultValue) { Min = min; DefaultValue = defaultValue; }
-        
+
+        private static readonly Type[] SupportedTypes =
+        {
+            typeof(byte), typeof(sbyte), typeof(short), typeof(ushort),
+            typeof(int), typeof(uint), typeof(long), typeof(ulong),
+            typeof(float), typeof(double), typeof(decimal)
+        };
+
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => Array.IndexOf(SupportedTypes, property.PropertyType) >= 0;
+
         protected override bool IsValidInternal(object value, object context)
         {
             if (Min == null) return false;

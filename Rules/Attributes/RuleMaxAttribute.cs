@@ -35,7 +35,17 @@ namespace BH.SDK.Rules.Attributes
         public RuleMaxAttribute(double max, double defaultValue) { Max = max; DefaultValue = defaultValue; }
         public RuleMaxAttribute(decimal max, decimal defaultValue) { Max = max; DefaultValue = defaultValue; }
         public RuleMaxAttribute(object max, object defaultValue) { Max = max; DefaultValue = defaultValue; }
-        
+
+        private static readonly Type[] SupportedTypes =
+        {
+            typeof(byte), typeof(sbyte), typeof(short), typeof(ushort),
+            typeof(int), typeof(uint), typeof(long), typeof(ulong),
+            typeof(float), typeof(double), typeof(decimal)
+        };
+
+        protected override bool IsValidTypeInternal(PropertyInfo property)
+            => Array.IndexOf(SupportedTypes, property.PropertyType) >= 0;
+
         protected override bool IsValidInternal(object value, object context)
         {
             if (Max == null) return false;

@@ -10,8 +10,8 @@ namespace BH.SDK.Versions
         public const string LevelMeta = nameof(Models.LevelMeta);
         public const string UserSettings = nameof(Models.UserSettings);
         public const string Prefab = nameof(Models.Objects.Prefab);
-        public const string EffectObject = nameof(Models.Objects.EffectObject);
-        public const string Theme = nameof(Models.Values.Theme);
+        public const string EffectData = nameof(Models.Data.EffectData);
+        public const string ThemeData = nameof(Models.Data.ThemeData);
         
         // Level
         public const string LevelSettings = nameof(Models.SettingGroups.LevelSettings);

@@ -8,7 +8,7 @@ namespace BH.SDK.Rules.Attributes
         public const AttributeTargets ClassTarget = AttributeTargets.Class;
         public const AttributeTargets PropertyTarget = AttributeTargets.Property;
 
-        protected virtual bool IsValidTypeInternal(PropertyInfo property) => true;
+        protected abstract bool IsValidTypeInternal(PropertyInfo property);
         protected abstract bool IsValidInternal(object value, object context);
         protected abstract void FixInternal(object target, PropertyInfo property, object context);
 

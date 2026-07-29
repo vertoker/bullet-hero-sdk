@@ -27,11 +27,7 @@ namespace BH.SDK.Validations
             foreach (var path in Trace)
             {
                 result = path.Property.GetValue(result);
-                if (!path.HasIndex) continue;
-                if (result is IList list)
-                    result = list[path.Index];
-                else if (result.GetType().IsArray)
-                    result = ((Array)result).GetValue(path.Index);
+                if (path.HasKey) result = GetCollectionItem(result, path);
             }
             return result;
         }
@@ -42,15 +38,21 @@ namespace BH.SDK.Validations
             {
                 var path = Trace[i];
                 result = path.Property.GetValue(result);
-
-                if (!path.HasIndex) continue;
-                if (result is IList list)
-                    result = list[path.Index];
-                else if (result.GetType().IsArray)
-                    result = ((Array)result).GetValue(path.Index);
+                if (path.HasKey) result = GetCollectionItem(result, path);
             }
             var resultProperty = Trace[^1].Property;
             return (result, resultProperty);
+        }
+
+        private static object GetCollectionItem(object collection, RulePath path)
+        {
+            return collection switch
+            {
+                IDictionary dictionary => dictionary[path.Key],
+                IList list => list[(int)path.Key],
+                _ when collection.GetType().IsArray => ((Array)collection).GetValue((int)path.Key),
+                _ => collection,
+            };
         }
 
         public string GetPath() => Trace.GetPath();

@@ -15,10 +15,11 @@ namespace BH.SDK.Models.Objects
     [DataVersion(DataDomains.Prefab, 1, 0)]
     public class Prefab : IObjectScope, IModel<Prefab>
     {
+        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.PrefabId)]
         public PrefabId PrefabId { get; set; }
         
-        // TODO add more contextual checks
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ObjectId)
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
         public Dictionary<ObjectId, RectObject> Objects { get; set; }

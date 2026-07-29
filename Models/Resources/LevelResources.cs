@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BH.SDK.Models.Data;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
@@ -19,27 +20,37 @@ namespace BH.SDK.Models.Resources
     [DataVersion(DataDomains.LevelResources, 1, 0)]
     public class LevelResources : IModel<LevelResources>
     {
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own TextureResourceId)
         [RuleNotNull]
         [JsonProperty(Names.Textures)]
         public Dictionary<TextureResourceId, TextureResource> Textures { get; set; }
-        
+
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own FontResourceId)
         [RuleNotNull]
         [JsonProperty(Names.Fonts)]
         public Dictionary<FontResourceId, FontResource> Fonts { get; set; }
-        
+
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own AudioResourceId)
         [RuleNotNull]
         [JsonProperty(Names.Audios)]
         public Dictionary<AudioResourceId, AudioResource> Audios { get; set; }
-        
-        
+
+
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ColliderId)
         [RuleNotNull]
         [JsonProperty(Names.Shapes)]
         public Dictionary<ColliderId, CompositeCollider> CompositeShapes { get; set; }
 
-        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxThemes)]
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ThemeId)
         [JsonProperty(Names.Themes)]
-        public Dictionary<ThemeId, Theme> Themes { get; set; }
+        public Dictionary<ThemeId, ThemeData> Themes { get; set; }
+
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ThemeId)
+        [JsonProperty(Names.Effects)]
+        public Dictionary<EffectId, EffectData> Effects { get; set; }
+
         
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own PrefabId)
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPrefabs)]
         [JsonProperty(Names.Prefabs)]
         public Dictionary<PrefabId, Prefab> Prefabs { get; set; }
@@ -51,14 +62,14 @@ namespace BH.SDK.Models.Resources
             Audios = new Dictionary<AudioResourceId, AudioResource>();
 
             CompositeShapes = new Dictionary<ColliderId, CompositeCollider>();
-            Themes = new Dictionary<ThemeId, Theme>();
+            Themes = new Dictionary<ThemeId, ThemeData>();
             Prefabs = new Dictionary<PrefabId, Prefab>();
         }
         public LevelResources(Dictionary<TextureResourceId, TextureResource> textures,
             Dictionary<FontResourceId, FontResource> fonts,
             Dictionary<AudioResourceId, AudioResource> audios,
             Dictionary<ColliderId, CompositeCollider> compositeShapes,
-            Dictionary<ThemeId, Theme> themes, Dictionary<PrefabId, Prefab> prefabs)
+            Dictionary<ThemeId, ThemeData> themes, Dictionary<PrefabId, Prefab> prefabs)
         {
             Textures = textures;
             Fonts = fonts;
