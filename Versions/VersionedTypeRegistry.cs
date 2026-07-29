@@ -4,10 +4,9 @@ using System.Reflection;
 
 namespace BH.SDK.Versions
 {
-    // Replaces CompatibilityService. Scans this assembly once for every [DataVersion]-tagged type
-    // and every IMigration implementer, then answers the two questions the old service never
-    // solved together: version -> concrete Type, and old instance -> latest instance (by walking
-    // registered migration steps). See VERSION-UPDATE.md.
+    // Scans this assembly once for every [DataVersion]-tagged type  and every IMigration implementer,
+    // then answers the two questions the old service never solved together: version -> concrete Type,
+    // and old instance -> latest instance (by walking registered migration steps)
     public static class VersionedTypeRegistry
     {
         private static readonly Dictionary<string, Dictionary<(int major, int minor), Type>> Types = new();

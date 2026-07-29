@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using BH.SDK.Models;
-using BH.SDK.Serialization.Converters.CustomTypes;
 using BH.SDK.Versions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,9 +15,17 @@ namespace BH.SDK.Serialization.Converters
     // special-casing for "aggregated vs non-aggregated" models.
     public class VersionedEnvelopeConverter : JsonConverter
     {
-        private readonly Dictionary<string, JsonSerializer> _valueSerializers = new();
+        // Domains currently being written/read one level up the call stack. Suppresses CanConvert
+        // just for that domain so the serializer.Serialize/ToObject calls below - which re-enter this
+        // same converter for the exact value being wrapped - fall through to plain member
+        // serialization instead of re-wrapping it in another envelope. A differently-domained nested
+        // aggregate (e.g. GameLevel's own [DataVersion] inside Level) is a different domain, so it
+        // stays convertible and recurses into this converter normally - this is how "aggregated"
+        // domains get every nested envelope written/upgraded without any special-casing.
+        private readonly HashSet<string> _activeDomains = new();
 
-        public override bool CanConvert(Type objectType) => VersionedTypeRegistry.CanConvert(objectType);
+        public override bool CanConvert(Type objectType) =>
+            VersionedTypeRegistry.CanConvert(objectType) && !_activeDomains.Contains(VersionedTypeRegistry.GetDomain(objectType));
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -31,15 +37,18 @@ namespace BH.SDK.Serialization.Converters
 
             var type = value.GetType();
             var attribute = type.GetCustomAttribute<DataVersionAttribute>();
-            var valueSerializer = GetValueSerializer(attribute.Domain, serializer);
 
             writer.WriteStartObject();
 
+            // serialize version
             writer.WritePropertyName(Names.Version);
             serializer.Serialize(writer, attribute.Version);
 
+            // serialize data
             writer.WritePropertyName(Names.Value);
-            valueSerializer.Serialize(writer, value);
+            _activeDomains.Add(attribute.Domain);
+            serializer.Serialize(writer, value);
+            _activeDomains.Remove(attribute.Domain);
 
             writer.WriteEndObject();
         }
@@ -53,40 +62,22 @@ namespace BH.SDK.Serialization.Converters
             var domain = VersionedTypeRegistry.GetDomain(objectType);
             var jObject = JObject.Load(reader);
 
+            // load version
             var versionToken = jObject[Names.Version];
             if (versionToken == null)
                 throw new JsonSerializationException($"Missing '{Names.Version}' property for domain '{domain}'");
             var version = versionToken.ToObject<Version>(serializer);
 
             var concreteType = VersionedTypeRegistry.Resolve(domain, version.Major, version.Minor);
-            var valueSerializer = GetValueSerializer(domain, serializer);
 
             var valueToken = jObject[Names.Value];
-            var raw = valueToken?.ToObject(concreteType, valueSerializer);
+            
+            _activeDomains.Add(domain);
+            var raw = valueToken?.ToObject(concreteType, serializer);
+            _activeDomains.Remove(domain);
 
+            // load and convert version type
             return VersionedTypeRegistry.UpgradeToLatest(domain, raw, version.Major, version.Minor);
-        }
-
-        private JsonSerializer GetValueSerializer(string domain, JsonSerializer serializer)
-        {
-            if (_valueSerializers.TryGetValue(domain, out var cached))
-                return cached;
-
-            var settings = new JsonSerializerSettings
-            {
-                Formatting = serializer.Formatting,
-                TypeNameHandling = serializer.TypeNameHandling,
-                ContractResolver = serializer.ContractResolver,
-            };
-            var valueSerializer = JsonSerializer.Create(settings);
-            foreach (var converter in serializer.Converters)
-            {
-                if (converter == this) continue;
-                valueSerializer.Converters.Add(converter);
-            }
-
-            _valueSerializers[domain] = valueSerializer;
-            return valueSerializer;
         }
     }
 }

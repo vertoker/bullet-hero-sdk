@@ -29,9 +29,27 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.PathShort)]
         public string Path { get; set; }
 
+        private object _value;
+
         [RuleNotNull]
         [JsonProperty(Names.ValueShort)]
-        public object Value { get; set; }
+        public object Value
+        {
+            get => _value;
+            // Widened to the same CLR types Newtonsoft always produces when deserializing a raw
+            // JSON number into an `object` property (long for any integral, double for any
+            // floating-point) - without this, a Modification built in code with e.g. a plain `int`
+            // stops Equals-ing itself after a serialize/deserialize round trip, since the
+            // deserialized copy always comes back as long/double regardless of the original width.
+            set => _value = NormalizeValue(value);
+        }
+
+        private static object NormalizeValue(object value) => value switch
+        {
+            sbyte or byte or short or ushort or int or uint or long or ulong => Convert.ToInt64(value),
+            float or double or decimal => Convert.ToDouble(value),
+            _ => value,
+        };
 
         public Modification()
         {
