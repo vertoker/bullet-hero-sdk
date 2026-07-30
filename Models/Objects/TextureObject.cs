@@ -20,7 +20,7 @@ namespace BH.SDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.TextureObject;
         
-        [RuleIPrimitiveIntNotNull]
+        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ColliderId)]
         public ColliderId ColliderId { get; set; }
 
@@ -40,7 +40,7 @@ namespace BH.SDK.Models.Objects
         
         public TextureObject()
         {
-            ColliderId = ColliderId.Square;
+            ColliderId = ColliderId.Null;
             TextureResourceId = TextureResourceId.Square;
             Colors = new List<IColor4X4Key>();
             UVs = new List<UVKey>();
@@ -60,7 +60,7 @@ namespace BH.SDK.Models.Objects
         public override void Reset()
         {
             base.Reset();
-            ColliderId = ColliderId.Square;
+            ColliderId = ColliderId.Null;
             TextureResourceId = TextureResourceId.Square;
             Colors.Clear();
             UVs.Clear();

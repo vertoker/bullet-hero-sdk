@@ -271,8 +271,9 @@ namespace BH.SDK.Tests
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
             }));
-            level.Resources.CompositeShapes.Add(new ColliderId(-1), new CompositeCollider(
-                new ColliderId(-1), "CustomCollider", new List<TriangleCollider> { new() }));
+            var customColliderId = ColliderId.NewGuid();
+            level.Resources.CompositeShapes.Add(customColliderId, new CompositeCollider(
+                customColliderId, "CustomCollider", new List<TriangleCollider> { new() }));
 
             var trackEffects = new LevelTrackEffects
             {
@@ -489,6 +490,15 @@ namespace BH.SDK.Tests
             theme.Matrix[2] = Color4Value.green;
             theme.Matrix[3] = Color4Value.blue;
             return theme;
+        }
+
+        public static CompositeCollider CreateTestCompositeCollider()
+        {
+            return new CompositeCollider(ColliderId.NewGuid(), "TestCollider", new List<TriangleCollider>
+            {
+                new(-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f),
+                new(-0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f),
+            });
         }
 
         public static UserSettings CreateValidTestSettings()

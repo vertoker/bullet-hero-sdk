@@ -46,7 +46,7 @@ namespace BH.SDK.Generators
             var textureObject2 = new TextureObject
             {
                 ObjectId = new ObjectId(2), ParentObjectId = new ObjectId(1), StartFrame = 60, EndFrame = 90,
-                TextureResourceId = TextureResourceId.Square, ColliderId = ColliderId.Square, Name = "TexObj2",
+                TextureResourceId = TextureResourceId.Square, ColliderId = ColliderId.NewGuid(), Name = "TexObj2",
             };
             textureObject2.Positions.Add(new PosKey(new Vector2Value(-1, 0), 0));
             textureObject2.Positions.Add(new PosKey(new Vector2Value(1, 0), 30));
@@ -56,7 +56,7 @@ namespace BH.SDK.Generators
             var textureObject3 = new TextureObject
             {
                 ObjectId = new ObjectId(3), ParentObjectId = ObjectId.Null, StartFrame = 60, EndFrame = 90,
-                TextureResourceId = TextureResourceId.Square, ColliderId = ColliderId.Square,
+                TextureResourceId = TextureResourceId.Square, ColliderId = ColliderId.NewGuid(),
             };
             textureObject2.Positions.Add(new PosKey(new Vector2Value(1, 0), 0));
             textureObject2.Positions.Add(new PosKey(new Vector2Value(1, 0), 30));
@@ -218,14 +218,14 @@ namespace BH.SDK.Generators
                         new ObjectId(1), new TextureObject
                         {
                             ObjectId = new ObjectId(1), ParentObjectId = ObjectId.Null, TextureResourceId = new TextureResourceId(78),
-                            ColliderId = new ColliderId(78),
+                            ColliderId = ColliderId.NewGuid(),
                             StartFrame = 150, EndFrame = 210, Name = "Prefab 1",
                         }
                     },
                     {
                         new ObjectId(2), new TextureObject
                         {
-                            ObjectId = new ObjectId(2), ParentObjectId = new ObjectId(1), TextureResourceId = new TextureResourceId(79), ColliderId = new ColliderId(79),
+                            ObjectId = new ObjectId(2), ParentObjectId = new ObjectId(1), TextureResourceId = new TextureResourceId(79), ColliderId = ColliderId.NewGuid(),
                             StartFrame = 150, EndFrame = 210, Name = "Prefab 2",
                             Positions = new List<PosKey>
                             {

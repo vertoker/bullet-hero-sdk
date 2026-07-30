@@ -1,4 +1,5 @@
-﻿using BH.SDK.Models.Primitives;
+﻿using BH.SDK.Models.Data;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Serialization.Converters.Base;
 

@@ -12,6 +12,7 @@ namespace BH.SDK.Versions
         public const string Prefab = nameof(Models.Objects.Prefab);
         public const string EffectData = nameof(Models.Data.EffectData);
         public const string ThemeData = nameof(Models.Data.ThemeData);
+        public const string CompositeCollider = nameof(Models.Data.CompositeCollider);
         
         // Level
         public const string LevelSettings = nameof(Models.SettingGroups.LevelSettings);

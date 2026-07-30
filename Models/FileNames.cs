@@ -16,10 +16,13 @@
         public const string LogoFileNamePng = "logo.png";
         public const string LogoFileNameJpg = "logo.jpg";
 
-        // Device-wide (not per-level) shared library of reusable Themes/Effects - see
-        // PathUtils.GetThemesDirectoryInfo/GetEffectsDirectoryInfo.
+        // Device-wide (not per-level) shared library of reusable Themes/Effects/Colliders - see
+        // PathUtils.GetThemesDirectoryInfo/GetEffectsDirectoryInfo/GetCollidersDirectoryInfo.
         public const string ResourcesDirectory = "resources";
         public const string ThemesDirectory = "themes";
         public const string EffectsDirectory = "effects";
+        public const string CollidersDirectory = "colliders";
+        
+        public const string ReportsDirectory = "reports";
     }
 }

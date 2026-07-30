@@ -85,6 +85,7 @@ namespace BH.SDK.Serialization
                 new DictionaryPrefabsConverter(),
 
                 new PrimitiveIntConverter(),
+                new PrimitiveGuidConverter(),
                 new PrimitiveFloatConverter(),
 
                 new IntConverter(),

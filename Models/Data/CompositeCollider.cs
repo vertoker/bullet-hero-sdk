@@ -2,27 +2,29 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
+using BH.SDK.Versions;
 using Newtonsoft.Json;
 
-namespace BH.SDK.Models.Values
+namespace BH.SDK.Models.Data
 {
     [RuleContainer]
+    [DataVersion(DataDomains.CompositeCollider, 1, 0)]
     public class CompositeCollider : IModel<CompositeCollider>
     {
-        [RuleIPrimitiveIntMax(ColliderId.MaxUserDefinedValue)]
+        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ColliderId)]
         public ColliderId ColliderId { get; set; }
-        
-        [JsonProperty(Names.ColliderName)]
-        public string ColliderName { get; set; }
-        
+
+        [JsonProperty(Names.ColliderName)] public string ColliderName { get; set; }
+
         // TODO (MAYBE) add Pivot for collider and maybe add it into collision process
         // TODO also most reason for it - extend game editor, because game colliders has it only for visuals
         // TODO or this can be PreferredPivot, it can be used by user in optional pivot in selection
-        
+
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxColliderTriangles)]
         [JsonProperty(Names.TrianglesShort)]
         public List<TriangleCollider> Triangles { get; set; }
@@ -33,12 +35,14 @@ namespace BH.SDK.Models.Values
             ColliderName = string.Empty;
             Triangles = new List<TriangleCollider>();
         }
+
         public CompositeCollider(ColliderId colliderId, string colliderName, List<TriangleCollider> triangles)
         {
             ColliderId = colliderId;
             ColliderName = colliderName;
             Triangles = triangles;
         }
+
         public void Reset()
         {
             ColliderId = ColliderId.Null;

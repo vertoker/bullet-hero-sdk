@@ -1,75 +1,67 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
-    [Serializable]
-    public struct ColliderId : IEquatable<ColliderId>, IPrimitiveInt
+    public struct ColliderId : IEquatable<ColliderId>, IPrimitiveGuid
     {
-        public int value;
-        int IPrimitiveInt.Value => value;
+        public Guid value;
+        Guid IPrimitiveGuid.Value => value;
 
-        public ColliderId(int value)
+        public ColliderId(Guid value)
         {
             this.value = value;
+        }
+        public ColliderId(string str)
+        {
+            value = new Guid(str);
         }
         public void Reset()
         {
             value = NullValue;
         }
 
-        // Collider ids are not a separate top-level resource list, they are embedded directly
-        // on TextureObject/CompositeCollider. What each number means:
-        // 0 => Null / not-set
-        // (1 - int.MaxValue) => game-defined colliders, built into the game (Square, Circle, ...)
-        // (int.MinValue - -1) => user-defined colliders, unique per level (custom CompositeCollider shapes)
+        // Collider ids are a stable identifier for a CompositeCollider/CompositeColliderShapeScriptable
+        // entry, same role ThemeId/EffectId play for Theme/Effect - a TextureObject references a
+        // shared, reusable collider shape by id instead of embedding its own copy. Unlike the
+        // previous int-based id, there is no game-defined/user-defined range split - a Guid has no
+        // meaningful "positive/negative" ordering to split on (see ThemeId/EffectId/PrefabId/LevelId
+        // for the same reasoning); "game-defined" vs "user-defined" is now determined by which
+        // collection an id is found in (GameResources.CompositeShapes vs Level.Resources.CompositeShapes),
+        // not by the id's own value. Guid.Empty is the only reserved/Null value.
 
-        public const int NullValue = 0;
-        public const int MinGameDefinedValue = 1;
-        public const int MaxUserDefinedValue = -1;
-        
+        public static readonly Guid NullValue = Guid.Empty;
+
         public static readonly ColliderId Null = new(NullValue);
-        public static readonly ColliderId MinGameDefined = new(MinGameDefinedValue);
-        public static readonly ColliderId MaxUserDefined = new(MaxUserDefinedValue);
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEnabled() => value != NullValue;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsGameDefined() => value >= MinGameDefinedValue;
-        
+        public static bool IsEnabled(Guid value) => value != NullValue;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsUserDefined() => value <= MaxUserDefinedValue;
-        
+        public static ColliderId NewId() => new(Guid.NewGuid());
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEnabled(int value) => value != NullValue;
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsGameDefined(int value) => value >= MinGameDefinedValue;
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsUserDefined(int value) => value <= MaxUserDefinedValue;
-        
-        // built-in game colliders, ids are stable and guaranteed to never change
-        public static readonly ColliderId Square = new(1);
-        public static readonly ColliderId Circle = new(2);
-        
-        
+        public static ColliderId NewGuid() => new(Guid.NewGuid());
+
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(ColliderId a, ColliderId b) => a.value == b.value;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(ColliderId a, ColliderId b) => a.value != b.value;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(ColliderId other) => value == other.value;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object obj) => obj is ColliderId other && Equals(other);
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => value;
+        public override int GetHashCode() => value.GetHashCode();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString() => $"{nameof(ColliderId)}={value}";
