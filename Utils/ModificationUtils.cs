@@ -24,7 +24,7 @@ namespace BH.SDK.Utils
             
             // Objects
             
-            AddPropertiesRecursive<RectObject, TextureObject, EffectObject, TextObject>();
+            AddPropertiesRecursive<RectObject, TextureObject, EffectObject, TextObject, PrefabObject>();
             
             // Effects
             

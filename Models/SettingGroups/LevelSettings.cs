@@ -12,7 +12,7 @@ namespace BH.SDK.Models.SettingGroups
 {
     [RuleContainer]
     [DataVersion(DataDomains.LevelSettings, 1, 0)]
-    public class LevelSettings : IModel<LevelSettings>
+    public class LevelSettings : IObjectIdCounter, IModel<LevelSettings>
     {
         [RuleInRange(FrameRules.MinFramerate, FrameRules.MaxFramerate)]
         [JsonProperty(Names.Fps)]

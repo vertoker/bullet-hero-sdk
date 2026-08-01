@@ -39,9 +39,9 @@ namespace BH.SDK.Models.Primitives
         
         public const int NullValue = 0;
         public const int MinLevelValue = 1;
-        public const int MinLevelParentValue = -2;
-        public const int MaxInframeValue = -3;
-        
+        public const int MinLevelParentValue = -3;
+        public const int MaxInframeValue = -4;
+
         public static readonly ObjectId Null = new(NullValue);
         public static readonly ObjectId MinLevel = new(MinLevelValue);
         public static readonly ObjectId MinLevelParent = new(MinLevelParentValue);
@@ -82,7 +82,16 @@ namespace BH.SDK.Models.Primitives
         // In multiplayer each localPlayer works individually (no effect on other players)
         // Recommend: try not to use colliders for user objects parented from localPlayer
         public static readonly ObjectId LocalPlayer = new(-2);
-        
+
+        // -3 => explicit "attach to this placement's own root" parent, only meaningful for an
+        // object living inside a Prefab template (Level.Resources.Prefabs[x].Objects) - resolves to
+        // the SAME id as an unset/Null ParentObjectId does there (see
+        // BH.Core.Services.PrefabMaterializer.RemapParents), just spelled out explicitly instead of
+        // relying on the "null auto-parents to the placement" fallback. Meaningless at level scope
+        // (GameLevel.Objects has no "root" to attach to) - RuleParentObjectIdValid still accepts it
+        // structurally there, same as Camera/LocalPlayer would in a context they don't apply to.
+        public static readonly ObjectId PrefabRoot = new(-3);
+
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(ObjectId a, ObjectId b) => a.value == b.value;

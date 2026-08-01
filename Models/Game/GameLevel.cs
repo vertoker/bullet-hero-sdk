@@ -33,35 +33,30 @@ namespace BH.SDK.Models.Game
         public PlayerEvents PlayerEvents { get; set; }
         
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ObjectId)
+        // Placed PrefabObject instances live directly in here too (GetModelType() ==
+        // ObjectType.PrefabObject) - see IObjectScope's own comment.
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
         public Dictionary<ObjectId, RectObject> Objects { get; set; }
-        
-        // TODO add more contextual checks
-        [RuleNotNull]
-        [JsonProperty(Names.ParentObjects)]
-        public List<PrefabObject> PrefabObjects { get; set; }
-        
+
         public GameLevel()
         {
             Events = new GameEvents();
             CameraEvents = new CameraEvents();
             PostProcessingEvents = new PostProcessingEvents();
             PlayerEvents = new PlayerEvents();
-            
+
             Objects = new Dictionary<ObjectId, RectObject>();
-            PrefabObjects = new List<PrefabObject>();
         }
         public GameLevel(GameEvents events, CameraEvents cameraEvents, PostProcessingEvents postProcessingEvents,
-            PlayerEvents playerEvents, Dictionary<ObjectId, RectObject> objects, List<PrefabObject> prefabObjects)
+            PlayerEvents playerEvents, Dictionary<ObjectId, RectObject> objects)
         {
             Events = events;
             CameraEvents = cameraEvents;
             PostProcessingEvents = postProcessingEvents;
             PlayerEvents = playerEvents;
-            
+
             Objects = objects;
-            PrefabObjects = prefabObjects;
         }
         public void Reset()
         {
@@ -69,29 +64,27 @@ namespace BH.SDK.Models.Game
             CameraEvents.Reset();
             PostProcessingEvents.Reset();
             PlayerEvents.Reset();
-            
+
             Objects.Clear();
-            PrefabObjects.Clear();
         }
 
         public object Clone() => Copy();
         public GameLevel Copy() => new(Events.Copy(), CameraEvents.Copy(), PostProcessingEvents.Copy(),
-            PlayerEvents.Copy(), Objects.CopyDictionary(), PrefabObjects.CopyList());
+            PlayerEvents.Copy(), Objects.CopyDictionary());
 
         public override bool Equals(object obj) => obj is GameLevel value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Events, CameraEvents, PostProcessingEvents, PlayerEvents,
-            Objects.GetDictionaryHashCode(), PrefabObjects.GetListHashCode());
+            Objects.GetDictionaryHashCode());
 
         public bool Equals(GameLevel other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Events.Equals(other.Events) 
+            var result = Events.Equals(other.Events)
                          && CameraEvents.Equals(other.CameraEvents)
                          && PostProcessingEvents.Equals(other.PostProcessingEvents)
                          && PlayerEvents.Equals(other.PlayerEvents)
-                         && Objects.DictionaryEquals(other.Objects)
-                         && PrefabObjects.ListEquals(other.PrefabObjects);
+                         && Objects.DictionaryEquals(other.Objects);
             return result;
         }
     }

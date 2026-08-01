@@ -16,6 +16,7 @@ namespace BH.SDK.Serialization.Converters.CustomTypes
                 ObjectType.TextureObject => typeof(TextureObject),
                 ObjectType.TextObject => typeof(TextObject),
                 ObjectType.EffectObject => typeof(EffectObject),
+                ObjectType.PrefabObject => typeof(PrefabObject),
                 _ => throw new ArgumentOutOfRangeException(nameof(customType), customType, null)
             };
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using BH.SDK.Versions;
@@ -13,55 +14,69 @@ namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
     [DataVersion(DataDomains.Prefab, 1, 0)]
-    public class Prefab : IObjectScope, IModel<Prefab>
+    public class Prefab : IObjectScope, IObjectIdCounter, IModel<Prefab>
     {
         [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.PrefabId)]
         public PrefabId PrefabId { get; set; }
-        
+
+        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
+        [JsonProperty(Names.Name)]
+        public string Name { get; set; }
+
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ObjectId)
+        // Nested PrefabObject placements (instances of OTHER prefabs, placed inside this template)
+        // live directly in here too, already fully materialized - see IObjectScope's own comment.
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
         public Dictionary<ObjectId, RectObject> Objects { get; set; }
-        
-        // TODO add more contextual checks
-        [RuleNotNull]
-        [JsonProperty(Names.ParentObjects)]
-        public List<PrefabObject> PrefabObjects { get; set; }
+
+        // This prefab's own object-id namespace (mirrors LevelSettings.ObjectIdCounter) - used both
+        // to author new objects directly inside this template, and to mint outer ids when this
+        // prefab is itself materialized as a nested placement inside another prefab's template.
+        [RuleMin(ObjectId.MinLevelValue)]
+        [JsonProperty(Names.ObjectIdCounter)]
+        public int ObjectIdCounter { get; set; }
+
+        public ObjectId GetNextObjectId() => new(ObjectIdCounter++);
 
         public Prefab()
         {
             PrefabId = PrefabId.Null;
+            Name = string.Empty;
             Objects = new Dictionary<ObjectId, RectObject>();
-            PrefabObjects = new List<PrefabObject>();
+            ObjectIdCounter = ObjectId.MinLevelValue;
         }
-        public Prefab(PrefabId prefabId, Dictionary<ObjectId, RectObject> objects, List<PrefabObject> prefabObjects)
+        public Prefab(PrefabId prefabId, string name, Dictionary<ObjectId, RectObject> objects, int objectIdCounter)
         {
             PrefabId = prefabId;
+            Name = name;
             Objects = objects;
-            PrefabObjects = prefabObjects;
+            ObjectIdCounter = objectIdCounter;
         }
         public void Reset()
         {
             PrefabId = PrefabId.Null;
+            Name = string.Empty;
             Objects.Clear();
-            PrefabObjects.Clear();
+            ObjectIdCounter = ObjectId.MinLevelValue;
         }
 
         public object Clone() => Copy();
-        public Prefab Copy() => new(PrefabId, Objects.CopyDictionary(), PrefabObjects.CopyList());
+        public Prefab Copy() => new(PrefabId, Name, Objects.CopyDictionary(), ObjectIdCounter);
 
         public override bool Equals(object obj) => obj is Prefab value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(PrefabId,
-            Objects.GetDictionaryHashCode(), PrefabObjects.GetListHashCode());
+        public override int GetHashCode() => HashCode.Combine(PrefabId, Name,
+            Objects.GetDictionaryHashCode(), ObjectIdCounter);
 
         public bool Equals(Prefab other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = PrefabId.Equals(other.PrefabId)
+                         && Name.Equals(other.Name)
                          && Objects.DictionaryEquals(other.Objects)
-                         && PrefabObjects.ListEquals(other.PrefabObjects);
+                         && ObjectIdCounter.Equals(other.ObjectIdCounter);
             return result;
         }
     }

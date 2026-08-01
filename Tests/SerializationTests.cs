@@ -110,7 +110,6 @@ namespace BH.SDK.Tests
             Assert.IsNotNull(level.Game.PostProcessingEvents);
             Assert.IsNotNull(level.Game.PlayerEvents);
             Assert.AreEqual(1, level.Game.Objects.Count);
-            Assert.AreEqual(0, level.Game.PrefabObjects.Count);
             Assert.IsNotNull(level.Audio);
             Assert.IsNotNull(level.Resources);
 

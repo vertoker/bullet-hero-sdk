@@ -6,5 +6,6 @@
         TextureObject = 1,
         EffectObject = 2,
         TextObject = 3,
+        PrefabObject = 4,
     }
 }

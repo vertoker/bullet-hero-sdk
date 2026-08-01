@@ -6,8 +6,10 @@ using BH.SDK.Models.Primitives;
 namespace BH.SDK.Rules.Attributes
 {
     // Validates a ParentObjectId reference (RectObject.ParentObjectId): unlike a regular ObjectId,
-    // this also allows Null (no parent) and the special public game objects (Camera, LocalPlayer),
-    // i.e. value >= ObjectId.MinLevelParentValue (see ObjectId.IsValidParent()).
+    // this also allows Null (no parent) and the special public game objects (Camera, LocalPlayer,
+    // PrefabRoot), i.e. value >= ObjectId.MinLevelParentValue (see ObjectId.IsValidParent()).
+    // PrefabRoot is only meaningful inside a Prefab template - nothing here enforces that context
+    // (same leniency Camera/LocalPlayer already get outside their own intended context).
     [AttributeUsage(PropertyTarget)]
     public class RuleParentObjectIdValidAttribute : BaseRuleAttribute
     {

@@ -23,7 +23,7 @@ namespace BH.SDK.Models.Objects
     {
         [RuleObjectIdValid]
         [JsonProperty(Names.ObjectId)]
-        public ObjectId ObjectId { get; set; } // to which Object this modification is applied, means prevObjectId
+        public ObjectId ObjectId { get; set; } // to which Object this modification is applied, means nextObjectId
 
         [RuleNotNull]
         [JsonProperty(Names.PathShort)]

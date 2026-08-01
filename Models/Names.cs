@@ -446,8 +446,7 @@
         public const string CameraEvents = Camera + _ + Events;
         public const string PostProcessingEvents = Post + Processing + _ + Events;
         public const string PlayerEvents = Player + _ + Events;
-        public const string ParentObjects = Parent + _ + Objects;
-        
+
         // Instances
         
         public const string LevelId = Level + _ + Id;

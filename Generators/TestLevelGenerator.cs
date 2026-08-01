@@ -235,43 +235,47 @@ namespace BH.SDK.Generators
                     }
                 }
             };
+            var nestedPrefabObject = new PrefabObject
+            {
+                ObjectId = new ObjectId(41),
+                PrefabId = prefabGuid1,
+                ObjectIds = new Dictionary<ObjectId, ObjectId>
+                {
+                    { new ObjectId(1), new ObjectId(11) },
+                    { new ObjectId(2), new ObjectId(12) },
+                },
+                Modifications = new Dictionary<ObjectId, Modification>(),
+            };
             var prefab2 = new Prefab
             {
                 PrefabId = prefabGuid2,
-                PrefabObjects = new List<PrefabObject>
+                Objects = new Dictionary<ObjectId, RectObject>
                 {
-                    new()
-                    {
-                        PrefabId = prefabGuid1,
-                        ObjectIds = new Dictionary<ObjectId, ObjectId>
-                        {
-                            { new ObjectId(1), new ObjectId(11) },
-                            { new ObjectId(2), new ObjectId(12) },
-                        },
-                        Modifications = new List<Modification>(),
-                    }
+                    { nestedPrefabObject.ObjectId, nestedPrefabObject },
                 }
             };
-            
+
             var prefabObject1 = new PrefabObject
             {
+                ObjectId = new ObjectId(30),
                 PrefabId = prefabGuid1,
                 ObjectIds = new Dictionary<ObjectId, ObjectId>
                 {
                     { new ObjectId(1), new ObjectId(21) },
                     { new ObjectId(2), new ObjectId(22) },
                 },
-                Modifications = new List<Modification>(),
+                Modifications = new Dictionary<ObjectId, Modification>(),
             };
             var prefabObject2 = new PrefabObject
             {
+                ObjectId = new ObjectId(31),
                 PrefabId = prefabGuid2,
                 ObjectIds = new Dictionary<ObjectId, ObjectId>
                 {
                     { new ObjectId(11), new ObjectId(23) },
                     { new ObjectId(12), new ObjectId(24) },
                 },
-                Modifications = new List<Modification>(),
+                Modifications = new Dictionary<ObjectId, Modification>(),
             };
             
             var level = new Level
@@ -289,8 +293,8 @@ namespace BH.SDK.Generators
             level.Resources.Effects.Add(effectObject1.EffectId, effectData1);
             level.Resources.Prefabs.Add(prefab1.PrefabId, prefab1);
             level.Resources.Prefabs.Add(prefab2.PrefabId, prefab2);
-            level.Game.PrefabObjects.Add(prefabObject1);
-            level.Game.PrefabObjects.Add(prefabObject2);
+            level.Game.Objects.Add(prefabObject1.ObjectId, prefabObject1);
+            level.Game.Objects.Add(prefabObject2.ObjectId, prefabObject2);
             
             level.Game.CameraEvents.Zooms.Add(new ZoomKey(new FloatValue(1f), 0));
             level.Game.CameraEvents.Zooms.Add(new ZoomKey(new FloatValue(0.5f), 90));
