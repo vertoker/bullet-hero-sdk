@@ -225,11 +225,7 @@ namespace BH.SDK.Tests
                 ObjectId = new ObjectId(3),
             });
             var innerPrefabObject = new PrefabObject { PrefabId = PrefabId.NewGuid() };
-            innerPrefabObject.ObjectIds.Add(new ObjectIdModification
-            {
-                PrevObjectId = new ObjectId(1),
-                NextObjectId = new ObjectId(2),
-            });
+            innerPrefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(2));
             innerPrefabObject.Modifications.Add(new Modification
             {
                 ObjectId = new ObjectId(1),
@@ -240,11 +236,7 @@ namespace BH.SDK.Tests
             level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 
             var prefabObject = new PrefabObject { PrefabId = PrefabId.NewGuid() };
-            prefabObject.ObjectIds.Add(new ObjectIdModification
-            {
-                PrevObjectId = new ObjectId(1),
-                NextObjectId = new ObjectId(3),
-            });
+            prefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(3));
             prefabObject.Modifications.Add(new Modification
             {
                 ObjectId = new ObjectId(2),
@@ -464,11 +456,7 @@ namespace BH.SDK.Tests
             {
                 PrefabId = PrefabId.NewId(),
             };
-            prefabObject.ObjectIds.Add(new ObjectIdModification
-            {
-                PrevObjectId = new ObjectId(1),
-                NextObjectId = new ObjectId(2),
-            });
+            prefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(2));
             var modification = new Modification
             {
                 ObjectId = new ObjectId(123),

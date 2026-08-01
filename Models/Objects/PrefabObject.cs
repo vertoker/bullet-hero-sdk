@@ -23,7 +23,7 @@ namespace BH.SDK.Models.Objects
         public PrefabId PrefabId { get; set; } // reference to all level Prefabs list
         
         [JsonProperty(Names.ObjectIds)]
-        public List<ObjectIdModification> ObjectIds { get; set; }
+        public Dictionary<ObjectId, ObjectId> ObjectIds { get; set; }
         
         [JsonProperty(Names.Mod)]
         public List<Modification> Modifications { get; set; }
@@ -31,10 +31,10 @@ namespace BH.SDK.Models.Objects
         public PrefabObject()
         {
             PrefabId = PrefabId.Null;
-            ObjectIds = new List<ObjectIdModification>();
+            ObjectIds = new Dictionary<ObjectId, ObjectId>();
             Modifications = new List<Modification>();
         }
-        public PrefabObject(PrefabId prefabId, List<ObjectIdModification> objectIds, List<Modification> modifications)
+        public PrefabObject(PrefabId prefabId, Dictionary<ObjectId, ObjectId> objectIds, List<Modification> modifications)
         {
             PrefabId = prefabId;
             ObjectIds = objectIds;
@@ -48,18 +48,18 @@ namespace BH.SDK.Models.Objects
         }
 
         public object Clone() => Copy();
-        public PrefabObject Copy() => new(PrefabId, ObjectIds.CopyList(), Modifications.CopyList());
+        public PrefabObject Copy() => new(PrefabId, ObjectIds.CopyDictionaryUnmanaged(), Modifications.CopyList());
 
         public override bool Equals(object obj) => obj is PrefabObject value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(PrefabId,
-            ObjectIds.GetListHashCode(), Modifications.GetListHashCode());
+            ObjectIds.GetDictionaryHashCode(), Modifications.GetListHashCode());
 
         public bool Equals(PrefabObject other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = PrefabId.Equals(other.PrefabId)
-                         && ObjectIds.ListEquals(other.ObjectIds)
+                         && ObjectIds.DictionaryEquals(other.ObjectIds)
                          && Modifications.ListEquals(other.Modifications);
             return result;
         }

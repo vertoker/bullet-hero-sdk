@@ -243,10 +243,10 @@ namespace BH.SDK.Generators
                     new()
                     {
                         PrefabId = prefabGuid1,
-                        ObjectIds = new List<ObjectIdModification>
+                        ObjectIds = new Dictionary<ObjectId, ObjectId>
                         {
-                            new(new ObjectId(1), new ObjectId(11)),
-                            new(new ObjectId(2), new ObjectId(12)),
+                            { new ObjectId(1), new ObjectId(11) },
+                            { new ObjectId(2), new ObjectId(12) },
                         },
                         Modifications = new List<Modification>(),
                     }
@@ -256,20 +256,20 @@ namespace BH.SDK.Generators
             var prefabObject1 = new PrefabObject
             {
                 PrefabId = prefabGuid1,
-                ObjectIds = new List<ObjectIdModification>
+                ObjectIds = new Dictionary<ObjectId, ObjectId>
                 {
-                    new(new ObjectId(1), new ObjectId(21)),
-                    new(new ObjectId(2), new ObjectId(22)),
+                    { new ObjectId(1), new ObjectId(21) },
+                    { new ObjectId(2), new ObjectId(22) },
                 },
                 Modifications = new List<Modification>(),
             };
             var prefabObject2 = new PrefabObject
             {
                 PrefabId = prefabGuid2,
-                ObjectIds = new List<ObjectIdModification>
+                ObjectIds = new Dictionary<ObjectId, ObjectId>
                 {
-                    new(new ObjectId(11), new ObjectId(23)),
-                    new(new ObjectId(12), new ObjectId(24)),
+                    { new ObjectId(11), new ObjectId(23) },
+                    { new ObjectId(12), new ObjectId(24) },
                 },
                 Modifications = new List<Modification>(),
             };

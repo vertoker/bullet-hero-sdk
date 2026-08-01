@@ -45,6 +45,14 @@ namespace BH.SDK.Utils
                 copyDictionary.Add(key, value.Copy());
             return copyDictionary;
         }
+        public static Dictionary<TKey, TValue> CopyDictionaryUnmanaged<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+            where TKey : unmanaged where TValue : unmanaged
+        {
+            var copyDictionary = new Dictionary<TKey, TValue>(dictionary.Count);
+            foreach (var (key, value) in dictionary)
+                copyDictionary.Add(key, value);
+            return copyDictionary;
+        }
         
         public static bool ArrayEquals<T>(this T[] array, T[] other)
         {
