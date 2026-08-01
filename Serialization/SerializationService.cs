@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Serialization.Converters;
 using BH.SDK.Serialization.Converters.Base;
 using BH.SDK.Serialization.Converters.CustomTypes;
@@ -83,6 +84,8 @@ namespace BH.SDK.Serialization
                 new DictionaryThemesConverter(),
                 new DictionaryEffectsConverter(),
                 new DictionaryPrefabsConverter(),
+                new DictionaryModificationsConverter(),
+                new DictionaryAsPairListConverter<ObjectId, ObjectId>(),
 
                 new PrimitiveIntConverter(),
                 new PrimitiveGuidConverter(),
