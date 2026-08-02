@@ -54,7 +54,7 @@ namespace BH.SDK.Utils
 
         public static void Apply(this RectObject obj, Modification mod)
         {
-            ParsePath(mod.Path, SegmentBuffer);
+            ParsePath(mod.Key.Path, SegmentBuffer);
             if (SegmentBuffer.Count == 0) return;
 
             object currentObject = obj;

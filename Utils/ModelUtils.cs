@@ -53,7 +53,15 @@ namespace BH.SDK.Utils
                 copyDictionary.Add(key, value);
             return copyDictionary;
         }
-        
+        public static Dictionary<TKey, TValue> CopyDictionaryManaged<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+            where TKey : ICopyable<TKey> where TValue : ICopyable<TValue>
+        {
+            var copyDictionary = new Dictionary<TKey, TValue>(dictionary.Count);
+            foreach (var (key, value) in dictionary)
+                copyDictionary.Add(key.Copy(), value.Copy());
+            return copyDictionary;
+        }
+
         public static bool ArrayEquals<T>(this T[] array, T[] other)
         {
             if (array is null || other is null) return false;

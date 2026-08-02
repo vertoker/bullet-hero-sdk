@@ -240,6 +240,8 @@
         
         public const string Prefab = "prefab";
         public const string Prefabs = "prefabs";
+        public const string Mod = "mod";
+        public const string Key = "key";
         public const string Property = "property";
         public const string Path = "path";
         public const string PathShort = "p";

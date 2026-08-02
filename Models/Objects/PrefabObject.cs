@@ -24,26 +24,39 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.ObjectIds)]
         public Dictionary<ObjectId, ObjectId> ObjectIds { get; set; } // inner id -> this instance's outer id
 
+        // Per-instance field overrides on this placement's own materialized children, keyed by
+        // ModificationKey (TEMPLATE's inner ObjectId + field Path) - see
+        // BH.Core.Services.PrefabMaterializer.ApplyModifications (re-applied after every
+        // materialize/resync, on top of the fresh template copy) and GameEditor's
+        // EditObjectOperation.RecordModification (what records one here whenever a direct edit lands
+        // on a materialized child outside Prefab Mode). One Modification per (object, field) pair -
+        // a child can have several fields overridden at once, but only one override per field.
+        [JsonProperty(Names.Mod)]
+        public Dictionary<ModificationKey, Modification> Modifications { get; set; }
+
         public PrefabObject()
         {
             PrefabId = PrefabId.Null;
             ObjectIds = new Dictionary<ObjectId, ObjectId>();
+            Modifications = new Dictionary<ModificationKey, Modification>();
         }
         public PrefabObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            PrefabId prefabId, Dictionary<ObjectId, ObjectId> objectIds)
+            PrefabId prefabId, Dictionary<ObjectId, ObjectId> objectIds, Dictionary<ModificationKey, Modification> modifications)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             PrefabId = prefabId;
             ObjectIds = objectIds;
+            Modifications = modifications;
         }
         public override void Reset()
         {
             base.Reset();
             PrefabId = PrefabId.Null;
             ObjectIds.Clear();
+            Modifications.Clear();
         }
 
         public override object Clone() => CopyImpl();
@@ -53,7 +66,7 @@ namespace BH.SDK.Models.Objects
         private PrefabObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
-            PrefabId, ObjectIds.CopyDictionaryUnmanaged());
+            PrefabId, ObjectIds.CopyDictionaryUnmanaged(), Modifications.CopyDictionaryManaged());
 
         public void Update(PrefabObject src)
         {
@@ -61,6 +74,7 @@ namespace BH.SDK.Models.Objects
 
             PrefabId = src.PrefabId;
             ObjectIds = src.ObjectIds.CopyDictionaryUnmanaged();
+            Modifications = src.Modifications.CopyDictionaryManaged();
         }
 
         public override bool Equals(object obj) => obj is PrefabObject value && Equals(value);
@@ -70,6 +84,7 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(base.GetHashCode());
             hashCode.Add(PrefabId);
             hashCode.Add(ObjectIds.GetDictionaryHashCode());
+            hashCode.Add(Modifications.GetDictionaryHashCode());
             return hashCode.ToHashCode();
         }
 
@@ -106,7 +121,8 @@ namespace BH.SDK.Models.Objects
         private bool EqualsPrefabObject(PrefabObject other)
         {
             var result = PrefabId.Equals(other.PrefabId)
-                         && ObjectIds.DictionaryEquals(other.ObjectIds);
+                         && ObjectIds.DictionaryEquals(other.ObjectIds)
+                         && Modifications.DictionaryEquals(other.Modifications);
             return result;
         }
     }

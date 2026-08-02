@@ -21,13 +21,10 @@ namespace BH.SDK.Models.Objects
     [RuleContainer]
     public class Modification : IModel<Modification>
     {
-        [RuleObjectIdValid]
-        [JsonProperty(Names.ObjectId)]
-        public ObjectId ObjectId { get; set; } // to which Object this modification is applied, means nextObjectId
-
-        [RuleNotNull]
-        [JsonProperty(Names.PathShort)]
-        public string Path { get; set; }
+        // WHICH object (inner/template ObjectId) and WHICH field (Path) this override applies to -
+        // see ModificationKey's own doc comment. Also PrefabObject.Modifications' dictionary key.
+        [JsonProperty(Names.Key)]
+        public ModificationKey Key { get; set; }
 
         private object _value;
 
@@ -53,25 +50,29 @@ namespace BH.SDK.Models.Objects
 
         public Modification()
         {
-            ObjectId = ObjectId.Null;
-            Path = string.Empty;
+            Key = new ModificationKey(ObjectId.Null, string.Empty);
             Value = null;
         }
         public Modification(ObjectId objectId, string path, object value)
         {
-            ObjectId = objectId;
-            Path = path;
+            Key = new ModificationKey(objectId, path);
+            Value = value;
+        }
+        public Modification(ModificationKey key, object value)
+        {
+            Key = key;
             Value = value;
         }
         public void Reset()
         {
-            ObjectId = ObjectId.Null;
-            Path = string.Empty;
+            var key = Key;
+            key.Reset();
+            Key = key;
             Value = null;
         }
 
         public object Clone() => Copy();
-        public Modification Copy() => new(ObjectId, Path, CopyValue());
+        public Modification Copy() => new(Key.Copy(), CopyValue());
 
         public object CopyValue()
         {
@@ -82,14 +83,13 @@ namespace BH.SDK.Models.Objects
         }
 
         public override bool Equals(object obj) => obj is Modification value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(ObjectId, Path, Value);
+        public override int GetHashCode() => HashCode.Combine(Key, Value);
 
         public bool Equals(Modification other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = ObjectId.Equals(other.ObjectId)
-                         && Path.Equals(other.Path)
+            var result = Key.Equals(other.Key)
                          && Value.Equals(other.Value);
             return result;
         }
