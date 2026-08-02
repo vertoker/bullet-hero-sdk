@@ -64,7 +64,7 @@ namespace BH.SDK.Models.Values
         public object Clone() => Copy();
         public Alignment Copy() => new(Value.Copy());
 
-        public override bool Equals(object obj) => obj is Vector4Value value && Equals(value);
+        public override bool Equals(object obj) => obj is Alignment value && Equals(value);
         public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
 
         public bool Equals(Alignment other)

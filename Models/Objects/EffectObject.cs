@@ -49,8 +49,8 @@ namespace BH.SDK.Models.Objects
         
         public void Update(EffectObject src)
         {
-            base.Update(this);
-            
+            base.Update(src);
+
             EffectId = src.EffectId;
         }
 

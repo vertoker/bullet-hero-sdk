@@ -92,7 +92,7 @@ namespace BH.SDK.Rules.Attributes
                     var valueVec = (Vector4Value)value;
                     if (valueVec.X > MaxX) valueVec.X = BHSDKMath.Min(valueVec.X, MaxX);
                     if (valueVec.Y > MaxY) valueVec.Y = BHSDKMath.Min(valueVec.Y, MaxY);
-                    if (valueVec.Z > MaxZ) valueVec.Z = BHSDKMath.Min(valueVec.Y, MaxZ);
+                    if (valueVec.Z > MaxZ) valueVec.Z = BHSDKMath.Min(valueVec.Z, MaxZ);
                     if (valueVec.W > MaxW) valueVec.W = BHSDKMath.Min(valueVec.W, MaxW);
                     break;
                 }

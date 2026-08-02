@@ -47,7 +47,7 @@ namespace BH.SDK.Models.Resources
             return result;
         }
 
-        public override bool Equals(object obj) => obj is Resource value && Equals(value);
+        public override bool Equals(object obj) => obj is ResourceKey value && Equals(value);
         public override int GetHashCode() => HashCode.Combine((int)UriType, Uri);
     }
 }

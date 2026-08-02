@@ -3,9 +3,9 @@
     public static class ValueRules
     {
         public const int IntZero = 0;
-        public const int IntOne = 0;
+        public const int IntOne = 1;
         public const float FloatZero = 0f;
-        public const float FloatOne = 0f;
+        public const float FloatOne = 1f;
         
         // default value limits without type specification.
         // Choose it because Max * Max => close to int.MaxValue 

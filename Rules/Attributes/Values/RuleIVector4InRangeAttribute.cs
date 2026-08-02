@@ -122,7 +122,7 @@ namespace BH.SDK.Rules.Attributes
                     var valueVec = (Vector4Value)value;
                     if (valueVec.X < MinX || valueVec.X > MaxX) valueVec.X = BHSDKMath.Clamp(valueVec.X, MinX, MaxX);
                     if (valueVec.Y < MinY || valueVec.Y > MaxY) valueVec.Y = BHSDKMath.Clamp(valueVec.Y, MinY, MaxY);
-                    if (valueVec.Z < MinZ || valueVec.Z > MaxZ) valueVec.Z = BHSDKMath.Clamp(valueVec.Y, MinZ, MaxZ);
+                    if (valueVec.Z < MinZ || valueVec.Z > MaxZ) valueVec.Z = BHSDKMath.Clamp(valueVec.Z, MinZ, MaxZ);
                     if (valueVec.W < MinW || valueVec.W > MaxW) valueVec.W = BHSDKMath.Clamp(valueVec.W, MinW, MaxW);
                     break;
                 }

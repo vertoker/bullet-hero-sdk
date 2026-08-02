@@ -85,7 +85,7 @@ namespace BH.SDK.Rules.Attributes
                     var valueVec = (Vector3Value)value;
                     if (valueVec.X > MaxX) valueVec.X = BHSDKMath.Min(valueVec.X, MaxX);
                     if (valueVec.Y > MaxY) valueVec.Y = BHSDKMath.Min(valueVec.Y, MaxY);
-                    if (valueVec.Z > MaxZ) valueVec.Z = BHSDKMath.Min(valueVec.Y, MaxZ);
+                    if (valueVec.Z > MaxZ) valueVec.Z = BHSDKMath.Min(valueVec.Z, MaxZ);
                     break;
                 }
                 case VectorType.RandomRect:

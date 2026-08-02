@@ -226,25 +226,11 @@ namespace BH.SDK.Tests
             });
             var innerPrefabObject = new PrefabObject { ObjectId = new ObjectId(4), PrefabId = PrefabId.NewGuid() };
             innerPrefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(2));
-            var innerModification = new Modification
-            {
-                ObjectId = new ObjectId(1),
-                Path = "core.render",
-                Value = false,
-            };
-            innerPrefabObject.Modifications.Add(innerModification.ObjectId, innerModification);
             prefab.Objects.Add(innerPrefabObject.ObjectId, innerPrefabObject);
             level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 
             var prefabObject = new PrefabObject { ObjectId = new ObjectId(4), PrefabId = PrefabId.NewGuid() };
             prefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(3));
-            var outerModification = new Modification
-            {
-                ObjectId = new ObjectId(2),
-                Path = "text",
-                Value = "overridden",
-            };
-            prefabObject.Modifications.Add(outerModification.ObjectId, outerModification);
             level.Game.Objects.Add(prefabObject.ObjectId, prefabObject);
 
             level.Resources.Themes.Add(themeId, new ThemeData(themeId));
@@ -460,13 +446,6 @@ namespace BH.SDK.Tests
                 PrefabId = PrefabId.NewId(),
             };
             prefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(2));
-            var modification = new Modification
-            {
-                ObjectId = new ObjectId(123),
-                Path = "sf",
-                Value = 321
-            };
-            prefabObject.Modifications.Add(modification.ObjectId, modification);
             prefab.Objects.Add(prefabObject.ObjectId, prefabObject);
 
             return prefab;

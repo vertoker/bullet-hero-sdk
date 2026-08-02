@@ -75,7 +75,7 @@ namespace BH.SDK.Models.Game
         public GameEvents Copy() => new(Markers.CopyList(), Checkpoints.CopyList(),
             ScreenLimits.CopyList(), Backgrounds.CopyList(), Themes.CopyList());
 
-        public override bool Equals(object obj) => obj is CameraEvents value && Equals(value);
+        public override bool Equals(object obj) => obj is GameEvents value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Markers.GetListHashCode(),
             Checkpoints.GetListHashCode(), Backgrounds.GetListHashCode(), Themes.GetListHashCode());
 

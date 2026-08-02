@@ -12,17 +12,6 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Objects
 {
-    // A PrefabObject is a placed instance of a Prefab template (Level.Resources.Prefabs).
-    // It is a regular RectObject in every respect (selectable, keyframeable, hierarchy root for
-    // its own materialized subtree - see ObjectIds below) so it participates in the editor exactly
-    // like any other object type.
-    //
-    // Materialization: ObjectIds/Modifications are populated by BH.Core.Services.PrefabMaterializer,
-    // never authored by hand. ObjectIds maps each "inner" ObjectId (as found in the referenced
-    // Prefab's own Objects dictionary) to the "outer" ObjectId of this placement's own materialized
-    // copy, living alongside this PrefabObject in the same IObjectScope.Objects dictionary. Outer
-    // ids are real, permanent, positive ids minted from the hosting scope's own id counter - a
-    // materialized child is otherwise a completely ordinary object.
     [RuleContainer]
     public class PrefabObject : RectObject, IModel<PrefabObject>, IUpdatable<PrefabObject>
     {
@@ -35,32 +24,26 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.ObjectIds)]
         public Dictionary<ObjectId, ObjectId> ObjectIds { get; set; } // inner id -> this instance's outer id
 
-        [JsonProperty(Names.Mod)]
-        public Dictionary<ObjectId, Modification> Modifications { get; set; } // keyed by inner id
-
         public PrefabObject()
         {
             PrefabId = PrefabId.Null;
             ObjectIds = new Dictionary<ObjectId, ObjectId>();
-            Modifications = new Dictionary<ObjectId, Modification>();
         }
         public PrefabObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            PrefabId prefabId, Dictionary<ObjectId, ObjectId> objectIds, Dictionary<ObjectId, Modification> modifications)
+            PrefabId prefabId, Dictionary<ObjectId, ObjectId> objectIds)
             : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             PrefabId = prefabId;
             ObjectIds = objectIds;
-            Modifications = modifications;
         }
         public override void Reset()
         {
             base.Reset();
             PrefabId = PrefabId.Null;
             ObjectIds.Clear();
-            Modifications.Clear();
         }
 
         public override object Clone() => CopyImpl();
@@ -70,7 +53,7 @@ namespace BH.SDK.Models.Objects
         private PrefabObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
-            PrefabId, ObjectIds.CopyDictionaryUnmanaged(), Modifications.CopyDictionary());
+            PrefabId, ObjectIds.CopyDictionaryUnmanaged());
 
         public void Update(PrefabObject src)
         {
@@ -78,7 +61,6 @@ namespace BH.SDK.Models.Objects
 
             PrefabId = src.PrefabId;
             ObjectIds = src.ObjectIds.CopyDictionaryUnmanaged();
-            Modifications = src.Modifications.CopyDictionary();
         }
 
         public override bool Equals(object obj) => obj is PrefabObject value && Equals(value);
@@ -88,7 +70,6 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(base.GetHashCode());
             hashCode.Add(PrefabId);
             hashCode.Add(ObjectIds.GetDictionaryHashCode());
-            hashCode.Add(Modifications.GetDictionaryHashCode());
             return hashCode.ToHashCode();
         }
 
@@ -125,8 +106,7 @@ namespace BH.SDK.Models.Objects
         private bool EqualsPrefabObject(PrefabObject other)
         {
             var result = PrefabId.Equals(other.PrefabId)
-                         && ObjectIds.DictionaryEquals(other.ObjectIds)
-                         && Modifications.DictionaryEquals(other.Modifications);
+                         && ObjectIds.DictionaryEquals(other.ObjectIds);
             return result;
         }
     }

@@ -244,7 +244,6 @@ namespace BH.SDK.Generators
                     { new ObjectId(1), new ObjectId(11) },
                     { new ObjectId(2), new ObjectId(12) },
                 },
-                Modifications = new Dictionary<ObjectId, Modification>(),
             };
             var prefab2 = new Prefab
             {
@@ -264,7 +263,6 @@ namespace BH.SDK.Generators
                     { new ObjectId(1), new ObjectId(21) },
                     { new ObjectId(2), new ObjectId(22) },
                 },
-                Modifications = new Dictionary<ObjectId, Modification>(),
             };
             var prefabObject2 = new PrefabObject
             {
@@ -275,7 +273,6 @@ namespace BH.SDK.Generators
                     { new ObjectId(11), new ObjectId(23) },
                     { new ObjectId(12), new ObjectId(24) },
                 },
-                Modifications = new Dictionary<ObjectId, Modification>(),
             };
             
             var level = new Level
