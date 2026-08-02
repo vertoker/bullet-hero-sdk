@@ -121,9 +121,18 @@ namespace BH.SDK.Utils
                 }
                 case PropertyCategory.List:
                 {
+                    // No [idx] in the path - replace the WHOLE list (see Modification's own doc
+                    // comment on track-level overrides), not one element of it.
+                    if (lastSegment.Index < 0)
+                    {
+                        if (!CheckTypeMatch(mod.Value.GetType(), lastValue.info.PropertyType)) return;
+                        lastValue.info.SetValue(currentObject, mod.Value);
+                        break;
+                    }
+
                     var toType = lastValue.info.PropertyType.GetGenericArguments()[0];
                     if (!CheckTypeMatch(mod.Value.GetType(), toType)) return;
-                    
+
                     SetListValue(lastValue.info, lastSegment, currentObject, mod.Value);
                     break;
                 }
@@ -139,10 +148,15 @@ namespace BH.SDK.Utils
             }
         }
 
+        // IsAssignableFrom (not strict equality) so a concrete polymorphic value (StringValue) can
+        // target its declared interface property (IString), and a whole List<TKeyframe> can target
+        // a List<TKeyframe>-typed property (see the PropertyCategory.List whole-list branch above) -
+        // an exact type match still satisfies IsAssignableFrom, so this is strictly more permissive
+        // than the equality check it replaces.
         private static bool CheckTypeMatch(Type from, Type to)
         {
-            if (from == to) return true;
-            
+            if (to.IsAssignableFrom(from)) return true;
+
             // Debug.LogWarning($"Type mismatch, from={from}, to={to}");
             return false;
         }

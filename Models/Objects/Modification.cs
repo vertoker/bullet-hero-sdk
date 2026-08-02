@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules.Attributes;
@@ -78,7 +80,20 @@ namespace BH.SDK.Models.Objects
         {
             if (Value == null) return null;
             if (Value.GetType().IsValueType) return Value;
-            if (Value is ICloneable cloneable) return cloneable.Clone();
+            // A whole-track override (see ModificationUtils.Apply's PropertyCategory.List branch)
+            // stores a List<TKeyframe> here - List<T> itself isn't ICloneable, so without this the
+            // copy would alias the SAME list instance as the original (a real bug for
+            // PrefabObject.CopyImpl/Update). Reconstruct a same-concrete-type list and clone each
+            // element through its own ICloneable.Clone() - every keyframe type already implements
+            // this transitively via IModel<T> : ICopyable<T> : ICloneable.
+            if (Value is IList list)
+            {
+                var copy = (IList)Activator.CreateInstance(list.GetType());
+                foreach (var item in list)
+                    copy.Add(item is ICloneable cloneable ? cloneable.Clone() : item);
+                return copy;
+            }
+            if (Value is ICloneable cloneableValue) return cloneableValue.Clone();
             return Value;
         }
 
@@ -89,8 +104,12 @@ namespace BH.SDK.Models.Objects
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = Key.Equals(other.Key)
-                         && Value.Equals(other.Value);
+            if (!Key.Equals(other.Key)) return false;
+            // List<T> has no value-equality override (default is reference equality) - a whole-track
+            // override's Value needs element-wise comparison instead, same reasoning as CopyValue.
+            if (Value is IEnumerable and not string && other.Value is IEnumerable and not string)
+                return ((IEnumerable)Value).Cast<object>().SequenceEqual(((IEnumerable)other.Value).Cast<object>());
+            var result = Value.Equals(other.Value);
             return result;
         }
     }
