@@ -14,7 +14,7 @@ namespace BH.SDK.Models.Objects
 {
     [RuleContainer]
     [DataVersion(DataDomains.Prefab, 1, 0)]
-    public class Prefab : IObjectScope, IObjectIdCounter, IModel<Prefab>
+    public class Prefab : IObjectScope, IObjectIdCounter, IFrameLength, IModel<Prefab>
     {
         [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.PrefabId)]
@@ -38,6 +38,14 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
 
+        // This template's own local timeline length - has no live placement to derive one from
+        // (a template can be referenced by many/zero placements), so it's authored directly,
+        // mirroring LevelSettings.FrameLength. Used both as the recommended/default duration for a
+        // newly-placed PrefabObject and as the Prefab Timeline's own editing bound.
+        [RuleMin(FrameRules.MinFrameLength)]
+        [JsonProperty(Names.FrameLengthShort)]
+        public int FrameLength { get; set; }
+
         public ObjectId GetNextObjectId() => new(ObjectIdCounter++);
 
         public Prefab()
@@ -46,13 +54,15 @@ namespace BH.SDK.Models.Objects
             Name = string.Empty;
             Objects = new Dictionary<ObjectId, RectObject>();
             ObjectIdCounter = ObjectId.MinLevelValue;
+            FrameLength = PrefabRules.DefaultFrameLength;
         }
-        public Prefab(PrefabId prefabId, string name, Dictionary<ObjectId, RectObject> objects, int objectIdCounter)
+        public Prefab(PrefabId prefabId, string name, Dictionary<ObjectId, RectObject> objects, int objectIdCounter, int frameLength)
         {
             PrefabId = prefabId;
             Name = name;
             Objects = objects;
             ObjectIdCounter = objectIdCounter;
+            FrameLength = frameLength;
         }
         public void Reset()
         {
@@ -60,14 +70,15 @@ namespace BH.SDK.Models.Objects
             Name = string.Empty;
             Objects.Clear();
             ObjectIdCounter = ObjectId.MinLevelValue;
+            FrameLength = PrefabRules.DefaultFrameLength;
         }
 
         public object Clone() => Copy();
-        public Prefab Copy() => new(PrefabId, Name, Objects.CopyDictionary(), ObjectIdCounter);
+        public Prefab Copy() => new(PrefabId, Name, Objects.CopyDictionary(), ObjectIdCounter, FrameLength);
 
         public override bool Equals(object obj) => obj is Prefab value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(PrefabId, Name,
-            Objects.GetDictionaryHashCode(), ObjectIdCounter);
+            Objects.GetDictionaryHashCode(), ObjectIdCounter, FrameLength);
 
         public bool Equals(Prefab other)
         {
@@ -76,7 +87,8 @@ namespace BH.SDK.Models.Objects
             var result = PrefabId.Equals(other.PrefabId)
                          && Name.Equals(other.Name)
                          && Objects.DictionaryEquals(other.Objects)
-                         && ObjectIdCounter.Equals(other.ObjectIdCounter);
+                         && ObjectIdCounter.Equals(other.ObjectIdCounter)
+                         && FrameLength.Equals(other.FrameLength);
             return result;
         }
     }
