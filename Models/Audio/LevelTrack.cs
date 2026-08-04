@@ -42,6 +42,9 @@ namespace BH.SDK.Models.Audio
         [JsonProperty(Names.OffsetTime)]
         public float OffsetTime { get; set; }
         
+        // TODO integrate pitch shift, Unity not limit it, -2f - 2f should be enough for shitty atmospheric remixes (slowed/nightcore)
+        // TODO also slow down original speed limits for whole level moving (-2f - 2f)
+        
         [RuleInRange(AudioRules.MinAudioLayer, AudioRules.MaxAudioLayer)]
         [JsonProperty(Names.AudioLayer)]
         public int AudioLayer { get; set; }

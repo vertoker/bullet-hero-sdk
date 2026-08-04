@@ -19,4 +19,11 @@ Icons
   - <a target="_blank" href="https://icons8.com/icon/59817/info">Info</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - <a target="_blank" href="https://icons8.com/icon/23545/minimize-window">minimize</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - <a target="_blank" href="https://icons8.com/icon/0YQW0zwuJMmk/post-processing">Post Processing</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/KA70C6mX5ZWI/move">Move</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/59872/refresh">Refresh</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/8155/crop">Crop</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/123951/square-border">Square Border</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/9f5tobI0tyEG/transform-clip">Transform Clip</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/10286/magnet">Magnet</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  - <a target="_blank" href="https://icons8.com/icon/10272/hand">Hand</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
   - 

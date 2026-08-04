@@ -14,16 +14,18 @@
         public const float MinFloatValue = -1_000_000f;
         public const float MaxFloatValue = 1_000_000f;
         
-        public const int MinLayer = -1000;
-        public const int MaxLayer = 1000;
-        public const float MinCameraLayer = -2000f;
-        public const float MaxCameraLayer = 2000f;
-        public const int DefaultLayer = 0;
-        
         // convert from logical layer to real z position
         public const float LayerCoefficient = -1f;
         // minimal allowed delta for no clipping editor object through each other
         public const float MinLayerDelta = 0.01f;
+        
+        public const int MinLayer = -1000;
+        public const int MaxLayer = 1000;
+        public const float MinLayerSelection = MaxLayer + MinLayerDelta;
+        public const int MinLayerGizmos = 1500;
+        public const float MinCameraLayer = -2000f;
+        public const float MaxCameraLayer = 2000f;
+        public const int DefaultLayer = 0;
         
         public const float MinColor = 0f;
         public const float MaxColor = 1f;
