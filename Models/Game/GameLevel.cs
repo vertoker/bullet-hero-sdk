@@ -45,6 +45,7 @@ namespace BH.SDK.Models.Game
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ObjectId)
         // Placed PrefabObject instances live directly in here too (GetModelType() ==
         // ObjectType.PrefabObject) - see IObjectScope's own comment.
+
         /// <summary> Every object in the level, flat and keyed by id - hierarchy is expressed through
         /// each object's ParentObjectId, not by nesting. </summary>
         [RuleNotNull]

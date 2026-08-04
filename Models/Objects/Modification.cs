@@ -30,6 +30,7 @@ namespace BH.SDK.Models.Objects
     {
         // WHICH object (inner/template ObjectId) and WHICH field (Path) this override applies to -
         // see ModificationKey's own doc comment. Also PrefabObject.Modifications' dictionary key.
+
         /// <summary> Target of the override (template object id + field path). </summary>
         [JsonProperty(Names.Key)]
         public ModificationKey Key { get; set; }

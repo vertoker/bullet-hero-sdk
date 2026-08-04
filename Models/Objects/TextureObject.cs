@@ -25,9 +25,16 @@ namespace BH.SDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.TextureObject;
 
+        // Deliberately NOT [RuleIPrimitiveGuidNotNull], unlike most IPrimitiveGuid properties here
+        // (PrefabObject.PrefabId is the other exception): Null is a normal authored state in this
+        // one ("no collision"), not an unset reference. Both the constructor and Reset() default to
+        // it, the runtime collision jobs skip on !IsEnabled(), and the editor's collision toggle
+        // writes Null to turn collision off - so the rule would flag ordinary decoration objects,
+        // and its Fix would assign a random Guid, silently giving them a nonexistent collider
+        // (and damage) instead.
+
         /// <summary> Collision shape from the shared library. Null means the object is decoration -
         /// drawn, never collided with. </summary>
-        [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ColliderId)]
         public ColliderId ColliderId { get; set; }
 

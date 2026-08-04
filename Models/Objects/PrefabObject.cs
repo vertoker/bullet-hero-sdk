@@ -22,8 +22,16 @@ namespace BH.SDK.Models.Objects
     {
         public override ObjectType GetModelType() => ObjectType.PrefabObject;
 
-        /// <summary> Which template this placement instantiates. </summary>
-        [RuleIPrimitiveGuidNotNull]
+        // Deliberately NOT [RuleIPrimitiveGuidNotNull], unlike most IPrimitiveGuid properties here:
+        // Null is a real state, not an unset reference. The ctor defaults to it and GameEditor's
+        // OpLevelCreatePrefabObject creates every placement empty on purpose (the author picks the
+        // target Prefab afterward, which runs OpLevelObjectPrefabId's null -> X transition). The
+        // rule's Fix would assign a random Guid, pointing the placement at a Prefab that doesn't
+        // exist - strictly worse than an empty placement, since materialization then finds nothing
+        // to copy and the dangling reference persists in the saved file.
+
+        /// <summary> Which template this placement instantiates. Null means the placement is empty -
+        /// created but not yet pointed at a template, so it materializes nothing. </summary>
         [JsonProperty(Names.PrefabId)]
         public PrefabId PrefabId { get; set; } // reference into Level.Resources.Prefabs
 
@@ -40,6 +48,7 @@ namespace BH.SDK.Models.Objects
         // EditObjectOperation.RecordModification (what records one here whenever a direct edit lands
         // on a materialized child outside Prefab Mode). One Modification per (object, field) pair -
         // a child can have several fields overridden at once, but only one override per field.
+
         /// <summary> Per-placement field overrides, keyed by (template object, field path). </summary>
         [JsonProperty(Names.Mod)]
         public Dictionary<ModificationKey, Modification> Modifications { get; set; }

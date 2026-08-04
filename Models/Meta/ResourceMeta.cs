@@ -27,6 +27,7 @@ namespace BH.SDK.Models.Meta
         public ResourceType ResourceType { get; set; }
 
         // Abstract resId, it cast to dedicated ids (audioResId, texResId...)
+
         /// <summary> The described resource, kept untyped so one list can cover every category.
         /// Capped to the user-defined (negative) range - game resources need no UGC metadata. </summary>
         [RuleIPrimitiveIntMax(TypedResourceId.MaxUserDefinedValue)]

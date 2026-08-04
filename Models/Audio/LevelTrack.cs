@@ -50,6 +50,7 @@ namespace BH.SDK.Models.Audio
 
         // Offset for audio clip itself. Frames tells where boundaries of track in level,
         // OffsetTime tells from which time starts clip itself
+
         /// <summary> Seconds skipped inside the clip at StartFrame. Frames place the track on the level
         /// timeline, this places the playhead inside the clip - the two are independent. </summary>
         [JsonProperty(Names.OffsetTime)]

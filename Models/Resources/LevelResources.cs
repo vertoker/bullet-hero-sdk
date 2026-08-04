@@ -26,18 +26,21 @@ namespace BH.SDK.Models.Resources
     public class LevelResources : IModel<LevelResources>
     {
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own TextureResourceId)
+
         /// <summary> Images the level ships with. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Textures)]
         public Dictionary<TextureResourceId, TextureResource> Textures { get; set; }
 
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own FontResourceId)
+
         /// <summary> Typefaces the level ships with. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Fonts)]
         public Dictionary<FontResourceId, FontResource> Fonts { get; set; }
 
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own AudioResourceId)
+
         /// <summary> Clips the level ships with, including the song itself. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Audios)]
@@ -45,23 +48,27 @@ namespace BH.SDK.Models.Resources
 
 
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ColliderId)
+
         /// <summary> Custom collision shapes, beyond the built-in library. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Shapes)]
         public Dictionary<ColliderId, CompositeCollider> CompositeShapes { get; set; }
 
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ThemeId)
+
         /// <summary> Color palettes the level switches between over time. </summary>
         [JsonProperty(Names.Themes)]
         public Dictionary<ThemeId, ThemeData> Themes { get; set; }
 
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ThemeId)
+
         /// <summary> Particle-system definitions, shared by every EffectObject that points at one. </summary>
         [JsonProperty(Names.Effects)]
         public Dictionary<EffectId, EffectData> Effects { get; set; }
 
 
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own PrefabId)
+
         /// <summary> Reusable object templates. Unlike the other six, these hold level content rather
         /// than external assets - a prefab is authored here, not fetched. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPrefabs)]

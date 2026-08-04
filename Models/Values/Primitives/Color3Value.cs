@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     // Alpha is not stored: any IColor3 is implicitly fully opaque (alpha = 1).
+
     /// <summary>
     /// A literal RGB color - the plain, non-random, non-themed IColor3 variant. What "I picked this
     /// exact color" serializes to; the other two variants defer the decision to a theme or a dice roll.

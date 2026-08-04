@@ -17,6 +17,7 @@ namespace BH.SDK.Models.Keyframes
     {
         // Same default-fix target as GameEvents.ScreenLimit (the single-value predecessor this
         // keyframe track replaces) - mappers choose limitations for the screen themselves.
+
         /// <summary> Constraint in force from this frame on: None / Fixed / Bounds. </summary>
         [RuleNotNull(typeof(ScreenLimitFixed))]
         [JsonProperty(Names.ScreenLimit)]

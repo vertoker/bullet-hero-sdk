@@ -84,8 +84,11 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   `MeowError`/...) gated by `#if BHSDK_UNITY` per call, falling back to `Console.WriteLine`. Own
   asmdef, distinct purpose from `UnityExtensions/` (logging, not data conversion) — don't conflate
   the two folders.
-- **Tests/** — `BulletHeroSDK.Tests.asmdef`, NUnit. `MockData.cs` is the shared fixture factory (not
-  a test itself) — read its header comment before writing new tests that need a `Level`/`Prefab`/etc.
+- **Tests/** — `BulletHeroSDK.Tests.asmdef`, NUnit. `MockData.cs`/`Metadata.cs` are shared fixture
+  factories (not tests themselves) — read `MockData.cs`'s header comment before writing new tests
+  that need a `Level`/`Prefab`/etc. Test files today: `SerializationTests`, `ModificationTests`,
+  `ValidatorTests`, `LevelCapacityUtilsTests`, `CryptographyTests`, `TextFormatTests`,
+  `ColliderIdTests`, `SerializationTypeExtensionsTests`.
 
 ## Object model (`Models/Objects/`)
 
@@ -125,21 +128,38 @@ meaningless (e.g. `PrefabRoot` at level scope) — a known leniency gap, not yet
 ## Prefab system
 
 `Prefab` (`Models/Objects/Prefab.cs`, a `Level.Resources.Prefabs` entry) is the *template*: its own
-`Objects`/`ObjectIdCounter`. `PrefabObject` (a `RectObject` subclass) is the *placement*: `PrefabId`
-(which template) + `Dictionary<ObjectId, ObjectId> ObjectIds` (template-inner id → this placement's
-own materialized outer id). Placements — whether at level scope or nested inside another `Prefab`'s
-own `Objects` — live in the **same** `Objects` dictionary as everything else, discriminated only by
+`Objects`/`ObjectIdCounter`, plus its own authored `Name`/`FrameLength`. `PrefabObject` (a
+`RectObject` subclass) is the *placement*: `PrefabId` (which template) +
+`Dictionary<ObjectId, ObjectId> ObjectIds` (template-inner id → this placement's own materialized
+outer id) + `Dictionary<ModificationKey, Modification> Modifications` (per-instance field overrides,
+below). Placements — whether at level scope or nested inside another `Prefab`'s own `Objects` — live
+in the **same** `Objects` dictionary as everything else, discriminated only by
 `GetModelType() == ObjectType.PrefabObject`; there's no separate placement list.
 
-**`PrefabObject` no longer has a `Modifications` field** (removed — see the Unity project's `git log`
-"remove ObjectIdModification.cs, now uses dictionary"). The `Modification` class itself
-(`Models/Objects/Modification.cs`: `ObjectId` + `string Path` + `object Value`) and the generic
-`Services/ModificationService.cs` (reflection get/set by dotted/indexed path string, e.g.
-`"transform.position[0]"`, resolved via each property's `[JsonProperty]` name) still exist as
-reusable infrastructure, but nothing in `Models/Objects/` wires `Modification` into `PrefabObject`
-anymore — don't assume it's load-bearing for prefab overrides today. `Modification.cs`'s own doc
-comment lists its design limitations (only `RectObject`/`Prefab`, no deep-inheritance across nested
-prefab scopes) if this gets revived.
+**Per-instance overrides (`PrefabObject.Modifications`) are live and load-bearing** — this is how a
+placement diverges from its template without breaking the link. Three pieces:
+
+- `ModificationKey` (`Models/Primitives/`) — the *address*: `ObjectId` (the **template's inner** id,
+  not the materialized outer one, so the key survives re-materialization) + `string Path` (dotted/
+  indexed field path like `"pos[0].v"`, resolved through each property's `[JsonProperty]` name).
+  Being the dictionary key is what makes "one override per (object, field) pair" a structural
+  guarantee rather than a rule to enforce.
+- `Modification` (`Models/Objects/`) — `Key` + an untyped `object Value`. The `Value` setter
+  **normalizes integrals to `long` and floating-point to `double`** on assignment, deliberately
+  matching what Newtonsoft always produces when deserializing a raw JSON number into an `object`
+  property — without it an override built in code with a plain `int` stops `Equals`-ing itself after
+  a round trip. Its file header also lists the design limits still in force: only `RectObject`/
+  `Prefab` targets, no parenting a `RectObject` *into* a prefab's inner objects (only the reverse),
+  and no deep inheritance — an override applies only within the prefab scope it lives in.
+- `Services/ModificationService.cs` — the generic reflection get/set by path string that resolves a
+  `Key.Path` against a live model instance.
+
+Overrides are **re-applied on top of a fresh template copy after every materialize/resync**
+(Unity-side: `Core`'s `PrefabMaterializer.ApplyModifications`; recorded by `GameEditor`'s
+`ModificationRecorder`/`EditObjectOperation.RecordModification` — see those folders' `CLAUDE.md`s).
+`Modifications` serializes through its own `Serialization/Converters/Dict/
+DictionaryModificationsConverter` (the key is recoverable from the value's own `Key` property, so it
+writes as a plain array — same family as `DictionaryAsListConverter`, see "Value system" below).
 
 ## The polymorphic Value system
 
@@ -172,7 +192,8 @@ Same 2-element-array mechanism backs several other polymorphic families beyond t
 `ObjectConverter` (`RectObject` hierarchy, see "Object model" above).
 
 **Dictionaries with a self-describing value** (`ObjectId→RectObject`, `AudioId→LevelTrack`,
-`ThemeId→ThemeData`, `EffectId→EffectData`, `PrefabId→Prefab`, resource-id dicts) serialize as a
+`ThemeId→ThemeData`, `EffectId→EffectData`, `PrefabId→Prefab`,
+`ModificationKey→Modification`, resource-id dicts) serialize as a
 **plain array with the key dropped** (`Serialization/Converters/Dict/DictionaryAsListConverter`,
 key recovered from the value on read). Dictionaries where the key *can't* be derived from the value
 (id→id remap tables) use `DictionaryAsPairListConverter` instead (array of `{K,V}` structs) — plain
@@ -275,7 +296,19 @@ range, freely convertible to/from the untyped `TypedResourceId`.
 `Guid`-based ids (`ColliderId`/`EffectId`/`LevelId`/`PrefabId`/`ThemeId`) deliberately have **no**
 positive/negative split — a `Guid` has no natural sign, so game-defined vs. user-defined is
 determined by *which collection* an id is found in (game registry vs. level `Resources`), not by the
-id's own value, unlike the int-based `TypedResourceId` family.
+id's own value, unlike the int-based `TypedResourceId` family. `Guid.Empty` is the reserved Null for
+all of them.
+
+**Two `IPrimitiveGuid` properties deliberately allow Null and must NOT carry
+`[RuleIPrimitiveGuidNotNull]`** — for them Null is a real authored state, not an unset reference:
+`TextureObject.ColliderId` (Null = decoration, drawn but never collided with — the runtime collision
+jobs skip on `!IsEnabled()` and the editor's collision toggle writes Null) and
+`PrefabObject.PrefabId` (Null = empty placement, materializes nothing — `OpLevelCreatePrefabObject`
+creates every placement this way before the author picks a template). Both defaults come straight
+from their constructors, so adding the rule makes a freshly-constructed object fail validation; worse,
+its `Fix` assigns a random `Guid`, silently inventing a nonexistent collider (giving decoration real
+damage) or a dangling prefab reference. This bit the SDK once already — the rule was on
+`ColliderId` and broke `ValidatorTests`/`SerializationTests` against `MockData`. Don't re-add either.
 
 ## `IModel<T>` pattern
 
@@ -406,6 +439,14 @@ non-static, non-abstract, and has a public parameterless constructor — because
   (nested property must stay typed as the *current* class, snapshot classes skip `IModel<T>`, a
   domain with no independent envelope yet at some generation gets a snapshot with no `[DataVersion]`
   at all).
+- **`ValueRules`' layer constants define reserved draw-order bands, not just a clamp.** Authored
+  content is capped to `[MinLayer, MaxLayer]` = `[-1000, 1000]`; everything above that is reserved
+  for the Unity project's editor-only overlays (`MinLayerSelection` = `MaxLayer + MinLayerDelta` for
+  selection outlines, `MinLayerGizmos` = 1500 for viewport gizmo handles, each overlay piece
+  stepping by `MinLayerDelta` so same-set pieces never z-fight — see `Services.GameEditor`'s
+  `LayerPolicy`), and `[MinCameraLayer, MaxCameraLayer]` bounds the camera itself. Don't widen the
+  authored range without moving those bands too. Layer is **parent-relative** (a child's effective
+  layer is the sum up its parent chain), so these are limits on one object's own contribution.
 - **Level-wide/track-wide numeric collection caps live in `Rules/LevelRules.cs`/`AudioRules.cs`**
   (max markers/checkpoints/keys/prefabs/audio-layers/...) — check there before hardcoding a magic
   cap elsewhere; `Level.Objects` itself is deliberately uncapped (see the commented-out
@@ -429,6 +470,12 @@ violation `RuleFixer` must detect and fix. A `#region Version v0.0` half builds 
 builder (`CreateTestLevelV0_0Json`) — needed because `VersionedEnvelopeConverter` always tags a
 *whole* current-shape object with the *current* version when serializing, so each historical fragment
 has to be serialized standalone from its own real `VX_Y` type and spliced in by hand.
+
+`ModificationTests` covers only `ModificationService`'s path resolution (`TestGet`/`TestSet`/
+`TestJToken`, against two local throwaway models) — **not** `Modification.Value`'s long/double
+normalization, nor a `PrefabObject.Modifications` round trip through
+`DictionaryModificationsConverter`; both are worth adding, since a path that fails to resolve
+degrades to "the override silently doesn't apply" rather than throwing.
 
 Per the SDK's own `TODO.md`: `SerializationService`'s stability across all keyframe/value/effect type
 combinations (round-trip + real saved level files) is explicitly flagged as not yet fully verified,
