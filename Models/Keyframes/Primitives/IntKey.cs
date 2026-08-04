@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Generic whole-number track entry, for counts and discrete modes that must not land between
+    /// two values the way a FloatKey would.
+    /// </summary>
     [RuleContainer]
     public class IntKey : Keyframe, IModel<IntKey>
     {
+        /// <summary> Value at this frame. </summary>
         [RuleNotNull(typeof(IntValue))]
         [JsonProperty(Names.Int)]
         public IInt Value { get; set; }

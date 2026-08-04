@@ -4,42 +4,60 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
+    /// <summary>
+    /// One switch per post-processing effect, mirroring PostProcessingEvents field for field - so a
+    /// player can disable exactly the effects that cost them frames (or that they find unreadable)
+    /// while keeping the rest of the level's look. Inherited Render kills the whole stack.
+    /// </summary>
     public class PostProcessingGraphicsSettings : BaseGraphicsSettings,
         IModel<PostProcessingGraphicsSettings>, IMoveable<PostProcessingGraphicsSettings>
     {
+        /// <summary> Allow bloom. One of the four effects flagged as heavy on phones. </summary>
         [JsonProperty(Names.RenderBloom)]
         public bool RenderBloom { get; set; }
-        
+
+        /// <summary> Allow chromatic aberration. </summary>
         [JsonProperty(Names.RenderChroma)]
         public bool RenderChroma { get; set; }
-        
+
+        /// <summary> Allow vignette. </summary>
         [JsonProperty(Names.RenderVignette)]
         public bool RenderVignette { get; set; }
-        
+
+        /// <summary> Allow lens distortion. </summary>
         [JsonProperty(Names.RenderLens)]
         public bool RenderLens { get; set; }
-        
+
+        /// <summary> Allow film grain. </summary>
         [JsonProperty(Names.RenderGrain)]
         public bool RenderGrain { get; set; }
-        
+
+        /// <summary> Allow motion blur. Heavy on phones. </summary>
         [JsonProperty(Names.RenderMotionBlur)]
         public bool RenderMotionBlur { get; set; }
-        
+
+        /// <summary> Allow hue/saturation remapping. </summary>
         [JsonProperty(Names.RenderColorCurves)]
         public bool RenderColorCurves { get; set; }
-        
+
+        /// <summary> Allow lift/gamma/gain grading. </summary>
         [JsonProperty(Names.RenderLiftGammaGain)]
         public bool RenderLiftGammaGain { get; set; }
-        
+
+        /// <summary> Allow shadows/midtones/highlights grading. </summary>
         [JsonProperty(Names.RenderShadowsMidtonesHighlights)]
         public bool RenderShadowsMidtonesHighlights { get; set; }
-        
+
+        /// <summary> Allow white balance shifts. </summary>
         [JsonProperty(Names.RenderWhiteBalance)]
         public bool RenderWhiteBalance { get; set; }
-        
+
+        /// <summary> Allow analog glitch. Heavy on phones, and the most likely to be disabled for
+        /// comfort rather than performance. </summary>
         [JsonProperty(Names.RenderAnalogGlitch)]
         public bool RenderAnalogGlitch { get; set; }
-        
+
+        /// <summary> Allow digital glitch. Heavy on phones. </summary>
         [JsonProperty(Names.RenderDigitalGlitch)]
         public bool RenderDigitalGlitch { get; set; }
 

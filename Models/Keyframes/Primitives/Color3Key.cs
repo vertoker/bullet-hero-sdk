@@ -11,9 +11,15 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Opaque color track entry, used for the level background. No alpha by construction - there is
+    /// nothing behind the background to blend with.
+    /// </summary>
     [RuleContainer]
     public class Color3Key : Keyframe, IModel<Color3Key>
     {
+        /// <summary> Color at this frame; may be a ThemeRef, which is how backgrounds follow the
+        /// active theme. </summary>
         [RuleNotNull(typeof(Color3Value))]
         [JsonProperty(Names.Color)]
         public IColor3 Value { get; set; }

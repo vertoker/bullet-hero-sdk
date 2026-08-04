@@ -5,9 +5,15 @@ using BH.SDK.Rules;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Identity of one LevelTrack inside a level's AudioLevel.Tracks. Positive-only: unlike every
+    /// other int id here it has no game-defined negative half, since audio tracks only ever exist
+    /// per level.
+    /// </summary>
     [Serializable]
     public struct AudioId : IEquatable<AudioId>, IPrimitiveInt
     {
+        /// <summary> The raw number, handed out by LevelSettings.GetNextAudioId. </summary>
         public int value;
         int IPrimitiveInt.Value => value;
 

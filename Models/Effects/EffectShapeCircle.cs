@@ -12,21 +12,30 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Emitter shape spawning particles on (or inside) a ring - the backbone of radial bullet
+    /// patterns, since Arc plus Spread together decide where along the ring the next particle lands.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeCircle : IEffectShape, IModel<EffectShapeCircle>
     {
+        /// <summary> Distance from the center to the ring. </summary>
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.CircleRadius_Min)]
         [JsonProperty(Names.Radius)]
         public IFloat Radius { get; set; }
-        
+
+        /// <summary> How far inward the ring is filled: 0 is a bare outline, 1 a full disc. </summary>
         [RuleNotNull, RuleIFloatInRange(EffectRules.Shape.CircleThickness_Min, EffectRules.Shape.CircleThickness_Max)]
         [JsonProperty(Names.Thickness)]
         public IFloat Thickness { get; set; }
-        
+
+        /// <summary> Portion of the circle actually used, in degrees - less than 360 makes a fan. </summary>
         [RuleNotNull, RuleIFloatInRange(EffectRules.Shape.Arc_Min, EffectRules.Shape.Arc_Max)]
         [JsonProperty(Names.Arc)]
         public IFloat Arc { get; set; }
-        
+
+        /// <summary> How successive particles walk the arc: randomly, looping, ping-pong or sine.
+        /// This is what turns a static ring into a rotating or sweeping pattern. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IEffectShapeSpread Spread { get; set; }

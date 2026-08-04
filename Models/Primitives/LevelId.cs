@@ -4,8 +4,13 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Identity of a whole level, carried by LevelMeta rather than Level itself. Survives renaming
+    /// and moving the level folder, which is what makes scores/progress attachable to it.
+    /// </summary>
     public struct LevelId : IEquatable<LevelId>, IPrimitiveGuid
     {
+        /// <summary> The raw Guid. </summary>
         public Guid value;
         Guid IPrimitiveGuid.Value => value;
 

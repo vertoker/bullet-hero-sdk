@@ -9,9 +9,16 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A normalized 0..1 point inside a rect - what anchors and pivots are made of. A thin wrapper
+    /// over IVector2 that exists to carry the clamp and the named presets below (corners, center,
+    /// and the centroid offsets that make regular polygons rotate around their real center).
+    /// </summary>
     [RuleContainer]
     public class Alignment : IModel<Alignment>
     {
+        /// <summary> The point itself: (0,0) = left-bottom, (1,1) = right-top. Still polymorphic, so
+        /// an alignment can legitimately be randomized like any other vector. </summary>
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinAlignment, ValueRules.MaxAlignment)]
         [JsonProperty(Names.ValueShort)]
         public IVector2 Value { get; set; }

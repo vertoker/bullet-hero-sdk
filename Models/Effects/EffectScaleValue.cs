@@ -12,9 +12,13 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Every particle keeps one fixed size for its whole life - the simplest IEffectScale variant.
+    /// </summary>
     [RuleContainer]
     public class EffectScaleValue : IEffectScale, IModel<EffectScaleValue>
     {
+        /// <summary> Particle size, per axis. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Scale)]
         public IVector2 Scale { get; set; }

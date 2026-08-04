@@ -17,38 +17,53 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Objects
 {
+    /// <summary>
+    /// A rect that renders text. Purely visual - unlike TextureObject it carries no collider, so
+    /// text can never kill the player, and its rect acts as the layout box rather than a hitbox.
+    /// </summary>
     [RuleContainer]
     public class TextObject : RectObject, IModel<TextObject>, IUpdatable<TextObject>
     {
         public override ObjectType GetModelType() => ObjectType.TextObject;
-        
+
+        /// <summary> The text to show, localizable - a level can read differently per language
+        /// without duplicating the object. </summary>
         [RuleNotNull(typeof(StringValue)), RuleIStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.Text)]
         public IString Text { get; set; }
-        
+
         // positive with 0 - game-defined (0 is NotoSans), negative - user-defined
         // more about resourceId and how it works, read in Resource.cs file
-        
+
+        /// <summary> Typeface, defaulting to the bundled one so a level always renders even without
+        /// its own font shipped alongside. </summary>
         [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.FontResourceId)]
         public FontResourceId FontResourceId { get; set; }
-        
+
+        /// <summary> Tint track. Flat Color4Key only, not the four-corner family a TextureObject
+        /// uses - glyphs have no quad to grade across. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(Color4Key.Frame))]
         [JsonProperty(Names.Color)]
         public List<Color4Key> Colors { get; set; }
-        
+
+        /// <summary> Font size track, animated independently of the object's Scales - one resizes
+        /// glyphs, the other stretches the whole rendered block. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(FloatKey.Frame))]
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
-        
+
+        /// <summary> Whether long lines wrap at the rect's width instead of overflowing it. </summary>
         [JsonProperty(Names.WordWrap)]
         public bool WordWrap { get; set; }
-        
+
+        /// <summary> Horizontal placement of the text inside its rect. </summary>
         [JsonProperty(Names.HorizontalAlignment)]
         public TextObjectHorizontalAlignment HorizontalAlignment { get; set; }
-        
+
+        /// <summary> Vertical placement of the text inside its rect. </summary>
         [JsonProperty(Names.VerticalAlignment)]
         public TextObjectVerticalAlignment VerticalAlignment { get; set; }
         

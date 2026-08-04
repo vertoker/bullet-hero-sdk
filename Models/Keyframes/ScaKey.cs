@@ -9,9 +9,15 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Two-axis multiplier key, used for both RectObject.Scales and RectObject.Sizes - the same shape
+    /// serves "stretch relative to parent" and "how big the rect is" tracks.
+    /// </summary>
     [RuleContainer]
     public class ScaKey : Keyframe, IModel<ScaKey>
     {
+        /// <summary> Target scale/size at this frame; X and Y are independent, so non-uniform
+        /// stretching is expressible. </summary>
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinSca, ValueRules.MaxSca)]
         [JsonProperty(Names.Vector2)]
         public IVector2 Scale { get; set; }

@@ -10,13 +10,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// Clamps the view between two aspect ratios - the practical middle ground between None and
+    /// Fixed: a level plays natively on anything from phone to ultrawide, letterboxed only outside.
+    /// </summary>
     [RuleContainer]
     public class ScreenLimitBounds : IScreenLimit, IModel<ScreenLimitBounds>
     {
+        /// <summary> Narrowest ratio still shown as-is; anything narrower is clamped to it. </summary>
         [RuleNotNull]
         [JsonProperty(Names.MinAspect)]
         public ScreenAspect MinAspect { get; set; }
-        
+
+        /// <summary> Widest ratio still shown as-is; anything wider is clamped to it. </summary>
         [RuleNotNull]
         [JsonProperty(Names.MaxAspect)]
         public ScreenAspect MaxAspect { get; set; }

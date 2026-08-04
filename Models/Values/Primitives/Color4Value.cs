@@ -13,21 +13,29 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A literal RGBA color - the plain IColor4 variant, and the only color model ThemeData stores
+    /// in its palette (a theme slot must be a real color, never another reference).
+    /// </summary>
     [RuleContainer]
     public class Color4Value : IColor4, IModel<Color4Value>
     {
+        /// <summary> Red channel, normalized 0..1 (not 0..255). </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelR)]
         public float R { get; set; }
-        
+
+        /// <summary> Green channel, normalized 0..1. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelG)]
         public float G { get; set; }
-        
+
+        /// <summary> Blue channel, normalized 0..1. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelB)]
         public float B { get; set; }
-        
+
+        /// <summary> Opacity, 0 = invisible, 1 = opaque. The only channel IColor3 lacks. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelA)]
         public float A { get; set; }

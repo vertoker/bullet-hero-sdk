@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Tint blended between two colors by a single random factor - every particle lands somewhere on
+    /// the straight line between A and B, so the palette stays coherent.
+    /// </summary>
     [RuleContainer]
     public class EffectColorRandomUniform : IEffectColor, IModel<EffectColorRandomUniform>
     {
+        /// <summary> One end of the blend. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ColorA)]
         public IColor4 Color4A { get; set; }
-        
+
+        /// <summary> The other end of the blend. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ColorB)]
         public IColor4 Color4B { get; set; }

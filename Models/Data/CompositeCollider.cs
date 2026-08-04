@@ -11,20 +11,28 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Data
 {
+    /// <summary>
+    /// A reusable collision shape built out of triangles, referenced by TextureObject.ColliderId.
+    /// Shared rather than embedded, so hundreds of identical bullets cost one shape definition.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.CompositeCollider, 1, 0)]
     public class CompositeCollider : IModel<CompositeCollider>
     {
+        /// <summary> Identity of this shape - either a built-in id or a level-defined one. </summary>
         [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ColliderId)]
         public ColliderId ColliderId { get; set; }
 
+        /// <summary> Editor-facing label of the shape. </summary>
         [JsonProperty(Names.ColliderName)] public string ColliderName { get; set; }
 
         // TODO (MAYBE) add Pivot for collider and maybe add it into collision process
         // TODO also most reason for it - extend game editor, because game colliders has it only for visuals
         // TODO or this can be PreferredPivot, it can be used by user in optional pivot in selection
 
+        /// <summary> The shape itself, as a triangle soup in the object's local rect space. Concave
+        /// shapes are expressed by using several triangles, never by winding order. </summary>
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxColliderTriangles)]
         [JsonProperty(Names.TrianglesShort)]
         public List<TriangleCollider> Triangles { get; set; }

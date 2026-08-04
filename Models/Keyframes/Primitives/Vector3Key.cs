@@ -9,9 +9,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Generic 3D track entry - reached where a third axis matters (effect forces), not for placing
+    /// objects in the 2D scene.
+    /// </summary>
     [RuleContainer]
     public class Vector3Key : Keyframe, IModel<Vector3Key>
     {
+        /// <summary> Value at this frame. </summary>
         [RuleNotNull(typeof(Vector3Value))]
         [JsonProperty(Names.Vector3)]
         public IVector3 Value { get; set; }

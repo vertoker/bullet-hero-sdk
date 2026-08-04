@@ -12,15 +12,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Objects
 {
+    /// <summary>
+    /// A placement of a Prefab template. Its children are not resolved at load time - they were
+    /// materialized as ordinary objects in the hosting scope the moment PrefabId was set, and this
+    /// object only keeps the bookkeeping needed to re-sync them when the template changes.
+    /// </summary>
     [RuleContainer]
     public class PrefabObject : RectObject, IModel<PrefabObject>, IUpdatable<PrefabObject>
     {
         public override ObjectType GetModelType() => ObjectType.PrefabObject;
 
+        /// <summary> Which template this placement instantiates. </summary>
         [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.PrefabId)]
         public PrefabId PrefabId { get; set; } // reference into Level.Resources.Prefabs
 
+        /// <summary> Remap table from template-inner ids to the real ids this placement's copies got
+        /// in the hosting scope - how a resync finds the objects it already owns instead of
+        /// duplicating them. </summary>
         [JsonProperty(Names.ObjectIds)]
         public Dictionary<ObjectId, ObjectId> ObjectIds { get; set; } // inner id -> this instance's outer id
 
@@ -31,6 +40,7 @@ namespace BH.SDK.Models.Objects
         // EditObjectOperation.RecordModification (what records one here whenever a direct edit lands
         // on a materialized child outside Prefab Mode). One Modification per (object, field) pair -
         // a child can have several fields overridden at once, but only one override per field.
+        /// <summary> Per-placement field overrides, keyed by (template object, field path). </summary>
         [JsonProperty(Names.Mod)]
         public Dictionary<ModificationKey, Modification> Modifications { get; set; }
 

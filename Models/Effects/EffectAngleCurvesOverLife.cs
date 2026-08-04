@@ -11,9 +11,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Rotation driven by a curve over the particle's age - what spinning debris that slows down
+    /// as it fades is made of.
+    /// </summary>
     [RuleContainer]
     public class EffectAngleCurvesOverLife : IEffectAngle, IModel<EffectAngleCurvesOverLife>
     {
+        /// <summary> Angle over normalized lifetime (0 = spawn, 1 = death). </summary>
         [RuleNotNull]
         [JsonProperty(Names.Curve)]
         public CurveValue Curve { get; set; }

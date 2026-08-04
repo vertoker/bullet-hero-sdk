@@ -8,9 +8,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Generic 2D track entry, for vector parameters with no dedicated key type of their own -
+    /// PosKey and ScaKey exist separately only because their rules and ranges differ.
+    /// </summary>
     [RuleContainer]
     public class Vector2Key : Keyframe, IModel<Vector2Key>
     {
+        /// <summary> Value at this frame. </summary>
         [RuleNotNull(typeof(Vector2Value))]
         [JsonProperty(Names.Vector2)]
         public IVector2 Value { get; set; }

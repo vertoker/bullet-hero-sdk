@@ -12,13 +12,20 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Rotation drawn between two bounds with an independent draw per component. Same fields as
+    /// EffectAngleRandomUniform; the split exists so the pair matches the scale/color families,
+    /// where per-component really does produce a different look.
+    /// </summary>
     [RuleContainer]
     public class EffectAngleRandomPerComponent : IEffectAngle, IModel<EffectAngleRandomPerComponent>
     {
+        /// <summary> First bound of the draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.AngleA)]
         public IFloat AngleA { get; set; }
-        
+
+        /// <summary> Second bound of the draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.AngleB)]
         public IFloat AngleB { get; set; }

@@ -11,26 +11,37 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.PostProcessing
 {
+    /// <summary>
+    /// Classic three-way color grading by tonal range. Each range has its own on/off flag, so a level
+    /// can tint only highlights and leave the rest untouched - the mathematical counterpart of
+    /// ShadowsMidtonesHighlightsKey, which grades by perceptual bands instead.
+    /// </summary>
     [RuleContainer]
     public class LiftGammaGainKey : PostProcessingKeyframe, IModel<LiftGammaGainKey>
     {
+        /// <summary> Whether the lift (dark end) correction is applied. </summary>
         [JsonProperty(Names.Lift)]
         public bool Lift { get; set; }
-        
+
+        /// <summary> Color pushed into the darkest tones - offsets the black point. </summary>
         [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.LiftColor)]
         public IColor4 LiftColor4 { get; set; }
-        
+
+        /// <summary> Whether the gamma (midtone) correction is applied. </summary>
         [JsonProperty(Names.Gamma)]
         public bool Gamma { get; set; }
-        
+
+        /// <summary> Color applied to midtones, leaving black and white ends anchored. </summary>
         [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.GammaColor)]
         public IColor4 GammaColor4 { get; set; }
-        
+
+        /// <summary> Whether the gain (bright end) correction is applied. </summary>
         [JsonProperty(Names.Gain)]
         public bool Gain { get; set; }
-        
+
+        /// <summary> Color multiplied into the brightest tones - scales the white point. </summary>
         [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.GainColor)]
         public IColor4 GainColor4 { get; set; }

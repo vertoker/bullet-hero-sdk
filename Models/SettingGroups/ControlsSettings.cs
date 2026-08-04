@@ -6,9 +6,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups
 {
+    /// <summary>
+    /// How the player drives the game, per device. Deliberately thin for now - key bindings are
+    /// still a TODO, so only the input scheme is persisted.
+    /// </summary>
     [RuleContainer]
     public class ControlsSettings : IModel<ControlsSettings>, IMoveable<ControlsSettings>
     {
+        /// <summary> Input scheme for classic mode (keyboard, gamepad, touch ...). </summary>
         [JsonProperty(Names.ClassicControlsType)]
         public ClassicControlsType ClassicControlsType { get; set; }
         

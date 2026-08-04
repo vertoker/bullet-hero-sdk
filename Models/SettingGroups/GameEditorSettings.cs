@@ -5,28 +5,38 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups
 {
+    /// <summary>
+    /// Preferences for the in-game level editor, per device: autosave policy and camera limits.
+    /// Belongs to the person editing, never to the level being edited.
+    /// </summary>
     [RuleContainer]
     public class GameEditorSettings : IModel<GameEditorSettings>, IMoveable<GameEditorSettings>
     {
         // Savings
-        
+
+        /// <summary> Whether the editor saves on its own. </summary>
         [JsonProperty(Names.Autosave)]
         public bool Autosave { get; set; }
-        
+
+        /// <summary> Seconds between autosaves. </summary>
         [RuleMin(1f)]
         [JsonProperty(Names.AutosaveRate)]
         public float AutosaveRate { get; set; }
-        
+
+        /// <summary> How many autosaves are kept before the oldest is dropped - the depth of the
+        /// safety net, traded against disk space. </summary>
         [RuleInRange(1, 1000)]
         [JsonProperty(Names.MaxAutosaveFiles)]
         public int MaxAutosaveFiles { get; set; }
-        
+
         // Editor Camera
-        
+
+        /// <summary> Closest the editor camera may zoom in. </summary>
         [RuleMin(0f)]
         [JsonProperty(Names.CameraMinSize)]
         public float CameraMinSize { get; set; }
-        
+
+        /// <summary> Furthest the editor camera may zoom out. </summary>
         [RuleMin(0f)]
         [JsonProperty(Names.CameraMaxSize)]
         public float CameraMaxSize { get; set; }

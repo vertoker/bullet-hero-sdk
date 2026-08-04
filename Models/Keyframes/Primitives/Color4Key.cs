@@ -12,9 +12,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Flat color key and the simplest member of the four-corner family: one color painted on all
+    /// four corners. Doubles as the plain RGBA key for text and any single-tint track.
+    /// </summary>
     [RuleContainer]
     public class Color4Key : Keyframe, IColor4X4Key, IModel<Color4Key>
     {
+        /// <summary> Color at this frame, applied uniformly across the rect. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.Color)]
         public IColor4 Value { get; set; }

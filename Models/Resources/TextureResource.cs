@@ -13,13 +13,20 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Resources
 {
+    /// <summary>
+    /// An image the level brings with it. The only Resource subtype with extra data of its own -
+    /// a sub-rect, so one shipped atlas can back many different sprites.
+    /// </summary>
     [RuleContainer]
     public class TextureResource : Resource, IModel<TextureResource>
     {
+        /// <summary> Identity of this image within the level. </summary>
         [RuleIPrimitiveIntMax(TextureResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
 
+        /// <summary> Region of the source image this resource actually is, as tiling+offset. Applies
+        /// to the resource itself, unlike UVKey which animates a single object's mapping. </summary>
         [JsonProperty(Names.TextureResourceUV)]
         public Vector4Value TextureResourceUV { get; set; }
 

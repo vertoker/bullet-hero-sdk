@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Spawn point sweeps back and forth instead of wrapping - no jump discontinuity, which reads as
+    /// a scanning emitter rather than a spinning one.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeSpreadPingPong : IEffectShapeSpread, IModel<EffectShapeSpreadPingPong>
     {
+        /// <summary> Portion of the shape the sweep covers. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }
-        
+
+        /// <summary> How fast the sweep travels. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Speed)]
         public IFloat Speed { get; set; }

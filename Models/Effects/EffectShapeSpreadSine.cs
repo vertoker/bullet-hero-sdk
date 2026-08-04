@@ -6,6 +6,10 @@ using BH.SDK.Rules.Attributes;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Spawn point follows a sine, easing at the turnarounds instead of moving at a constant rate.
+    /// Fieldless - unlike Loop/PingPong it takes neither spread nor speed, so the motion is fixed.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeSpreadSine : IEffectShapeSpread, IModel<EffectShapeSpreadSine>
     {

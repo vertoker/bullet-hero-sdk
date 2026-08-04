@@ -10,21 +10,28 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A 3D vector rolled inside a sphere around a center - the radial counterpart of Vector3Rect.
+    /// </summary>
     [RuleContainer]
     public class Vector3Circle : IVector3, IModel<Vector3Circle>
     {
+        /// <summary> Center X the sphere is built around. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
-        
+
+        /// <summary> Center Y the sphere is built around. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordY)]
         public float Y { get; set; }
-        
+
+        /// <summary> Center Z the sphere is built around. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordZ)]
         public float Z { get; set; }
-        
+
+        /// <summary> Maximum distance from the center; zero collapses to the center point. </summary>
         [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Radius)]
         public float Radius { get; set; }

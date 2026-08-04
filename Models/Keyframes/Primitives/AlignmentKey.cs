@@ -9,9 +9,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Key of an anchor or pivot track. Same payload shape as Vector2Key, but clamped to 0..1 and
+    /// defaulting to center - animating it moves the point an object rotates and scales around.
+    /// </summary>
     [RuleContainer]
     public class AlignmentKey : Keyframe, IModel<AlignmentKey>
     {
+        /// <summary> Normalized point in the rect at this frame: (0,0) left-bottom, (1,1) right-top. </summary>
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinAlignment, ValueRules.MaxAlignment)]
         [JsonProperty(Names.Vector2)]
         public IVector2 Value { get; set; }

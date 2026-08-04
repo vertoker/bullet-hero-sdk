@@ -6,8 +6,15 @@ using BH.SDK.Utils;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Identity of a reusable collision shape (CompositeCollider). The only Guid id here with a
+    /// large set of well-known constants below - the built-in shape library every TextureObject
+    /// picks from, generated from small ints so they stay readable in a saved file.
+    /// </summary>
     public struct ColliderId : IEquatable<ColliderId>, IPrimitiveGuid
     {
+        /// <summary> The raw Guid; game-defined vs. user-defined is decided by which collection it
+        /// is found in, not by the value. </summary>
         public Guid value;
         Guid IPrimitiveGuid.Value => value;
 

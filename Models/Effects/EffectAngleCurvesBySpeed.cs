@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Rotation driven by how fast the particle is moving rather than by its age - so the same
+    /// particle can spin harder while accelerating and settle when it slows.
+    /// </summary>
     [RuleContainer]
     public class EffectAngleCurvesBySpeed : IEffectAngle, IModel<EffectAngleCurvesBySpeed>
     {
+        /// <summary> Angle over normalized speed (0 = SpeedRange min, 1 = max). </summary>
         [RuleNotNull]
         [JsonProperty(Names.Curve)]
         public CurveValue Curve { get; set; }
-        
+
+        /// <summary> Speed window mapped onto the curve's 0..1 axis; speeds outside it clamp. </summary>
         [RuleNotNull]
         [JsonProperty(Names.SpeedRange)]
         public IVector2 SpeedRange { get; set; }

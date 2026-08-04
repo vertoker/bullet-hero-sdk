@@ -9,9 +9,15 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Position key of a RectObject or the camera. Coordinates are local to the parent, so moving a
+    /// parent carries its children along without touching their own keys.
+    /// </summary>
     [RuleContainer]
     public class PosKey : Keyframe, IModel<PosKey>
     {
+        /// <summary> Target position at this frame. Polymorphic, so a position can be re-rolled per
+        /// frame (random spawn) instead of being fixed. </summary>
         [RuleNotNull(typeof(Vector2Value)), RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Vector2)]
         public IVector2 Pos { get; set; }

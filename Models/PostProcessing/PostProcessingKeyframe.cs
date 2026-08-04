@@ -8,15 +8,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.PostProcessing
 {
+    /// <summary>
+    /// Base of every post-processing key. Mirrors Keyframe (Frame + Ease) but implements IKeyframe
+    /// directly instead of deriving from it, because it adds a per-key Active toggle no other
+    /// keyframe family has - each effect can switch itself off mid-track, not just change values.
+    /// </summary>
     public class PostProcessingKeyframe : IKeyframe, IModel<PostProcessingKeyframe>
     {
+        /// <summary> Whether this effect runs from this frame on. Independent of - and additional to -
+        /// PostProcessingEvents.Active, which gates the whole stack. </summary>
         [JsonProperty(Names.ActiveShort)]
         public bool Active { get; set; }
-        
+
+        /// <summary> Level frame this key sits on. </summary>
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
-        
+
+        /// <summary> Interpolation used on the way into this key. </summary>
         [JsonProperty(Names.Ease)]
         public EaseType Ease { get; set; }
 

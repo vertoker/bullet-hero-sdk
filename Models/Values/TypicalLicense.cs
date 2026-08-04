@@ -6,8 +6,13 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A well-known license picked from a list (CC family, MIT, ...) - one enum instead of the full
+    /// text CustomLicense has to carry, since the game already knows what these terms mean.
+    /// </summary>
     public class TypicalLicense : ILicense, IModel<TypicalLicense>
     {
+        /// <summary> Which preset license applies. </summary>
         [JsonProperty(Names.LicenseType)]
         public TypicalLicenseType Type { get; set; }
 

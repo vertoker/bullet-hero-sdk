@@ -10,21 +10,29 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A literal 4-component vector. Not a position - it is the generic "four numbers that travel
+    /// together" carrier (UV rects, shader-style params), reached through Vector4Key.
+    /// </summary>
     [RuleContainer]
     public class Vector4Value : IVector4, IModel<Vector4Value>
     {
+        /// <summary> First component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
-        
+
+        /// <summary> Second component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordY)]
         public float Y { get; set; }
-        
+
+        /// <summary> Third component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordZ)]
         public float Z { get; set; }
-        
+
+        /// <summary> Fourth component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordW)]
         public float W { get; set; }

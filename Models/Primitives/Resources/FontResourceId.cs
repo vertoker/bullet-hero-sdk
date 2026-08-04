@@ -4,9 +4,14 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives.Resources
 {
+    /// <summary>
+    /// Points at a typeface - a FontResource of Level.Resources.Fonts or a game-shipped one.
+    /// Referenced by TextObject.
+    /// </summary>
     [Serializable]
     public struct FontResourceId : IEquatable<FontResourceId>, IPrimitiveInt
     {
+        /// <summary> The raw number, sharing TypedResourceId's sign convention. </summary>
         public int value;
         int IPrimitiveInt.Value => value;
 

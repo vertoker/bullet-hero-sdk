@@ -11,16 +11,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A whole animation curve stored as data, used inside effects (particle angle/scale over life).
+    /// Different axis from the level timeline: its Time is normalized 0..1 progress of a particle,
+    /// not a level frame - which is why it needs its own wrap modes instead of StartFrame/EndFrame.
+    /// </summary>
     [RuleContainer]
     public class CurveValue : IModel<CurveValue>
     {
+        /// <summary> Control points of the curve, each with its own tangents. </summary>
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCurveKeys)]
         [JsonProperty(Names.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
-        
+
+        /// <summary> What the curve reads as before its first key (clamp, loop, ping-pong). </summary>
         [JsonProperty(Names.PreWrapMode)]
         public CurveWrapMode PreWrapMode { get; set; }
-        
+
+        /// <summary> Same, after its last key - the two ends wrap independently. </summary>
         [JsonProperty(Names.PostWrapMode)]
         public CurveWrapMode PostWrapMode { get; set; }
         

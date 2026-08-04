@@ -12,6 +12,10 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Game
 {
+    /// <summary>
+    /// Level-driven overrides of the player's own state. Three independent switch tracks, so a level
+    /// can e.g. keep the player visible but take control away during a cutscene section.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.PlayerEvents, 1, 0)]
     public class PlayerEvents : IModel<PlayerEvents>
@@ -22,16 +26,22 @@ namespace BH.SDK.Models.Game
         // [JsonProperty(ModelNames.Velocity + ModelNames.Point)]
         // public List<VelocityPoint> VelocityPoints { get; set; }
         
+        /// <summary> Whether the player avatar is drawn. Hiding it does not make it safe - see
+        /// Collisions. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPlayerKeys)]
         [RuleCollectionUnique(nameof(BoolKey.Frame))]
         [JsonProperty(Names.Visibles)]
         public List<BoolKey> Visibles { get; set; } // player can see himself
-        
+
+        /// <summary> Whether input moves the player. Off freezes them in place while the level keeps
+        /// running. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPlayerKeys)]
         [RuleCollectionUnique(nameof(BoolKey.Frame))]
         [JsonProperty(Names.Controls)]
         public List<BoolKey> Controls { get; set; } // player can control himself
-        
+
+        /// <summary> Whether the player can be hit at all - the authored equivalent of invulnerability
+        /// during a transition. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPlayerKeys)]
         [RuleCollectionUnique(nameof(BoolKey.Frame))]
         [JsonProperty(Names.Collisions)]

@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Size drawn per axis, so particles come out stretched in random directions - the deliberately
+    /// non-proportional twin of EffectScaleRandomUniform.
+    /// </summary>
     [RuleContainer]
     public class EffectScaleRandomPerComponent : IEffectScale, IModel<EffectScaleRandomPerComponent>
     {
+        /// <summary> Per-axis first bound of the size draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ScaleX)]
         public IVector2 ScaleA { get; set; }
-        
+
+        /// <summary> Per-axis second bound of the size draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ScaleY)]
         public IVector2 ScaleB { get; set; }

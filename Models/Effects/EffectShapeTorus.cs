@@ -12,21 +12,29 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Emitter shape spawning particles in a tube bent into a ring. Differs from Circle by having
+    /// thickness as a real radius rather than an inward fill fraction.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeTorus : IEffectShape, IModel<EffectShapeTorus>
     {
+        /// <summary> Radius of the tube itself - how thick the ring is. </summary>
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.TorusRadiusMinor_Min)]
         [JsonProperty(Names.RadiusMinor)]
         public IFloat RadiusMinor { get; set; }
-        
+
+        /// <summary> Radius of the ring the tube is bent around. </summary>
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.TorusRadiusMajor_Min)]
         [JsonProperty(Names.RadiusMajor)]
         public IFloat RadiusMajor { get; set; }
-        
+
+        /// <summary> Portion of the ring used, in degrees. </summary>
         [RuleNotNull, RuleIFloatInRange(EffectRules.Shape.Arc_Min, EffectRules.Shape.Arc_Max)]
         [JsonProperty(Names.Arc)]
         public IFloat Arc { get; set; }
-        
+
+        /// <summary> How successive particles walk the arc. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IEffectShapeSpread Spread { get; set; }

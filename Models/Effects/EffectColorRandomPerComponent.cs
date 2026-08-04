@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Tint drawn per channel between two colors - any color inside the RGBA box, not just the line
+    /// between A and B the uniform variant produces. Same fields, much wider spread.
+    /// </summary>
     [RuleContainer]
     public class EffectColorRandomPerComponent : IEffectColor, IModel<EffectColorRandomPerComponent>
     {
+        /// <summary> Per-channel first bound. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ColorA)]
         public IColor4 Color4A { get; set; }
-        
+
+        /// <summary> Per-channel second bound. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ColorB)]
         public IColor4 Color4B { get; set; }

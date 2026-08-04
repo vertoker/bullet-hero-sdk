@@ -4,9 +4,16 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Identity of a scene object inside one object scope (GameLevel.Objects or a Prefab's own
+    /// Objects). A bare int wrapper whose sign carves the space into user objects, reserved game
+    /// objects and runtime-only ids - see the range table below.
+    /// </summary>
     [Serializable]
     public struct ObjectId : IEquatable<ObjectId>, IPrimitiveInt
     {
+        /// <summary> The raw number. Public field, not a property, so jobs/structs can touch it
+        /// directly; serialized as a bare scalar by PrimitiveIntConverter. </summary>
         public int value;
         int IPrimitiveInt.Value => value;
 

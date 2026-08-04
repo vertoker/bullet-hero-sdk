@@ -12,18 +12,27 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Data
 {
+    /// <summary>
+    /// A named palette of 64 colors that objects reference by slot instead of storing colors of
+    /// their own. Swapping which theme is active (ThemeKeyframe) then recolors the whole level at
+    /// once - the reason ColorType.ThemeRef exists.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.ThemeData, 1, 0)]
     public class ThemeData : IModel<ThemeData>
     {
+        /// <summary> Identity of this palette, what ThemeKeyframe selects. </summary>
         [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ThemeId)]
         public ThemeId ThemeId { get; set; }
 
+        /// <summary> Editor-facing label of the palette. </summary>
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
-        
+
+        /// <summary> The 64 slots, fixed length so a ThemeRef index is always resolvable. Slot
+        /// meanings follow Project Arrhythmya's layout, mapped out below. </summary>
         [RuleNotNull, RuleCollectionCount(ValueRules.ThemeCount)]
         [JsonProperty(Names.Matrix)]
         public Color4Value[] Matrix { get; set; }

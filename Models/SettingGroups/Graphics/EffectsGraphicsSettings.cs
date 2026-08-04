@@ -6,17 +6,27 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups.Graphics
 {
+    /// <summary>
+    /// Particle rendering options with their own framerate budget - effects can be simulated slower
+    /// than the game itself, which is the main lever for keeping heavy levels playable on phones.
+    /// </summary>
     [RuleContainer]
     public class EffectsGraphicsSettings : BaseGraphicsSettings, IFrameable,
         IModel<EffectsGraphicsSettings>, IMoveable<EffectsGraphicsSettings>
     {
+        /// <summary> Where the effect update rate comes from - separate from the game's own, hence
+        /// the duplicate of GraphicsSettings' pair of fields. </summary>
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
-        
+
+        /// <summary> Explicit effect update rate, used when FramerateTarget says so. Lower than the
+        /// game framerate by default. </summary>
         [RuleMin(1)]
         [JsonProperty(Names.FixedFramerate)]
         public int FixedFramerate { get; set; }
-        
+
+        /// <summary> Longest effect state the player will fast-forward when seeking, before it gives
+        /// up and starts the effect fresh. </summary>
         [RuleMin(0.2f)]
         [JsonProperty(Names.MaxScrubTime)]
         public float MaxScrubTime { get; set; }

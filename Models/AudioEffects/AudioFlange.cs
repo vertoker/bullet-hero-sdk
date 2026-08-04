@@ -8,21 +8,29 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.AudioEffects
 {
+    /// <summary>
+    /// Mixes the signal with a very short, sweeping delay of itself, producing the moving comb-filter
+    /// whoosh. Same family as AudioChorus, but one modulated copy at a shorter delay.
+    /// </summary>
     [RuleContainer]
     public class AudioFlange : AudioEffect, IModel<AudioFlange>
     {
+        /// <summary> Level of the untouched signal. </summary>
         [RuleInRange(AudioRules.Flange.DryMix_Min, AudioRules.Flange.DryMix_Max)]
         [JsonProperty(Names.DryMix)]
         public float DryMix { get; set; }
-        
+
+        /// <summary> Level of the swept copy - the cancellation between the two is the effect. </summary>
         [RuleInRange(AudioRules.Flange.WetMix_Min, AudioRules.Flange.WetMix_Max)]
         [JsonProperty(Names.WetMix)]
         public float WetMix { get; set; }
-        
+
+        /// <summary> How far the delay swings. </summary>
         [RuleInRange(AudioRules.Flange.Depth_Min, AudioRules.Flange.Depth_Max)]
         [JsonProperty(Names.Depth)]
         public float Depth { get; set; }
-        
+
+        /// <summary> How fast the sweep repeats, in Hz. </summary>
         [RuleInRange(AudioRules.Flange.Rate_Min, AudioRules.Flange.Rate_Max)]
         [JsonProperty(Names.Rate)]
         public float Rate { get; set; }

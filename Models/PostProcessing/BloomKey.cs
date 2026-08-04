@@ -12,21 +12,28 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.PostProcessing
 {
+    /// <summary>
+    /// Glow bleeding out of bright pixels. Threshold is pinned at 0, so everything glows in
+    /// proportion to its brightness rather than only what crosses a cutoff.
+    /// </summary>
     [RuleContainer]
     public class BloomKey : PostProcessingKeyframe, IModel<BloomKey> // HEAVY IN ANY CASE, PHONES DON'T LIKE IT
     {
         // Threshold - 0 (always, not a parameter)
-        
+
+        /// <summary> Strength of the glow. </summary>
         [RuleInRange(PostProcessingRules.Bloom.IntensityMin,
            PostProcessingRules.Bloom.IntensityMax)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
-        
+
+        /// <summary> How far the glow spreads from its source. </summary>
         [RuleInRange(PostProcessingRules.Bloom.ScatterMin,
             PostProcessingRules.Bloom.ScatterMax)]
         [JsonProperty(Names.Scatter)]
         public float Scatter { get; set; }
-        
+
+        /// <summary> Tint of the glow, independent of the source pixel's own color. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.Color)]
         public IColor4 Color4 { get; set; }

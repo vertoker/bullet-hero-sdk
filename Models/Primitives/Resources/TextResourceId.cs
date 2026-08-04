@@ -4,9 +4,14 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives.Resources
 {
+    /// <summary>
+    /// Points at an external text file (TextResource) - long copy kept out of the level file itself,
+    /// as opposed to the short strings TextObject stores inline.
+    /// </summary>
     [Serializable]
     public struct TextResourceId : IEquatable<TextResourceId>, IPrimitiveInt
     {
+        /// <summary> The raw number, sharing TypedResourceId's sign convention. </summary>
         public int value;
         int IPrimitiveInt.Value => value;
 

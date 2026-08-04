@@ -4,11 +4,20 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Address of a single overridable field inside a prefab placement: which object, which field.
+    /// Used as the key of PrefabObject.Modifications, which is what makes "one override per
+    /// (object, field) pair" a structural guarantee instead of a rule to enforce.
+    /// </summary>
     public struct ModificationKey : IModel<ModificationKey>, IComparable<ModificationKey>
     {
+        /// <summary> Object being overridden, addressed by its id inside the TEMPLATE, not the
+        /// materialized outer id - so the key survives re-materialization. </summary>
         [JsonProperty(Names.ObjectId)]
         public ObjectId ObjectId { get; set; }
 
+        /// <summary> Dotted/indexed field path ("pos[0].v"), resolved by ModificationService through
+        /// each property's JsonProperty name. </summary>
         [JsonProperty(Names.PathShort)]
         public string Path { get; set; }
 

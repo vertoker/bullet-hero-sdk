@@ -10,11 +10,17 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Audio
 {
+    /// <summary>
+    /// The whole audio side of a level: one flat set of tracks, no groups or buses. Layering is
+    /// expressed by tracks overlapping in time and separating by AudioLayer, not by nesting.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.AudioLevel, 1, 0)]
     public class AudioLevel : IModel<AudioLevel>
     {
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own AudioId)
+        /// <summary> Every scheduled clip in the level, keyed by the track's own AudioId - the audio
+        /// analogue of GameLevel.Objects. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Tracks)]
         public Dictionary<AudioId, LevelTrack> Tracks { get; set; }

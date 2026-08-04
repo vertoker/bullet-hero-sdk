@@ -13,70 +13,101 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Objects
 {
+    /// <summary>
+    /// Base of every placeable object in a level: identity, parenting, lifetime and the seven shared
+    /// transform tracks. Usable on its own as an invisible node - a pure transform other objects
+    /// parent to. Subclasses only add what they draw.
+    /// <br/><br/>
+    /// Every track may legitimately be empty; that means "use the engine default for this field",
+    /// not "data is missing".
+    /// </summary>
     [RuleContainer]
     public class RectObject : IFrameBounds, INameable, IModel<RectObject>, IUpdatable<RectObject>
     {
         public virtual ObjectType GetModelType() => ObjectType.RectObject;
-        
+
+        /// <summary> Identity within its own scope (a level or one prefab template) - the key of the
+        /// Objects dictionary holding it. </summary>
         [RuleObjectIdValid]
         [JsonProperty(Names.ObjectId)]
         public ObjectId ObjectId { get; set; }
-        
+
+        /// <summary> Whose transform this one is relative to. Null means level space; reserved
+        /// negative ids attach to the camera, the local player, or a prefab's root. </summary>
         [RuleParentObjectIdValid]
         [JsonProperty(Names.ParentObjectId)]
         public ObjectId ParentObjectId { get; set; }
-        
+
+        /// <summary> Editor-facing label. Not unique and not an identity - ObjectId is. </summary>
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
-        
+
+        /// <summary> Whether the object renders. Hiding it keeps it alive as a parent and, for
+        /// texture objects, keeps its collider working - this is not a "disable" switch. </summary>
         [JsonProperty(Names.VisibleShort)]
         public bool Visible { get; set; }
-        
+
+        /// <summary> First frame the object exists on. Outside its frame bounds the object is not
+        /// simulated at all, which is what keeps a long level cheap. </summary>
         [RuleLevelFrame]
         [JsonProperty(Names.StartFrameShort)]
         public int StartFrame { get; set; }
-        
+
+        /// <summary> Last frame the object exists on. </summary>
         [RuleLevelFrame]
         [JsonProperty(Names.EndFrameShort)]
         public int EndFrame { get; set; }
-        
+
+        /// <summary> Draw order among siblings - higher draws in front. Static here; LayerKey
+        /// animates it where a track is wired up. </summary>
         [RuleInRange(ValueRules.MinLayer, ValueRules.MaxLayer)]
         [JsonProperty(Names.Layer)]
         public int Layer { get; set; }
-        
+
         // Rect content
-        
+
+        /// <summary> Position track, in parent space. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(PosKey.Frame))]
         [JsonProperty(Names.Position)]
         public List<PosKey> Positions { get; set; }
-        
+
+        /// <summary> Rotation track, in degrees around the pivot. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(AngleKey.Frame))]
         [JsonProperty(Names.Rotation)]
         public List<AngleKey> Rotations { get; set; }
-        
+
+        /// <summary> Scale track - a multiplier applied on top of Sizes, and the one that also
+        /// scales children. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(ScaKey.Frame))]
         [JsonProperty(Names.Scale)]
         public List<ScaKey> Scales { get; set; }
-        
+
+        /// <summary> Size track - the rect's own extents before scaling, in the parent's units. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(ScaKey.Frame))]
         [JsonProperty(Names.Size)]
         public List<ScaKey> Sizes { get; set; }
-        
+
+        /// <summary> Lower anchor track: which point of the parent's rect this object's lower corner
+        /// sticks to. Together with AnchorsMax this is what makes layouts survive aspect changes. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.AnchorMin)]
         public List<AlignmentKey> AnchorsMin { get; set; }
-        
+
+        /// <summary> Upper anchor track. Equal to AnchorsMin means "follow that point"; different
+        /// means "stretch between the two". </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.AnchorMax)]
         public List<AlignmentKey> AnchorsMax { get; set; }
-        
+
+        /// <summary> Pivot track: the point rotation and scaling happen around, and the origin the
+        /// position refers to. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.Pivot)]

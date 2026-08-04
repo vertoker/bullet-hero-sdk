@@ -12,17 +12,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Emitter shape spawning particles along a segment - walls and curtains of bullets, where the
+    /// Spread decides whether the wall fills evenly, sweeps, or scatters.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeLine : IEffectShape, IModel<EffectShapeLine>
     {
+        /// <summary> One end of the segment, local to the effect object. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Start)]
         public IVector2 Start { get; set; }
-        
+
+        /// <summary> The other end of the segment. </summary>
         [RuleNotNull]
         [JsonProperty(Names.End)]
         public IVector2 End { get; set; }
-        
+
+        /// <summary> How successive particles walk from Start to End. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IEffectShapeSpread Spread { get; set; }

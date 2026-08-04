@@ -8,9 +8,13 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.AudioEffects
 {
+    /// <summary>
+    /// Clips the waveform for a gritty, overdriven sound. The simplest effect here - one dial.
+    /// </summary>
     [RuleContainer]
     public class AudioDistortion : AudioEffect, IModel<AudioDistortion>
     {
+        /// <summary> How hard the signal is clipped. </summary>
         [RuleInRange(AudioRules.Distortion.Level_Min, AudioRules.Distortion.Level_Max)]
         [JsonProperty(Names.Level)]
         public float Level { get; set; }

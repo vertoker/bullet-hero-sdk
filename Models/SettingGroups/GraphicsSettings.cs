@@ -7,27 +7,39 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups
 {
+    /// <summary>
+    /// Per-device rendering options: the global framerate policy plus one sub-group per subsystem
+    /// that can be turned down independently. This is how a weak phone runs a level authored on a
+    /// PC - the level is unchanged, the player just renders less of it.
+    /// </summary>
     [RuleContainer]
     public class GraphicsSettings : IFrameable, IModel<GraphicsSettings>, IMoveable<GraphicsSettings>
     {
+        /// <summary> Where the target framerate comes from - the screen's refresh rate or the fixed
+        /// value below. </summary>
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
-        
+
         // if 0 - doesn't setup framerate, use Unity default. Require project restart
         // if > 0 - target framerate
-        
+
+        /// <summary> Explicit framerate cap, used when FramerateTarget says so. </summary>
         [RuleMin(1)]
         [JsonProperty(Names.FixedFramerate)]
         public int FixedFramerate { get; set; }
-        
+
+        /// <summary> Audio playback/sync options - grouped here rather than in AudioSettings because
+        /// these are performance trade-offs, not volume preferences. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Audio)]
         public AudioGraphicsSettings Audio { get; set; }
-        
+
+        /// <summary> Particle rendering options, including their own framerate budget. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Effects)]
         public EffectsGraphicsSettings Effects { get; set; }
-        
+
+        /// <summary> Per-effect switches for the post-processing stack. </summary>
         [RuleNotNull]
         [JsonProperty(Names.PostProcessing)]
         public PostProcessingGraphicsSettings PostProcessing { get; set; }

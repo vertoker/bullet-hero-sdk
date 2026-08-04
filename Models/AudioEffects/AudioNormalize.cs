@@ -8,17 +8,25 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.AudioEffects
 {
+    /// <summary>
+    /// Continuously brings the signal toward a target loudness - what makes clips from different
+    /// sources sit at a comparable level without hand-tuning each one.
+    /// </summary>
     [RuleContainer]
     public class AudioNormalize : AudioEffect, IModel<AudioNormalize>
     {
+        /// <summary> Seconds the gain takes to settle, so the correction is not audible as a jump. </summary>
         [RuleInRange(AudioRules.Normalize.FadeInTime_Min, AudioRules.Normalize.FadeInTime_Max)]
         [JsonProperty(Names.FadeInTime)]
         public float FadeInTime { get; set; }
-        
+
+        /// <summary> Signals quieter than this are left alone - keeps silence and noise floors from
+        /// being amplified into hiss. </summary>
         [RuleInRange(AudioRules.Normalize.LowestVolume_Min, AudioRules.Normalize.LowestVolume_Max)]
         [JsonProperty(Names.LowestVolume)]
         public float LowestVolume { get; set; }
-        
+
+        /// <summary> Ceiling on how much gain may be applied. </summary>
         [RuleInRange(AudioRules.Normalize.MaximumAmp_Min, AudioRules.Normalize.MaximumAmp_Max)]
         [JsonProperty(Names.MaximumAmp)]
         public float MaximumAmp { get; set; }

@@ -10,37 +10,49 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// RGBA counterpart of Color3MinMax - alpha rolls independently too, which is what makes
+    /// "random, sometimes barely visible" possible from a single value.
+    /// </summary>
     [RuleContainer]
     public class Color4MinMax : IColor4, IModel<Color4MinMax>
     {
+        /// <summary> Lower bound of the red roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinR)]
         public float MinR { get; set; }
-        
+
+        /// <summary> Lower bound of the green roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinG)]
         public float MinG { get; set; }
-        
+
+        /// <summary> Lower bound of the blue roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinB)]
         public float MinB { get; set; }
-        
+
+        /// <summary> Lower bound of the opacity roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinA)]
         public float MinA { get; set; }
-        
+
+        /// <summary> Upper bound of the red roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxR)]
         public float MaxR { get; set; }
-        
+
+        /// <summary> Upper bound of the green roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxG)]
         public float MaxG { get; set; }
-        
+
+        /// <summary> Upper bound of the blue roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxB)]
         public float MaxB { get; set; }
-        
+
+        /// <summary> Upper bound of the opacity roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxA)]
         public float MaxA { get; set; }

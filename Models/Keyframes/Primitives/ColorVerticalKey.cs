@@ -12,13 +12,18 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Bottom-to-top gradient across a texture object - the vertical twin of ColorHorizontalKey.
+    /// </summary>
     [RuleContainer]
     public class ColorVerticalKey : Keyframe, IColor4X4Key, IModel<ColorVerticalKey>
     {
+        /// <summary> Color of both bottom corners. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorBottom)]
         public IColor4 Color4Bottom { get; set; }
-        
+
+        /// <summary> Color of both top corners. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorTop)]
         public IColor4 Color4Top { get; set; }

@@ -11,20 +11,30 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A color ramp stored as data - the color counterpart of CurveValue, used for particle tint over
+    /// life or speed. RGB and alpha are two independent tracks, so a fade can outlive a hue shift.
+    /// </summary>
     [RuleContainer]
     public class GradientValue : IModel<GradientValue>
     {
+        /// <summary> RGB stops along the ramp. </summary>
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
         [JsonProperty(Names.ColorKeys)]
         public List<GradientColorKeyValue> ColorKeys { get; set; }
-        
+
+        /// <summary> Opacity stops, placed at their own times independently of ColorKeys. </summary>
         [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
         [JsonProperty(Names.AlphaKeys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
-        
+
+        /// <summary> Blend or hard-step between stops - the difference between a smooth fade and a
+        /// banded palette. </summary>
         [JsonProperty(Names.Mode)]
         public GradientInterpolationMode Mode { get; set; }
-        
+
+        /// <summary> Space the blend happens in (linear vs. gamma); changes the midpoints, not the
+        /// stops themselves. </summary>
         [JsonProperty(Names.ColorSpace)]
         public GradientColorSpace ColorSpace { get; set; }
         

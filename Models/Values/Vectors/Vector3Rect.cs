@@ -10,29 +10,38 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A 3D vector rolled inside an axis-aligned box - Vector2Rect with a depth axis added.
+    /// </summary>
     [RuleContainer]
     public class Vector3Rect : IVector3, IModel<Vector3Rect>
     {
+        /// <summary> Lower X bound of the roll box. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
-        
+
+        /// <summary> Lower Y bound of the roll box. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinY)]
         public float MinY { get; set; }
-        
+
+        /// <summary> Lower Z bound of the roll box. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinZ)]
         public float MinZ { get; set; }
-        
+
+        /// <summary> Upper X bound of the roll box. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }
-        
+
+        /// <summary> Upper Y bound of the roll box. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxY)]
         public float MaxY { get; set; }
-        
+
+        /// <summary> Upper Z bound of the roll box. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxZ)]
         public float MaxZ { get; set; }

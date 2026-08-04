@@ -12,6 +12,11 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Game
 {
+    /// <summary>
+    /// The camera's animation tracks - a trimmed-down RectObject, kept as its own aggregate because
+    /// the camera has no parent, no layer and no independent axes. The comment below lists exactly
+    /// which object tracks were dropped or replaced and why.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.CameraEvents, 1, 0)]
     public class CameraEvents : IModel<CameraEvents>
@@ -27,26 +32,33 @@ namespace BH.SDK.Models.Game
         // AnchorsMin/AnchorsMax - camera doesn't have any parents, remove
         // Pivot - unchanged
         
+        /// <summary> Where the camera looks, in level space - it has no parent to be relative to. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
         [RuleCollectionUnique(nameof(PosKey.Frame))]
         [JsonProperty(Names.Position)]
         public List<PosKey> Positions { get; set; }
-        
+
+        /// <summary> Camera roll in degrees. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
         [RuleCollectionUnique(nameof(AngleKey.Frame))]
         [JsonProperty(Names.Rotation)]
         public List<AngleKey> Rotations { get; set; }
-        
+
+        /// <summary> Single-axis stand-in for an object's two-axis Sizes track - the aspect ratio is
+        /// the device's, so only uniform zoom is authorable. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
         [RuleCollectionUnique(nameof(ZoomKey.Frame))]
         [JsonProperty(Names.Zoom)]
         public List<ZoomKey> Zooms { get; set; }
-        
+
+        /// <summary> The point rotation and zoom happen around. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(AlignmentKey.Frame))]
         [JsonProperty(Names.Pivot)]
         public List<AlignmentKey> Pivots { get; set; }
-        
+
+        /// <summary> Procedural shake layered over Positions - the one track with no RectObject
+        /// counterpart, since only the camera shakes. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCameraKeys)]
         [RuleCollectionUnique(nameof(ShakeKey.Frame))]
         [JsonProperty(Names.Shake)]

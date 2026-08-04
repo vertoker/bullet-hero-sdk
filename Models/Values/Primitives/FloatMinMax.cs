@@ -10,13 +10,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A number rolled anywhere in a continuous range. Stays random after loading - the roll happens
+    /// per evaluation in the player, not once at load, which is what makes bullet patterns vary.
+    /// </summary>
     [RuleContainer]
     public class FloatMinMax : IFloat, IModel<FloatMinMax>
     {
+        /// <summary> Inclusive lower bound of the roll. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Min)]
         public float Min { get; set; }
-        
+
+        /// <summary> Inclusive upper bound of the roll. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Max)]
         public float Max { get; set; }

@@ -12,40 +12,53 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.PostProcessing
 {
+    /// <summary>
+    /// Three-band color grading where the bands themselves are authorable: the two Limit fields say
+    /// where shadows end and highlights begin, which LiftGammaGainKey cannot express.
+    /// </summary>
     [RuleContainer]
     public class ShadowsMidtonesHighlightsKey : PostProcessingKeyframe, IModel<ShadowsMidtonesHighlightsKey>
     {
+        /// <summary> Whether the shadow tint is applied. </summary>
         [JsonProperty(Names.Shadow)]
         public bool Shadows { get; set; }
-        
+
+        /// <summary> Tint applied to the dark band. </summary>
         [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.ShadowColor)]
         public IColor4 ShadowsColor4 { get; set; }
-        
-        
+
+
+        /// <summary> Whether the midtone tint is applied. </summary>
         [JsonProperty(Names.Midtone)]
         public bool Midtones { get; set; }
-        
+
+        /// <summary> Tint applied to the middle band - whatever falls between the two limits. </summary>
         [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.MidtoneColor)]
         public IColor4 MidtonesColor4 { get; set; }
-        
-        
+
+
+        /// <summary> Whether the highlight tint is applied. </summary>
         [JsonProperty(Names.Highlight)]
         public bool Highlights { get; set; }
-        
+
+        /// <summary> Tint applied to the bright band. </summary>
         [RuleNotNull(typeof(Color4Value))] // TODO add color hdr support for alpha rule (0f-2f)
         [JsonProperty(Names.HighlightColor)]
         public IColor4 HighlightsColor4 { get; set; }
-        
-        
+
+
         // TODO graph like in Post Processing menu
-        
+
+        /// <summary> Start/end luminance of the shadow band - a range, not a single cut, so shadows
+        /// fade into midtones instead of banding. </summary>
         [RuleNotNull, RuleIVector2InRange(PostProcessingRules.ShadowsMidtonesHighlights.ShadowLimitMin,
              PostProcessingRules.ShadowsMidtonesHighlights.ShadowLimitMax)]
         [JsonProperty(Names.ShadowLimit)]
         public IVector2 ShadowLimits { get; set; }
-        
+
+        /// <summary> Start/end luminance of the highlight band, same blended-edge idea. </summary>
         [RuleNotNull, RuleIVector2InRange(PostProcessingRules.ShadowsMidtonesHighlights.HighlightLimitMin,
              PostProcessingRules.ShadowsMidtonesHighlights.HighlightLimitMax)]
         [JsonProperty(Names.HighlightLimit)]

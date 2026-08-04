@@ -11,9 +11,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Resources
 {
+    /// <summary>
+    /// A text file shipped with the level, for copy too long to keep inline in a TextObject
+    /// (credits, story text). Kept out of the level file so editing it does not rewrite the level.
+    /// </summary>
     [RuleContainer]
     public class TextResource : Resource, IModel<TextResource>
     {
+        /// <summary> Identity of this text file within the level. </summary>
         [RuleIPrimitiveIntMax(TextResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.TextResourceId)]
         public TextResourceId TextResourceId { get; set; }
@@ -31,7 +36,7 @@ namespace BH.SDK.Models.Resources
         public override void Reset()
         {
             base.Reset();
-            TextResourceId.Reset();
+            TextResourceId = TextResourceId.Null;
         }
         
         public override object Clone() => CopyImpl();

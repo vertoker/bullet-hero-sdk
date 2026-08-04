@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// RGBA counterpart of Color3ThemeRef - alpha comes from the referenced palette slot too, so a
+    /// theme can make a whole class of objects translucent without touching them.
+    /// </summary>
     [RuleContainer]
     public class Color4ThemeRef : IColor4, IModel<Color4ThemeRef>
     {
+        /// <summary> Slot inside the active ThemeData.Matrix (0-63), resolved per frame. </summary>
         [RuleInRange(ValueRules.MinThemeIndex, ValueRules.MaxThemeIndex)]
         [JsonProperty(Names.ThemeIndex)]
         public int ThemeColorIndex { get; set; }

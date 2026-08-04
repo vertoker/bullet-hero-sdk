@@ -11,9 +11,15 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Each particle picks one random spot on the gradient and keeps that color - a palette to draw
+    /// from, not an animation. The gradient is a color set here, unlike the OverLife/BySpeed variants
+    /// where it is a curve in time or speed.
+    /// </summary>
     [RuleContainer]
     public class EffectColorGradientRandom : IEffectColor, IModel<EffectColorGradientRandom>
     {
+        /// <summary> Ramp the per-particle color is drawn from. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Gradient)]
         public GradientValue Gradient { get; set; }

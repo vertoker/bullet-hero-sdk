@@ -12,9 +12,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Emitter shape spawning particles anywhere inside an axis-aligned box. The one shape of the
+    /// family with no IEffectShapeSpread - a filled area has no rim to walk along.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeRectangle : IEffectShape, IModel<EffectShapeRectangle>
     {
+        /// <summary> Full width/height of the spawn box, centered on the effect object. </summary>
         [RuleNotNull, RuleIVector2Min(EffectRules.Shape.BoxSize_Min)]
         [JsonProperty(Names.Size)]
         public IVector2 Size { get; set; }
@@ -38,8 +43,8 @@ namespace BH.SDK.Models.Effects
 
         public object Clone() => Copy();
         public EffectShapeType GetModelType() => EffectShapeType.Rectangle;
-        IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeRectangle();
-        public EffectShapeRectangle Copy() => new();
+        IEffectShape ICopyable<IEffectShape>.Copy() => new EffectShapeRectangle(Size.Copy());
+        public EffectShapeRectangle Copy() => new(Size.Copy());
 
         public override bool Equals(object obj) => obj is EffectShapeRectangle value && Equals(value);
         public override int GetHashCode() => Size != null ? Size.GetHashCode() : 0;

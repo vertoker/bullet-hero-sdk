@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Spawn point walks the shape in one direction and jumps back at the end - the classic rotating
+    /// emitter that always turns the same way.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeSpreadLoop : IEffectShapeSpread, IModel<EffectShapeSpreadLoop>
     {
+        /// <summary> Portion of the shape the walk covers before wrapping. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }
-        
+
+        /// <summary> How fast the spawn point advances - what sets the visible rotation rate. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Speed)]
         public IFloat Speed { get; set; }

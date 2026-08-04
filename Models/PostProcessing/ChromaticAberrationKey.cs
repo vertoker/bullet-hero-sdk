@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.PostProcessing
 {
+    /// <summary>
+    /// Splits color channels toward the screen edges, like a cheap lens. Cheaper than the glitch
+    /// effects and often enough to sell an "impact" moment on its own.
+    /// </summary>
     [RuleContainer]
     public class ChromaticAberrationKey : PostProcessingKeyframe, IModel<ChromaticAberrationKey>
     {
+        /// <summary> How far the channels separate. </summary>
         [RuleInRange(PostProcessingRules.ChromaticAberration.IntensityMin,
             PostProcessingRules.ChromaticAberration.IntensityMax)]
         [JsonProperty(Names.Intensity)]

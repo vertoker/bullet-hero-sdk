@@ -26,18 +26,23 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.Instances)]
         public int Instances { get; set; }
 
+        /// <summary> Peak simultaneous texture objects - a subset of Instances. </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
         [JsonProperty(Names.Textures)]
         public int Textures { get; set; }
 
+        /// <summary> Peak simultaneous effect objects (emitters, not particles). </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
         [JsonProperty(Names.Effects)]
         public int Effects { get; set; }
 
+        /// <summary> Peak simultaneous text objects. </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
         [JsonProperty(Names.Texts)]
         public int Texts { get; set; }
 
+        /// <summary> Peak simultaneously sounding audio tracks - the one count that is not an object
+        /// at all. </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
         [JsonProperty(Names.Tracks)]
         public int Tracks { get; set; }

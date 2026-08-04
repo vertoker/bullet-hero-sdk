@@ -12,22 +12,32 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Game
 {
+    /// <summary>
+    /// Everything a level shows and does: its objects plus four aggregates of level-global events.
+    /// This is the object scope at level scope - note the id counter that feeds it lives on
+    /// LevelSettings instead, so the pair has to be carried together by anything creating objects.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.GameLevel, 1, 0)]
     public class GameLevel : IObjectScope, IModel<GameLevel>
     {
+        /// <summary> Markers, checkpoints, screen limits, background and theme tracks. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Events)]
         public GameEvents Events { get; set; }
-        
+
+        /// <summary> The camera's own transform tracks - it is animated like an object but is not
+        /// one, so it lives here rather than in Objects. </summary>
         [RuleNotNull]
         [JsonProperty(Names.CameraEvents)]
         public CameraEvents CameraEvents { get; set; }
-        
+
+        /// <summary> The screen-effect stack over time. </summary>
         [RuleNotNull]
         [JsonProperty(Names.PostProcessingEvents)]
         public PostProcessingEvents PostProcessingEvents { get; set; }
-        
+
+        /// <summary> Player-state switches over time (visible / controllable / collidable). </summary>
         [RuleNotNull]
         [JsonProperty(Names.PlayerEvents)]
         public PlayerEvents PlayerEvents { get; set; }
@@ -35,6 +45,8 @@ namespace BH.SDK.Models.Game
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ObjectId)
         // Placed PrefabObject instances live directly in here too (GetModelType() ==
         // ObjectType.PrefabObject) - see IObjectScope's own comment.
+        /// <summary> Every object in the level, flat and keyed by id - hierarchy is expressed through
+        /// each object's ParentObjectId, not by nesting. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Objects)]
         public Dictionary<ObjectId, RectObject> Objects { get; set; }

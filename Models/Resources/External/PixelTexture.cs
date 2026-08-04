@@ -6,10 +6,19 @@ using BH.SDK.Utils;
 
 namespace BH.SDK.Models.Resources
 {
+    /// <summary>
+    /// A raw image in memory - the Unity-free counterpart of Texture2D, used by tooling that
+    /// generates or reads image data (see TextureToObjectsGenerator). Not part of the level format:
+    /// a level stores a TextureResource pointing at a file, never pixels.
+    /// </summary>
     public class PixelTexture : ICopyable<PixelTexture>, IEquatable<PixelTexture>
     {
+        /// <summary> Row length in pixels. </summary>
         public int Width;
+        /// <summary> Number of rows. </summary>
         public int Height;
+        /// <summary> Pixels in one flat row-major array of Width*Height - indexing is the caller's
+        /// job (see DimensionalIndexer2). </summary>
         public Pixel[] Pixels;
 
         public PixelTexture(int width, int height)

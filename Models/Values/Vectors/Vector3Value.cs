@@ -10,17 +10,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A literal 3D vector. The game is 2D, so this shows up where a third axis is genuinely
+    /// meaningful - effect forces (EffectObjectForces orbital axis) rather than object transforms.
+    /// </summary>
     [RuleContainer]
     public class Vector3Value : IVector3, IModel<Vector3Value>
     {
+        /// <summary> Horizontal component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
-        
+
+        /// <summary> Vertical component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordY)]
         public float Y { get; set; }
-        
+
+        /// <summary> Depth component - the axis 2D gameplay ignores but rotation/orbit math needs. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordZ)]
         public float Z { get; set; }

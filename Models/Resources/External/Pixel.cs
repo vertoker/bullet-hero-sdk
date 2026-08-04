@@ -9,14 +9,25 @@ using BH.SDK.Utils;
 
 namespace BH.SDK.Models.Resources
 {
+    /// <summary>
+    /// One 32-bit RGBA pixel - a Unity-free stand-in for Color32, since the core SDK must not
+    /// reference UnityEngine. Byte channels here, unlike the float-based Color4Value used for
+    /// authored colors: this is image data, not a value someone edits.
+    /// </summary>
     [StructLayout(LayoutKind.Explicit, Size = 4)]
     public struct Pixel : IEquatable<Pixel>, IFormattable, ICopyable<Pixel>
     {
+        /// <summary> All four channels as one int - the same four bytes seen whole, thanks to the
+        /// explicit layout. Lets a pixel be compared or copied in a single operation. </summary>
         [FieldOffset(0)] public int rgba;
-        
+
+        /// <summary> Red channel, 0-255. </summary>
         [FieldOffset(0)] public byte r;
+        /// <summary> Green channel, 0-255. </summary>
         [FieldOffset(1)] public byte g;
+        /// <summary> Blue channel, 0-255. </summary>
         [FieldOffset(2)] public byte b;
+        /// <summary> Alpha channel, 0-255. </summary>
         [FieldOffset(3)] public byte a;
 
         public Pixel(byte r, byte g, byte b, byte a)

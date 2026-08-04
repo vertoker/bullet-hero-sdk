@@ -12,21 +12,30 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Fully independent corner colors - the widest member of the four-corner family, giving a
+    /// barycentric blend across the quad. The other three variants exist so the common cases
+    /// (flat, horizontal, vertical) don't have to store four colors that are mostly equal.
+    /// </summary>
     [RuleContainer]
     public class Color4X4Key : Keyframe, IColor4X4Key, IModel<Color4X4Key>
     {
+        /// <summary> Bottom-left corner color. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorBL)]
         public IColor4 Color4BL { get; set; }
-        
+
+        /// <summary> Bottom-right corner color. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorBR)]
         public IColor4 Color4BR { get; set; }
-        
+
+        /// <summary> Top-left corner color. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorTL)]
         public IColor4 Color4TL { get; set; }
-        
+
+        /// <summary> Top-right corner color. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorTR)]
         public IColor4 Color4TR { get; set; }

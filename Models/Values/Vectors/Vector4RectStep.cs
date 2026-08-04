@@ -10,41 +10,54 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// Vector4Rect quantized to a grid - the 4D end of the Value/Rect/RectStep/Circle family that
+    /// every IVector interface repeats identically.
+    /// </summary>
     [RuleContainer]
     public class Vector4RectStep : IVector4, IModel<Vector4RectStep>
     {
+        /// <summary> Lower bound of the first component, and its grid origin. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
-        
+
+        /// <summary> Lower bound of the second component, and its grid origin. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinY)]
         public float MinY { get; set; }
-        
+
+        /// <summary> Lower bound of the third component, and its grid origin. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinZ)]
         public float MinZ { get; set; }
-        
+
+        /// <summary> Lower bound of the fourth component, and its grid origin. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinW)]
         public float MinW { get; set; }
-        
+
+        /// <summary> Upper bound of the first component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }
-        
+
+        /// <summary> Upper bound of the second component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxY)]
         public float MaxY { get; set; }
-        
+
+        /// <summary> Upper bound of the third component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxZ)]
         public float MaxZ { get; set; }
-        
+
+        /// <summary> Upper bound of the fourth component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxW)]
         public float MaxW { get; set; }
-        
+
+        /// <summary> Cell size, shared by all four components. </summary>
         [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }

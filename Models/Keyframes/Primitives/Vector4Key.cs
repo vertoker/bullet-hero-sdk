@@ -8,9 +8,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Generic 4-component track entry, for parameters that travel as a quadruple (rects, shader-like
+    /// params). The widest of the vector key types and the least specific in meaning.
+    /// </summary>
     [RuleContainer]
     public class Vector4Key : Keyframe, IModel<Vector4Key>
     {
+        /// <summary> Value at this frame. </summary>
         [RuleNotNull(typeof(Vector4Value))]
         [JsonProperty(Names.Vector4)]
         public IVector4 Value { get; set; }

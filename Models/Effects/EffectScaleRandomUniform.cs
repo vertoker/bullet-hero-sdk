@@ -12,13 +12,20 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Size drawn between two vectors with one shared factor, so a particle stays proportional -
+    /// bigger or smaller, never stretched. That is the whole difference from RandomPerComponent.
+    /// </summary>
     [RuleContainer]
     public class EffectScaleRandomUniform : IEffectScale, IModel<EffectScaleRandomUniform>
     {
+        /// <summary> One end of the size range (the JSON key reads "scale x" for historical
+        /// reasons - it is the A bound, not the X axis). </summary>
         [RuleNotNull]
         [JsonProperty(Names.ScaleX)]
         public IVector2 ScaleA { get; set; }
-        
+
+        /// <summary> The other end of the size range. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ScaleY)]
         public IVector2 ScaleB { get; set; }

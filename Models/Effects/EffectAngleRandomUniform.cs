@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Rotation drawn between two bounds, one draw shared by the whole particle. Structurally
+    /// identical to EffectAngleRandomPerComponent - only the evaluation differs.
+    /// </summary>
     [RuleContainer]
     public class EffectAngleRandomUniform : IEffectAngle, IModel<EffectAngleRandomUniform>
     {
+        /// <summary> First bound of the draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.AngleA)]
         public IFloat AngleA { get; set; }
-        
+
+        /// <summary> Second bound of the draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.AngleB)]
         public IFloat AngleB { get; set; }

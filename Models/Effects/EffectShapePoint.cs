@@ -6,6 +6,10 @@ using BH.SDK.Rules.Attributes;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Every particle spawns at the effect object's own origin. Fieldless - the object's transform
+    /// is the shape, which also makes it the one shape with nothing to spread along.
+    /// </summary>
     [RuleContainer]
     public class EffectShapePoint : IEffectShape, IModel<EffectShapePoint>
     {

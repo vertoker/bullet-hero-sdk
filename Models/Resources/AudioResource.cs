@@ -11,9 +11,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Resources
 {
+    /// <summary>
+    /// A music or sfx file the level brings with it - usually the song itself, which is why almost
+    /// every level has at least one. Referenced by LevelTrack.
+    /// </summary>
     [RuleContainer]
     public class AudioResource : Resource, IModel<AudioResource>
     {
+        /// <summary> Identity of this clip within the level. </summary>
         [RuleIPrimitiveIntMax(AudioResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.AudioResourceId)]
         public AudioResourceId AudioResourceId { get; set; }
@@ -31,7 +36,7 @@ namespace BH.SDK.Models.Resources
         public override void Reset()
         {
             base.Reset();
-            AudioResourceId.Reset();
+            AudioResourceId = AudioResourceId.Null;
         }
         
         public override object Clone() => CopyImpl();

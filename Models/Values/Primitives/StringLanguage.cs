@@ -8,12 +8,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// One (language, text) pair inside a StringLocalized. Not an IString itself - it is an entry of
+    /// a localized value, never a value a field can hold on its own.
+    /// </summary>
     [RuleContainer]
     public class StringLanguage : IModel<StringLanguage>
     {
+        /// <summary> Locale tag this translation answers to ("en", "ru"), matched against the
+        /// player's language. </summary>
         [JsonProperty(Names.Language)]
         public string LanguageCode { get; set; }
-        
+
+        /// <summary> The translated text. </summary>
         [RuleNotNull, RuleStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.ValueShort)]
         public string Value { get; set; }

@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// Pins the view to exactly one aspect ratio, letterboxing everything else. The strict choice for
+    /// levels whose patterns are only fair at the ratio they were authored on.
+    /// </summary>
     [RuleContainer]
     public class ScreenLimitFixed : IScreenLimit, IModel<ScreenLimitFixed>
     {
+        /// <summary> The one ratio the level is played at, whatever the device reports. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Aspect)]
         public ScreenAspect Aspect { get; set; }

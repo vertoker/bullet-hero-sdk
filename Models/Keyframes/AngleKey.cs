@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Rotation key. Deliberately unclamped: values beyond 360 are meaningful, since interpolating
+    /// 0 -> 720 spins twice, while wrapping it to 0 would not move at all.
+    /// </summary>
     [RuleContainer]
     public class AngleKey : Keyframe, IModel<AngleKey>
     {
+        /// <summary> Target rotation in degrees at this frame, around the object's pivot. </summary>
         [RuleNotNull(typeof(FloatValue))]
         [JsonProperty(Names.Float)]
         public IFloat Angle { get; set; }

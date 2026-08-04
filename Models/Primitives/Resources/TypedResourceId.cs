@@ -4,9 +4,16 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives.Resources
 {
+    /// <summary>
+    /// Category-agnostic resource id: the shared numeric convention (0 = null, positive = shipped
+    /// with the game, negative = defined by this level) that every per-type id below reuses.
+    /// Exists so code that doesn't care which kind of resource it holds - UGC metadata, validation -
+    /// can still speak about one.
+    /// </summary>
     [Serializable]
     public struct TypedResourceId : IEquatable<TypedResourceId>, IPrimitiveInt
     {
+        /// <summary> The raw number; its sign alone decides game-defined vs. user-defined. </summary>
         public int value;
         int IPrimitiveInt.Value => value;
 

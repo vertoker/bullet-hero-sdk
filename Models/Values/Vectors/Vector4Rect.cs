@@ -10,37 +10,48 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A 4-component vector rolled inside a 4D box - every component drawn independently.
+    /// </summary>
     [RuleContainer]
     public class Vector4Rect : IVector4, IModel<Vector4Rect>
     {
+        /// <summary> Lower bound of the first component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinX)]
         public float MinX { get; set; }
-        
+
+        /// <summary> Lower bound of the second component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinY)]
         public float MinY { get; set; }
-        
+
+        /// <summary> Lower bound of the third component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinZ)]
         public float MinZ { get; set; }
-        
+
+        /// <summary> Lower bound of the fourth component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MinW)]
         public float MinW { get; set; }
-        
+
+        /// <summary> Upper bound of the first component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxX)]
         public float MaxX { get; set; }
-        
+
+        /// <summary> Upper bound of the second component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxY)]
         public float MaxY { get; set; }
-        
+
+        /// <summary> Upper bound of the third component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxZ)]
         public float MaxZ { get; set; }
-        
+
+        /// <summary> Upper bound of the fourth component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.MaxW)]
         public float MaxW { get; set; }

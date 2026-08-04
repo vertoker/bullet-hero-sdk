@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A plain authored number - the IFloat variant that means exactly what it says, as opposed to
+    /// the two random ones. The default choice everywhere a float is keyframeable.
+    /// </summary>
     [RuleContainer]
     public class FloatValue : IFloat, IModel<FloatValue>
     {
+        /// <summary> The number itself. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.ValueShort)]
         public float Value { get; set; }

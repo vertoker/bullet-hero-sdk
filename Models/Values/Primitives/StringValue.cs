@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// One piece of text, same in every language - the IString variant for content that shouldn't be
+    /// translated (a song title, a URL) or simply isn't yet.
+    /// </summary>
     [RuleContainer]
     public class StringValue : IString, IModel<StringValue>
     {
+        /// <summary> The text itself. </summary>
         [RuleNotNull, RuleStringMax(ValueRules.MaxGameString)]
         [JsonProperty(Names.ValueShort)]
         public string Value { get; set; }

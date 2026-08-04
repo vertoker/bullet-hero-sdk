@@ -12,13 +12,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Left-to-right gradient across a texture object: two colors instead of four, with the top and
+    /// bottom corners of each side sharing one value.
+    /// </summary>
     [RuleContainer]
     public class ColorHorizontalKey : Keyframe, IColor4X4Key, IModel<ColorHorizontalKey>
     {
+        /// <summary> Color of both left corners. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorLeft)]
         public IColor4 Color4Left { get; set; }
-        
+
+        /// <summary> Color of both right corners. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.ColorRight)]
         public IColor4 Color4Right { get; set; }

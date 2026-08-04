@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A plain authored whole number - the literal IInt variant, used where a value must be countable
+    /// (particle counts, indices) rather than interpolatable.
+    /// </summary>
     [RuleContainer]
     public class IntValue : IInt, IModel<IntValue>
     {
+        /// <summary> The number itself. </summary>
         [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.ValueShort)]
         public int Value { get; set; }

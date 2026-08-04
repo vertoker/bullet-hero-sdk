@@ -10,22 +10,33 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups
 {
+    /// <summary>
+    /// The level's timeline shape and its id counters. Also the level-scope IObjectIdCounter, while
+    /// the objects those ids belong to live on GameLevel - the two halves a Prefab carries on one
+    /// class are split here, so anything creating objects must hold both.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.LevelSettings, 1, 0)]
     public class LevelSettings : IObjectIdCounter, IFrameLength, IModel<LevelSettings>
     {
+        /// <summary> Frames per second the level is authored in - fixes what one frame means, and so
+        /// what every keyframe's Frame refers to. Not a rendering framerate. </summary>
         [RuleInRange(FrameRules.MinFramerate, FrameRules.MaxFramerate)]
         [JsonProperty(Names.Fps)]
         public int Framerate { get; set; }
-        
+
+        /// <summary> Total length of the level in frames; every keyframe is validated against it. </summary>
         [RuleMin(FrameRules.MinFrameLength)]
         [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
-        
+
+        /// <summary> Next free object id. Only ever grows - ids of deleted objects are never reused,
+        /// so a stale reference can't silently point at a different object. </summary>
         [RuleMin(ObjectId.MinLevelValue)]
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
 
+        /// <summary> Next free audio track id, same never-reused rule. </summary>
         [RuleMin(AudioId.MinValue)]
         [JsonProperty(Names.AudioIdCounter)]
         public int AudioIdCounter { get; set; }

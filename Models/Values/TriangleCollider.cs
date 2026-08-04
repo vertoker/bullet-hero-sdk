@@ -8,17 +8,26 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// One triangle of a CompositeCollider. Triangles are the only collision primitive - any shape
+    /// in the library is a bag of these, which is what lets collision stay a single fast code path.
+    /// Coordinates are local to the object's rect, so a collider scales with it for free.
+    /// </summary>
     [RuleContainer]
     public class TriangleCollider : IModel<TriangleCollider>
     {
+        /// <summary> First corner. </summary>
         [RuleNotNull, RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Point1)]
         public Vector2Value Point1 { get; set; }
-        
+
+        /// <summary> Second corner. </summary>
         [RuleNotNull, RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Point2)]
         public Vector2Value Point2 { get; set; }
-        
+
+        /// <summary> Third corner. Concrete Vector2Value, not IVector2 - a collider vertex must not
+        /// wander randomly between frames. </summary>
         [RuleNotNull, RuleIVector2InRange(ValueRules.MinPos, ValueRules.MaxPos)]
         [JsonProperty(Names.Point3)]
         public Vector2Value Point3 { get; set; }

@@ -13,11 +13,18 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Objects
 {
+    /// <summary>
+    /// Places a particle system in the scene. Deliberately thin - it only points at an EffectData
+    /// resource; its inherited transform tracks decide where and when the emitter lives, the resource
+    /// decides what it emits.
+    /// </summary>
     [RuleContainer]
     public class EffectObject : RectObject, IModel<EffectObject>, IUpdatable<EffectObject>
     {
         public override ObjectType GetModelType() => ObjectType.EffectObject;
 
+        /// <summary> Which EffectData of Level.Resources.Effects to play. Several objects sharing one
+        /// id share one definition, not one running instance. </summary>
         [JsonProperty(Names.EffectId)]
         public EffectId EffectId { get; set; }
         

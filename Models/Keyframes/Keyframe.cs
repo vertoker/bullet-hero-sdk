@@ -8,16 +8,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Base of every animated key in a level: a point in time plus how the value gets there.
+    /// Concrete subclasses add exactly one payload field each. Tracks are plain lists with unique
+    /// but not necessarily sorted frames - sorting is the consumer's job, not the format's.
+    /// </summary>
     [RuleContainer]
     public class Keyframe : IKeyframe, IModel<Keyframe>
     {
         public const int DefaultFrame = 0;
         public const EaseType DefaultEase = EaseType.Linear;
-        
+
+        /// <summary> Level frame this key sits on, bounded by LevelSettings.FrameLength. </summary>
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
-        
+
+        /// <summary> Interpolation used on the way INTO this key, i.e. it shapes the segment before
+        /// it. Stored per key, not per track, so a single track can mix easings freely. </summary>
         [JsonProperty(Names.Ease)]
         public EaseType Ease { get; set; }
 

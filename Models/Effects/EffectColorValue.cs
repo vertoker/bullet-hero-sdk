@@ -12,9 +12,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// One constant tint for every particle - the simplest IEffectColor variant.
+    /// </summary>
     [RuleContainer]
     public class EffectColorValue : IEffectColor, IModel<EffectColorValue>
     {
+        /// <summary> Particle tint. Polymorphic, so it can be a ThemeRef and follow the level's
+        /// active palette. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Color)]
         public IColor4 Color4 { get; set; }

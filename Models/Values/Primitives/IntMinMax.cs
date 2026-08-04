@@ -10,13 +10,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A whole number rolled inside a range - integer counterpart of FloatMinMax, re-rolled per
+    /// evaluation rather than frozen at load.
+    /// </summary>
     [RuleContainer]
     public class IntMinMax : IInt, IModel<IntMinMax>
     {
+        /// <summary> Inclusive lower bound of the roll. </summary>
         [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Min)]
         public int Min { get; set; }
-        
+
+        /// <summary> Inclusive upper bound of the roll. </summary>
         [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Max)]
         public int Max { get; set; }

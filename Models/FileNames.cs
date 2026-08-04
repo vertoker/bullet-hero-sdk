@@ -1,5 +1,9 @@
 ﻿namespace BH.SDK.Models
 {
+    /// <summary>
+    /// Fixed names of everything the game reads from disk - level folders, save files, shared
+    /// libraries. Centralized so a level folder authored by one build is readable by any other.
+    /// </summary>
     public static class FileNames
     {
         public const string LevelDirectory = "levels";

@@ -10,9 +10,15 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// The same text in several languages, picked by the player's locale at display time. The
+    /// translated-content IString variant, as opposed to the single-string StringValue.
+    /// </summary>
     [RuleContainer]
     public class StringLocalized : IString, IModel<StringLocalized>
     {
+        /// <summary> One entry per language, unique by language code. Order carries no meaning; the
+        /// list is a lookup, not a priority chain. </summary>
         [RuleNotNull, RuleCollectionUnique(nameof(StringLanguage.LanguageCode))]
         [JsonProperty(Names.Strings)]
         public List<StringLanguage> Strings { get; set; }

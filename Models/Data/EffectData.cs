@@ -12,45 +12,67 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Data
 {
+    /// <summary>
+    /// A whole particle system definition, stored once in Level.Resources.Effects and referenced by
+    /// any number of EffectObject placements. The object says where/when it plays, this says what it
+    /// looks like - so reusing one effect across a level costs one placement, not one copy.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.EffectData, 1, 0)]
     public class EffectData : IModel<EffectData>, IUpdatable<EffectData>
     {
+        /// <summary> Identity of this effect resource and the key EffectObject.EffectId points at. </summary>
         [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.EffectId)]
         public EffectId EffectId { get; set; }
 
+        /// <summary> Editor-facing label of the effect. Cosmetic - EffectId is the identity. </summary>
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
-        
+
+        /// <summary> Whether StopLocalFrame is honoured at all. Off means the emitter keeps spawning
+        /// for as long as its object lives. </summary>
         [JsonProperty(Names.HasStopLocalFrame)]
         public bool HasStopLocalFrame { get; set; }
-        
+
+        /// <summary> Frame, counted from the object's own StartFrame (local, not level time), where
+        /// emission stops - already-spawned particles still finish their lifetime. </summary>
         [RuleLevelFrame]
         [JsonProperty(Names.StopLocalFrame)]
         public int StopLocalFrame { get; set; }
-        
+
+        /// <summary> Emission basics: particle count, lifetime, looping, texture, pivot - everything
+        /// that decides how many particles exist and how long. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Core)]
         public EffectObjectCore Core { get; set; }
-        
+
+        /// <summary> What moves a particle after it spawns: gravity, velocity, orbital and linear
+        /// force. Complements Shape, which only decides where it starts. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Forces)]
         public EffectObjectForces Forces { get; set; }
-        
+
+        /// <summary> Spawn volume (Point/Circle/Rectangle/Line/Cone/Torus); rim shapes additionally
+        /// nest an IEffectShapeSpread deciding where along the rim the next particle lands. </summary>
         [RuleNotNull(typeof(EffectShapePoint))]
         [JsonProperty(Names.Shape)]
         public IEffectShape Shape { get; set; }
-        
+
+        /// <summary> Particle rotation over its life - one of the five polymorphic variants
+        /// (Value / CurvesOverLife / CurvesBySpeed / RandomUniform / RandomPerComponent). </summary>
         [RuleNotNull(typeof(EffectAngleValue))]
         [JsonProperty(Names.Angle)]
         public IEffectAngle Angle { get; set; }
-        
+
+        /// <summary> Particle size over its life, same five-variant family as Angle. </summary>
         [RuleNotNull(typeof(EffectScaleValue))]
         [JsonProperty(Names.Scale)]
         public IEffectScale Scale { get; set; }
-        
+
+        /// <summary> Particle tint over its life - gradient-based variants instead of curve-based,
+        /// but otherwise the same five-way split as Angle/Scale. </summary>
         [RuleNotNull(typeof(EffectColorValue))]
         [JsonProperty(Names.Color)]
         public IEffectColor Color { get; set; }
@@ -121,6 +143,7 @@ namespace BH.SDK.Models.Data
         {
             var hashCode = new HashCode();
             hashCode.Add(EffectId);
+            hashCode.Add(Name);
             hashCode.Add(HasStopLocalFrame);
             hashCode.Add(StopLocalFrame);
             hashCode.Add(Core);

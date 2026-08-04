@@ -5,6 +5,10 @@ using BH.SDK.Models.Interfaces.Values;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// "Terms unknown" - the ILicense variant meaning nothing was declared, not that anything is
+    /// permitted. Fieldless; a resource carrying it is the one a takedown request lands on.
+    /// </summary>
     public class NoSpecifiedLicense : ILicense, IModel<NoSpecifiedLicense>
     {
         public LicenseType GetModelType() => LicenseType.NoSpecified;
@@ -19,7 +23,7 @@ namespace BH.SDK.Models.Values
         public override int GetHashCode() => base.GetHashCode();
         public override bool Equals(object obj) => obj is NoSpecifiedLicense value && Equals(value);
         
-        public bool Equals(ILicense other) => other is not null && ReferenceEquals(this, other);
+        public bool Equals(ILicense other) => other is NoSpecifiedLicense value && Equals(value);
         public bool Equals(NoSpecifiedLicense other) => other is not null;
     }
 }

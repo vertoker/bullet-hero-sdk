@@ -10,13 +10,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A literal 2D vector - the workhorse of the format: positions, sizes, pivots and anchors all
+    /// land here when the author picked exact numbers rather than a random variant.
+    /// </summary>
     [RuleContainer]
     public class Vector2Value : IVector2, IModel<Vector2Value>
     {
+        /// <summary> Horizontal component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
-        
+
+        /// <summary> Vertical component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordY)]
         public float Y { get; set; }

@@ -11,31 +11,46 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// The "how many, how long, what do they look like" half of an EffectData - everything that
+    /// exists before a single force is applied. EffectObjectForces is the other half.
+    /// </summary>
     [RuleContainer]
     public class EffectObjectCore : IModel<EffectObjectCore>, IUpdatable<EffectObjectCore>
     {
+        /// <summary> Whether particles are drawn at all. Off keeps the system simulating - useful
+        /// when only its side effects matter. </summary>
         [JsonProperty(Names.Render)]
         public bool Render { get; set; }
-        
+
+        /// <summary> Whether emission restarts once the batch is spent, instead of running once.
+        /// NOTE: serialized under the "local" key - a legacy name, not a second meaning. </summary>
         [JsonProperty(Names.Local)]
         public bool Loop { get; set; }
-        
+
         // For user-space it's always Local
-        
+
+        /// <summary> How many particles the system may have alive at once - the main cost knob, and
+        /// what a level's capacity hint ultimately counts. </summary>
         [RuleInRange(EffectRules.Core.ParticleCount_Min, EffectRules.Core.ParticleCount_Max)]
         [JsonProperty(Names.ParticleCount)]
         public uint ParticleCount { get; set; }
-        
+
+        /// <summary> Min/max seconds a particle lives, drawn per particle - the spread is what keeps
+        /// a burst from dying all at once. </summary>
         [RuleNotNull, RuleIVector2Min(EffectRules.Core.LifetimeBounds_Min)]
         [JsonProperty(Names.Lifetime)]
         public IVector2 LifetimeBounds { get; set; }
-        
+
         // Same logic as TextureObject.TextureId
 
+        /// <summary> Image each particle draws - the same resource pool TextureObject draws from. </summary>
         [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
-        
+
+        /// <summary> Point of the particle quad that sits on its position, and that it rotates
+        /// around - the per-particle counterpart of RectObject.Pivots. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ParticlePivot)]
         public Alignment ParticlePivot { get; set; }

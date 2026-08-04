@@ -10,20 +10,29 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Events
 {
+    /// <summary>
+    /// A point playback rewinds to after a death. Real gameplay state, unlike the purely decorative
+    /// Marker it sits next to - place them and a hard section stops costing the whole run.
+    /// </summary>
     [RuleContainer]
     public class Checkpoint : IFrame, IModel<Checkpoint>
     {
+        /// <summary> Level frame a retry resumes from. </summary>
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }
-        
+
+        /// <summary> Editor-facing label. </summary>
         [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
-        
+
+        /// <summary> Whether the checkpoint counts - lets a mapper disable one without deleting it
+        /// and losing its position. </summary>
         [JsonProperty(Names.ActiveShort)]
         public bool Active { get; set; }
-        
+
+        /// <summary> Color of the in-game checkpoint marker; themeable, unlike Marker's. </summary>
         [RuleNotNull(typeof(Color4Value))]
         [JsonProperty(Names.Color)]
         public IColor4 Color4 { get; set; }

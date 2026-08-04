@@ -4,8 +4,13 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Identity of a Prefab template in Level.Resources.Prefabs - the link a PrefabObject placement
+    /// follows to know what to materialize, and what Resync walks back along when the template changes.
+    /// </summary>
     public struct PrefabId : IEquatable<PrefabId>, IPrimitiveGuid
     {
+        /// <summary> The raw Guid. </summary>
         public Guid value;
         Guid IPrimitiveGuid.Value => value;
 
@@ -23,7 +28,7 @@ namespace BH.SDK.Models.Primitives
         }
 
         // Prefab ids are a stable identifier for a Prefab entry (Level.Resources.Prefabs) - what
-        // PrefabObject.PrefabGuid references back to. Unlike the int-based ids (ColliderId,
+        // PrefabObject.PrefabId references back to. Unlike the int-based ids (ColliderId,
         // ThemeId, ...) there is no game-defined/user-defined range split - prefabs are always
         // per-level authored data, and a Guid has no meaningful "positive/negative" ordering to
         // split on anyway. Guid.Empty is the only reserved/Null value.

@@ -11,13 +11,19 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Size driven by curves over the particle's age - what "pop in, shrink away" is made of. Two
+    /// separate curves, so the axes can breathe out of step.
+    /// </summary>
     [RuleContainer]
     public class EffectScaleCurvesOverLife : IEffectScale, IModel<EffectScaleCurvesOverLife>
     {
+        /// <summary> Width over normalized lifetime. </summary>
         [RuleNotNull]
         [JsonProperty(Names.CurveX)]
         public CurveValue CurveX { get; set; }
-        
+
+        /// <summary> Height over normalized lifetime. </summary>
         [RuleNotNull]
         [JsonProperty(Names.CurveY)]
         public CurveValue CurveY { get; set; }

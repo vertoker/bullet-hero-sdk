@@ -10,29 +10,40 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// An RGB color rolled per channel inside a box of colors. The tag survives serialization, so the
+    /// player re-rolls it every frame instead of freezing one color at load time.
+    /// </summary>
     [RuleContainer]
     public class Color3MinMax : IColor3, IModel<Color3MinMax>
     {
+        /// <summary> Lower bound of the red roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinR)]
         public float MinR { get; set; }
 
+        /// <summary> Lower bound of the green roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinG)]
         public float MinG { get; set; }
 
+        /// <summary> Lower bound of the blue roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MinB)]
         public float MinB { get; set; }
 
+        /// <summary> Upper bound of the red roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxR)]
         public float MaxR { get; set; }
 
+        /// <summary> Upper bound of the green roll. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxG)]
         public float MaxG { get; set; }
 
+        /// <summary> Upper bound of the blue roll. Channels roll independently, so the result is any
+        /// color in the box, not a point on the Min-Max line. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.MaxB)]
         public float MaxB { get; set; }

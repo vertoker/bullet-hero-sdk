@@ -10,17 +10,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// FloatMinMax quantized to a grid - the roll can only land on Min + k*Step. Keeps randomness
+    /// while staying on musically or visually meaningful values (quarter turns, whole beats).
+    /// </summary>
     [RuleContainer]
     public class FloatMinMaxStep : IFloat, IModel<FloatMinMaxStep>
     {
+        /// <summary> Inclusive lower bound, and the origin the grid is measured from. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Min)]
         public float Min { get; set; }
-        
+
+        /// <summary> Inclusive upper bound of the roll. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Max)]
         public float Max { get; set; }
-        
+
+        /// <summary> Grid spacing. Non-negative; zero degenerates back to a plain continuous roll. </summary>
         [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Step)]
         public float Step { get; set; }

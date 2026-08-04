@@ -10,17 +10,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// IntMinMax restricted to multiples of Step - e.g. "a random even count". Structurally the same
+    /// idea as FloatMinMaxStep, just without fractional grids.
+    /// </summary>
     [RuleContainer]
     public class IntMinMaxStep : IInt, IModel<IntMinMaxStep>
     {
+        /// <summary> Inclusive lower bound, and the origin the grid is measured from. </summary>
         [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Min)]
         public int Min { get; set; }
-        
+
+        /// <summary> Inclusive upper bound of the roll. </summary>
         [RuleInRange(ValueRules.MinIntValue, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Max)]
         public int Max { get; set; }
-        
+
+        /// <summary> Grid spacing. Non-negative; zero degenerates back to a plain roll. </summary>
         [RuleInRange(ValueRules.IntZero, ValueRules.MaxIntValue)]
         [JsonProperty(Names.Step)]
         public int Step { get; set; }

@@ -4,9 +4,15 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives.Resources
 {
+    /// <summary>
+    /// Points at an opaque binary blob (BytesResource) - the fallback category for data the format
+    /// has no dedicated type for. Nothing in Models references it directly today; it exists so a
+    /// level can carry arbitrary payloads without a format change.
+    /// </summary>
     [Serializable]
     public struct BytesResourceId : IEquatable<BytesResourceId>, IPrimitiveInt
     {
+        /// <summary> The raw number, sharing TypedResourceId's sign convention. </summary>
         public int value;
         int IPrimitiveInt.Value => value;
 

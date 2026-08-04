@@ -11,9 +11,15 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Resources
 {
+    /// <summary>
+    /// An arbitrary binary file the level ships with. The catch-all Resource subtype - nothing in
+    /// the object model references it yet, it exists so payloads can be carried without a format bump.
+    /// </summary>
     [RuleContainer]
     public class BytesResource : Resource, IModel<BytesResource>
     {
+        /// <summary> Identity of this blob, capped to the user-defined range like every level
+        /// resource. </summary>
         [RuleIPrimitiveIntMax(BytesResourceId.MaxUserDefinedValue)]
         [JsonProperty(Names.ByteResourceId)]
         public BytesResourceId ByteResourceId { get; set; }
@@ -31,7 +37,7 @@ namespace BH.SDK.Models.Resources
         public override void Reset()
         {
             base.Reset();
-            ByteResourceId.Reset();
+            ByteResourceId = BytesResourceId.Null;
         }
         
         public override object Clone() => CopyImpl();

@@ -12,9 +12,15 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Every particle keeps one fixed rotation for its whole life - the simplest IEffectAngle
+    /// variant, and the default an effect starts from.
+    /// </summary>
     [RuleContainer]
     public class EffectAngleValue : IEffectAngle, IModel<EffectAngleValue>
     {
+        /// <summary> Rotation in degrees. Still an IFloat, so "fixed" can itself be a random draw
+        /// made once per particle. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Angle)]
         public IFloat Angle { get; set; }

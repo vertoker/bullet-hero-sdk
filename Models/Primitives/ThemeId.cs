@@ -4,8 +4,15 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Identity of a ThemeData palette in Level.Resources.Themes, picked over time by ThemeKeyframe.
+    /// Note it addresses a whole palette - a single color slot inside it is addressed by a plain
+    /// int index (Color4ThemeRef.ThemeColorIndex), not by an id.
+    /// </summary>
     public struct ThemeId : IEquatable<ThemeId>, IPrimitiveGuid
     {
+        /// <summary> The raw Guid. Serialized as a string under JSON and as a native UUID under
+        /// BSON by PrimitiveGuidConverter. </summary>
         public Guid value;
         Guid IPrimitiveGuid.Value => value;
 

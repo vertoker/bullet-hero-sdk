@@ -15,24 +15,36 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Objects
 {
+    /// <summary>
+    /// The visible workhorse of a level: a rect that draws an image and can hurt the player.
+    /// Shape and hitbox are separate concerns here - TextureResourceId is what is seen,
+    /// ColliderId is what is hit, and the two do not have to agree.
+    /// </summary>
     [RuleContainer]
     public class TextureObject : RectObject, IModel<TextureObject>, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.TextureObject;
-        
+
+        /// <summary> Collision shape from the shared library. Null means the object is decoration -
+        /// drawn, never collided with. </summary>
         [RuleIPrimitiveGuidNotNull]
         [JsonProperty(Names.ColliderId)]
         public ColliderId ColliderId { get; set; }
 
+        /// <summary> Image to draw, defaulting to the plain square that most bullets use. </summary>
         [RuleIPrimitiveIntNotNull]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
-        
+
+        /// <summary> Tint track, typed as the four-corner family - so a single object can be flat,
+        /// horizontally, vertically or per-corner graded, and switch between those over time. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(IColor4X4Key.Frame))]
         [JsonProperty(Names.Color)]
         public List<IColor4X4Key> Colors { get; set; }
-        
+
+        /// <summary> Texture mapping track (tiling/offset) - animates the image inside the rect
+        /// while the rect itself stays put. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(UVKey.Frame))]
         [JsonProperty(Names.UV)]

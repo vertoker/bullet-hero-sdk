@@ -4,8 +4,13 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives
 {
+    /// <summary>
+    /// Identity of an EffectData preset in Level.Resources.Effects, referenced by EffectObject.
+    /// The indirection is the point: one edited preset changes every placement at once.
+    /// </summary>
     public struct EffectId : IEquatable<EffectId>, IPrimitiveGuid
     {
+        /// <summary> The raw Guid. </summary>
         public Guid value;
         Guid IPrimitiveGuid.Value => value;
 

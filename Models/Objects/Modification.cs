@@ -20,16 +20,24 @@ namespace BH.SDK.Models.Objects
     // 3. Modification works only for prefab scope where it's located.
     // No deep inheritance of changes
 
+    /// <summary>
+    /// One per-placement field override: "in this PrefabObject, that object's that field is this
+    /// value instead". Re-applied on top of a fresh template copy after every materialize/resync,
+    /// which is what lets a placement diverge from its template without breaking the link.
+    /// </summary>
     [RuleContainer]
     public class Modification : IModel<Modification>
     {
         // WHICH object (inner/template ObjectId) and WHICH field (Path) this override applies to -
         // see ModificationKey's own doc comment. Also PrefabObject.Modifications' dictionary key.
+        /// <summary> Target of the override (template object id + field path). </summary>
         [JsonProperty(Names.Key)]
         public ModificationKey Key { get; set; }
 
         private object _value;
 
+        /// <summary> The overriding value, untyped because a path can point at any field. Normalized
+        /// to long/double on assignment so an override still equals itself after a round trip. </summary>
         [RuleNotNull]
         [JsonProperty(Names.ValueShort)]
         public object Value

@@ -10,9 +10,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Keyframes
 {
+    /// <summary>
+    /// Generic single-number track entry - the key type post-processing and any unnamed scalar
+    /// parameter animate through, where AngleKey/ZoomKey exist only because their meaning is fixed.
+    /// </summary>
     [RuleContainer]
     public class FloatKey : Keyframe, IModel<FloatKey>
     {
+        /// <summary> Value at this frame. </summary>
         [RuleNotNull(typeof(FloatValue))]
         [JsonProperty(Names.Float)]
         public IFloat Value { get; set; }

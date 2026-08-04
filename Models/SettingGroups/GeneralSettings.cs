@@ -5,13 +5,21 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups
 {
+    /// <summary>
+    /// Device-wide options that fit no other group - today, how aggressively a level's resources are
+    /// fetched. Language is planned but not stored yet (see the TODO below).
+    /// </summary>
     [RuleContainer]
     public class GeneralSettings : IModel<GeneralSettings>, IMoveable<GeneralSettings>
     {
+        /// <summary> How many resources download/load at once. Higher is faster on a good
+        /// connection, worse on a phone with a weak one. </summary>
         [RuleInRange(1, 8)]
         [JsonProperty(Names.ResourceParallelLoadCount)]
         public int ResourceParallelLoadCount { get; set; }
-        
+
+        /// <summary> Seconds before a remote resource fetch is given up on and its next fallback
+        /// source is tried. </summary>
         [RuleMin(0f)]
         [JsonProperty(Names.ResourceWebTimeout)]
         public float ResourceWebTimeout { get; set; }

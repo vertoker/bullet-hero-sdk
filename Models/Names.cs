@@ -1,5 +1,11 @@
 ﻿namespace BH.SDK.Models
 {
+    /// <summary>
+    /// Every JSON key used by the format, in one place. Deliberately short and abbreviated to keep
+    /// saved levels small; a key is only ever reused across models that can never co-occur.
+    /// Changing a value here changes the on-disk format - historical snapshots keep their own copies
+    /// precisely so that stays safe.
+    /// </summary>
     public static class Names
     {
         // ---------------------------------------------------------------------------------------------

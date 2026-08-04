@@ -12,25 +12,34 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Emitter shape spawning particles in a widening (or narrowing) cone - a directional spray,
+    /// where a circle would be omnidirectional.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeCone : IEffectShape, IModel<EffectShapeCone>
     {
+        /// <summary> Radius at the far end. Larger than BaseRadius flares out, smaller funnels in. </summary>
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeTopRadius_Min)]
         [JsonProperty(Names.TopRadius)]
         public IFloat TopRadius { get; set; }
-        
+
+        /// <summary> Radius at the emitter end. </summary>
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeBaseRadius_Min)]
         [JsonProperty(Names.BaseRadius)]
         public IFloat BaseRadius { get; set; }
-        
+
+        /// <summary> Portion of the cone's circumference used, in degrees. </summary>
         [RuleNotNull, RuleIFloatInRange(EffectRules.Shape.Arc_Min, EffectRules.Shape.Arc_Max)]
         [JsonProperty(Names.Arc)]
         public IFloat Arc { get; set; }
-        
+
+        /// <summary> Distance between the two ends - how deep the spawn volume is. </summary>
         [RuleNotNull, RuleIFloatMin(EffectRules.Shape.ConeHeight_Min)]
         [JsonProperty(Names.Height)]
         public IFloat Height { get; set; }
-        
+
+        /// <summary> How successive particles walk the arc. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IEffectShapeSpread Spread { get; set; }

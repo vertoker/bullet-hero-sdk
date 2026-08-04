@@ -12,17 +12,24 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Values
 {
     // Alpha is not stored: any IColor3 is implicitly fully opaque (alpha = 1).
+    /// <summary>
+    /// A literal RGB color - the plain, non-random, non-themed IColor3 variant. What "I picked this
+    /// exact color" serializes to; the other two variants defer the decision to a theme or a dice roll.
+    /// </summary>
     [RuleContainer]
     public class Color3Value : IColor3, IModel<Color3Value>
     {
+        /// <summary> Red channel, normalized 0..1 (not 0..255). </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelR)]
         public float R { get; set; }
 
+        /// <summary> Green channel, normalized 0..1. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelG)]
         public float G { get; set; }
 
+        /// <summary> Blue channel, normalized 0..1. </summary>
         [RuleInRange(ValueRules.MinColor, ValueRules.MaxColor)]
         [JsonProperty(Names.ChannelB)]
         public float B { get; set; }

@@ -4,9 +4,14 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Models.Primitives.Resources
 {
+    /// <summary>
+    /// Points at a music/sfx clip - an AudioResource of Level.Resources.Audios or a game-shipped one.
+    /// Referenced by LevelTrack, not by any RectObject: audio is placed on the timeline, not in space.
+    /// </summary>
     [Serializable]
     public struct AudioResourceId : IEquatable<AudioResourceId>, IPrimitiveInt
     {
+        /// <summary> The raw number, sharing TypedResourceId's sign convention. </summary>
         public int value;
         int IPrimitiveInt.Value => value;
 

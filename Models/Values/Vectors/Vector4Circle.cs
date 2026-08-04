@@ -10,25 +10,34 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// A 4-component vector rolled inside a hypersphere around a center - radial spread carried into
+    /// 4D for consistency with the rest of the family, rather than because 4D geometry is authored.
+    /// </summary>
     [RuleContainer]
     public class Vector4Circle : IVector4, IModel<Vector4Circle>
     {
+        /// <summary> Center of the first component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordX)]
         public float X { get; set; }
-        
+
+        /// <summary> Center of the second component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordY)]
         public float Y { get; set; }
-        
+
+        /// <summary> Center of the third component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordZ)]
         public float Z { get; set; }
-        
+
+        /// <summary> Center of the fourth component. </summary>
         [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.CoordW)]
         public float W { get; set; }
-        
+
+        /// <summary> Maximum distance from the center point. </summary>
         [RuleInRange(ValueRules.FloatZero, ValueRules.MaxFloatValue)]
         [JsonProperty(Names.Radius)]
         public float Radius { get; set; }

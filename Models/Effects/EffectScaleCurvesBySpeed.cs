@@ -12,17 +12,24 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Size driven by how fast the particle moves - stretch it along its motion for a speed-line
+    /// look without any per-particle scripting.
+    /// </summary>
     [RuleContainer]
     public class EffectScaleCurvesBySpeed : IEffectScale, IModel<EffectScaleCurvesBySpeed>
     {
+        /// <summary> Width over normalized speed. </summary>
         [RuleNotNull]
         [JsonProperty(Names.CurveX)]
         public CurveValue CurveX { get; set; }
-        
+
+        /// <summary> Height over normalized speed. </summary>
         [RuleNotNull]
         [JsonProperty(Names.CurveY)]
         public CurveValue CurveY { get; set; }
-        
+
+        /// <summary> Speed window mapped onto the curves' 0..1 axis. </summary>
         [RuleNotNull]
         [JsonProperty(Names.SpeedRange)]
         public IVector2 SpeedRange { get; set; }

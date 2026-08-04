@@ -12,9 +12,14 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Each particle lands at a random point of the shape's arc/segment - scattered, with no
+    /// relation between consecutive spawns.
+    /// </summary>
     [RuleContainer]
     public class EffectShapeSpreadRandom : IEffectShapeSpread, IModel<EffectShapeSpreadRandom>
     {
+        /// <summary> How much of the shape the draw may cover; smaller values keep spawns clustered. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Spread)]
         public IFloat Spread { get; set; }

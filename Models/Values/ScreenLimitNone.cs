@@ -6,6 +6,10 @@ using BH.SDK.Rules.Attributes;
 
 namespace BH.SDK.Models.Values
 {
+    /// <summary>
+    /// "Do not constrain the view" - the IScreenLimit variant that accepts any aspect ratio and
+    /// passes the device's own through untouched. Fieldless: the behavior is the whole value.
+    /// </summary>
     [RuleContainer]
     public class ScreenLimitNone : IScreenLimit, IModel<ScreenLimitNone>
     {
@@ -23,7 +27,7 @@ namespace BH.SDK.Models.Values
         public override int GetHashCode() => base.GetHashCode();
         public override bool Equals(object obj) => obj is ScreenLimitNone value && Equals(value);
 
-        public bool Equals(IScreenLimit other) => other is not null && ReferenceEquals(this, other);
+        public bool Equals(IScreenLimit other) => other is ScreenLimitNone value && Equals(value);
         public bool Equals(ScreenLimitNone other) => other is not null;
     }
 }

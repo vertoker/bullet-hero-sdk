@@ -10,49 +10,70 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models.Effects
 {
+    /// <summary>
+    /// Everything that moves a particle after it spawns. Split in two kinds: the Start* fields are
+    /// drawn once at birth (min/max pairs), the rest act continuously for the particle's whole life.
+    /// </summary>
     [RuleContainer]
     public class EffectObjectForces : IModel<EffectObjectForces>, IUpdatable<EffectObjectForces>
     {
+        /// <summary> Lower bound of the per-particle gravity draw; negative values float upward. </summary>
         [RuleNotNull]
         [JsonProperty(Names.GravityMin)]
         public IFloat StartGravityMin { get; set; }
-        
+
+        /// <summary> Upper bound of the per-particle gravity draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.GravityMax)]
         public IFloat StartGravityMax { get; set; }
-        
+
+        /// <summary> Lower bound of the initial velocity draw, per axis. </summary>
         [RuleNotNull]
         [JsonProperty(Names.VelocityMin)]
         public IVector2 StartVelocityMin { get; set; }
-        
+
+        /// <summary> Upper bound of the initial velocity draw. Spreading these two is what turns a
+        /// clean burst into a spray. </summary>
         [RuleNotNull]
         [JsonProperty(Names.VelocityMax)]
         public IVector2 StartVelocityMax { get; set; }
-        
+
+        /// <summary> Lower bound of the initial spin draw, in degrees per second. </summary>
         [RuleNotNull]
         [JsonProperty(Names.AngularVelocityMin)]
         public IFloat StartAngularVelocityMin { get; set; }
-        
+
+        /// <summary> Upper bound of the initial spin draw. </summary>
         [RuleNotNull]
         [JsonProperty(Names.AngularVelocityMax)]
         public IFloat StartAngularVelocityMax { get; set; }
-        
+
+        /// <summary> Constant drift added every frame, on top of whatever velocity the particle was
+        /// born with - wind, not an impulse. </summary>
         [RuleNotNull]
         [JsonProperty(Names.LinearVelocity)]
         public IVector2 LinearVelocity { get; set; }
-        
+
+        /// <summary> Rotation of particles around a center rather than around themselves; the Z
+        /// component is the one that matters in a 2D scene. </summary>
         [RuleNotNull]
         [JsonProperty(Names.OrbitalVelocity)]
         public IVector3 OrbitalVelocity { get; set; }
-        
+
+        /// <summary> Where that orbit center sits relative to the emitter - offsetting it makes the
+        /// swirl lopsided. </summary>
         [RuleNotNull]
         [JsonProperty(Names.OrbitalCenterOffset)]
         public IVector3 OrbitalCenterOffset { get; set; }
-        
+
+        /// <summary> Multiplier over the particle's whole velocity - one dial to slow down or speed
+        /// up a finished effect without re-tuning every field above. </summary>
         [RuleNotNull]
         [JsonProperty(Names.VelocitySpeed)]
         public IFloat VelocitySpeed { get; set; }
-        
+
+        /// <summary> Constant acceleration (force, not velocity), so its effect compounds over the
+        /// particle's life instead of staying flat. </summary>
         [RuleNotNull]
         [JsonProperty(Names.LinearForce)]
         public IVector2 LinearForce { get; set; }

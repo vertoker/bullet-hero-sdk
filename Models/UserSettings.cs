@@ -9,26 +9,37 @@ namespace BH.SDK.Models
 {
     // TODO Add tests for IResetable
 
+    /// <summary>
+    /// The player's own options, saved once per device (settings.json) - the third top-level file
+    /// next to a level and its metadata. Nothing here travels with a level: the same level must
+    /// play the same way regardless of these.
+    /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.UserSettings, 1, 0)]
     public class UserSettings : IModel<UserSettings>, IMoveable<UserSettings>
     {
+        /// <summary> Options fitting no other group (resource loading, later language). </summary>
         [RuleNotNull]
         [JsonProperty(Names.General)]
         public GeneralSettings General { get; set; }
-        
+
+        /// <summary> Input scheme and (eventually) key bindings. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Controls)]
         public ControlsSettings Controls { get; set; }
-        
+
+        /// <summary> Volume mix. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Audio)]
         public AudioSettings Audio { get; set; }
-        
+
+        /// <summary> Rendering quality and per-subsystem switches. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Graphics)]
         public GraphicsSettings Graphics { get; set; }
-        
+
+        /// <summary> In-game level editor preferences. Present even for players who never open the
+        /// editor - the file has a fixed shape. </summary>
         [RuleNotNull]
         [JsonProperty(Names.GameEditor)]
         public GameEditorSettings GameEditor { get; set; }
