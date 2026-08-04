@@ -63,8 +63,10 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   **Opt-in tooling, not wired into save/load anywhere** — see "Rules & validation" below.
 - **Utils/** — `BHSDKMath` (Unity-independent math, since the core assembly can't reference
   `UnityEngine.Mathf`), `DimensionalIndexer2` (flat-array↔2D-grid indexing), `LevelUtils`
-  (`RectObject` id/parent/bounds setters), `ModelUtils` (deep-copy/equality/hash helpers for
-  `List`/`Dictionary`/`Array` of `ICopyable<T>`), `ModificationUtils`/`TypeExtensions`.
+  (`RectObject` id/parent/bounds setters), `LevelCapacityUtils` (sweep-line "peak simultaneous
+  objects per type" measurement backing `LevelCapacityHint` — see below), `ModelUtils`
+  (deep-copy/equality/hash helpers for `List`/`Dictionary`/`Array` of `ICopyable<T>`),
+  `ModificationUtils`/`TypeExtensions`.
 - **Services/** — `SerializationService`-adjacent but SDK-root-level: `CryptographyService`
   (AES-256-CBC), `ModificationService` (reflection path-based get/set, see "Modification system"
   below), `TextFormatService` (`{variable}` string templating).
@@ -241,11 +243,21 @@ alongside `ThemeKeyframe` (which *is* a real track) in the same `GameEvents` cla
 ## `Models/SettingGroups/` — one folder, two unrelated aggregates
 
 `LevelSettings` (`Level.Settings`, per-level: `Framerate`, `FrameLength`, `ObjectIdCounter`,
-`AudioIdCounter` — the `IObjectIdCounter` implementation) has nothing to do with the rest of this
+`AudioIdCounter` — the `IObjectIdCounter` implementation — plus `Capacity`, a `LevelCapacityHint`)
+has nothing to do with the rest of this
 folder (`GeneralSettings`/`ControlsSettings`/`AudioSettings`/`GraphicsSettings`/
 `GameEditorSettings`), which are all sub-groups of `UserSettings` (per-device, `settings.json`).
 The `UserSettings` sub-groups additionally implement `IMoveable<T>` (`Pull(source)` — an in-place
 merge, distinct from `IModel<T>`'s `Copy`/`Reset`).
+
+`LevelCapacityHint` (`LevelSettings.Capacity`) is the one **advisory** value in the whole format:
+five peak-simultaneous-object counts (instances/textures/effects/texts/tracks) an editor writes on
+save from `LevelCapacityUtils.GetPeakUsage`, so a player can preallocate its per-frame buffers
+instead of growing them mid-level. It is never authoritative — the file may be hand-edited, foreign,
+or stale, so a consumer treats it as a lower bound at most, measures/grows on its own anyway, and
+clamps it against what the device allows. All zeroes (the default, and what an older level
+deserializes to) means "no hint", not "no objects". `LevelRules.Min/MaxCapacityHint` bound it purely
+so a hostile file can't request a gigabyte-scale preallocation.
 
 ## `Models/Resources/`
 

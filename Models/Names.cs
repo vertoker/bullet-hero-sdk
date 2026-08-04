@@ -173,6 +173,8 @@
         
         public const string Object = "object";
         public const string Objects = "objects";
+        public const string Instance = "instance";
+        public const string Instances = "instances";
         public const string Parent = "parent";
         public const string ObjectShort = "obj";
         public const string ParentShort = "p";
@@ -210,6 +212,7 @@
         public const string Textures = "textures";
         public const string Subling = "sbl";
         public const string Text = "text";
+        public const string Texts = "texts";
         public const string Font = "font";
         public const string Fonts = "fonts";
         public const string Direction = "direction";
@@ -287,6 +290,11 @@
         public const string Limit = "limit";
         public const string Limits = "limits";
         public const string LimitShort = "lmt";
+        public const string Hint = "hint";
+        public const string Hints = "hints";
+        public const string HintShort = "hnt";
+        public const string Capacity = "capacity";
+        public const string CapacityShort = "cap";
         public const string Smoothness = "smt";
         public const string Rounded = "rnd";
         public const string Temperature = "tmp";
@@ -447,6 +455,8 @@
         public const string CameraEvents = Camera + _ + Events;
         public const string PostProcessingEvents = Post + Processing + _ + Events;
         public const string PlayerEvents = Player + _ + Events;
+        
+        public const string LimitHints = Limit + _ + Hints;
 
         // Instances
         
