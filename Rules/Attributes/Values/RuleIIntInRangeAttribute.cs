@@ -8,7 +8,7 @@ using BH.SDK.Utils;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleIIntInRangeAttribute : BaseRuleAttribute
+    public class RuleIIntInRangeAttribute : BasePropertyRuleAttribute
     {
         // always include
         public int Min { get; set; }
@@ -26,7 +26,7 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IInt).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
             if (value is not IInt integer) return false;
 
@@ -54,7 +54,7 @@ namespace BH.SDK.Rules.Attributes
             }
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             var value = property.GetValue(target);
             if (value is not IInt integer) return;

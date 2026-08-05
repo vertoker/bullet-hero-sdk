@@ -2,6 +2,7 @@
 using BH.SDK.Models.Enum.Meta;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -16,17 +17,17 @@ namespace BH.SDK.Models.Values
     public class CustomLicense : ILicense, IModel<CustomLicense>
     {
         /// <summary> Display name of the license ("My Studio EULA v2"). </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleStringMax(ValueRules.MaxLicenseName)]
         [JsonProperty(Names.Name)]
         public string LicenseName { get; set; }
 
         /// <summary> Where the authoritative wording is published. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleStringMax(ValueRules.MaxUrl)]
         [JsonProperty(Names.Url)]
         public string LicenseUrl { get; set; }
 
         /// <summary> Full license wording embedded in the level, so it survives the URL going dead. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleStringMax(ValueRules.MaxLicenseText)]
         [JsonProperty(Names.Text)]
         public string LicenseText { get; set; }
 

@@ -1,33 +1,46 @@
-﻿using System;
+using System;
 using System.Reflection;
-using BH.SDK.Models;
 using BH.SDK.Utils;
 
 namespace BH.SDK.Rules.Attributes
 {
+    // Bounded by the timeline of the scope currently being walked, not by "the level's" - a frame
+    // inside a prefab template belongs to that template's own FrameLength, and measuring it against
+    // the level's would let a 10-frame template hold a keyframe at frame 500.
+    //
+    // A root with no timeline at all (LevelMeta, UserSettings, a standalone value model) still gets
+    // its lower bound checked. Reporting every frame as broken there - the old behaviour, which fell
+    // out of requiring the context to literally be a Level - made the issue unfixable rather than
+    // informative, since Fix had nothing to clamp against either.
+
+    /// <summary>
+    /// A frame must sit inside its own scope's timeline: [0, FrameLength). The upper bound is
+    /// exclusive - FrameLength is a count, so the last playable frame is FrameLength - 1.
+    /// </summary>
     [AttributeUsage(PropertyTarget)]
-    public class RuleLevelFrameAttribute : BaseRuleAttribute
+    public class RuleLevelFrameAttribute : BasePropertyRuleAttribute
     {
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(int).IsAssignableFrom(property.PropertyType);
 
-        protected override bool IsValidInternal(object value, object context)
-            => value is int frame and >= FrameRules.MinFrame
-               && context is Level level && frame < level.Settings.FrameLength;
-
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
-            if (context is not Level level) return;
-            if (level.Settings.FrameLength < FrameRules.MinFrame) return;
-            
-            var value = property.GetValue(target);
-            if (value is not int frame) return;
+            if (value is not int frame || frame < FrameRules.MinFrame) return false;
+            if (context is not { HasScope: true }) return true;
 
-            if (frame < FrameRules.MinFrame || frame >= level.Settings.FrameLength)
-            {
-                frame = BHSDKMath.Clamp(frame, FrameRules.MinFrame, level.Settings.FrameLength - 1);
-                property.SetValue(target, frame);
-            }
+            return frame < context.FrameLength;
+        }
+
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
+        {
+            if (property.GetValue(target) is not int frame) return;
+
+            var hasTimeline = context is { HasScope: true }
+                              && context.FrameLength >= FrameRules.MinFrameLength;
+            var maxFrame = hasTimeline ? context.FrameLength - 1 : int.MaxValue;
+
+            if (frame < FrameRules.MinFrame || frame > maxFrame)
+                property.SetValue(target, BHSDKMath.Clamp(frame, FrameRules.MinFrame, maxFrame));
         }
     }
 }

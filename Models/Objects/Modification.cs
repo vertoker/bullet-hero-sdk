@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -32,6 +33,7 @@ namespace BH.SDK.Models.Objects
         // see ModificationKey's own doc comment. Also PrefabObject.Modifications' dictionary key.
 
         /// <summary> Target of the override (template object id + field path). </summary>
+        [RuleModificationKeyValid(ValueRules.MaxModificationPath)]
         [JsonProperty(Names.Key)]
         public ModificationKey Key { get; set; }
 

@@ -14,6 +14,9 @@ namespace BH.SDK.Models.Values
     /// Vector3Rect snapped to a cubic grid - random 3D placement constrained to cell centers.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Vector3RectStep.MinX), nameof(Vector3RectStep.MaxX))]
+    [RulePropertyOrder(nameof(Vector3RectStep.MinY), nameof(Vector3RectStep.MaxY))]
+    [RulePropertyOrder(nameof(Vector3RectStep.MinZ), nameof(Vector3RectStep.MaxZ))]
     public class Vector3RectStep : IVector3, IModel<Vector3RectStep>
     {
         /// <summary> Lower X bound, and the X origin the grid is measured from. </summary>

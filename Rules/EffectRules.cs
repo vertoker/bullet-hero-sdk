@@ -11,7 +11,20 @@ namespace BH.SDK.Rules
     public static class EffectRules
     {
         public const bool HasStopLocalFrame_Default = false;
+
+        // A frame counted from the emitter's own start, NOT a frame on the level timeline - an
+        // effect placed near the end of a level may legitimately stop 300 of its own frames later.
+        // It used to be validated as a level frame, which tied an effect's internal duration to
+        // wherever it happened to be placed.
+        public const int StopLocalFrame_Min = 0;
+        public const int StopLocalFrame_Max = 100_000;
         public const int StopLocalFrame_Default = 10;
+
+        // Speed window the "by speed" variants (EffectAngleCurvesBySpeed, EffectScaleCurvesBySpeed,
+        // EffectColorGradientBySpeed) remap a particle's speed through. Speed is a magnitude, so it
+        // never goes below zero; the upper end is well past what the force fields can produce.
+        public const float SpeedRange_Min = 0f;
+        public const float SpeedRange_Max = 1000f;
 
         public static class Core
         {
@@ -23,7 +36,11 @@ namespace BH.SDK.Rules
             public const uint ParticleCount_Max = 32768;
             public const uint ParticleCount_Default = 10;
             
+            // Particle lifetime range, in seconds. The upper bound is what keeps ParticleCount
+            // meaningful: emitter cost is roughly count x lifetime, so an unbounded lifetime makes
+            // a legal particle count unboundedly expensive.
             public const float LifetimeBounds_Min = 0f;
+            public const float LifetimeBounds_Max = 60f;
             public const float LifetimeBounds_X_Default = 3f;
             public const float LifetimeBounds_Y_Default = 3f;
             

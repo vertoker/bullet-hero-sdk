@@ -6,7 +6,7 @@ using BH.SDK.Utils;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleCollectionCountAttribute : BaseRuleAttribute
+    public class RuleCollectionCountAttribute : BasePropertyRuleAttribute
     {
         public int Count { get; set; }
 
@@ -18,10 +18,10 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(ICollection).IsAssignableFrom(property.PropertyType);
 
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
             => value is ICollection col && col.Count == Count;
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             var value = property.GetValue(target);
             if (value == null) return;

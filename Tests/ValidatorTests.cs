@@ -29,9 +29,10 @@ namespace BH.SDK.Tests
             var settings = new RuleAnalyzerSettings(true, true);
             var issues = validator.Analyze(level, settings);
             Assert.IsNotEmpty(issues);
-            
-            fixer.Fix(issues, level, new RuleFixerSettings());
-            issues = validator.Analyze(level, settings);
+
+            // Repeated passes, because one repair can create the next: giving an unset resource an
+            // id makes it disagree with the key it is filed under, and only a re-analysis sees that.
+            issues = fixer.FixUntilStable(validator, level, settings, new RuleFixerSettings());
             Assert.IsEmpty(issues);
         }
         
@@ -53,11 +54,10 @@ namespace BH.SDK.Tests
             var validator = new RuleAnalyzer();
             var level = MockData.CreateInvalidTestLevelMeta();
             
-            var issues = validator.Analyze(level, new RuleAnalyzerSettings());
-            Assert.IsNotEmpty(issues);
-            
-            fixer.Fix(issues, level, new RuleFixerSettings());
-            issues = validator.Analyze(level, new RuleAnalyzerSettings());
+            var analyzerSettings = new RuleAnalyzerSettings();
+            Assert.IsNotEmpty(validator.Analyze(level, analyzerSettings));
+
+            var issues = fixer.FixUntilStable(validator, level, analyzerSettings, new RuleFixerSettings());
             Assert.IsEmpty(issues);
         }
         
@@ -79,11 +79,10 @@ namespace BH.SDK.Tests
             var validator = new RuleAnalyzer();
             var settings = MockData.CreateInvalidTestSettings();
             
-            var issues = validator.Analyze(settings, new RuleAnalyzerSettings());
-            Assert.IsNotEmpty(issues);
-            
-            fixer.Fix(issues, settings, new RuleFixerSettings());
-            issues = validator.Analyze(settings, new RuleAnalyzerSettings());
+            var analyzerSettings = new RuleAnalyzerSettings();
+            Assert.IsNotEmpty(validator.Analyze(settings, analyzerSettings));
+
+            var issues = fixer.FixUntilStable(validator, settings, analyzerSettings, new RuleFixerSettings());
             Assert.IsEmpty(issues);
         }
         

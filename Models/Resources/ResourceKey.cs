@@ -1,6 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -19,11 +20,12 @@ namespace BH.SDK.Models.Resources
 
         /// <summary> How Uri should be interpreted (file path / URL / addressable key) - it cannot
         /// be guessed reliably from the string itself. </summary>
+        [RuleEnumValid(ResourceUriType.Undefined)]
         [JsonProperty(Names.UriType)]
         public ResourceUriType UriType { get; set; }
 
         /// <summary> The location itself, in whatever form UriType says. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleStringMax(ResourceRules.MaxUriLength)]
         [JsonProperty(Names.Uri)]
         public string Uri { get; set; }
         

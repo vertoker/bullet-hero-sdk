@@ -4,7 +4,7 @@ using System.Reflection;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleStringMaxAttribute : BaseRuleAttribute
+    public class RuleStringMaxAttribute : BasePropertyRuleAttribute
     {
         public int MaxLength { get; set; }
 
@@ -16,10 +16,10 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(string).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
             => value is string str && str.Length <= MaxLength;
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             if (property.PropertyType != typeof(string)) return;
             if (property.GetValue(target) is not string s) return;

@@ -8,15 +8,15 @@ namespace BH.SDK.Rules.Attributes
     // reserved NullValue (always Guid.Empty by convention). See RuleLevelIdValid for LevelId's own
     // dedicated (context-free but type-specific) equivalent.
     [AttributeUsage(PropertyTarget)]
-    public class RuleIPrimitiveGuidNotNullAttribute : BaseRuleAttribute
+    public class RuleIPrimitiveGuidNotNullAttribute : BasePropertyRuleAttribute
     {
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IPrimitiveGuid).IsAssignableFrom(property.PropertyType);
 
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
             => value is IPrimitiveGuid primitive && primitive.Value != Guid.Empty;
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             if (property.GetValue(target) is not IPrimitiveGuid primitive) return;
             if (primitive.Value != Guid.Empty) return;

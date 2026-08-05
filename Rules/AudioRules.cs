@@ -9,6 +9,11 @@ namespace BH.SDK.Rules
         public const int MinAudioLayer = 0;
         public const int MaxAudioLayer = MaxFrameCount - 1;
         
+        // How far a track's audio is shifted against the timeline, in seconds. Bounded both ways at
+        // an hour: the value is a float with no other constraint, so without this a file can hold
+        // NaN or 1e30 and every time-to-frame conversion downstream inherits it.
+        public const float MinOffsetTime = -3600f;
+        public const float MaxOffsetTime = 3600f;
         public const float OffsetTimeDefault = 0f;
         
         // -80f - 0f, 0.1f, dB;

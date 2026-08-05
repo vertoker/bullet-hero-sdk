@@ -4,6 +4,7 @@ using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using Newtonsoft.Json;
@@ -38,6 +39,7 @@ namespace BH.SDK.Models.Objects
         /// <summary> Remap table from template-inner ids to the real ids this placement's copies got
         /// in the hosting scope - how a resync finds the objects it already owns instead of
         /// duplicating them. </summary>
+        [RuleNotNull, RuleCollectionMaxCount(PrefabRules.MaxObjectIdRemaps)]
         [JsonProperty(Names.ObjectIds)]
         public Dictionary<ObjectId, ObjectId> ObjectIds { get; set; } // inner id -> this instance's outer id
 
@@ -50,6 +52,7 @@ namespace BH.SDK.Models.Objects
         // a child can have several fields overridden at once, but only one override per field.
 
         /// <summary> Per-placement field overrides, keyed by (template object, field path). </summary>
+        [RuleNotNull, RuleCollectionMaxCount(PrefabRules.MaxModifications)]
         [JsonProperty(Names.Mod)]
         public Dictionary<ModificationKey, Modification> Modifications { get; set; }
 

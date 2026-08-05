@@ -15,6 +15,10 @@ namespace BH.SDK.Models.Values
     /// every IVector interface repeats identically.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Vector4RectStep.MinX), nameof(Vector4RectStep.MaxX))]
+    [RulePropertyOrder(nameof(Vector4RectStep.MinY), nameof(Vector4RectStep.MaxY))]
+    [RulePropertyOrder(nameof(Vector4RectStep.MinZ), nameof(Vector4RectStep.MaxZ))]
+    [RulePropertyOrder(nameof(Vector4RectStep.MinW), nameof(Vector4RectStep.MaxW))]
     public class Vector4RectStep : IVector4, IModel<Vector4RectStep>
     {
         /// <summary> Lower bound of the first component, and its grid origin. </summary>

@@ -19,7 +19,8 @@ namespace BH.SDK.Models.Values
     {
         /// <summary> One entry per language, unique by language code. Order carries no meaning; the
         /// list is a lookup, not a priority chain. </summary>
-        [RuleNotNull, RuleCollectionUnique(nameof(StringLanguage.LanguageCode))]
+        [RuleNotNull, RuleCollectionNoNullItems]
+        [RuleCollectionUnique(nameof(StringLanguage.LanguageCode))]
         [JsonProperty(Names.Strings)]
         public List<StringLanguage> Strings { get; set; }
 

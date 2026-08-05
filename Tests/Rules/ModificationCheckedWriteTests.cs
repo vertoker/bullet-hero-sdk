@@ -1,0 +1,106 @@
+using BH.SDK.Models;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
+using BH.SDK.Services;
+using NUnit.Framework;
+
+namespace BH.SDK.Tests.Rules
+{
+    // A per-instance override is the one write in the whole format that reaches a model without
+    // passing anything that could judge it - ModificationService resolves a path and assigns. So an
+    // override could hold a frame past the end of the timeline while the level it belongs to
+    // validated clean, and nothing would notice until playback.
+
+    /// <summary>
+    /// ModificationService.IsValueAllowed / SetValueChecked: the rules of the target property,
+    /// applied to a value on its way in.
+    /// </summary>
+    public class ModificationCheckedWriteTests
+    {
+        private static ModificationService ServiceFor(params System.Type[] types)
+        {
+            var service = new ModificationService();
+            foreach (var type in types) service.Add(type);
+            return service;
+        }
+
+        private static RuleContext ContextOfLength(int frameLength)
+        {
+            var level = new Level();
+            level.Settings.FrameLength = frameLength;
+            return RuleContext.ForRoot(level);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestAllowedValueIsWritten()
+        {
+            var service = ServiceFor(typeof(RectObject));
+            var obj = new RectObject { ObjectId = new ObjectId(1) };
+
+            Assert.IsTrue(service.SetValueChecked(obj, 50, Names.EndFrameShort, ContextOfLength(100)));
+            Assert.AreEqual(50, obj.EndFrame);
+        }
+
+        // The case the whole feature exists for: a frame outside the level's timeline, arriving
+        // through an override rather than through the editor.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestOutOfRangeFrameIsRefused()
+        {
+            var service = ServiceFor(typeof(RectObject));
+            var obj = new RectObject { ObjectId = new ObjectId(1), EndFrame = 10 };
+
+            Assert.IsFalse(service.SetValueChecked(obj, 500, Names.EndFrameShort, ContextOfLength(100)));
+            Assert.AreEqual(10, obj.EndFrame, "A refused write must change nothing");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestOutOfRangeLayerIsRefused()
+        {
+            var service = ServiceFor(typeof(RectObject));
+            var obj = new RectObject { ObjectId = new ObjectId(1) };
+
+            Assert.IsFalse(service.IsValueAllowed(obj, ValueRules.MaxLayer + 1, Names.Layer,
+                ContextOfLength(100)));
+            Assert.IsTrue(service.IsValueAllowed(obj, ValueRules.MaxLayer, Names.Layer,
+                ContextOfLength(100)));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestNullIntoNotNullPropertyIsRefused()
+        {
+            var service = ServiceFor(typeof(RectObject));
+            var obj = new RectObject { ObjectId = new ObjectId(1) };
+
+            Assert.IsFalse(service.IsValueAllowed(obj, null, Names.Name, ContextOfLength(100)));
+        }
+
+        // The plain write is left as it was: existing callers keep their behaviour, and opting into
+        // checking is explicit.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestUncheckedWriteStillBypassesRules()
+        {
+            var service = ServiceFor(typeof(RectObject));
+            var obj = new RectObject { ObjectId = new ObjectId(1) };
+
+            Assert.IsTrue(service.SetValue(obj, 500, Names.EndFrameShort));
+            Assert.AreEqual(500, obj.EndFrame);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestUnresolvablePathIsRefused()
+        {
+            var service = ServiceFor(typeof(RectObject));
+            var obj = new RectObject { ObjectId = new ObjectId(1) };
+
+            Assert.IsFalse(service.IsValueAllowed(obj, 1, "no_such_field", ContextOfLength(100)));
+            Assert.IsFalse(service.SetValueChecked(obj, 1, "no_such_field", ContextOfLength(100)));
+        }
+    }
+}

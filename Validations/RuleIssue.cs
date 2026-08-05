@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 
@@ -11,13 +12,20 @@ namespace BH.SDK.Validations
     public readonly struct RuleIssue
     {
         public readonly BaseRuleAttribute Rule;
-        public readonly object Root;
+
+        // The context as it was WHERE the rule fired, not as it is at the root - inside a prefab
+        // template that means the template's own timeline and scope. RuleFixer replays the fix
+        // against this exact context, so a repair lands on the same bounds the check used.
+        public readonly RuleContext Context;
+
         public readonly List<RulePath> Trace;
 
-        public RuleIssue(BaseRuleAttribute rule, object root, List<RulePath> trace)
+        public object Root => Context.Root;
+
+        public RuleIssue(BaseRuleAttribute rule, RuleContext context, List<RulePath> trace)
         {
             Rule = rule;
-            Root = root;
+            Context = context;
             Trace = trace;
         }
 
@@ -53,6 +61,27 @@ namespace BH.SDK.Validations
                 _ when collection.GetType().IsArray => ((Array)collection).GetValue((int)path.Key),
                 _ => collection,
             };
+        }
+
+        // Applying the repair is the issue's own job, because only it knows which kind of rule it
+        // holds: a property rule needs the owner plus the PropertyInfo, an object rule needs the
+        // object itself and has no property at all.
+        public void ApplyFix()
+        {
+            switch (Rule)
+            {
+                case BasePropertyRuleAttribute propertyRule:
+                {
+                    var (target, property) = GetContextAndProperty();
+                    propertyRule.Fix(target, property, Context);
+                    break;
+                }
+                case BaseObjectRuleAttribute objectRule:
+                {
+                    objectRule.Fix(GetValue(), Context);
+                    break;
+                }
+            }
         }
 
         public string GetPath() => Trace.GetPath();

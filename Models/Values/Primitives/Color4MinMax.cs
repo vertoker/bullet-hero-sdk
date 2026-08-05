@@ -15,6 +15,10 @@ namespace BH.SDK.Models.Values
     /// "random, sometimes barely visible" possible from a single value.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Color4MinMax.MinR), nameof(Color4MinMax.MaxR))]
+    [RulePropertyOrder(nameof(Color4MinMax.MinG), nameof(Color4MinMax.MaxG))]
+    [RulePropertyOrder(nameof(Color4MinMax.MinB), nameof(Color4MinMax.MaxB))]
+    [RulePropertyOrder(nameof(Color4MinMax.MinA), nameof(Color4MinMax.MaxA))]
     public class Color4MinMax : IColor4, IModel<Color4MinMax>
     {
         /// <summary> Lower bound of the red roll. </summary>

@@ -38,14 +38,15 @@ namespace BH.SDK.Models.Effects
 
         /// <summary> Min/max seconds a particle lives, drawn per particle - the spread is what keeps
         /// a burst from dying all at once. </summary>
-        [RuleNotNull, RuleIVector2Min(EffectRules.Core.LifetimeBounds_Min)]
+        [RuleNotNull, RuleIVector2Ordered]
+        [RuleIVector2InRange(EffectRules.Core.LifetimeBounds_Min, EffectRules.Core.LifetimeBounds_Max)]
         [JsonProperty(Names.Lifetime)]
         public IVector2 LifetimeBounds { get; set; }
 
         // Same logic as TextureObject.TextureId
 
         /// <summary> Image each particle draws - the same resource pool TextureObject draws from. </summary>
-        [RuleIPrimitiveIntNotNull]
+        [RuleIPrimitiveIntNotNull, RuleReferenceExists(ResourceReferenceKind.Texture)]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
 

@@ -14,6 +14,10 @@ namespace BH.SDK.Models.Values
     /// A 4-component vector rolled inside a 4D box - every component drawn independently.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Vector4Rect.MinX), nameof(Vector4Rect.MaxX))]
+    [RulePropertyOrder(nameof(Vector4Rect.MinY), nameof(Vector4Rect.MaxY))]
+    [RulePropertyOrder(nameof(Vector4Rect.MinZ), nameof(Vector4Rect.MaxZ))]
+    [RulePropertyOrder(nameof(Vector4Rect.MinW), nameof(Vector4Rect.MaxW))]
     public class Vector4Rect : IVector4, IModel<Vector4Rect>
     {
         /// <summary> Lower bound of the first component. </summary>

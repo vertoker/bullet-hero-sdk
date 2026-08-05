@@ -39,7 +39,7 @@ namespace BH.SDK.Models.Objects
         public ColliderId ColliderId { get; set; }
 
         /// <summary> Image to draw, defaulting to the plain square that most bullets use. </summary>
-        [RuleIPrimitiveIntNotNull]
+        [RuleIPrimitiveIntNotNull, RuleReferenceExists(ResourceReferenceKind.Texture)]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
 

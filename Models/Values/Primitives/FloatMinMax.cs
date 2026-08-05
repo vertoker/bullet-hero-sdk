@@ -15,6 +15,7 @@ namespace BH.SDK.Models.Values
     /// per evaluation in the player, not once at load, which is what makes bullet patterns vary.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(FloatMinMax.Min), nameof(FloatMinMax.Max))]
     public class FloatMinMax : IFloat, IModel<FloatMinMax>
     {
         /// <summary> Inclusive lower bound of the roll. </summary>

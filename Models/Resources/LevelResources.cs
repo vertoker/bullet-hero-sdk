@@ -25,53 +25,52 @@ namespace BH.SDK.Models.Resources
     [DataVersion(DataDomains.LevelResources, 1, 0)]
     public class LevelResources : IModel<LevelResources>
     {
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own TextureResourceId)
+        // Every dictionary here is capped and key-checked. The caps bound LOAD time rather than frame
+        // time: each entry is a user-defined resource the loader resolves before playback starts.
+        // The key checks close a gap serialization hides - DictionaryAsListConverter rebuilds keys
+        // from values on read, so only in-memory code can make the two disagree, and when it does,
+        // lookup by id finds nothing while iteration finds the resource.
 
         /// <summary> Images the level ships with. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxTextures)]
+        [RuleDictionaryKeyMatches(nameof(TextureResource.TextureResourceId))]
         [JsonProperty(Names.Textures)]
         public Dictionary<TextureResourceId, TextureResource> Textures { get; set; }
 
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own FontResourceId)
-
         /// <summary> Typefaces the level ships with. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxFonts)]
+        [RuleDictionaryKeyMatches(nameof(FontResource.FontResourceId))]
         [JsonProperty(Names.Fonts)]
         public Dictionary<FontResourceId, FontResource> Fonts { get; set; }
 
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own AudioResourceId)
-
         /// <summary> Clips the level ships with, including the song itself. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxAudios)]
+        [RuleDictionaryKeyMatches(nameof(AudioResource.AudioResourceId))]
         [JsonProperty(Names.Audios)]
         public Dictionary<AudioResourceId, AudioResource> Audios { get; set; }
 
-
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ColliderId)
-
         /// <summary> Custom collision shapes, beyond the built-in library. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxCompositeShapes)]
+        [RuleDictionaryKeyMatches(nameof(CompositeCollider.ColliderId))]
         [JsonProperty(Names.Shapes)]
         public Dictionary<ColliderId, CompositeCollider> CompositeShapes { get; set; }
 
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ThemeId)
-
         /// <summary> Color palettes the level switches between over time. </summary>
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxThemes)]
+        [RuleDictionaryKeyMatches(nameof(ThemeData.ThemeId))]
         [JsonProperty(Names.Themes)]
         public Dictionary<ThemeId, ThemeData> Themes { get; set; }
 
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ThemeId)
-
         /// <summary> Particle-system definitions, shared by every EffectObject that points at one. </summary>
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxEffects)]
+        [RuleDictionaryKeyMatches(nameof(EffectData.EffectId))]
         [JsonProperty(Names.Effects)]
         public Dictionary<EffectId, EffectData> Effects { get; set; }
-
-
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own PrefabId)
 
         /// <summary> Reusable object templates. Unlike the other six, these hold level content rather
         /// than external assets - a prefab is authored here, not fetched. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxPrefabs)]
+        [RuleDictionaryKeyMatches(nameof(Prefab.PrefabId))]
         [JsonProperty(Names.Prefabs)]
         public Dictionary<PrefabId, Prefab> Prefabs { get; set; }
         

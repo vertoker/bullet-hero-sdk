@@ -15,6 +15,7 @@ namespace BH.SDK.Models.Values
     /// while staying on musically or visually meaningful values (quarter turns, whole beats).
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(FloatMinMaxStep.Min), nameof(FloatMinMaxStep.Max))]
     public class FloatMinMaxStep : IFloat, IModel<FloatMinMaxStep>
     {
         /// <summary> Inclusive lower bound, and the origin the grid is measured from. </summary>

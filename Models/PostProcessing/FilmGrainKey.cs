@@ -19,6 +19,7 @@ namespace BH.SDK.Models.PostProcessing
     {
         /// <summary> Which grain texture to use - picks the character (fine/medium/coarse), not the
         /// amount. </summary>
+        [RuleEnumValid(FilmGrainType.Medium1)]
         [JsonProperty(Names.Type)]
         public FilmGrainType Type { get; set; }
 

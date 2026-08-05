@@ -26,13 +26,13 @@ namespace BH.SDK.Models.SettingGroups
         public int Framerate { get; set; }
 
         /// <summary> Total length of the level in frames; every keyframe is validated against it. </summary>
-        [RuleMin(FrameRules.MinFrameLength)]
+        [RuleInRange(FrameRules.MinFrameLength, FrameRules.MaxFrameLength)]
         [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
 
         /// <summary> Next free object id. Only ever grows - ids of deleted objects are never reused,
         /// so a stale reference can't silently point at a different object. </summary>
-        [RuleMin(ObjectId.MinLevelValue)]
+        [RuleInRange(ObjectId.MinLevelValue, LevelRules.MaxObjects)]
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
 

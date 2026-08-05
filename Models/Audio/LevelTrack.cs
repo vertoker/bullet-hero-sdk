@@ -16,6 +16,7 @@ namespace BH.SDK.Models.Audio
     /// Stored in AudioLevel.Tracks; several tracks may overlap, separated by AudioLayer.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(LevelTrack.StartFrame), nameof(LevelTrack.EndFrame))]
     public class LevelTrack : IFrameBounds, INameable, IModel<LevelTrack>
     {
         // Same logic as RectObject.ObjectId, but only for audio and much simpler
@@ -34,7 +35,7 @@ namespace BH.SDK.Models.Audio
 
         /// <summary> Which clip to play - points at an AudioResource, either a game-defined one or a
         /// user-defined entry of Level.Resources.Audios. Null means the track is silent. </summary>
-        [RuleIPrimitiveIntNotNull]
+        [RuleIPrimitiveIntNotNull, RuleReferenceExists(ResourceReferenceKind.Audio)]
         [JsonProperty(Names.AudioResourceId)]
         public AudioResourceId AudioResourceId { get; set; }
 
@@ -53,6 +54,7 @@ namespace BH.SDK.Models.Audio
 
         /// <summary> Seconds skipped inside the clip at StartFrame. Frames place the track on the level
         /// timeline, this places the playhead inside the clip - the two are independent. </summary>
+        [RuleInRange(AudioRules.MinOffsetTime, AudioRules.MaxOffsetTime)]
         [JsonProperty(Names.OffsetTime)]
         public float OffsetTime { get; set; }
 

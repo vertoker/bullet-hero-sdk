@@ -23,6 +23,7 @@ namespace BH.SDK.Models.Meta
     {
         /// <summary> Which resource family ResourceId belongs to - the only thing that disambiguates
         /// an otherwise untyped id. </summary>
+        [RuleEnumValid]
         [JsonProperty(Names.ResourceType)]
         public ResourceType ResourceType { get; set; }
 
@@ -58,7 +59,7 @@ namespace BH.SDK.Models.Meta
 
         /// <summary> Human-readable provenance strings (where it was taken from), localizable. Free
         /// text for a reader, unlike the machine-usable URIs in Resource.Sources. </summary>
-        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxSources)]
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxMetaSources)]
         [JsonProperty(Names.Sources)]
         public List<IString> ResourceSources { get; set; }
 

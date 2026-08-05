@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 
@@ -12,7 +14,8 @@ namespace BH.SDK.Validations
     {
         private readonly List<RulePath> _trace = new(16);
         private readonly Dictionary<Type, PropertyInfo[]> _typesCache = new(32);
-        private readonly Dictionary<PropertyInfo, BaseRuleAttribute[]> _rulesCache = new(32);
+        private readonly Dictionary<PropertyInfo, BasePropertyRuleAttribute[]> _rulesCache = new(32);
+        private readonly Dictionary<Type, BaseObjectRuleAttribute[]> _objectRulesCache = new(32);
         private readonly Stack<List<(object, PropertyInfo)>> _nextObjectsPool;
 
         public RuleAnalyzer()
@@ -40,6 +43,7 @@ namespace BH.SDK.Validations
             var ruleContainer = contextType.GetCustomAttribute<RuleContainerAttribute>();
             if (ruleContainer == null) return;
 
+            GetObjectRules(contextType);
             var objProperties = GetObjProperties(contextType);
 
             foreach (var property in objProperties)
@@ -61,27 +65,52 @@ namespace BH.SDK.Validations
             var result = new List<RuleIssue>(8);
 
             // Cat.Meow("Analyze");
-            AnalyzeRecursive(obj, settings, result, obj);
+            AnalyzeRecursive(obj, settings, result, RuleContext.ForRoot(obj));
             _trace.Clear();
-            
+
             return result;
         }
-        
-        private void AnalyzeRecursive(object context, RuleAnalyzerSettings settings, List<RuleIssue> result, object obj)
+
+        private void AnalyzeRecursive(object target, RuleAnalyzerSettings settings,
+            List<RuleIssue> result, RuleContext context)
         {
-            if (context == null) return;
-            var contextType = context.GetType();
-            
-            var ruleContainer = contextType.GetCustomAttribute<RuleContainerAttribute>();
+            if (target == null) return;
+            var targetType = target.GetType();
+
+            var ruleContainer = targetType.GetCustomAttribute<RuleContainerAttribute>();
             if (ruleContainer == null) return;
-            
-            var objProperties = GetObjProperties(contextType);
-            
+
+            // Entering a scope of its own (a prefab template) rebases everything scope-relative -
+            // frames against its own timeline, parent ids against its own reserved targets - for
+            // this subtree and everything below it.
+            if (target is IFrameScope frameScope) context = context.WithScope(frameScope);
+
+            // Object rules run before the property walk, so an issue spanning two properties is
+            // reported against the object owning both - and lands in the trace before either of
+            // them, which is what makes the reverse-order fix pass repair the pair first.
+            foreach (var rule in GetObjectRules(targetType))
+            {
+                if (!rule.IsValidType(targetType))
+                {
+                    throw new ArgumentException($"Can't apply rule {rule.GetType().Name} " +
+                                                $"to type {targetType.Name}, path: {_trace.GetPath()}");
+                }
+
+                if (!settings.Reports(rule.Group)) continue;
+                if (rule.IsValid(target, context)) continue;
+
+                var objectIssue = new RuleIssue(rule, context, new List<RulePath>(_trace));
+                result.Add(objectIssue);
+                Cat.MeowWarn(objectIssue);
+            }
+
+            var objProperties = GetObjProperties(targetType);
+
             var nextObjects = _nextObjectsPool.Pop();
             foreach (var property in objProperties)
             {
                 var rules = GetRules(property);
-                var nextObj = property.GetValue(context);
+                var nextObj = property.GetValue(target);
                 _trace.Add(new RulePath(property));
 
                 var hasInvalidRule = false;
@@ -93,14 +122,16 @@ namespace BH.SDK.Validations
                         throw new ArgumentException($"Can't apply rule {rule.GetType().Name} " +
                                                  $"to type {nextObj?.GetType().Name}, path: {_trace.GetPath()}");
                     }
-                    
-                    if (!rule.IsValid(nextObj, obj))
+
+                    if (!settings.Reports(rule.Group)) continue;
+
+                    if (!rule.IsValid(nextObj, context))
                     {
                         hasInvalidRule = true;
-                        var issue = new RuleIssue(rule, obj, new List<RulePath>(_trace));
+                        var issue = new RuleIssue(rule, context, new List<RulePath>(_trace));
                         result.Add(issue);
                         Cat.MeowWarn(issue);
-                        
+
                         if (!settings.analyzeAllPropertyRules) break;
                     }
                 }
@@ -114,7 +145,7 @@ namespace BH.SDK.Validations
                 {
                     nextObjects.Add((nextObj, property));
                 }
-                
+
                 _trace.RemoveAt(_trace.Count - 1);
             }
 
@@ -125,16 +156,24 @@ namespace BH.SDK.Validations
                     for (var i = 0; i < list.Count; i++)
                     {
                         _trace.Add(new RulePath(nextProp, i));
-                        AnalyzeRecursive(list[i], settings, result, obj);
+                        AnalyzeRecursive(list[i], settings, result, context);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
                 else if (nextObj is IDictionary dictionary)
                 {
+                    // Values only, deliberately. A RulePath addresses "this property, at this key",
+                    // which is how RuleFixer finds its way back to a value - there is no way to
+                    // express "the key itself", so an issue raised on a key would be repaired into
+                    // the value instead. Keys stay safe without the walk: every key in the format is
+                    // an id struct, and a struct can never be a [RuleContainer] anyway (it is boxed
+                    // on the way in, so any Fix would write into a copy and vanish). Anything a key
+                    // needs checking for - above all whether it agrees with its value's own id - is
+                    // relational, and belongs to the graph pass rather than here.
                     foreach (DictionaryEntry entry in dictionary)
                     {
                         _trace.Add(new RulePath(nextProp, entry.Key));
-                        AnalyzeRecursive(entry.Value, settings, result, obj);
+                        AnalyzeRecursive(entry.Value, settings, result, context);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
@@ -144,39 +183,49 @@ namespace BH.SDK.Validations
                     for (var i = 0; i < array.Length; i++)
                     {
                         _trace.Add(new RulePath(nextProp, i));
-                        AnalyzeRecursive(array.GetValue(i), settings, result, obj);
+                        AnalyzeRecursive(array.GetValue(i), settings, result, context);
                         _trace.RemoveAt(_trace.Count - 1);
                     }
                 }
                 else
                 {
                     _trace.Add(new RulePath(nextProp));
-                    AnalyzeRecursive(nextObj, settings, result, obj);
+                    AnalyzeRecursive(nextObj, settings, result, context);
                     _trace.RemoveAt(_trace.Count - 1);
                 }
             }
-            
+
             nextObjects.Clear();
             _nextObjectsPool.Push(nextObjects);
         }
-        
+
         private PropertyInfo[] GetObjProperties(Type objType)
         {
             if (!_typesCache.TryGetValue(objType, out var objProperties))
             {
                 objProperties = objType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Where(property => property.CanRead && property.CanWrite).ToArray();
-                
+
                 _typesCache.Add(objType, objProperties);
             }
             return objProperties;
         }
-        private BaseRuleAttribute[] GetRules(PropertyInfo property)
+        private BasePropertyRuleAttribute[] GetRules(PropertyInfo property)
         {
             if (!_rulesCache.TryGetValue(property, out var rules))
             {
-                rules = property.GetCustomAttributes<BaseRuleAttribute>(true).ToArray();
+                rules = property.GetCustomAttributes<BasePropertyRuleAttribute>(true).ToArray();
                 _rulesCache.Add(property, rules);
+            }
+            return rules;
+        }
+
+        private BaseObjectRuleAttribute[] GetObjectRules(Type type)
+        {
+            if (!_objectRulesCache.TryGetValue(type, out var rules))
+            {
+                rules = type.GetCustomAttributes<BaseObjectRuleAttribute>(true).ToArray();
+                _objectRulesCache.Add(type, rules);
             }
             return rules;
         }

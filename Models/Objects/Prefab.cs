@@ -19,7 +19,7 @@ namespace BH.SDK.Models.Objects
     /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.Prefab, 1, 0)]
-    public class Prefab : IObjectScope, IObjectIdCounter, IFrameLength, IModel<Prefab>
+    public class Prefab : IFrameScope, IObjectIdCounter, IModel<Prefab>
     {
         /// <summary> Identity of this template and the key of Level.Resources.Prefabs. </summary>
         [RuleIPrimitiveGuidNotNull]
@@ -38,7 +38,8 @@ namespace BH.SDK.Models.Objects
         /// <summary> The template's own contents, keyed by ids local to this template - the same
         /// dictionary shape a level uses, which is why every editor operation works unchanged
         /// inside Prefab Mode. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(PrefabRules.MaxObjects)]
+        [RuleDictionaryKeyMatches(nameof(RectObject.ObjectId))]
         [JsonProperty(Names.Objects)]
         public Dictionary<ObjectId, RectObject> Objects { get; set; }
 
@@ -47,7 +48,7 @@ namespace BH.SDK.Models.Objects
         // prefab is itself materialized as a nested placement inside another prefab's template.
 
         /// <summary> Next free id in this template's own namespace. </summary>
-        [RuleMin(ObjectId.MinLevelValue)]
+        [RuleInRange(ObjectId.MinLevelValue, PrefabRules.MaxObjects)]
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
 
@@ -57,7 +58,7 @@ namespace BH.SDK.Models.Objects
         // newly-placed PrefabObject and as the Prefab Timeline's own editing bound.
 
         /// <summary> Length of the template's own timeline, in frames. </summary>
-        [RuleMin(FrameRules.MinFrameLength)]
+        [RuleInRange(FrameRules.MinFrameLength, PrefabRules.MaxFrameLength)]
         [JsonProperty(Names.FrameLengthShort)]
         public int FrameLength { get; set; }
 

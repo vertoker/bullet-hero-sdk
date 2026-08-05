@@ -29,11 +29,13 @@ namespace BH.SDK.Models.Values
         public float Value { get; set; }
 
         /// <summary> Which sides honour InWeight/OutWeight; without it weights are ignored. </summary>
+        [RuleEnumValid]
         [JsonProperty(Names.WeightedMode)]
         public CurveWeightedMode WeightedMode { get; set; }
 
         /// <summary> How tangents are derived (free, auto, broken ...) - editor intent kept in the
         /// file so re-editing the curve behaves the same way it did when authored. </summary>
+        [RuleEnumValid]
         [JsonProperty(Names.TangentMode)]
         public CurveTangentMode TangentMode { get; set; }
 

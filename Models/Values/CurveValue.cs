@@ -20,15 +20,19 @@ namespace BH.SDK.Models.Values
     public class CurveValue : IModel<CurveValue>
     {
         /// <summary> Control points of the curve, each with its own tangents. </summary>
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxCurveKeys)]
+        [RuleNotNull, RuleCollectionNoNullItems]
+        [RuleCollectionMinCount(ValueRules.MinCurveKeys), RuleCollectionMaxCount(ValueRules.MaxCurveKeys)]
+        [RuleCollectionSorted(nameof(CurveKeyframeValue.Time))]
         [JsonProperty(Names.Keys)]
         public List<CurveKeyframeValue> KeyFrames { get; set; }
 
         /// <summary> What the curve reads as before its first key (clamp, loop, ping-pong). </summary>
+        [RuleEnumValid(CurveWrapMode.Default)]
         [JsonProperty(Names.PreWrapMode)]
         public CurveWrapMode PreWrapMode { get; set; }
 
         /// <summary> Same, after its last key - the two ends wrap independently. </summary>
+        [RuleEnumValid(CurveWrapMode.Default)]
         [JsonProperty(Names.PostWrapMode)]
         public CurveWrapMode PostWrapMode { get; set; }
         

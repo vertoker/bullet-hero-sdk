@@ -6,7 +6,7 @@ using BH.SDK.Utils;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleNotNullAttribute : BaseRuleAttribute
+    public class RuleNotNullAttribute : BasePropertyRuleAttribute
     {
         public Type DefaultConstructType { get; set; }
         public object[] DefaultConstructArgs { get; set; }
@@ -37,11 +37,11 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => !property.PropertyType.IsValueType || Nullable.GetUnderlyingType(property.PropertyType) != null;
 
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
             return value != null;
         }
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             var valueType = DefaultConstructType ?? property.PropertyType;
             var value = CreateDefaultValue(valueType);

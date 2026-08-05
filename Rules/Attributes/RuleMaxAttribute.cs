@@ -5,7 +5,7 @@ using System.Reflection;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleMaxAttribute : BaseRuleAttribute
+    public class RuleMaxAttribute : BasePropertyRuleAttribute
     {
         public object Max { get; set; } // always include
         public object DefaultValue { get; set; }
@@ -46,7 +46,7 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => Array.IndexOf(SupportedTypes, property.PropertyType) >= 0;
 
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
             if (Max == null) return false;
 
@@ -59,7 +59,7 @@ namespace BH.SDK.Rules.Attributes
             return comparableValue.CompareTo(max) <= 0;
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             if (Max == null) return;
 

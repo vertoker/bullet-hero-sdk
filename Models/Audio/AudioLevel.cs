@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using BH.SDK.Versions;
@@ -22,7 +23,8 @@ namespace BH.SDK.Models.Audio
 
         /// <summary> Every scheduled clip in the level, keyed by the track's own AudioId - the audio
         /// analogue of GameLevel.Objects. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxAudioTracks)]
+        [RuleDictionaryKeyMatches(nameof(LevelTrack.AudioId))]
         [JsonProperty(Names.Tracks)]
         public Dictionary<AudioId, LevelTrack> Tracks { get; set; }
 

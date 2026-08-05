@@ -26,6 +26,7 @@ namespace BH.SDK.Models.Keyframes
 
         /// <summary> Interpolation used on the way INTO this key, i.e. it shapes the segment before
         /// it. Stored per key, not per track, so a single track can mix easings freely. </summary>
+        [RuleEnumValid(DefaultEase)]
         [JsonProperty(Names.Ease)]
         public EaseType Ease { get; set; }
 

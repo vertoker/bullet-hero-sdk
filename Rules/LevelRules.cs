@@ -1,4 +1,4 @@
-﻿namespace BH.SDK.Rules
+namespace BH.SDK.Rules
 {
     public static class LevelRules
     {
@@ -6,18 +6,33 @@
         public const int MaxCheckpointEvents = 128;
         public const int MaxBackgroundEvents = 128;
         public const int MaxThemeEvents = 128;
-        
+        public const int MaxScreenLimitEvents = 128;
+
         public const int MaxPlayerKeys = 512;
         public const int MaxCameraKeys = 512;
         public const int MaxPostProcessingKeys = 512;
         public const int MaxObjectKeys = 32;
         public const int MaxAudioKeys = 32;
-        
-        // public const int MaxObjects = 100000; // no limit for objects count
+
+        // Was deliberately uncapped for a long time, on the grounds that peak simultaneous objects
+        // (LevelLimitHints) is what actually costs anything at runtime. It is capped now because a
+        // total count is what a LOADER pays for - every object is deserialized, id-mapped and
+        // parent-linked before playback ever decides it is off-screen - so an unbounded count is an
+        // unbounded load, not an unbounded frame. 2^18 sits far above any authored level and far
+        // below what would exhaust a phone.
+        public const int MaxObjects = 262_144;
+
+        // Longest parent chain. Depth is walked per object per frame (a child's transform and layer
+        // are the sum up its chain), and without a bound a pathological chain is only caught by a
+        // stack overflow. Cycles are a graph invariant and checked separately.
+        public const int MaxObjectDepth = 64;
+
+        public const int MaxAudioTracks = 512;
+        public const int MaxResourcesMeta = 512;
 
         public const int MaxPrefabs = 64;
 
-        // Bounds of LevelCapacityHint - purely a format-level sanity clamp, so a corrupted or
+        // Bounds of LevelLimitHints - purely a format-level sanity clamp, so a corrupted or
         // hostile file can't ask a player's device to preallocate gigabytes before the runtime even
         // looks at the number. The real ceiling is per-device and applied at runtime; the hint
         // itself is advisory and never trusted on its own.

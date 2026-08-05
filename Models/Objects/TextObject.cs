@@ -37,7 +37,7 @@ namespace BH.SDK.Models.Objects
 
         /// <summary> Typeface, defaulting to the bundled one so a level always renders even without
         /// its own font shipped alongside. </summary>
-        [RuleIPrimitiveIntNotNull]
+        [RuleIPrimitiveIntNotNull, RuleReferenceExists(ResourceReferenceKind.Font)]
         [JsonProperty(Names.FontResourceId)]
         public FontResourceId FontResourceId { get; set; }
 
@@ -51,7 +51,7 @@ namespace BH.SDK.Models.Objects
         /// <summary> Font size track, animated independently of the object's Scales - one resizes
         /// glyphs, the other stretches the whole rendered block. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
-        [RuleCollectionUnique(nameof(FloatKey.Frame))]
+        [RuleCollectionUnique(nameof(FloatKey.Frame)), RuleCollectionNoNullItems]
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
 
@@ -60,10 +60,12 @@ namespace BH.SDK.Models.Objects
         public bool WordWrap { get; set; }
 
         /// <summary> Horizontal placement of the text inside its rect. </summary>
+        [RuleEnumValid(TextRules.HorizontalAlignment_Default)]
         [JsonProperty(Names.HorizontalAlignment)]
         public TextObjectHorizontalAlignment HorizontalAlignment { get; set; }
 
         /// <summary> Vertical placement of the text inside its rect. </summary>
+        [RuleEnumValid(TextRules.VerticalAlignment_Default)]
         [JsonProperty(Names.VerticalAlignment)]
         public TextObjectVerticalAlignment VerticalAlignment { get; set; }
         

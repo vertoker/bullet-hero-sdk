@@ -15,6 +15,7 @@ namespace BH.SDK.Models.Values
     /// idea as FloatMinMaxStep, just without fractional grids.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(IntMinMaxStep.Min), nameof(IntMinMaxStep.Max))]
     public class IntMinMaxStep : IInt, IModel<IntMinMaxStep>
     {
         /// <summary> Inclusive lower bound, and the origin the grid is measured from. </summary>

@@ -15,6 +15,8 @@ namespace BH.SDK.Models.Values
     /// use Vector2Circle instead when the spread should be radial rather than boxy.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Vector2Rect.MinX), nameof(Vector2Rect.MaxX))]
+    [RulePropertyOrder(nameof(Vector2Rect.MinY), nameof(Vector2Rect.MaxY))]
     public class Vector2Rect : IVector2, IModel<Vector2Rect>
     {
         // TODO add rule check for Min and Max, must be always Min < Max

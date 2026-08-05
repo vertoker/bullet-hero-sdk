@@ -6,7 +6,7 @@ using System.Reflection;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleCollectionUniqueAttribute : BaseRuleAttribute
+    public class RuleCollectionUniqueAttribute : BasePropertyRuleAttribute
     {
         public string ItemPropertyName { get; set; }
 
@@ -22,7 +22,7 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(ICollection).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
             if (value is not ICollection collection) return false;
 
@@ -55,7 +55,7 @@ namespace BH.SDK.Rules.Attributes
             return true;
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             var value = property.GetValue(target);
             if (value is not IList list || list.IsReadOnly) return;

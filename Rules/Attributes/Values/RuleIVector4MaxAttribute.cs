@@ -8,7 +8,7 @@ using BH.SDK.Utils;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleIVector4MaxAttribute : BaseRuleAttribute
+    public class RuleIVector4MaxAttribute : BasePropertyRuleAttribute
     {
         // always include
         public float MaxX { get; set; }
@@ -34,7 +34,7 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IVector4).IsAssignableFrom(property.PropertyType);
 
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
             if (value is not IVector4 vec) return false;
 
@@ -80,7 +80,7 @@ namespace BH.SDK.Rules.Attributes
             }
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             var value = property.GetValue(target);
             if (value is not IVector4 vec) return;

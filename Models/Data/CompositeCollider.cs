@@ -25,6 +25,7 @@ namespace BH.SDK.Models.Data
         public ColliderId ColliderId { get; set; }
 
         /// <summary> Editor-facing label of the shape. </summary>
+        [RuleNotNull, RuleStringMax(ValueRules.MaxEditorName)]
         [JsonProperty(Names.ColliderName)] public string ColliderName { get; set; }
 
         // TODO (MAYBE) add Pivot for collider and maybe add it into collision process
@@ -33,7 +34,9 @@ namespace BH.SDK.Models.Data
 
         /// <summary> The shape itself, as a triangle soup in the object's local rect space. Concave
         /// shapes are expressed by using several triangles, never by winding order. </summary>
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxColliderTriangles)]
+        [RuleNotNull, RuleCollectionNoNullItems]
+        [RuleCollectionMinCount(ValueRules.MinColliderTriangles)]
+        [RuleCollectionMaxCount(ValueRules.MaxColliderTriangles)]
         [JsonProperty(Names.TrianglesShort)]
         public List<TriangleCollider> Triangles { get; set; }
 

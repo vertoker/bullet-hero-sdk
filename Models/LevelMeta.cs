@@ -73,7 +73,7 @@ namespace BH.SDK.Models
 
         /// <summary> One UGC record per user-defined resource: origin, license, credits. This is what
         /// makes a level shareable without guessing where its assets came from. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxResourcesMeta), RuleCollectionNoNullItems]
         [JsonProperty(Names.ResourcesMeta)]
         public List<ResourceMeta> ResourcesMeta { get; set; }
 

@@ -5,7 +5,7 @@ using System.Reflection;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleInRangeAttribute : BaseRuleAttribute
+    public class RuleInRangeAttribute : BasePropertyRuleAttribute
     {
         public object Min { get; set; } // always include
         public object Max { get; set; } // always include
@@ -59,7 +59,7 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => Array.IndexOf(SupportedTypes, property.PropertyType) >= 0;
 
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
             if (Min == null || Max == null) return false;
 
@@ -73,7 +73,7 @@ namespace BH.SDK.Rules.Attributes
             return comparableValue.CompareTo(min) >= 0 && comparableValue.CompareTo(max) <= 0;
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             if (Min == null || Max == null) return;
 

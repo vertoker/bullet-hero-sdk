@@ -95,8 +95,9 @@ namespace BH.SDK.Models.Primitives
         // the SAME id as an unset/Null ParentObjectId does there (see
         // BH.Core.Services.PrefabMaterializer.RemapParents), just spelled out explicitly instead of
         // relying on the "null auto-parents to the placement" fallback. Meaningless at level scope
-        // (GameLevel.Objects has no "root" to attach to) - RuleParentObjectIdValid still accepts it
-        // structurally there, same as Camera/LocalPlayer would in a context they don't apply to.
+        // (GameLevel.Objects has no "root" to attach to), and RuleParentObjectIdValid rejects it
+        // there - just as it rejects Camera/LocalPlayer inside a prefab template, since those are
+        // level-runtime objects a template's inner object cannot reach.
         public static readonly ObjectId PrefabRoot = new(-3);
 
         

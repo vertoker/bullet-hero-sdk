@@ -10,6 +10,7 @@ namespace BH.SDK.Models.SettingGroups
     /// Belongs to the person editing, never to the level being edited.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(GameEditorSettings.CameraMinSize), nameof(GameEditorSettings.CameraMaxSize))]
     public class GameEditorSettings : IModel<GameEditorSettings>, IMoveable<GameEditorSettings>
     {
         // Savings

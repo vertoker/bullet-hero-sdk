@@ -20,10 +20,13 @@ namespace BH.SDK.Models.Effects
     public class EffectColorGradientBySpeed : IEffectColor, IModel<EffectColorGradientBySpeed>
     {
         /// <summary> Ramp sampled at normalized speed. </summary>
+        [RuleNotNull]
         [JsonProperty(Names.Gradient)]
         public GradientValue Gradient { get; set; }
 
         /// <summary> Speed window mapped onto the ramp's 0..1 axis; outside it the ends clamp. </summary>
+        [RuleNotNull, RuleIVector2Ordered]
+        [RuleIVector2InRange(EffectRules.SpeedRange_Min, EffectRules.SpeedRange_Max)]
         [JsonProperty(Names.SpeedRange)]
         public IVector2 SpeedRange { get; set; }
 

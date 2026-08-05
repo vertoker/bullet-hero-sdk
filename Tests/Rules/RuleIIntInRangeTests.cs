@@ -1,0 +1,102 @@
+using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules.Attributes;
+using NUnit.Framework;
+
+namespace BH.SDK.Tests.Rules
+{
+    /// <summary>
+    /// RuleIIntInRange over all three IInt variants. Only LayerKey.Layer uses it today, bounding an
+    /// animated draw-order track to the authored layer band.
+    /// </summary>
+    public class RuleIIntInRangeTests : BaseRuleTests
+    {
+        [RuleContainer]
+        private class Model
+        {
+            [RuleIIntInRange(-10, 10)]
+            public IInt Value { get; set; } = new IntValue(0);
+        }
+
+        [RuleContainer]
+        private class WrongTypeModel
+        {
+            [RuleIIntInRange(-10, 10)]
+            public int Value { get; set; }
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestValueValid()
+        {
+            AssertValid(new Model { Value = new IntValue(0) });
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestValueBoundaries()
+        {
+            AssertValid(new Model { Value = new IntValue(-10) });
+            AssertValid(new Model { Value = new IntValue(10) });
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestValueOutOfRange()
+        {
+            AssertInvalid<RuleIIntInRangeAttribute>(new Model { Value = new IntValue(-11) });
+            AssertInvalid<RuleIIntInRangeAttribute>(new Model { Value = new IntValue(11) });
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestFixValueClamps()
+        {
+            var model = new Model { Value = new IntValue(500) };
+            AssertFixedTo(model, () => ((IntValue)model.Value).Value, 10);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestMinMax()
+        {
+            AssertValid(new Model { Value = new IntMinMax(-5, 5) });
+            AssertInvalid<RuleIIntInRangeAttribute>(new Model { Value = new IntMinMax(-50, 5) });
+            AssertInvalid<RuleIIntInRangeAttribute>(new Model { Value = new IntMinMax(-5, 50) });
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestFixMinMaxClampsBothEnds()
+        {
+            var model = new Model { Value = new IntMinMax(-50, 50) };
+            AssertFixed(model);
+
+            var value = (IntMinMax)model.Value;
+            Assert.AreEqual(-10, value.Min);
+            Assert.AreEqual(10, value.Max);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestMinMaxStep()
+        {
+            AssertValid(new Model { Value = new IntMinMaxStep(-5, 5, 1) });
+            AssertInvalid<RuleIIntInRangeAttribute>(new Model { Value = new IntMinMaxStep(-5, 50, 1) });
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestNull()
+        {
+            AssertInvalid<RuleIIntInRangeAttribute>(new Model { Value = null });
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestWrongType()
+        {
+            AssertWrongType(new WrongTypeModel());
+        }
+    }
+}

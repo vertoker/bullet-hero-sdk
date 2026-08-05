@@ -27,6 +27,7 @@ namespace BH.SDK.Models.Resources
 
         /// <summary> Region of the source image this resource actually is, as tiling+offset. Applies
         /// to the resource itself, unlike UVKey which animates a single object's mapping. </summary>
+        [RuleNotNull]
         [JsonProperty(Names.TextureResourceUV)]
         public Vector4Value TextureResourceUV { get; set; }
 

@@ -36,9 +36,13 @@ namespace BH.SDK.Models.Data
         [JsonProperty(Names.HasStopLocalFrame)]
         public bool HasStopLocalFrame { get; set; }
 
+        // Bounded on its own scale, not as a level frame. It counts from the emitter's own start, so
+        // validating it against the level timeline tied an effect's internal duration to wherever it
+        // happened to be placed - and made an EffectData validated on its own fail outright.
+
         /// <summary> Frame, counted from the object's own StartFrame (local, not level time), where
         /// emission stops - already-spawned particles still finish their lifetime. </summary>
-        [RuleLevelFrame]
+        [RuleInRange(EffectRules.StopLocalFrame_Min, EffectRules.StopLocalFrame_Max)]
         [JsonProperty(Names.StopLocalFrame)]
         public int StopLocalFrame { get; set; }
 

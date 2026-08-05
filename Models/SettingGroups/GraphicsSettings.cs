@@ -17,6 +17,7 @@ namespace BH.SDK.Models.SettingGroups
     {
         /// <summary> Where the target framerate comes from - the screen's refresh rate or the fixed
         /// value below. </summary>
+        [RuleEnumValid]
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
 

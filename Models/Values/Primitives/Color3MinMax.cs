@@ -15,6 +15,9 @@ namespace BH.SDK.Models.Values
     /// player re-rolls it every frame instead of freezing one color at load time.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Color3MinMax.MinR), nameof(Color3MinMax.MaxR))]
+    [RulePropertyOrder(nameof(Color3MinMax.MinG), nameof(Color3MinMax.MaxG))]
+    [RulePropertyOrder(nameof(Color3MinMax.MinB), nameof(Color3MinMax.MaxB))]
     public class Color3MinMax : IColor3, IModel<Color3MinMax>
     {
         /// <summary> Lower bound of the red roll. </summary>

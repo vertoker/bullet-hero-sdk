@@ -16,6 +16,7 @@ namespace BH.SDK.Models.SettingGroups.Graphics
     {
         /// <summary> Where the effect update rate comes from - separate from the game's own, hence
         /// the duplicate of GraphicsSettings' pair of fields. </summary>
+        [RuleEnumValid]
         [JsonProperty(Names.FramerateTarget)]
         public FramerateTarget FramerateTarget { get; set; }
 

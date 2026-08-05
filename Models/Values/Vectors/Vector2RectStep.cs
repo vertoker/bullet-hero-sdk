@@ -15,6 +15,8 @@ namespace BH.SDK.Models.Values
     /// scattered pattern stays visually aligned.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Vector2RectStep.MinX), nameof(Vector2RectStep.MaxX))]
+    [RulePropertyOrder(nameof(Vector2RectStep.MinY), nameof(Vector2RectStep.MaxY))]
     public class Vector2RectStep : IVector2, IModel<Vector2RectStep>
     {
         /// <summary> Left edge, and the X origin the grid is measured from. </summary>

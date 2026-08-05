@@ -22,6 +22,7 @@ namespace BH.SDK.Models.Objects
     /// not "data is missing".
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(RectObject.StartFrame), nameof(RectObject.EndFrame))]
     public class RectObject : IFrameBounds, INameable, IModel<RectObject>, IUpdatable<RectObject>
     {
         public virtual ObjectType GetModelType() => ObjectType.RectObject;

@@ -14,6 +14,7 @@ namespace BH.SDK.Models.SettingGroups
     public class ControlsSettings : IModel<ControlsSettings>, IMoveable<ControlsSettings>
     {
         /// <summary> Input scheme for classic mode (keyboard, gamepad, touch ...). </summary>
+        [RuleEnumValid(ClassicControlsType.Keyboard)]
         [JsonProperty(Names.ClassicControlsType)]
         public ClassicControlsType ClassicControlsType { get; set; }
         

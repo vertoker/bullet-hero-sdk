@@ -15,6 +15,7 @@ namespace BH.SDK.Models.Values
     /// evaluation rather than frozen at load.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(IntMinMax.Min), nameof(IntMinMax.Max))]
     public class IntMinMax : IInt, IModel<IntMinMax>
     {
         /// <summary> Inclusive lower bound of the roll. </summary>

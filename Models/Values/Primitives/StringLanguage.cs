@@ -17,6 +17,8 @@ namespace BH.SDK.Models.Values
     {
         /// <summary> Locale tag this translation answers to ("en", "ru"), matched against the
         /// player's language. </summary>
+        [RuleNotNull, RuleStringMax(ValueRules.MaxLanguageCode)]
+        [RuleStringPattern(ValueRules.LanguageCodePattern, ValueRules.DefaultLanguageCode)]
         [JsonProperty(Names.Language)]
         public string LanguageCode { get; set; }
 

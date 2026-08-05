@@ -7,7 +7,7 @@ using BH.SDK.Models.Values;
 namespace BH.SDK.Rules.Attributes
 {
     [AttributeUsage(PropertyTarget)]
-    public class RuleIStringMaxAttribute : BaseRuleAttribute
+    public class RuleIStringMaxAttribute : BasePropertyRuleAttribute
     {
         public int MaxLength { get; set; }
 
@@ -19,7 +19,7 @@ namespace BH.SDK.Rules.Attributes
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IString).IsAssignableFrom(property.PropertyType);
         
-        protected override bool IsValidInternal(object value, object context)
+        protected override bool IsValidInternal(object value, RuleContext context)
         {
             if (value is not IString str) return false;
 
@@ -44,7 +44,7 @@ namespace BH.SDK.Rules.Attributes
             }
         }
 
-        protected override void FixInternal(object target, PropertyInfo property, object context)
+        protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
         {
             var value = property.GetValue(target);
             if (value is not IString str) return;

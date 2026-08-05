@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;
 using BH.SDK.Versions;
@@ -45,7 +46,8 @@ namespace BH.SDK.Models.Game
         // TODO add a contextual Rule validating this whole dictionary (key must equal value's own id)
         /// <summary> Every object in the level, flat and keyed by id - hierarchy is expressed through
         /// each object's ParentObjectId, not by nesting. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjects)]
+        [RuleDictionaryKeyMatches(nameof(RectObject.ObjectId))]
         [JsonProperty(Names.Objects)]
         public Dictionary<ObjectId, RectObject> Objects { get; set; }
 

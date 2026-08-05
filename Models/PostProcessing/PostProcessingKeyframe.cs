@@ -13,6 +13,7 @@ namespace BH.SDK.Models.PostProcessing
     /// directly instead of deriving from it, because it adds a per-key Active toggle no other
     /// keyframe family has - each effect can switch itself off mid-track, not just change values.
     /// </summary>
+    [RuleContainer]
     public class PostProcessingKeyframe : IKeyframe, IModel<PostProcessingKeyframe>
     {
         /// <summary> Whether this effect runs from this frame on. Independent of - and additional to -
@@ -26,6 +27,7 @@ namespace BH.SDK.Models.PostProcessing
         public int Frame { get; set; }
 
         /// <summary> Interpolation used on the way into this key. </summary>
+        [RuleEnumValid(Keyframe.DefaultEase)]
         [JsonProperty(Names.Ease)]
         public EaseType Ease { get; set; }
 

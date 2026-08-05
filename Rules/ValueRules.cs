@@ -23,8 +23,13 @@
         public const int MaxLayer = 1000;
         public const float MinLayerSelection = MaxLayer + MinLayerDelta;
         public const int MinLayerGizmos = 1500;
+
+        // Not an authored limit and not validated by any rule - the camera has no Layer field. This
+        // is the z range the camera itself is allowed to occupy at runtime, wide enough to sit
+        // outside every authored layer and every editor overlay band above them.
         public const float MinCameraLayer = -2000f;
         public const float MaxCameraLayer = 2000f;
+
         public const int DefaultLayer = 0;
         
         public const float MinColor = 0f;
@@ -68,11 +73,20 @@
         public const int MaxThemeIndex = 63;
         public const int ThemeCount = 64;
         
+        // A collider needs at least one triangle to be a shape at all - an empty one is a collider
+        // that silently never collides, which is worse than no collider (that is what a Null
+        // ColliderId already means, explicitly).
+        public const int MinColliderTriangles = 1;
         public const int MaxColliderTriangles = 64;
-        
+
+        // A curve needs two keys to define a segment and a gradient two stops to define a blend.
+        // Below that there is nothing to interpolate between, and every consumer would have to
+        // invent a fallback of its own.
+        public const int MinCurveKeys = 2;
         public const int MaxCurveKeys = 4;
+        public const int MinGradientKeys = 2;
         public const int MaxGradientKeys = 4;
-        
+
         public const float MinCurveTime = 0f;
         public const float MaxCurveTime = 1f;
         public const float MinGradientTime = 0f;
@@ -90,5 +104,19 @@
         public const int MaxUrl = 512;
         public const int MaxEditorName = 512;
         public const int MaxEditorDescription = 4096;
+
+        // BCP-47 tags: "en", "pt-BR", "zh-Hans-CN". Bounded and shaped, because the code is a lookup
+        // key - an unbounded or malformed one just silently never matches a player's locale.
+        public const int MaxLanguageCode = 16;
+        public const string LanguageCodePattern = "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$";
+
+        // Licence text is the one field in the whole format meant to hold a wall of prose (a full
+        // MIT/CC licence body), so it gets its own generous cap instead of the description one.
+        public const int MaxLicenseName = 256;
+        public const int MaxLicenseText = 65_536;
+
+        // A Modification's field path ("pos[0].v"). Depth is what makes a path long, and the model
+        // tree is nowhere near deep enough to need more than this.
+        public const int MaxModificationPath = 256;
     }
 }

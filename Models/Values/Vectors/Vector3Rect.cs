@@ -14,6 +14,9 @@ namespace BH.SDK.Models.Values
     /// A 3D vector rolled inside an axis-aligned box - Vector2Rect with a depth axis added.
     /// </summary>
     [RuleContainer]
+    [RulePropertyOrder(nameof(Vector3Rect.MinX), nameof(Vector3Rect.MaxX))]
+    [RulePropertyOrder(nameof(Vector3Rect.MinY), nameof(Vector3Rect.MaxY))]
+    [RulePropertyOrder(nameof(Vector3Rect.MinZ), nameof(Vector3Rect.MaxZ))]
     public class Vector3Rect : IVector3, IModel<Vector3Rect>
     {
         /// <summary> Lower X bound of the roll box. </summary>

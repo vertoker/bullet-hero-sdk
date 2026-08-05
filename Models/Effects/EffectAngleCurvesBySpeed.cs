@@ -25,7 +25,8 @@ namespace BH.SDK.Models.Effects
         public CurveValue Curve { get; set; }
 
         /// <summary> Speed window mapped onto the curve's 0..1 axis; speeds outside it clamp. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleIVector2Ordered]
+        [RuleIVector2InRange(EffectRules.SpeedRange_Min, EffectRules.SpeedRange_Max)]
         [JsonProperty(Names.SpeedRange)]
         public IVector2 SpeedRange { get; set; }
         

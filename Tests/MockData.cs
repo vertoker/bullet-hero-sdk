@@ -20,6 +20,7 @@ using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Resources;
 using BH.SDK.Models.SettingGroups;
 using BH.SDK.Models.Values;
+using BH.SDK.Rules;
 using BH.SDK.Serialization;
 using BH.SDK.Versions.V0_0;
 using Newtonsoft.Json.Linq;
@@ -92,28 +93,31 @@ namespace BH.SDK.Tests
                     VelocitySpeed = new FloatValue(2f),
                     LinearForce = new Vector2Value(0.1f, -0.1f),
                 },
+                // Curves and gradients carry their minimum of two keys, and every SpeedRange is an
+                // ordered [low..high] pair - a random one must be ordered for EVERY value it can
+                // roll, which for a circle means its whole X extent clearing its whole Y extent.
                 Angle = new EffectAngleCurvesBySpeed
                 {
                     Curve = new CurveValue(new List<CurveKeyframeValue>
                     {
                         new(), new()
                     }, CurveWrapMode.Default, CurveWrapMode.Default),
-                    SpeedRange = new Vector2Circle(0f, 1f, 2f),
+                    SpeedRange = new Vector2Circle(2f, 10f, 1f),
                 },
                 Color = new EffectColorGradientRandom
                 {
                     Gradient = new GradientValue(new List<GradientColorKeyValue>
                     {
-                        new()
+                        new(), new()
                     }, new List<GradientAlphaKeyValue>
                     {
-                        new()
+                        new(), new()
                     }, GradientInterpolationMode.PerceptualBlend, GradientColorSpace.Linear)
                 },
                 Scale = new EffectScaleCurvesBySpeed
                 {
-                    CurveX = new CurveValue(),
-                    CurveY = new CurveValue(),
+                    CurveX = EffectRules.GetCurve_Default(),
+                    CurveY = EffectRules.GetCurve_Default(),
                     SpeedRange = new Vector2Value(),
                 },
                 Shape = new EffectShapeCircle
@@ -340,13 +344,21 @@ namespace BH.SDK.Tests
             };
             level.Game.Objects.Add(new ObjectId(3), effectObject);
 
-            var prefab = new Prefab();
+            // The template's own id is valid here even though this is the "invalid" fixture: an
+            // unset PrefabId would be fixed to a fresh Guid, which then no longer matches the key it
+            // is filed under - one repair creating a different violation, in a fixture whose whole
+            // point is that a single pass of RuleFixer clears everything.
+            var prefab = new Prefab { PrefabId = PrefabId.NewGuid() };
             prefab.Objects.Add(new ObjectId(4), new TextureObject() { ObjectId = new ObjectId(4), });
             prefab.Objects.Add(new ObjectId(5), new TextObject() { ObjectId = new ObjectId(5), });
             prefab.Objects.Add(new ObjectId(6), new EffectObject() { ObjectId = new ObjectId(6), });
             level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 
-            var prefabObject = new PrefabObject();
+            // Given a real id for the same reason the template above is: an unset one is fixed to
+            // ObjectId 1, which then collides with the texture object already filed under that key,
+            // and re-keying collapses the two into one. That is correct behaviour, but it is not the
+            // violation this fixture is here to exercise.
+            var prefabObject = new PrefabObject { ObjectId = new ObjectId(4) };
             level.Game.Objects.Add(prefabObject.ObjectId, prefabObject);
 
             var invalidLevelThemeId = ThemeId.NewGuid();

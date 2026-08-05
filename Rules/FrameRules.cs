@@ -9,7 +9,15 @@ namespace BH.SDK.Rules
         public const int MinFrame = 0;
         public const int MinFrameLength = 1;
         public const float MinTime = 0f;
-        
+
+        // Upper bound of a timeline, and therefore of every Frame in the format. Chosen from what a
+        // level can plausibly be rather than from int.MaxValue: at the default 60fps this is ~4.6
+        // hours, at the 1000fps ceiling ~17 minutes. Without it a hostile or corrupt file can claim
+        // a two-billion-frame timeline, which every editor timeline widget and every "allocate per
+        // frame" consumer has to survive.
+        public const int MaxFrameLength = 1_000_000;
+        public const int MaxFrame = MaxFrameLength - 1;
+
         public const int MinFramerate = 1;
         public const int MaxFramerate = 1000;
         

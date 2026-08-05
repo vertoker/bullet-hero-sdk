@@ -1,0 +1,129 @@
+using System;
+using BH.SDK.Models;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
+using BH.SDK.Rules.Attributes;
+using NUnit.Framework;
+
+namespace BH.SDK.Tests.Rules
+{
+    /// <summary>
+    /// RuleContext: what every rule is allowed to know about its surroundings. The scope it resolves
+    /// is what decides which timeline a frame is measured against and which reserved parent targets
+    /// mean anything, so getting it wrong misvalidates whole subtrees silently.
+    /// </summary>
+    public class RuleContextTests : BaseRuleTests
+    {
+        // A level's scope is assembled from two different objects on purpose: GameLevel owns the
+        // objects, LevelSettings owns the timeline. Nothing else in the SDK pairs them up, which is
+        // why a level cannot simply implement IFrameScope itself.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestLevelRootPairsGameAndSettings()
+        {
+            var level = new Level();
+            level.Settings.FrameLength = 250;
+
+            var context = RuleContext.ForRoot(level);
+
+            Assert.IsTrue(context.HasScope);
+            Assert.IsFalse(context.IsPrefabScope);
+            Assert.AreSame(level, context.Root);
+            Assert.AreSame(level, context.Level);
+            Assert.AreSame(level.Game, context.Objects);
+            Assert.AreEqual(250, context.FrameLength);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestPrefabRootIsItsOwnScope()
+        {
+            var prefab = new Prefab { FrameLength = 42 };
+
+            var context = RuleContext.ForRoot(prefab);
+
+            Assert.IsTrue(context.HasScope);
+            Assert.IsTrue(context.IsPrefabScope);
+            Assert.AreSame(prefab, context.Objects);
+            Assert.AreEqual(42, context.FrameLength);
+            Assert.IsNull(context.Level, "A standalone template has no level around it");
+        }
+
+        // LevelMeta, UserSettings, a bare value model: no timeline, no objects. Scope-dependent rules
+        // must degrade rather than fail here.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestScopelessRoot()
+        {
+            var context = RuleContext.ForRoot(new LevelMeta());
+
+            Assert.IsFalse(context.HasScope);
+            Assert.IsFalse(context.IsPrefabScope);
+            Assert.IsNull(context.Level);
+            Assert.IsNull(context.Objects);
+            Assert.AreEqual(0, context.FrameLength);
+        }
+
+        // Descending into a template swaps everything scope-local but keeps the level, which
+        // reference-resolving rules still need - a template's objects point at the same
+        // Level.Resources as everything else.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestWithScopeKeepsLevelAndRoot()
+        {
+            var level = new Level();
+            level.Settings.FrameLength = 250;
+            var prefab = new Prefab { FrameLength = 42 };
+
+            var context = RuleContext.ForRoot(level).WithScope(prefab);
+
+            Assert.AreSame(level, context.Root);
+            Assert.AreSame(level, context.Level);
+            Assert.AreSame(prefab, context.Objects);
+            Assert.AreEqual(42, context.FrameLength);
+            Assert.IsTrue(context.IsPrefabScope);
+        }
+
+        // Immutable: entering a nested scope must not disturb the context an already-recorded issue
+        // is holding, or a fix would clamp against the wrong timeline once the walk moved on.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestWithScopeDoesNotMutateOriginal()
+        {
+            var level = new Level();
+            level.Settings.FrameLength = 250;
+            var outer = RuleContext.ForRoot(level);
+
+            var inner = outer.WithScope(new Prefab { FrameLength = 42 });
+
+            Assert.AreNotSame(outer, inner);
+            Assert.AreEqual(250, outer.FrameLength);
+            Assert.IsFalse(outer.IsPrefabScope);
+            Assert.AreSame(level.Game, outer.Objects);
+        }
+
+        // Proof the analyzer actually rebases as it walks: the same object is legal at level scope
+        // and illegal one level down, purely because of where it lives.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        public void TestAnalyzerRebasesInsideTemplate()
+        {
+            var atLevel = new Level();
+            atLevel.Settings.FrameLength = 100;
+            var levelObject = new RectObject { ObjectId = new ObjectId(1), EndFrame = 50 };
+            atLevel.Game.Objects.Add(levelObject.ObjectId, levelObject);
+
+            AssertValid(atLevel);
+
+            var withTemplate = new Level();
+            withTemplate.Settings.FrameLength = 100;
+            var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameLength = 10 };
+            var innerObject = new RectObject { ObjectId = new ObjectId(1), EndFrame = 50 };
+            prefab.Objects.Add(innerObject.ObjectId, innerObject);
+            withTemplate.Resources.Prefabs.Add(prefab.PrefabId, prefab);
+
+            AssertHasIssue<RuleLevelFrameAttribute>(withTemplate);
+        }
+    }
+}

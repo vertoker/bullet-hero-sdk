@@ -19,22 +19,28 @@ namespace BH.SDK.Models.Values
     public class GradientValue : IModel<GradientValue>
     {
         /// <summary> RGB stops along the ramp. </summary>
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
+        [RuleNotNull, RuleCollectionNoNullItems]
+        [RuleCollectionMinCount(ValueRules.MinGradientKeys), RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
+        [RuleCollectionSorted(nameof(GradientColorKeyValue.Time))]
         [JsonProperty(Names.ColorKeys)]
         public List<GradientColorKeyValue> ColorKeys { get; set; }
 
         /// <summary> Opacity stops, placed at their own times independently of ColorKeys. </summary>
-        [RuleNotNull, RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
+        [RuleNotNull, RuleCollectionNoNullItems]
+        [RuleCollectionMinCount(ValueRules.MinGradientKeys), RuleCollectionMaxCount(ValueRules.MaxGradientKeys)]
+        [RuleCollectionSorted(nameof(GradientAlphaKeyValue.Time))]
         [JsonProperty(Names.AlphaKeys)]
         public List<GradientAlphaKeyValue> AlphaKeys { get; set; }
 
         /// <summary> Blend or hard-step between stops - the difference between a smooth fade and a
         /// banded palette. </summary>
+        [RuleEnumValid(GradientInterpolationMode.PerceptualBlend)]
         [JsonProperty(Names.Mode)]
         public GradientInterpolationMode Mode { get; set; }
 
         /// <summary> Space the blend happens in (linear vs. gamma); changes the midpoints, not the
         /// stops themselves. </summary>
+        [RuleEnumValid(GradientColorSpace.Linear)]
         [JsonProperty(Names.ColorSpace)]
         public GradientColorSpace ColorSpace { get; set; }
         

@@ -30,7 +30,8 @@ namespace BH.SDK.Models.Effects
         public CurveValue CurveY { get; set; }
 
         /// <summary> Speed window mapped onto the curves' 0..1 axis. </summary>
-        [RuleNotNull]
+        [RuleNotNull, RuleIVector2Ordered]
+        [RuleIVector2InRange(EffectRules.SpeedRange_Min, EffectRules.SpeedRange_Max)]
         [JsonProperty(Names.SpeedRange)]
         public IVector2 SpeedRange { get; set; }
 

@@ -41,7 +41,7 @@ namespace BH.SDK.Models.Game
         /// <summary> How the visible area is constrained over time (None / fixed aspect / aspect
         /// bounds), so a level authored for one aspect ratio stays playable on any device
         /// (limitations for screen will be chosen by mappers) </summary>
-        [RuleNotNull(typeof(ScreenLimitFixed))]
+        [RuleNotNull(typeof(ScreenLimitFixed)), RuleCollectionMaxCount(LevelRules.MaxScreenLimitEvents)]
         [RuleCollectionUnique(nameof(ScreenLimitKey.Frame))]
         [JsonProperty(Names.ScreenLimits)]
         public List<ScreenLimitKey> ScreenLimits { get; set; }
