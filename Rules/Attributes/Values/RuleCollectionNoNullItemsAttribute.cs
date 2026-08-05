@@ -16,6 +16,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionNoNullItemsAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_collection_no_null_items";
+
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(ICollection).IsAssignableFrom(property.PropertyType);
 

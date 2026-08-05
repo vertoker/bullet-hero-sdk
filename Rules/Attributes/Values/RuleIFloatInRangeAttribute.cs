@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIFloatInRangeAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_ifloat_in_range";
+
         // always include
         public float Min { get; set; }
         public float Max { get; set; }

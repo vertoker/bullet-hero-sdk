@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIPrimitiveGuidNotNullAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_iprimitive_guid_not_null";
+
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IPrimitiveGuid).IsAssignableFrom(property.PropertyType);
 

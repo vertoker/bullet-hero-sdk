@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIFloatMaxAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_ifloat_max";
+
         // always include
         public float Max { get; set; }
         

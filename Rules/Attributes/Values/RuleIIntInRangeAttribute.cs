@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIIntInRangeAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_iint_in_range";
+
         // always include
         public int Min { get; set; }
         public int Max { get; set; }

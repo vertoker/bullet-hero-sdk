@@ -7,6 +7,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleMinAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_min";
+
         public object Min { get; set; } // always include
         public object DefaultValue { get; set; }
 

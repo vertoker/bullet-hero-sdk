@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using BH.SDK.Rules.Attributes;
 using NUnit.Framework;
 
@@ -99,5 +100,87 @@ namespace BH.SDK.Tests.Rules
             CollectionAssert.IsEmpty(stale,
                 "Registry names rules that no longer exist: " + string.Join(", ", stale));
         }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void TestEveryRuleHasNameKey()
+        {
+            var unnamed = ConcreteRules
+                .Where(type => !NameKeyOf(type).StartsWith(KeyPrefix, StringComparison.Ordinal))
+                .Select(type => type.Name).ToList();
+
+            CollectionAssert.IsEmpty(unnamed,
+                "Rules whose RuleNameKey is empty or not prefixed with \"" + KeyPrefix + "\": "
+                + string.Join(", ", unnamed));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void TestEveryRuleNameKeyIsUnique()
+        {
+            var duplicates = ConcreteRules.GroupBy(NameKeyOf)
+                .Where(group => group.Count() > 1)
+                .Select(group => group.Key + " -> " + string.Join("/", group.Select(type => type.Name)))
+                .ToList();
+
+            CollectionAssert.IsEmpty(duplicates,
+                "Rules sharing one RuleNameKey: " + string.Join(", ", duplicates));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void TestEveryRuleNameKeyMatchesTypeName()
+        {
+            var mismatched = ConcreteRules
+                .Where(type => NameKeyOf(type) != ExpectedNameKey(type))
+                .Select(type => type.Name + ": \"" + NameKeyOf(type) + "\" != \"" + ExpectedNameKey(type) + "\"")
+                .ToList();
+
+            CollectionAssert.IsEmpty(mismatched,
+                "RuleNameKey does not follow the naming scheme: " + string.Join(", ", mismatched));
+        }
+
+        // Rule attributes have no parameterless constructor (every one of them takes its bounds), so
+        // reading an instance property off a Type means building the instance without running a
+        // constructor. That is safe here precisely because RuleNameKey is a literal on every rule -
+        // it reads no field, so an uninitialized instance answers exactly what a real one would.
+        private static string NameKeyOf(Type type)
+            => ((BaseRuleAttribute)FormatterServices.GetUninitializedObject(type)).RuleNameKey ?? string.Empty;
+
+        /// <summary> The key a rule of this type is expected to declare: "rule_" plus the type name
+        /// without its Rule prefix and Attribute suffix, in snake_case, with a leading interface "I"
+        /// glued to the word it prefixes (IFloat -> ifloat). </summary>
+        private static string ExpectedNameKey(Type type)
+        {
+            var name = type.Name;
+            if (name.StartsWith("Rule", StringComparison.Ordinal)) name = name["Rule".Length..];
+            if (name.EndsWith("Attribute", StringComparison.Ordinal)) name = name[..^"Attribute".Length];
+
+            var words = new List<string>();
+            var start = 0;
+            for (var i = 1; i < name.Length; i++)
+            {
+                if (!char.IsUpper(name[i])) continue;
+                words.Add(name[start..i]);
+                start = i;
+            }
+            words.Add(name[start..]);
+
+            if (words.Count > 1 && words[0] == "I")
+            {
+                words[1] = words[0] + words[1];
+                words.RemoveAt(0);
+            }
+
+            return KeyPrefix + string.Join("_", words.Select(word => word.ToLowerInvariant()));
+        }
+
+        private const string KeyPrefix = "rule_";
     }
 }

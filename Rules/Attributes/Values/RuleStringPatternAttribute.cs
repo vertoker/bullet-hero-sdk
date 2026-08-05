@@ -16,6 +16,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleStringPatternAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_string_pattern";
+
         public string Pattern { get; }
         public string DefaultValue { get; set; }
 

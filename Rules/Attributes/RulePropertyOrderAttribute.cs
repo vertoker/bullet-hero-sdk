@@ -21,6 +21,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(ClassTarget, AllowMultiple = true)]
     public class RulePropertyOrderAttribute : BaseObjectRuleAttribute
     {
+        public override string RuleNameKey => "rule_property_order";
+
         public string LowPropertyName { get; }
         public string HighPropertyName { get; }
 

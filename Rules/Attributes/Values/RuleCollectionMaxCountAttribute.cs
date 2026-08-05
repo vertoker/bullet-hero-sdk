@@ -7,6 +7,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionMaxCountAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_collection_max_count";
+
         public int MaxCount { get; set; }
 
         public RuleCollectionMaxCountAttribute(int maxCount)

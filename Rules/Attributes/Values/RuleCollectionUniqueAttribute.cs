@@ -8,6 +8,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionUniqueAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_collection_unique";
+
         public string ItemPropertyName { get; set; }
 
         public RuleCollectionUniqueAttribute()

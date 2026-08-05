@@ -19,6 +19,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionMinCountAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_collection_min_count";
+
         public int MinCount { get; set; }
 
         public RuleCollectionMinCountAttribute(int minCount)

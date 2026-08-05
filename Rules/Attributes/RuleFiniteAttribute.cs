@@ -17,6 +17,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleFiniteAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_finite";
+
         public object DefaultValue { get; set; }
 
         public RuleFiniteAttribute() { }

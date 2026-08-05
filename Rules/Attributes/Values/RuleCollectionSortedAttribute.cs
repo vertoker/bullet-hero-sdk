@@ -21,6 +21,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionSortedAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_collection_sorted";
+
         public string ItemPropertyName { get; set; }
 
         public RuleCollectionSortedAttribute(string itemPropertyName)

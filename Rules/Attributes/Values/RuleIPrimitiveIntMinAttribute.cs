@@ -8,6 +8,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIPrimitiveIntMinAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_iprimitive_int_min";
+
         // always include
         public int Min { get; set; }
 

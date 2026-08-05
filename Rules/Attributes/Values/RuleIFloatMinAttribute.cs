@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIFloatMinAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_ifloat_min";
+
         // always include
         public float Min { get; set; }
         

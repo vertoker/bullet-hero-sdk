@@ -8,6 +8,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleCollectionCountAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_collection_count";
+
         public int Count { get; set; }
 
         public RuleCollectionCountAttribute(int count)

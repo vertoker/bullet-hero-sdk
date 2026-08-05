@@ -9,6 +9,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIStringMaxAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_istring_max";
+
         public int MaxLength { get; set; }
 
         public RuleIStringMaxAttribute(int maxLength)

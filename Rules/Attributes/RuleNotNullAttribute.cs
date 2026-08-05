@@ -8,6 +8,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleNotNullAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_not_null";
+
         public Type DefaultConstructType { get; set; }
         public object[] DefaultConstructArgs { get; set; }
         public Type[] DefaultConstructArgTypes { get; set; }

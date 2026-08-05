@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIVector3InRangeAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_ivector3_in_range";
+
         // always include
         public float MinX { get; set; }
         public float MaxX { get; set; }

@@ -24,6 +24,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIVector2OrderedAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_ivector2_ordered";
+
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IVector2).IsAssignableFrom(property.PropertyType);
 

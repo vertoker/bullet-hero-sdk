@@ -7,6 +7,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleMaxAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_max";
+
         public object Max { get; set; } // always include
         public object DefaultValue { get; set; }
 

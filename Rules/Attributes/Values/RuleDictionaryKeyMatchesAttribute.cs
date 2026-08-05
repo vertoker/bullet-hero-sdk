@@ -19,6 +19,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleDictionaryKeyMatchesAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_dictionary_key_matches";
+
         public string ValuePropertyName { get; set; }
 
         public RuleDictionaryKeyMatchesAttribute(string valuePropertyName)

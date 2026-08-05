@@ -18,6 +18,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleParentObjectIdValidAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_parent_object_id_valid";
+
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(ObjectId).IsAssignableFrom(property.PropertyType);
 

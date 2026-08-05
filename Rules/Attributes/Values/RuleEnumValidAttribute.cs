@@ -24,6 +24,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleEnumValidAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_enum_valid";
+
         public object DefaultValue { get; set; }
 
         public RuleEnumValidAttribute() { }

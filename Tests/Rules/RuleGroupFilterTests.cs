@@ -25,6 +25,7 @@ namespace BH.SDK.Tests.Rules
         [AttributeUsage(BaseRuleAttribute.PropertyTarget)]
         private class AlwaysFailsAdviceAttribute : BasePropertyRuleAttribute
         {
+            public override string RuleNameKey => "rule_always_fails_advice";
             public override RuleGroup Group => RuleGroup.Advice;
             public override bool HasFix => false;
 

@@ -29,6 +29,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleReferenceExistsAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_reference_exists";
+
         public ResourceReferenceKind Kind { get; }
 
         /// <summary> Whether an unset reference is a legitimate authored state rather than a

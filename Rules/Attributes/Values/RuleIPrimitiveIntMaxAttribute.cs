@@ -8,6 +8,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIPrimitiveIntMaxAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_iprimitive_int_max";
+
         // always include
         public int Max { get; set; }
 

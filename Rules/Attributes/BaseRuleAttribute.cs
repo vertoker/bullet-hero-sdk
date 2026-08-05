@@ -19,6 +19,15 @@ namespace BH.SDK.Rules.Attributes
         public const AttributeTargets ClassTarget = AttributeTargets.Class;
         public const AttributeTargets PropertyTarget = AttributeTargets.Property;
 
+        // Abstract rather than "virtual => GetType().Name" on purpose. A consumer that shows issues
+        // to a person needs a name that survives a rename and can be translated, and a default would
+        // let a new rule reach a UI as an unnamed issue nobody notices until a player reports it.
+        // Same contract, and the same reason, as LevelEditorOperation.OperationNameKey in the game.
+
+        /// <summary> Stable identifier of this rule, shaped as a localization key
+        /// ("rule_" + the type name without its Rule prefix/Attribute suffix, in snake_case). </summary>
+        public abstract string RuleNameKey { get; }
+
         /// <summary> How badly a violation breaks the level: Error means unplayable, Warning means
         /// playable but wrong, Advice means cosmetic. Drives RuleAnalyzerSettings' severity filter. </summary>
         public virtual RuleGroup Group => RuleGroup.Error;

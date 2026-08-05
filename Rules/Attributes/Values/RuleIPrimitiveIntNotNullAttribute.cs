@@ -11,6 +11,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIPrimitiveIntNotNullAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_iprimitive_int_not_null";
+
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(IPrimitiveInt).IsAssignableFrom(property.PropertyType);
 

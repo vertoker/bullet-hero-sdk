@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIVector2MaxAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_ivector2_max";
+
         // always include
         public float MaxX { get; set; }
         public float MaxY { get; set; }

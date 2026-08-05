@@ -10,6 +10,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleIVector2MinAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_ivector2_min";
+
         // always include
         public float MinX { get; set; }
         public float MinY { get; set; }

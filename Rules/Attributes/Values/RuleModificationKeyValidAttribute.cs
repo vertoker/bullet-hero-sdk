@@ -22,6 +22,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleModificationKeyValidAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_modification_key_valid";
+
         public int MaxPathLength { get; set; }
 
         public RuleModificationKeyValidAttribute(int maxPathLength)

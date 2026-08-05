@@ -20,6 +20,8 @@ namespace BH.SDK.Rules.Attributes
     [AttributeUsage(PropertyTarget)]
     public class RuleLevelFrameAttribute : BasePropertyRuleAttribute
     {
+        public override string RuleNameKey => "rule_level_frame";
+
         protected override bool IsValidTypeInternal(PropertyInfo property)
             => typeof(int).IsAssignableFrom(property.PropertyType);
 
