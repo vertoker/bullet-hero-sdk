@@ -89,6 +89,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new ReferenceModel());
@@ -96,6 +98,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInvalid()
         {
             AssertInvalid<RuleNotNullAttribute>(new ReferenceModel { Value = null });
@@ -103,6 +107,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixReference()
         {
             var model = new ReferenceModel { Value = null };
@@ -114,6 +120,8 @@ namespace BH.SDK.Tests.Rules
         // an empty name is valid, a null one is not.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixStringToEmpty()
         {
             var model = new StringModel { Value = null };
@@ -122,6 +130,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixListToEmpty()
         {
             var model = new ListModel { Value = null };
@@ -132,6 +142,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixArrayToEmpty()
         {
             var model = new ArrayModel { Value = null };
@@ -145,6 +157,8 @@ namespace BH.SDK.Tests.Rules
         // property in the model tree gets repaired.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixInterfaceUsesDefaultConstructType()
         {
             var model = new InterfaceModel { Value = null };
@@ -154,6 +168,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixUsesConstructArgs()
         {
             var model = new ConstructArgsModel { Value = null };
@@ -163,6 +179,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullable()
         {
             AssertValid(new NullableModel { Value = 5 });
@@ -175,6 +193,8 @@ namespace BH.SDK.Tests.Rules
         // today - pinned here so adding the first one is a deliberate choice, not a surprise.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixNullableIsNoOp()
         {
             var model = new NullableModel { Value = null };
@@ -188,6 +208,8 @@ namespace BH.SDK.Tests.Rules
         // analyzer refuses it outright instead of quietly always passing.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongTypeValueType()
         {
             AssertWrongType(new WrongTypeModel());

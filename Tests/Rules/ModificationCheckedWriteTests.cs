@@ -34,6 +34,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestAllowedValueIsWritten()
         {
             var service = ServiceFor(typeof(RectObject));
@@ -47,6 +49,8 @@ namespace BH.SDK.Tests.Rules
         // through an override rather than through the editor.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestOutOfRangeFrameIsRefused()
         {
             var service = ServiceFor(typeof(RectObject));
@@ -58,6 +62,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestOutOfRangeLayerIsRefused()
         {
             var service = ServiceFor(typeof(RectObject));
@@ -71,6 +77,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestNullIntoNotNullPropertyIsRefused()
         {
             var service = ServiceFor(typeof(RectObject));
@@ -83,6 +91,8 @@ namespace BH.SDK.Tests.Rules
         // checking is explicit.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestUncheckedWriteStillBypassesRules()
         {
             var service = ServiceFor(typeof(RectObject));
@@ -94,6 +104,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestUnresolvablePathIsRefused()
         {
             var service = ServiceFor(typeof(RectObject));

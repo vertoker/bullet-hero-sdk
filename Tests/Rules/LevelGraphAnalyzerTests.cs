@@ -51,6 +51,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestHealthyLevel()
         {
             AssertClean(LevelWith(Obj(1), Obj(2, 1), Obj(3, 2)));
@@ -58,6 +60,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestEmptyLevel()
         {
             AssertClean(new Level());
@@ -67,6 +71,8 @@ namespace BH.SDK.Tests.Rules
         // and the value's id is what every parent and remap resolves against.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestDuplicateObjectId()
         {
             var level = LevelWith(Obj(1), Obj(2));
@@ -77,6 +83,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestMissingParent()
         {
             AssertReports(LevelWith(Obj(1, 99)), GraphRule.MissingParent);
@@ -85,6 +93,8 @@ namespace BH.SDK.Tests.Rules
         // Null and the reserved negatives are chain terminators, not missing objects.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestReservedParentsAreNotMissing()
         {
             AssertClean(LevelWith(Obj(1, ObjectId.NullValue), Obj(2, -1), Obj(3, -2)));
@@ -92,6 +102,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestParentCycle()
         {
             var level = LevelWith(Obj(1, 2), Obj(2, 1));
@@ -100,6 +112,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestSelfParent()
         {
             AssertReports(LevelWith(Obj(1, 1)), GraphRule.ParentCycle);
@@ -109,6 +123,8 @@ namespace BH.SDK.Tests.Rules
         // silent while authoring, corrupt afterwards.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestIdCounterBehind()
         {
             var level = LevelWith(Obj(1), Obj(2));
@@ -119,6 +135,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestPlacementWithMissingTemplate()
         {
             var placement = new PrefabObject
@@ -133,6 +151,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestEmptyPlacementIsNotDangling()
         {
             var placement = new PrefabObject { ObjectId = new ObjectId(1), PrefabId = PrefabId.Null };
@@ -141,6 +161,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestBrokenRemap()
         {
             var template = new Prefab { PrefabId = PrefabId.NewGuid() };
@@ -159,6 +181,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestOverrideTargetingRemovedTemplateObject()
         {
             var template = new Prefab { PrefabId = PrefabId.NewGuid() };
@@ -179,6 +203,8 @@ namespace BH.SDK.Tests.Rules
         // The failure that makes materialization non-terminating rather than merely wrong.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestPrefabSelfReference()
         {
             var template = new Prefab { PrefabId = PrefabId.NewGuid() };
@@ -194,6 +220,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestPrefabMutualReference()
         {
             var first = new Prefab { PrefabId = PrefabId.NewGuid(), ObjectIdCounter = 2 };
@@ -215,6 +243,8 @@ namespace BH.SDK.Tests.Rules
         // distinguish "deep" from "looping".
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestLegitimateNestingIsClean()
         {
             var level = new Level();
@@ -238,6 +268,8 @@ namespace BH.SDK.Tests.Rules
         // property rule, which is precisely why this analyzer exists.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestGraphFailuresPassDeclarativeRules()
         {
             var level = LevelWith(Obj(1, 2), Obj(2, 1));

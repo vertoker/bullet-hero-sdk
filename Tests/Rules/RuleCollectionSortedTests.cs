@@ -40,6 +40,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestSorted()
         {
             AssertValid(new Model { Value = new List<Key> { new(0), new(5), new(9) } });
@@ -47,6 +49,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEqualKeysCountAsSorted()
         {
             AssertValid(new Model { Value = new List<Key> { new(5), new(5) } });
@@ -54,6 +58,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUnsorted()
         {
             AssertInvalid<RuleCollectionSortedAttribute>(
@@ -62,6 +68,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixSorts()
         {
             var model = new Model { Value = new List<Key> { new(9), new(1), new(5) } };
@@ -72,6 +80,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestGroupIsAdvice()
         {
             AssertGroup<RuleCollectionSortedAttribute>(
@@ -81,6 +91,8 @@ namespace BH.SDK.Tests.Rules
         // A consumer asking only "can this level be played" must not be told about tidiness.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestSuppressedInErrorOnlyReport()
         {
             var model = new Model { Value = new List<Key> { new(5), new(1) } };
@@ -90,6 +102,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

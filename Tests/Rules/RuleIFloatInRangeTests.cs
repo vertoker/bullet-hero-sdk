@@ -34,6 +34,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueValid()
         {
             AssertValid(new Model { Value = new FloatValue(0.5f) });
@@ -41,6 +43,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueBoundaries()
         {
             AssertValid(new Model { Value = new FloatValue(0f) });
@@ -49,6 +53,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueBelowMin()
         {
             AssertInvalid<RuleIFloatInRangeAttribute>(new Model { Value = new FloatValue(-0.1f) });
@@ -56,6 +62,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueAboveMax()
         {
             AssertInvalid<RuleIFloatInRangeAttribute>(new Model { Value = new FloatValue(1.1f) });
@@ -63,6 +71,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixValueClamps()
         {
             var model = new Model { Value = new FloatValue(5f) };
@@ -71,6 +81,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinMaxValid()
         {
             AssertValid(new Model { Value = new FloatMinMax(0.2f, 0.8f) });
@@ -82,6 +94,8 @@ namespace BH.SDK.Tests.Rules
         // are complementary, and neither alone is enough.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInvertedPairCaughtByModelRule()
         {
             AssertInvalid<RulePropertyOrderAttribute>(new Model { Value = new FloatMinMax(0.8f, 0.2f) });
@@ -89,6 +103,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinMaxOutOfRange()
         {
             AssertInvalid<RuleIFloatInRangeAttribute>(new Model { Value = new FloatMinMax(-1f, 0.5f) });
@@ -97,6 +113,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixMinMaxClampsBothEnds()
         {
             var model = new Model { Value = new FloatMinMax(-3f, 4f) };
@@ -109,6 +127,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinMaxStepValid()
         {
             AssertValid(new Model { Value = new FloatMinMaxStep(0.2f, 0.8f, 0.1f) });
@@ -116,6 +136,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinMaxStepOutOfRange()
         {
             AssertInvalid<RuleIFloatInRangeAttribute>(
@@ -125,6 +147,8 @@ namespace BH.SDK.Tests.Rules
         // Step is untouched by the range rule - a step larger than the whole range stays valid.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixMinMaxStepLeavesStepAlone()
         {
             var model = new Model { Value = new FloatMinMaxStep(-3f, 4f, 0.25f) };
@@ -138,6 +162,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIFloatInRangeAttribute>(new Model { Value = null });
@@ -145,6 +171,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

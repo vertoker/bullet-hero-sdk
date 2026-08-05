@@ -59,6 +59,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new ListModel { Value = new List<int> { 1, 2, 3 } });
@@ -66,6 +68,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestBoundary()
         {
             AssertValid(new ListModel { Value = new List<int> { 1, 2 } });
@@ -73,6 +77,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestJustUnder()
         {
             AssertInvalid<RuleCollectionMinCountAttribute>(new ListModel { Value = new List<int> { 1 } });
@@ -80,6 +86,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmpty()
         {
             AssertInvalid<RuleCollectionMinCountAttribute>(new ListModel { Value = new List<int>() });
@@ -87,6 +95,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixPadsValueTypes()
         {
             var model = new ListModel { Value = new List<int> { 7 } };
@@ -99,6 +109,8 @@ namespace BH.SDK.Tests.Rules
         // never nulls that satisfy the count and break everything downstream.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixPadsReferenceTypesWithInstances()
         {
             var model = new ReferenceListModel { Value = new List<Item> { new() } };
@@ -112,6 +124,8 @@ namespace BH.SDK.Tests.Rules
         // a null - reporting an unfixable truth beats silently satisfying the count.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUnconstructableElementStaysBroken()
         {
             var model = new UnconstructableModel
@@ -128,6 +142,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

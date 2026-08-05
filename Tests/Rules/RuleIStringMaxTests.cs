@@ -28,6 +28,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueValid()
         {
             AssertValid(new Model { Value = new StringValue("abc") });
@@ -35,6 +37,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueBoundary()
         {
             AssertValid(new Model { Value = new StringValue("abcde") });
@@ -42,6 +46,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueJustOver()
         {
             AssertInvalid<RuleIStringMaxAttribute>(new Model { Value = new StringValue("abcdef") });
@@ -49,6 +55,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixValueTruncates()
         {
             var model = new Model { Value = new StringValue("abcdefghij") };
@@ -57,6 +65,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestLocalizedValid()
         {
             AssertValid(new Model
@@ -70,6 +80,8 @@ namespace BH.SDK.Tests.Rules
         // though their combined length is over the cap.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestLocalizedCapsEachLanguageSeparately()
         {
             AssertInvalid<RuleIStringMaxAttribute>(new Model
@@ -81,6 +93,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixLocalizedTruncatesOnlyOverlongEntries()
         {
             var localized = new StringLocalized(new StringLanguage("en", "ab"),
@@ -94,6 +108,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmptyLocalizedIsValid()
         {
             AssertValid(new Model { Value = new StringLocalized() });
@@ -101,6 +117,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIStringMaxAttribute>(new Model { Value = null });
@@ -112,6 +130,8 @@ namespace BH.SDK.Tests.Rules
         // too. Pinned as a throw so the guard that fixes it has to update this test deliberately.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullInnerStringThrows()
         {
             var model = new Model { Value = new StringValue(null) };
@@ -120,6 +140,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

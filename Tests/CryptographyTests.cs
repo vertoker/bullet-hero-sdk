@@ -7,6 +7,8 @@ namespace BH.SDK.Tests
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void CryptographyTest()
         {
             var cryptography = new CryptographyService();

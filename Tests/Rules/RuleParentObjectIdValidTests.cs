@@ -32,6 +32,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUserSpaceParent()
         {
             Assert.IsTrue(Rule.IsValid(new ObjectId(1), LevelContext));
@@ -41,6 +43,8 @@ namespace BH.SDK.Tests.Rules
         // Null is a real state here, not an error: it means "parented to level space".
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullParentIsValid()
         {
             Assert.IsTrue(Rule.IsValid(ObjectId.Null, LevelContext));
@@ -49,6 +53,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestBelowReservedRangeIsInvalid()
         {
             Assert.IsFalse(Rule.IsValid(new ObjectId(-4), LevelContext));
@@ -59,6 +65,8 @@ namespace BH.SDK.Tests.Rules
         // not from inside a template, which has no level around it to attach to.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRuntimeTargetsAreLevelScopeOnly()
         {
             Assert.IsTrue(Rule.IsValid(ObjectId.Camera, LevelContext));
@@ -72,6 +80,8 @@ namespace BH.SDK.Tests.Rules
         // have. This used to be accepted everywhere - the leniency the context abstraction closes.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestPrefabRootIsTemplateScopeOnly()
         {
             Assert.IsTrue(Rule.IsValid(ObjectId.PrefabRoot, PrefabContext));
@@ -82,6 +92,8 @@ namespace BH.SDK.Tests.Rules
         // falls back to the plain range check rather than guessing.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNoScopeAcceptsEveryReservedTarget()
         {
             Assert.IsTrue(Rule.IsValid(ObjectId.Camera, NoScopeContext));
@@ -92,6 +104,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixDetachesToLevelSpace()
         {
             var model = new ParentModel { Value = new ObjectId(-50) };
@@ -102,6 +116,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixDetachesWrongScopeTarget()
         {
             var model = new ParentModel { Value = ObjectId.PrefabRoot };
@@ -114,6 +130,8 @@ namespace BH.SDK.Tests.Rules
         // is a graph property, invisible to a single-property rule.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestDanglingParentIsNotDetected()
         {
             Assert.IsTrue(Rule.IsValid(new ObjectId(12345), LevelContext));
@@ -121,6 +139,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestThroughAnalyzerInsideTemplate()
         {
             var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()) };

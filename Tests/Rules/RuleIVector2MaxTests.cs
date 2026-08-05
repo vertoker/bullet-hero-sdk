@@ -36,6 +36,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueValid()
         {
             AssertValid(new Model { Value = new Vector2Value(10f, -100f) });
@@ -43,6 +45,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueAboveMaxPerAxis()
         {
             AssertInvalid<RuleIVector2MaxAttribute>(new Model { Value = new Vector2Value(11f, 0f) });
@@ -51,6 +55,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixValueLowersEachAxis()
         {
             var model = new Model { Value = new Vector2Value(50f, 30f) };
@@ -63,6 +69,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestPerAxisBounds()
         {
             AssertValid(new PerAxisModel { Value = new Vector2Value(10f, 1f) });
@@ -72,6 +80,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRect()
         {
             AssertValid(new Model { Value = new Vector2Rect(-50f, -50f, 10f, 10f) });
@@ -81,6 +91,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRectStep()
         {
             AssertValid(new Model { Value = new Vector2RectStep(-50f, -50f, 10f, 10f, 1f) });
@@ -90,6 +102,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCircleUsesDiscEdge()
         {
             AssertValid(new Model { Value = new Vector2Circle(8f, 8f, 2f) });
@@ -98,6 +112,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixCircleShiftsCentre()
         {
             var model = new Model { Value = new Vector2Circle(20f, 20f, 2f) };
@@ -111,6 +127,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIVector2MaxAttribute>(new Model { Value = null });
@@ -118,6 +136,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

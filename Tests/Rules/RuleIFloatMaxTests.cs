@@ -30,6 +30,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueValid()
         {
             AssertValid(new Model { Value = new FloatValue(-100f) });
@@ -37,6 +39,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueBoundary()
         {
             AssertValid(new Model { Value = new FloatValue(1f) });
@@ -44,6 +48,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueAboveMax()
         {
             AssertInvalid<RuleIFloatMaxAttribute>(new Model { Value = new FloatValue(1.1f) });
@@ -51,6 +57,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixValueLowersToMax()
         {
             var model = new Model { Value = new FloatValue(50f) };
@@ -59,6 +67,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinMaxChecksMax()
         {
             AssertValid(new Model { Value = new FloatMinMax(-10f, 1f) });
@@ -70,6 +80,8 @@ namespace BH.SDK.Tests.Rules
         // RulePropertyOrder is what reports it.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinEndAboveBoundCaughtByModelRule()
         {
             AssertInvalid<RulePropertyOrderAttribute>(new Model { Value = new FloatMinMax(100f, 0f) });
@@ -77,6 +89,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixMinMaxLowersMaxOnly()
         {
             var model = new Model { Value = new FloatMinMax(-10f, 50f) };
@@ -89,6 +103,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinMaxStep()
         {
             AssertValid(new Model { Value = new FloatMinMaxStep(-10f, 1f, 1f) });
@@ -98,6 +114,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIFloatMaxAttribute>(new Model { Value = null });
@@ -105,6 +123,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

@@ -70,6 +70,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestValid()
         {
             AssertValid(new IntModel { Value = 100 });
@@ -77,6 +79,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestBoundary()
         {
             AssertValid(new IntModel { Value = 10 });
@@ -84,6 +88,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestJustUnder()
         {
             AssertInvalid<RuleMinAttribute>(new IntModel { Value = 9 });
@@ -91,6 +97,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestFixClampsToMin()
         {
             var model = new IntModel { Value = -5 };
@@ -99,6 +107,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestFixUsesDefaultValue()
         {
             var model = new IntDefaultModel { Value = -5 };
@@ -107,6 +117,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestByte()
         {
             AssertValid(new ByteModel { Value = 5 });
@@ -115,6 +127,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestUInt()
         {
             AssertValid(new UIntModel { Value = 5u });
@@ -123,6 +137,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestLong()
         {
             AssertValid(new LongModel { Value = 5L });
@@ -131,6 +147,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestFloat()
         {
             AssertValid(new FloatModel { Value = 1.5f });
@@ -139,6 +157,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestDouble()
         {
             AssertValid(new DoubleModel { Value = 1.5d });
@@ -150,6 +170,8 @@ namespace BH.SDK.Tests.Rules
         // explicitly so a future refactor of the comparison can't silently start accepting NaN.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestNaNIsInvalid()
         {
             AssertInvalid<RuleMinAttribute>(new FloatModel { Value = float.NaN });
@@ -157,6 +179,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestNegativeInfinityIsInvalid()
         {
             AssertInvalid<RuleMinAttribute>(new FloatModel { Value = float.NegativeInfinity });
@@ -166,6 +190,8 @@ namespace BH.SDK.Tests.Rules
         // that must stay finite needs an upper bound too (RuleInRange), not just RuleMin.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestPositiveInfinityIsValid()
         {
             AssertValid(new FloatModel { Value = float.PositiveInfinity });
@@ -173,6 +199,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

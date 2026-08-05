@@ -31,6 +31,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUserSpaceIdIsValid()
         {
             Assert.IsTrue(Rule.IsValid(new ObjectId(1), LevelContext));
@@ -39,6 +41,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullIdIsInvalid()
         {
             Assert.IsFalse(Rule.IsValid(ObjectId.Null, LevelContext));
@@ -46,6 +50,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestReservedNegativeIdsAreInvalid()
         {
             Assert.IsFalse(Rule.IsValid(ObjectId.Camera, LevelContext));
@@ -57,6 +63,8 @@ namespace BH.SDK.Tests.Rules
         // nothing off the context - it works standalone, inside a template, anywhere.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestScopeIndependent()
         {
             Assert.IsTrue(Rule.IsValid(new ObjectId(1), PrefabContext));
@@ -68,6 +76,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixAssignsFirstUserId()
         {
             var model = new IdModel { Value = ObjectId.Null };
@@ -80,6 +90,8 @@ namespace BH.SDK.Tests.Rules
         // repaired too.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixWorksWithoutLevel()
         {
             var model = new IdModel { Value = ObjectId.Null };
@@ -93,6 +105,8 @@ namespace BH.SDK.Tests.Rules
         // sees one value.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestDuplicateIdsAreNotDetected()
         {
             var first = new RectObject { ObjectId = new ObjectId(1) };
@@ -104,6 +118,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestThroughAnalyzerOnRealLevel()
         {
             var level = new Level();

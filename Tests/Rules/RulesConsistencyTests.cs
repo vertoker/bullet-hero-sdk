@@ -84,6 +84,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestEveryPairIsOrdered()
         {
             var broken = Triples().Where(triple => triple.min > triple.max)
@@ -95,6 +97,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestEveryDefaultIsInsideItsPair()
         {
             var broken = Triples()
@@ -111,6 +115,8 @@ namespace BH.SDK.Tests.Rules
         // refactor that renames the constants would otherwise turn them into silent no-ops.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestPairDiscoveryIsNotEmpty()
         {
             Assert.Greater(Triples().Count(), 50);
@@ -118,6 +124,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestFrameBoundsAgree()
         {
             Assert.AreEqual(FrameRules.MaxFrameLength - 1, FrameRules.MaxFrame,
@@ -128,6 +136,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestPrefabBudgetsFollowLevel()
         {
             Assert.AreEqual(LevelRules.MaxObjects, PrefabRules.MaxObjects);
@@ -139,6 +149,8 @@ namespace BH.SDK.Tests.Rules
         // could draw on top of the selection outline and the gizmo handles.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestLayerBandsDoNotOverlap()
         {
             Assert.Less(ValueRules.MaxLayer, ValueRules.MinLayerSelection);

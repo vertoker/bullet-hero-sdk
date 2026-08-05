@@ -10,6 +10,8 @@ namespace BH.SDK.Tests
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestGet()
         {
             var instanceMetadata = new ModificationService();
@@ -41,6 +43,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestSet()
         {
             var instanceMetadata = new ModificationService();
@@ -65,6 +69,9 @@ namespace BH.SDK.Tests
         }
         
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestJToken()
         {
             var model2 = new Model2("321", 345);

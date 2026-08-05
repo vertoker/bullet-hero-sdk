@@ -59,6 +59,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestDeclaredValueIsValid()
         {
             AssertValid(new EaseModel { Value = EaseType.Linear });
@@ -66,6 +68,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUndeclaredValueIsInvalid()
         {
             AssertInvalid<RuleEnumValidAttribute>(new EaseModel { Value = (EaseType)200 });
@@ -75,6 +79,8 @@ namespace BH.SDK.Tests.Rules
         // where the number is simply not one this build knows.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixFallsBackToZeroWhenDeclared()
         {
             var model = new DenseModel { Value = (Dense)99 };
@@ -84,6 +90,8 @@ namespace BH.SDK.Tests.Rules
         // An enum with no zero member cannot fall back to it, so the first declared value stands in.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixFallsBackToFirstDeclaredWhenNoZero()
         {
             var model = new SparseModel { Value = (Sparse)99 };
@@ -92,6 +100,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixPrefersDeclaredDefault()
         {
             var model = new DefaultModel { Value = (EaseType)200 };
@@ -102,6 +112,8 @@ namespace BH.SDK.Tests.Rules
         // not be treated as "unset and therefore broken".
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestZeroIsValidWhenDeclared()
         {
             AssertValid(new DenseModel { Value = Dense.Zero });
@@ -109,6 +121,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

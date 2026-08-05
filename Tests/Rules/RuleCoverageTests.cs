@@ -74,6 +74,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestEveryRuleHasTests()
         {
             var missing = ConcreteRules.Where(type => !Covered.ContainsKey(type))
@@ -86,6 +88,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestRegistryHasNoStaleEntries()
         {
             var live = new HashSet<Type>(ConcreteRules);

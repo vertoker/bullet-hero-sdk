@@ -40,6 +40,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestConsistent()
         {
             AssertValid(new Model { Value = Consistent() });
@@ -47,6 +49,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmptyIsValid()
         {
             AssertValid(new Model());
@@ -56,6 +60,8 @@ namespace BH.SDK.Tests.Rules
         // lookup by id finds nothing while iteration finds the object.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestDriftedKey()
         {
             var objects = Consistent();
@@ -67,6 +73,8 @@ namespace BH.SDK.Tests.Rules
         // The value's own id is the authored intent; the key is bookkeeping, so the key gets rebuilt.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixRekeysToValueId()
         {
             var objects = Consistent();
@@ -87,6 +95,8 @@ namespace BH.SDK.Tests.Rules
         // rather than being inferred from the dictionary surviving a fix.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixCollapsesCollidingIds()
         {
             var objects = Consistent();
@@ -101,6 +111,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

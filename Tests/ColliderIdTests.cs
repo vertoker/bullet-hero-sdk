@@ -13,6 +13,8 @@ namespace BH.SDK.Tests
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void Null_IsNotEnabled()
         {
             Assert.IsFalse(ColliderId.Null.IsEnabled());
@@ -21,6 +23,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void NewGuid_IsEnabled_AndDistinct()
         {
             var a = ColliderId.NewGuid();
@@ -33,6 +37,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void StringConstructor_RoundTripsGuidConstructor()
         {
             var guid = Guid.NewGuid();
@@ -44,6 +50,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void Equality_OperatorsAndEquatable_AgreeWithValue()
         {
             var guid = Guid.NewGuid();
@@ -61,6 +69,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void IPrimitiveGuid_ExposesSameValue()
         {
             var colliderId = ColliderId.NewGuid();

@@ -28,6 +28,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new Model { Key = new ModificationKey(new ObjectId(1), "pos[0].v") });
@@ -37,6 +39,8 @@ namespace BH.SDK.Tests.Rules
         // reserved negatives mean nothing there.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullObjectId()
         {
             AssertInvalid<RuleModificationKeyValidAttribute>(
@@ -45,6 +49,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestReservedObjectId()
         {
             AssertInvalid<RuleModificationKeyValidAttribute>(
@@ -53,6 +59,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmptyPath()
         {
             AssertInvalid<RuleModificationKeyValidAttribute>(
@@ -63,6 +71,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestPathBoundary()
         {
             AssertValid(new Model { Key = new ModificationKey(new ObjectId(1), new string('a', MaxPath)) });
@@ -74,6 +84,8 @@ namespace BH.SDK.Tests.Rules
         // can see it - the path almost certainly no longer resolves.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixTruncatesPath()
         {
             var model = new Model { Key = new ModificationKey(new ObjectId(1), new string('a', 100)) };
@@ -88,6 +100,8 @@ namespace BH.SDK.Tests.Rules
         // dictionary, so the issue stays reported.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixLeavesBrokenObjectIdAlone()
         {
             var model = new Model { Key = new ModificationKey(ObjectId.Null, "pos[0].v") };
@@ -99,6 +113,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

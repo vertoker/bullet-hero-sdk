@@ -32,6 +32,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestValid()
         {
             AssertValid(new Model { Value = "abc" });
@@ -39,6 +41,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestEmpty()
         {
             AssertValid(new Model { Value = string.Empty });
@@ -46,6 +50,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestBoundary()
         {
             AssertValid(new Model { Value = "abcde" });
@@ -53,6 +59,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestJustOver()
         {
             AssertInvalid<RuleStringMaxAttribute>(new Model { Value = "abcdef" });
@@ -60,6 +68,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestFixTruncates()
         {
             var model = new Model { Value = "abcdefghij" };
@@ -71,6 +81,8 @@ namespace BH.SDK.Tests.Rules
         // RuleNotNull (as every live model does) is what actually repairs this.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestNullStaysBroken()
         {
             var model = new Model { Value = null };
@@ -82,6 +94,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestZeroLength()
         {
             AssertValid(new ZeroModel { Value = string.Empty });
@@ -90,6 +104,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

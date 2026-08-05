@@ -15,6 +15,9 @@ namespace BH.SDK.Tests
         #region GetPeak
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void GetPeak_NoIntervals_ReturnsZero()
         {
             var peak = LevelCapacityUtils.GetPeak(new List<int>(), new List<int>());
@@ -22,6 +25,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void GetPeak_DisjointIntervals_ReturnsOne()
         {
             // [0,10] then [11,20] - never alive at the same frame
@@ -30,6 +36,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void GetPeak_TouchingIntervals_BothEndsInclusive_ReturnsTwo()
         {
             // [0,10] and [10,20] share frame 10 - inclusive bounds mean they do overlap there
@@ -38,6 +47,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void GetPeak_NestedIntervals_ReturnsDepth()
         {
             var peak = LevelCapacityUtils.GetPeak(new[] { 0, 1, 2 }, new[] { 100, 50, 10 });
@@ -45,6 +57,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void GetPeak_SingleFrameIntervals_OnSameFrame_ReturnsCount()
         {
             var peak = LevelCapacityUtils.GetPeak(new[] { 5, 5, 5 }, new[] { 5, 5, 5 });
@@ -52,6 +67,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void GetPeak_PeakIsNotTotalCount()
         {
             // three objects, but never more than two at once: [0,10] [5,15] [20,30]
@@ -60,6 +78,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void GetPeak_InvertedInterval_IsIgnored()
         {
             // EndFrame < StartFrame - the object is never alive, so it must not take a slot
@@ -72,6 +93,9 @@ namespace BH.SDK.Tests
         #region GetPeakUsage
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void GetPeakUsage_EmptyLevel_ReturnsZeroes()
         {
             var hint = LevelCapacityUtils.GetPeakUsage(new Level());
@@ -85,6 +109,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void GetPeakUsage_NullLevel_ReturnsZeroes()
         {
             var hint = LevelCapacityUtils.GetPeakUsage(null);
@@ -92,6 +119,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void GetPeakUsage_CountsEveryTypeAsInstance_AndItsOwnFamilySeparately()
         {
             var level = new Level();
@@ -112,6 +142,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void GetPeakUsage_FamiliesPeakIndependently()
         {
             var level = new Level();
@@ -131,6 +164,9 @@ namespace BH.SDK.Tests
         }
 
         [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void GetPeakUsage_CountsAudioTracks()
         {
             var level = new Level();

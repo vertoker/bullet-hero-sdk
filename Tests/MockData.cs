@@ -137,7 +137,7 @@ namespace BH.SDK.Tests
             var themeId = ThemeId.NewGuid();
 
             level.Settings.Framerate = 61;
-            level.Settings.ObjectIdCounter = 4;
+            level.Settings.ObjectIdCounter = 5;
             level.Settings.AudioIdCounter = 2;
 
             level.Game.Events.ScreenLimits.Add(new ScreenLimitKey(new ScreenLimitBounds(), 0));
@@ -212,9 +212,26 @@ namespace BH.SDK.Tests
             };
             level.Game.Objects.Add(new ObjectId(3), effectObject);
 
+            // Every prefab reference here resolves to a template that actually exists in this level,
+            // and every id counter sits past the highest id its scope uses. Both are invariants only
+            // LevelGraphAnalyzer sees - the declarative rules judge one property at a time and pass
+            // on a randomly-minted PrefabId or a stale counter either way. A "valid level" fixture
+            // has to satisfy both halves of the standard, not just the one that walks properties.
+            var innerPrefab = new Prefab()
+            {
+                PrefabId = PrefabId.NewGuid(),
+                ObjectIdCounter = 2,
+            };
+            innerPrefab.Objects.Add(new ObjectId(1), new TextureObject()
+            {
+                ObjectId = new ObjectId(1),
+            });
+            level.Resources.Prefabs.Add(innerPrefab.PrefabId, innerPrefab);
+
             var prefab = new Prefab()
             {
                 PrefabId = PrefabId.NewGuid(),
+                ObjectIdCounter = 5,
             };
             prefab.Objects.Add(new ObjectId(1), new TextureObject()
             {
@@ -228,12 +245,12 @@ namespace BH.SDK.Tests
             {
                 ObjectId = new ObjectId(3),
             });
-            var innerPrefabObject = new PrefabObject { ObjectId = new ObjectId(4), PrefabId = PrefabId.NewGuid() };
+            var innerPrefabObject = new PrefabObject { ObjectId = new ObjectId(4), PrefabId = innerPrefab.PrefabId };
             innerPrefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(2));
             prefab.Objects.Add(innerPrefabObject.ObjectId, innerPrefabObject);
             level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 
-            var prefabObject = new PrefabObject { ObjectId = new ObjectId(4), PrefabId = PrefabId.NewGuid() };
+            var prefabObject = new PrefabObject { ObjectId = new ObjectId(4), PrefabId = prefab.PrefabId };
             prefabObject.ObjectIds.Add(new ObjectId(1), new ObjectId(3));
             level.Game.Objects.Add(prefabObject.ObjectId, prefabObject);
 

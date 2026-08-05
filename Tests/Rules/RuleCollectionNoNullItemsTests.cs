@@ -37,6 +37,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new Model { Value = new List<Item> { new(1), new(2) } });
@@ -44,6 +46,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmptyIsValid()
         {
             AssertValid(new Model());
@@ -51,6 +55,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullItem()
         {
             AssertInvalid<RuleCollectionNoNullItemsAttribute>(
@@ -59,6 +65,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixRemovesNulls()
         {
             var model = new Model { Value = new List<Item> { null, new(1), null, new(2), null } };
@@ -73,6 +81,8 @@ namespace BH.SDK.Tests.Rules
         // count rule and is full of holes. Pairing the two rules is what makes the count meaningful.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCatchesWhatCountPaddingLeavesBehind()
         {
             var padded = new List<Item> { new(1), null, null };
@@ -82,6 +92,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

@@ -45,6 +45,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNotNullValid()
         {
             AssertValid(new NotNullModel { Value = new ObjectId(5) });
@@ -54,6 +56,8 @@ namespace BH.SDK.Tests.Rules
         // rule deliberately does not pick a side of the game-defined/user-defined split.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNotNullAcceptsNegative()
         {
             AssertValid(new NotNullModel { Value = new ObjectId(-5) });
@@ -61,6 +65,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNotNullRejectsZero()
         {
             AssertInvalid<RuleIPrimitiveIntNotNullAttribute>(new NotNullModel { Value = ObjectId.Null });
@@ -71,6 +77,8 @@ namespace BH.SDK.Tests.Rules
         // (TextureObject.ColliderId, PrefabObject.PrefabId) must never carry a not-null rule.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNotNullFixAssignsOne()
         {
             var model = new NotNullModel { Value = ObjectId.Null };
@@ -79,6 +87,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMin()
         {
             AssertValid(new MinModel { Value = new ObjectId(1) });
@@ -89,6 +99,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMax()
         {
             AssertValid(new MaxModel { Value = new ObjectId(-1) });
@@ -98,6 +110,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinFixRaisesToMin()
         {
             var model = new MinModel { Value = new ObjectId(-50) };
@@ -106,6 +120,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMaxFixLowersToMax()
         {
             var model = new MaxModel { Value = new ObjectId(50) };
@@ -114,6 +130,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

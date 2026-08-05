@@ -59,6 +59,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestOrdered()
         {
             AssertValid(new FloatPairModel { Min = 0f, Max = 1f });
@@ -66,6 +68,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEqualIsOrdered()
         {
             AssertValid(new FloatPairModel { Min = 5f, Max = 5f });
@@ -73,6 +77,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInverted()
         {
             AssertInvalid<RulePropertyOrderAttribute>(new FloatPairModel { Min = 5f, Max = 1f });
@@ -82,6 +88,8 @@ namespace BH.SDK.Tests.Rules
         // and silently discard whichever value the author actually meant.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixSwaps()
         {
             var model = new FloatPairModel { Min = 5f, Max = 1f };
@@ -93,6 +101,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFramePair()
         {
             AssertValid(new FramePairModel { StartFrame = 0, EndFrame = 10 });
@@ -108,6 +118,8 @@ namespace BH.SDK.Tests.Rules
         // to be repeatable and each instance reported on its own.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMultiplePairsReportedIndependently()
         {
             AssertValid(new TwoPairModel());
@@ -119,6 +131,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixRepairsEveryPair()
         {
             var model = new TwoPairModel { MinR = 5f, MaxR = 1f, MinG = 9f, MaxG = 2f };
@@ -135,6 +149,8 @@ namespace BH.SDK.Tests.Rules
         // quietly passing everything.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMissingPropertyIsRejected()
         {
             AssertWrongType(new MissingPropertyModel());
@@ -142,6 +158,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMismatchedTypesAreRejected()
         {
             AssertWrongType(new MismatchedTypesModel());

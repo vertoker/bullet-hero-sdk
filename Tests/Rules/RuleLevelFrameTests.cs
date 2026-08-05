@@ -42,6 +42,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInsideBounds()
         {
             var context = LevelContext(100);
@@ -54,6 +56,8 @@ namespace BH.SDK.Tests.Rules
         // FrameLength - 1.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUpperBoundIsExclusive()
         {
             var context = LevelContext(100);
@@ -64,6 +68,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNegativeFrame()
         {
             Assert.IsFalse(Rule.IsValid(-1, LevelContext(100)));
@@ -71,6 +77,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixClampsIntoBounds()
         {
             var context = LevelContext(100);
@@ -87,6 +95,8 @@ namespace BH.SDK.Tests.Rules
         // A prefab template validates against its own timeline, standalone, with no level anywhere.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestStandalonePrefabUsesOwnLength()
         {
             var context = RuleContext.ForRoot(new Prefab { FrameLength = 10 });
@@ -99,6 +109,8 @@ namespace BH.SDK.Tests.Rules
         // legal for the level's 100-frame timeline and illegal for the template's 10-frame one.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestPrefabInsideLevelUsesTemplateLength()
         {
             var level = LevelOfLength(100);
@@ -120,6 +132,8 @@ namespace BH.SDK.Tests.Rules
         // issues no Fix could clear.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNoScopeChecksLowerBoundOnly()
         {
             var context = RuleContext.ForRoot(new object());
@@ -131,6 +145,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNoScopeFixRaisesNegativeToZero()
         {
             var model = new FrameModel { Frame = -5 };
@@ -141,6 +157,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestThroughAnalyzerOnRealLevel()
         {
             var level = LevelOfLength(100);
@@ -158,6 +176,8 @@ namespace BH.SDK.Tests.Rules
         // context abstraction exists.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestThroughAnalyzerOnStandalonePrefab()
         {
             var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameLength = 10 };

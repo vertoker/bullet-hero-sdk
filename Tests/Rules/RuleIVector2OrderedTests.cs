@@ -28,6 +28,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueOrdered()
         {
             AssertValid(new Model { Value = new Vector2Value(0f, 1f) });
@@ -35,6 +37,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueDegenerateRangeIsValid()
         {
             AssertValid(new Model { Value = new Vector2Value(3f, 3f) });
@@ -42,6 +46,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueInverted()
         {
             AssertInvalid<RuleIVector2OrderedAttribute>(new Model { Value = new Vector2Value(5f, 1f) });
@@ -51,6 +57,8 @@ namespace BH.SDK.Tests.Rules
         // keeps the range the author meant instead of collapsing it to a point.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixValueSwaps()
         {
             var model = new Model { Value = new Vector2Value(5f, 1f) };
@@ -65,6 +73,8 @@ namespace BH.SDK.Tests.Rules
         // overlap means some roll produces an inverted pair.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRectDisjointSpansAreValid()
         {
             AssertValid(new Model { Value = new Vector2Rect(0f, 10f, 5f, 20f) });
@@ -72,6 +82,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRectOverlappingSpansAreInvalid()
         {
             AssertInvalid<RuleIVector2OrderedAttribute>(
@@ -80,6 +92,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixRectSwapsAxes()
         {
             var model = new Model { Value = new Vector2Rect(10f, 0f, 20f, 5f) };
@@ -94,6 +108,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRectStep()
         {
             AssertValid(new Model { Value = new Vector2RectStep(0f, 10f, 5f, 20f, 1f) });
@@ -105,6 +121,8 @@ namespace BH.SDK.Tests.Rules
         // whole X extent clears the whole Y extent.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCircleSeparatedExtents()
         {
             AssertValid(new Model { Value = new Vector2Circle(0f, 10f, 1f) });
@@ -115,6 +133,8 @@ namespace BH.SDK.Tests.Rules
         // repair collapses the radius and keeps the authored centre.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixCircleCollapsesRadius()
         {
             var model = new Model { Value = new Vector2Circle(0f, 1f, 1f) };
@@ -128,6 +148,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIVector2OrderedAttribute>(new Model { Value = null });
@@ -135,6 +157,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

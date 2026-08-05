@@ -18,6 +18,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestValidLevel()
         {
             var report = Facade.Validate(MockData.CreateTestLevel());
@@ -28,6 +30,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestInvalidLevelIsRepaired()
         {
             var report = Facade.ValidateAndFix(MockData.CreateInvalidTestLevel());
@@ -40,6 +44,8 @@ namespace BH.SDK.Tests.Rules
         // structurally broken. Catching that is the whole reason the facade runs both.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestGraphOnlyFailureIsReported()
         {
             var level = new Level();
@@ -60,6 +66,8 @@ namespace BH.SDK.Tests.Rules
         // describes the level as it now stands, not as it arrived.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestGraphIssuesSurviveFixing()
         {
             var level = new Level();
@@ -78,6 +86,8 @@ namespace BH.SDK.Tests.Rules
         // declarative half applies - and it must not fail merely for being validated on its own.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestStandalonePrefab()
         {
             var prefab = new Prefab { PrefabId = PrefabId.NewGuid(), FrameLength = 100 };
@@ -93,6 +103,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestStandaloneMetaAndSettings()
         {
             Assert.IsTrue(Facade.Validate(MockData.CreateTestLevelMeta()).IsValid);

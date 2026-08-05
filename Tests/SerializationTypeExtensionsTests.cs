@@ -8,6 +8,8 @@ namespace BH.SDK.Tests
         [TestCase(SerializationType.Json, ".json")]
         [TestCase(SerializationType.Bson, ".bson")]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void ToFileExtension_ReturnsExpectedExtension(SerializationType type, string expected)
         {
             Assert.AreEqual(expected, type.ToFileExtension());
@@ -18,6 +20,8 @@ namespace BH.SDK.Tests
         [TestCase(".bson", SerializationType.Bson)]
         [TestCase(".BSON", SerializationType.Bson)]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TryFromFileExtension_ParsesKnownExtensions(string extension, SerializationType expected)
         {
             var result = SerializationTypeExtensions.TryFromFileExtension(extension, out var type);
@@ -29,6 +33,8 @@ namespace BH.SDK.Tests
         [TestCase("")]
         [TestCase(".jsonx")]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
         public void TryFromFileExtension_RejectsUnknownExtensions(string extension)
         {
             var result = SerializationTypeExtensions.TryFromFileExtension(extension, out _);

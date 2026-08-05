@@ -45,6 +45,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new ListModel());
@@ -52,6 +54,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestTooFew()
         {
             AssertInvalid<RuleCollectionCountAttribute>(new ListModel { Value = new List<int> { 1 } });
@@ -59,6 +63,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestTooMany()
         {
             AssertInvalid<RuleCollectionCountAttribute>(
@@ -67,6 +73,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixTrims()
         {
             var model = new ListModel { Value = new List<int> { 1, 2, 3, 4, 5 } };
@@ -77,6 +85,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixPadsValueTypes()
         {
             var model = new ListModel { Value = new List<int> { 7 } };
@@ -91,6 +101,8 @@ namespace BH.SDK.Tests.Rules
         // above all - needs a not-null-elements check too, which no rule provides today.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixPadsReferenceTypesWithNulls()
         {
             var model = new ReferenceListModel { Value = new List<Item> { new() } };
@@ -104,6 +116,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixArrayResizes()
         {
             var model = new ArrayModel { Value = new[] { 1 } };
@@ -114,6 +128,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

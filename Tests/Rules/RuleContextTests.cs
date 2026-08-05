@@ -20,6 +20,8 @@ namespace BH.SDK.Tests.Rules
         // why a level cannot simply implement IFrameScope itself.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestLevelRootPairsGameAndSettings()
         {
             var level = new Level();
@@ -37,6 +39,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestPrefabRootIsItsOwnScope()
         {
             var prefab = new Prefab { FrameLength = 42 };
@@ -54,6 +58,8 @@ namespace BH.SDK.Tests.Rules
         // must degrade rather than fail here.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestScopelessRoot()
         {
             var context = RuleContext.ForRoot(new LevelMeta());
@@ -70,6 +76,8 @@ namespace BH.SDK.Tests.Rules
         // Level.Resources as everything else.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWithScopeKeepsLevelAndRoot()
         {
             var level = new Level();
@@ -89,6 +97,8 @@ namespace BH.SDK.Tests.Rules
         // is holding, or a fix would clamp against the wrong timeline once the walk moved on.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWithScopeDoesNotMutateOriginal()
         {
             var level = new Level();
@@ -107,6 +117,8 @@ namespace BH.SDK.Tests.Rules
         // and illegal one level down, purely because of where it lives.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestAnalyzerRebasesInsideTemplate()
         {
             var atLevel = new Level();

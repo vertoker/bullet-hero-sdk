@@ -34,6 +34,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueValid()
         {
             AssertValid(new Model { Value = new Vector2Value(0f, 5f) });
@@ -41,6 +43,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueBelowMinPerAxis()
         {
             AssertInvalid<RuleIVector2MinAttribute>(new Model { Value = new Vector2Value(-0.1f, 5f) });
@@ -49,6 +53,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixValueRaisesEachAxis()
         {
             var model = new Model { Value = new Vector2Value(-5f, -3f) };
@@ -61,6 +67,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestPerAxisBounds()
         {
             AssertValid(new PerAxisModel { Value = new Vector2Value(0f, -10f) });
@@ -70,6 +78,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRect()
         {
             AssertValid(new Model { Value = new Vector2Rect(0f, 0f, 5f, 5f) });
@@ -82,6 +92,8 @@ namespace BH.SDK.Tests.Rules
         // a rect is inverted on both axes. Same division of labour as the IFloat pair.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInvertedRectCaughtByModelRule()
         {
             AssertInvalid<RulePropertyOrderAttribute>(
@@ -90,6 +102,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRectStep()
         {
             AssertValid(new Model { Value = new Vector2RectStep(0f, 0f, 5f, 5f, 0.5f) });
@@ -100,6 +114,8 @@ namespace BH.SDK.Tests.Rules
         // The circle case measures the disc's edge, not its centre.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCircleUsesDiscEdge()
         {
             AssertValid(new Model { Value = new Vector2Circle(2f, 2f, 2f) });
@@ -108,6 +124,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixCircleShiftsCentre()
         {
             var model = new Model { Value = new Vector2Circle(0f, 0f, 2f) };
@@ -121,6 +139,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIVector2MinAttribute>(new Model { Value = null });
@@ -128,6 +148,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

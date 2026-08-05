@@ -8,9 +8,14 @@
         }
         public static class Category
         {
-            // SelfNamespace = Namespace of this file - postfix ".Tests"
-            public const string SelfNamespace = "BH.SDK";
-            public const string Heavy = "heavy";
+            // Self = Namespace of this file - postfix ".Tests"
+            public const string Self = "BH.SDK";
+            
+            public const string VeryEasy = "1_very_easy";
+            public const string Easy = "2_easy";
+            public const string Normal = "3_normal";
+            public const string Hard = "4_hard";
+            public const string Extreme = "5_extreme";
         }
     }
 }

@@ -62,6 +62,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestAdviceReportedByDefault()
         {
             CollectionAssert.IsNotEmpty(Analyze(new AdviceModel()));
@@ -69,6 +71,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestAdviceSuppressedAtWarning()
         {
             CollectionAssert.IsEmpty(Analyze(new AdviceModel(), Reporting(RuleGroup.Warning)));
@@ -76,6 +80,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestAdviceSuppressedAtError()
         {
             CollectionAssert.IsEmpty(Analyze(new AdviceModel(), Reporting(RuleGroup.Error)));
@@ -83,6 +89,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestErrorSurvivesEveryFilter()
         {
             CollectionAssert.IsNotEmpty(Analyze(new ErrorModel(), Reporting(RuleGroup.Error)));
@@ -93,6 +101,8 @@ namespace BH.SDK.Tests.Rules
         // drowned out by cosmetic findings on the same object.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestErrorOnlyReportKeepsErrorsDropsAdvice()
         {
             var issues = Analyze(new MixedModel(), Reporting(RuleGroup.Error));
@@ -103,6 +113,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFullReportKeepsBoth()
         {
             var issues = Analyze(new MixedModel(), Reporting(RuleGroup.Advice));

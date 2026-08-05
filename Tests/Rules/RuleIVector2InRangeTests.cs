@@ -34,6 +34,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueValid()
         {
             AssertValid(new Model { Value = new Vector2Value(0.5f, -0.5f) });
@@ -41,6 +43,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueBoundaries()
         {
             AssertValid(new Model { Value = new Vector2Value(-1f, 1f) });
@@ -48,6 +52,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValueOutOfRangePerAxis()
         {
             AssertInvalid<RuleIVector2InRangeAttribute>(new Model { Value = new Vector2Value(2f, 0f) });
@@ -56,6 +62,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixValueClampsPerAxis()
         {
             var model = new Model { Value = new Vector2Value(5f, -5f) };
@@ -68,6 +76,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestAsymmetricBounds()
         {
             AssertValid(new AsymmetricModel { Value = new Vector2Value(10f, -5f) });
@@ -77,6 +87,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRect()
         {
             AssertValid(new Model { Value = new Vector2Rect(-1f, -1f, 1f, 1f) });
@@ -86,6 +98,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixRectClampsEachEdge()
         {
             var model = new Model { Value = new Vector2Rect(-5f, -5f, 5f, 5f) };
@@ -100,6 +114,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestRectStep()
         {
             AssertValid(new Model { Value = new Vector2RectStep(-1f, -1f, 1f, 1f, 0.5f) });
@@ -111,6 +127,8 @@ namespace BH.SDK.Tests.Rules
         // shorter side, and the whole disc within bounds - not just its centre.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCircleInscribed()
         {
             AssertValid(new Model { Value = new Vector2Circle(0f, 0f, 1f) });
@@ -118,6 +136,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCircleTooLarge()
         {
             AssertInvalid<RuleIVector2InRangeAttribute>(
@@ -126,6 +146,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCircleCentreInsideButDiscOutside()
         {
             AssertInvalid<RuleIVector2InRangeAttribute>(
@@ -134,6 +156,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixCircleShrinksThenRecentres()
         {
             var model = new Model { Value = new Vector2Circle(5f, 0f, 3f) };
@@ -151,6 +175,8 @@ namespace BH.SDK.Tests.Rules
         // the range rule pointed at it.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNegativeRadiusCaughtByModelRule()
         {
             AssertInvalid<RuleInRangeAttribute>(new Model { Value = new Vector2Circle(0f, 0f, -1f) });
@@ -158,6 +184,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIVector2InRangeAttribute>(new Model { Value = null });
@@ -165,6 +193,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

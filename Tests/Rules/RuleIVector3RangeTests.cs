@@ -48,6 +48,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeValue()
         {
             AssertValid(new InRangeModel { Value = new Vector3Value(-1f, 0f, 1f) });
@@ -57,6 +59,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeFixClampsZ()
         {
             var model = new InRangeModel { Value = new Vector3Value(0f, 0f, 5f) };
@@ -67,6 +71,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeRect()
         {
             AssertValid(new InRangeModel { Value = new Vector3Rect(-1f, -1f, -1f, 1f, 1f, 1f) });
@@ -76,6 +82,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeRectStep()
         {
             AssertValid(new InRangeModel { Value = new Vector3RectStep(-1f, -1f, -1f, 1f, 1f, 1f, 0.5f) });
@@ -85,6 +93,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeCircle()
         {
             AssertValid(new InRangeModel { Value = new Vector3Circle(0f, 0f, 0f, 1f) });
@@ -94,6 +104,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMin()
         {
             AssertValid(new MinModel { Value = new Vector3Value(0f, 0f, 0f) });
@@ -103,6 +115,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinFixRaisesZ()
         {
             var model = new MinModel { Value = new Vector3Value(0f, 0f, -5f) };
@@ -113,6 +127,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinRectAndCircle()
         {
             AssertValid(new MinModel { Value = new Vector3Rect(0f, 0f, 0f, 5f, 5f, 5f) });
@@ -126,6 +142,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMax()
         {
             AssertValid(new MaxModel { Value = new Vector3Value(10f, 10f, 10f) });
@@ -135,6 +153,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMaxFixLowersZ()
         {
             var model = new MaxModel { Value = new Vector3Value(0f, 0f, 50f) };
@@ -145,6 +165,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMaxRectStepAndCircle()
         {
             AssertValid(new MaxModel { Value = new Vector3RectStep(-5f, -5f, -5f, 10f, 10f, 10f, 1f) });
@@ -158,6 +180,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIVector3InRangeAttribute>(new InRangeModel { Value = null });
@@ -165,6 +189,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

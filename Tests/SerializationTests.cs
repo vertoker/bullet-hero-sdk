@@ -18,6 +18,8 @@ namespace BH.SDK.Tests
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestEffectSerialization()
         {
             var settings = new SerializationSettings(Formatting.Indented);
@@ -34,6 +36,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Extreme)]
         public void TestLevelSerialization()
         {
             var settings = new SerializationSettings(Formatting.Indented);
@@ -56,6 +60,8 @@ namespace BH.SDK.Tests
         [TestCase(SerializationType.Json)]
         [TestCase(SerializationType.Bson)]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestDataSerializerRoundTrip(SerializationType type)
         {
             var serializationService = new SerializationService(new SerializationSettings(Formatting.Indented));
@@ -93,6 +99,8 @@ namespace BH.SDK.Tests
         // classes rather than a hand-typed literal - see that method's own comment for why.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Extreme)]
         public void TestLevelV0_0Migration()
         {
             var settings = new SerializationSettings(Formatting.Indented);
@@ -124,6 +132,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestLevelMetaSerialization()
         {
             var settings = new SerializationSettings(Formatting.Indented);
@@ -139,6 +149,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestPrefabSerialization()
         {
             var settings = new SerializationSettings(Formatting.Indented);
@@ -155,6 +167,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestThemeSerialization()
         {
             var settings = new SerializationSettings(Formatting.Indented);
@@ -171,6 +185,8 @@ namespace BH.SDK.Tests
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestPlayerSettingsSerialization()
         {
             var settings = new SerializationSettings(Formatting.Indented);

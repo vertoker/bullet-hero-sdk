@@ -58,9 +58,12 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
 - **Rules/** — `public const` numeric/enum clamp tables (`FrameRules`, `ValueRules`, `LevelRules`,
   `AudioRules`, `EffectRules`, `PostProcessingRules`, `ResourceRules`, `TextRules`) plus
   `Rules/Attributes/` (declarative `[RuleXxx]` property attributes consumed by `Validations/`).
-- **Validations/** — the reflection-based rule engine (`RuleAnalyzer`/`RuleFixer`) that walks
-  `[RuleContainer]`-marked object graphs and checks/auto-fixes every `[RuleXxx]`-attributed property.
-  **Opt-in tooling, not wired into save/load anywhere** — see "Rules & validation" below.
+- **Validations/** — the rule engine, in two halves. *Declarative*: `RuleAnalyzer`/`RuleFixer`
+  (+`RuleIssue`/`RulePath`) walk `[RuleContainer]`-marked object graphs and check/auto-fix every
+  `[RuleXxx]`-attributed property, one property at a time. *Relational*: `LevelGraphAnalyzer`
+  (+`GraphRule`/`GraphIssue`) checks the cross-object invariants a per-property attribute
+  structurally cannot see. `ValidationFacade`/`ValidationReport` run both and are what a consumer
+  should call. **Opt-in tooling, not wired into save/load anywhere** — see "Rules & validation" below.
 - **Utils/** — `BHSDKMath` (Unity-independent math, since the core assembly can't reference
   `UnityEngine.Mathf`), `DimensionalIndexer2` (flat-array↔2D-grid indexing), `LevelUtils`
   (`RectObject` id/parent/bounds setters), `LevelCapacityUtils` (sweep-line "peak simultaneous
@@ -84,11 +87,15 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   `MeowError`/...) gated by `#if BHSDK_UNITY` per call, falling back to `Console.WriteLine`. Own
   asmdef, distinct purpose from `UnityExtensions/` (logging, not data conversion) — don't conflate
   the two folders.
-- **Tests/** — `BulletHeroSDK.Tests.asmdef`, NUnit. `MockData.cs`/`Metadata.cs` are shared fixture
-  factories (not tests themselves) — read `MockData.cs`'s header comment before writing new tests
-  that need a `Level`/`Prefab`/etc. Test files today: `SerializationTests`, `ModificationTests`,
-  `ValidatorTests`, `LevelCapacityUtilsTests`, `CryptographyTests`, `TextFormatTests`,
-  `ColliderIdTests`, `SerializationTypeExtensionsTests`.
+- **Tests/** — `BulletHeroSDK.Tests.asmdef`, NUnit. `MockData.cs` is the shared fixture factory and
+  `Metadata.cs` the author/category constants (neither is a test) — read `MockData.cs`'s header
+  comment before writing new tests that need a `Level`/`Prefab`/etc. Root-level files cover
+  serialization (`SerializationTests`, `SerializationTypeExtensionsTests`), modification
+  (`ModificationTests`), validation (`ValidatorTests`), capacity (`LevelCapacityUtilsTests`),
+  cryptography, text formatting and `ColliderIdTests`. **`Tests/Rules/` is the bulk** — 42 files,
+  roughly one per `[RuleXxx]` attribute on top of `BaseRuleTests` (the shared analyze/fix harness),
+  `RuleCoverageTests` (fails if a rule has no test file), `RuleContextTests`, `RulesConsistencyTests`,
+  `LevelGraphAnalyzerTests`, `ValidationFacadeTests`, `ModificationCheckedWriteTests`.
 
 ## Object model (`Models/Objects/`)
 
@@ -399,9 +406,12 @@ only — never fields), all `: BaseRuleAttribute` (`IsValidType`/`IsValid`/`Fix`
 (156+ files), not just a handful of aggregate roots. `Rules/Attributes/Contextual/` need the root
 `Level` as context (`RuleLevelFrameAttribute` checks against `Level.Settings.FrameLength`,
 `RuleObjectIdValidAttribute`/`RuleParentObjectIdValidAttribute` check `ObjectId` validity/parent
-rules) — both have an explicit `// TODO add complex check for parenting and ids uniqueness`, i.e.
-**cross-object graph invariants (referential integrity, uniqueness, cycles) are not implemented
-anywhere yet**, only single-property range/shape checks in isolation. `Rules/Attributes/Values/` are
+rules) — both still carry a `// TODO add complex check for parenting and ids uniqueness`, because a
+property attribute only ever sees one property at a time. **Cross-object invariants are implemented,
+just not here** — `Validations/LevelGraphAnalyzer` owns them (duplicate `ObjectId`s, missing or
+cyclic parents, dangling/self-referencing prefab placements, stale id counters, broken remap tables),
+and `ValidationFacade` is what runs the two passes together. Don't write a graph check as a
+`[RuleXxx]` attribute. `Rules/Attributes/Values/` are
 typed against the polymorphic `IFloat`/`IVector2-4`/`IString`/`IPrimitiveInt`/`IPrimitiveGuid`
 interfaces, switching per concrete variant to check/clamp.
 
@@ -470,6 +480,14 @@ violation `RuleFixer` must detect and fix. A `#region Version v0.0` half builds 
 builder (`CreateTestLevelV0_0Json`) — needed because `VersionedEnvelopeConverter` always tags a
 *whole* current-shape object with the *current* version when serializing, so each historical fragment
 has to be serialized standalone from its own real `VX_Y` type and spliced in by hand.
+
+**Every test method carries three attributes**, no exceptions — `[Author(Metadata.Author.Vertoker)]`,
+`[Category(Metadata.Category.Self)]` (`"BH.SDK"`, this namespace minus its `.Tests` suffix), and
+exactly one difficulty out of `Metadata.Category.VeryEasy`/`Easy`/`Normal`/`Hard`/`Extreme`. They sit
+between the `[Test]`/`[TestCase]` attribute(s) and the signature. `Metadata.cs` holds the constants;
+their string values are ordinal-prefixed (`"1_very_easy"` … `"5_extreme"`) so a category dropdown
+sorts cheapest-first. The consuming Unity project states this as a hard rule and applies the same
+convention to its own test assemblies — see its root `CLAUDE.md`.
 
 `ModificationTests` covers only `ModificationService`'s path resolution (`TestGet`/`TestSet`/
 `TestJToken`, against two local throwaway models) — **not** `Modification.Value`'s long/double

@@ -10,6 +10,8 @@ namespace BH.SDK.Tests
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestValidatorLevel()
         {
             var validator = new RuleAnalyzer();
@@ -20,6 +22,8 @@ namespace BH.SDK.Tests
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
         public void TestFixerLevel()
         {
             var fixer = new RuleFixer();
@@ -38,6 +42,8 @@ namespace BH.SDK.Tests
         
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestValidatorLevelMeta()
         {
             var validator = new RuleAnalyzer();
@@ -48,6 +54,8 @@ namespace BH.SDK.Tests
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestFixerLevelMeta()
         {
             var fixer = new RuleFixer();
@@ -63,6 +71,8 @@ namespace BH.SDK.Tests
         
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestValidatorSettings()
         {
             var validator = new RuleAnalyzer();
@@ -73,6 +83,8 @@ namespace BH.SDK.Tests
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestFixerSettings()
         {
             var fixer = new RuleFixer();
@@ -88,6 +100,8 @@ namespace BH.SDK.Tests
         
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestCopyLevel()
         {
             var validator = new RuleAnalyzer();
@@ -99,6 +113,8 @@ namespace BH.SDK.Tests
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestCopyEqualsLevel()
         {
             var level = MockData.CreateTestLevel();
@@ -107,6 +123,8 @@ namespace BH.SDK.Tests
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
         public void TestCopyNotEqualsLevel()
         {
             var level = MockData.CreateTestLevel();
@@ -117,6 +135,8 @@ namespace BH.SDK.Tests
         
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCopySettings()
         {
             var validator = new RuleAnalyzer();
@@ -128,6 +148,8 @@ namespace BH.SDK.Tests
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCopyEqualsSettings()
         {
             var settings = MockData.CreateValidTestSettings();
@@ -136,6 +158,8 @@ namespace BH.SDK.Tests
         }
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestCopyNotEqualsSettings()
         {
             var settings = MockData.CreateValidTestSettings();

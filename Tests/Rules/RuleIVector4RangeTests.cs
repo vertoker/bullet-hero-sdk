@@ -44,6 +44,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeValue()
         {
             AssertValid(new InRangeModel { Value = new Vector4Value(-1f, 0f, 0f, 1f) });
@@ -53,6 +55,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeFixClampsW()
         {
             var model = new InRangeModel { Value = new Vector4Value(0f, 0f, 0f, 5f) };
@@ -63,6 +67,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeRect()
         {
             AssertValid(new InRangeModel
@@ -77,6 +83,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeRectStep()
         {
             AssertValid(new InRangeModel
@@ -91,6 +99,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInRangeCircle()
         {
             AssertValid(new InRangeModel { Value = new Vector4Circle(0f, 0f, 0f, 0f, 1f) });
@@ -100,6 +110,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMin()
         {
             AssertValid(new MinModel { Value = new Vector4Value(0f, 0f, 0f, 0f) });
@@ -109,6 +121,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinFixRaisesW()
         {
             var model = new MinModel { Value = new Vector4Value(0f, 0f, 0f, -5f) };
@@ -119,6 +133,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMinRectAndCircle()
         {
             AssertValid(new MinModel
@@ -137,6 +153,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMax()
         {
             AssertValid(new MaxModel { Value = new Vector4Value(10f, 10f, 10f, 10f) });
@@ -146,6 +164,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMaxFixLowersW()
         {
             var model = new MaxModel { Value = new Vector4Value(0f, 0f, 0f, 50f) };
@@ -156,6 +176,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMaxRectStepAndCircle()
         {
             AssertValid(new MaxModel
@@ -174,6 +196,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNull()
         {
             AssertInvalid<RuleIVector4InRangeAttribute>(new InRangeModel { Value = null });
@@ -181,6 +205,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

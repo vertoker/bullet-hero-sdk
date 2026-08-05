@@ -38,6 +38,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestOrdinaryValues()
         {
             AssertValid(new FloatModel { Value = 0f });
@@ -47,6 +49,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNaN()
         {
             AssertInvalid<RuleFiniteAttribute>(new FloatModel { Value = float.NaN });
@@ -54,6 +58,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestInfinities()
         {
             AssertInvalid<RuleFiniteAttribute>(new FloatModel { Value = float.PositiveInfinity });
@@ -62,6 +68,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestDouble()
         {
             AssertValid(new DoubleModel { Value = 1d });
@@ -72,6 +80,8 @@ namespace BH.SDK.Tests.Rules
         // Zero rather than a bound: the rule exists precisely where there is no bound to clamp to.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixToZero()
         {
             var model = new FloatModel { Value = float.NaN };
@@ -80,6 +90,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixToDeclaredDefault()
         {
             var model = new DefaultModel { Value = float.PositiveInfinity };
@@ -88,6 +100,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

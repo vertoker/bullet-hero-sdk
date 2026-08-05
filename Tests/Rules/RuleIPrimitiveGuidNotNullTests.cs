@@ -28,6 +28,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new Model { Value = new ThemeId(Guid.NewGuid()) });
@@ -35,6 +37,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmptyGuidIsInvalid()
         {
             AssertInvalid<RuleIPrimitiveGuidNotNullAttribute>(
@@ -48,6 +52,8 @@ namespace BH.SDK.Tests.Rules
         // dangling template). This test is the reason that stays a deliberate omission.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixInventsNewGuid()
         {
             var model = new Model { Value = new ThemeId(Guid.Empty) };
@@ -60,6 +66,8 @@ namespace BH.SDK.Tests.Rules
         // property is rejected rather than silently validated.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongTypeRawGuid()
         {
             AssertWrongType(new WrongTypeModel());

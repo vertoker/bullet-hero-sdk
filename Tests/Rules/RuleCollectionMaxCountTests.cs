@@ -33,6 +33,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new ListModel { Value = new List<int> { 1 } });
@@ -40,6 +42,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmpty()
         {
             AssertValid(new ListModel());
@@ -47,6 +51,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestBoundary()
         {
             AssertValid(new ListModel { Value = new List<int> { 1, 2, 3 } });
@@ -54,6 +60,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestJustOver()
         {
             AssertInvalid<RuleCollectionMaxCountAttribute>(
@@ -63,6 +71,8 @@ namespace BH.SDK.Tests.Rules
         // Tail-drop, not head-drop: keyframes authored first are the ones kept.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixDropsFromTail()
         {
             var model = new ListModel { Value = new List<int> { 1, 2, 3, 4, 5 } };
@@ -73,6 +83,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixArray()
         {
             var model = new ArrayModel { Value = new[] { 1, 2, 3, 4, 5 } };
@@ -87,6 +99,8 @@ namespace BH.SDK.Tests.Rules
         // other direction if anything ever calls Fix directly.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestShortArrayRaisesNoIssue()
         {
             AssertValid(new ArrayModel { Value = new[] { 1 } });
@@ -94,6 +108,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

@@ -54,6 +54,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestValid()
         {
             AssertValid(new ByPropertyModel { Value = new List<Key> { new(0), new(1), new(2) } });
@@ -61,6 +63,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestEmpty()
         {
             AssertValid(new ByPropertyModel());
@@ -69,6 +73,8 @@ namespace BH.SDK.Tests.Rules
         // Uniqueness, not sortedness - a descending track is perfectly valid data.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUnsortedIsValid()
         {
             AssertValid(new ByPropertyModel { Value = new List<Key> { new(5), new(1), new(3) } });
@@ -76,6 +82,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestDuplicateByProperty()
         {
             AssertInvalid<RuleCollectionUniqueAttribute>(
@@ -84,6 +92,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestDuplicateByItself()
         {
             AssertValid(new ByItselfModel { Value = new List<int> { 1, 2, 3 } });
@@ -96,6 +106,8 @@ namespace BH.SDK.Tests.Rules
         // auto-fix keeps.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestFixKeepsLastDuplicate()
         {
             var model = new ByPropertyModel
@@ -112,6 +124,8 @@ namespace BH.SDK.Tests.Rules
         // reported valid and still get shorter when some other rule triggers a fix pass over it.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullEntryIsIgnoredButRemovedOnFix()
         {
             var model = new ByPropertyModel { Value = new List<Key> { new(1), null, new(1) } };
@@ -127,6 +141,8 @@ namespace BH.SDK.Tests.Rules
         // a permanent validation failure rather than a silent no-op.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestMissingPropertyNameStaysBroken()
         {
             var model = new MissingPropertyModel { Value = new List<Key> { new(1) } };
@@ -138,6 +154,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestWrongType()
         {
             AssertWrongType(new WrongTypeModel());

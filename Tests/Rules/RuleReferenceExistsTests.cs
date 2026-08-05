@@ -32,6 +32,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUserDefinedResolves()
         {
             Assert.IsTrue(Rule.IsValid(new TextureResourceId(-1), LevelWithTexture(-1)));
@@ -39,6 +41,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestUserDefinedDangling()
         {
             Assert.IsFalse(Rule.IsValid(new TextureResourceId(-99), LevelWithTexture(-1)));
@@ -48,6 +52,8 @@ namespace BH.SDK.Tests.Rules
         // invisible from the SDK - accepting them is the only correct answer available here.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestGameDefinedIsAccepted()
         {
             Assert.IsTrue(Rule.IsValid(new TextureResourceId(5), LevelWithTexture(-1)));
@@ -55,6 +61,8 @@ namespace BH.SDK.Tests.Rules
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullRejectedByDefault()
         {
             Assert.IsFalse(Rule.IsValid(new TextureResourceId(0), LevelWithTexture(-1)));
@@ -64,6 +72,8 @@ namespace BH.SDK.Tests.Rules
         // than a broken reference.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNullAcceptedWhenAllowed()
         {
             Assert.IsTrue(NullableRule.IsValid(new TextureResourceId(0), LevelWithTexture(-1)));
@@ -73,6 +83,8 @@ namespace BH.SDK.Tests.Rules
         // the rule stands down instead of reporting every reference as dangling.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestNoLevelInContextStandsDown()
         {
             Assert.IsTrue(Rule.IsValid(new TextureResourceId(-99), RuleContext.ForRoot(new object())));
@@ -82,6 +94,8 @@ namespace BH.SDK.Tests.Rules
         // hides the object or changes what it means. Both are decisions for whoever edits the level.
         [Test]
         [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
         public void TestHasNoFix()
         {
             Assert.IsFalse(Rule.HasFix);
