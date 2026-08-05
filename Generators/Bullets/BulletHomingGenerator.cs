@@ -1,0 +1,171 @@
+using System;
+using BH.SDK.Generators.Spawn;
+using BH.SDK.Models.Enum;
+using BH.SDK.Rules;
+
+namespace BH.SDK.Generators.Bullets
+{
+    // Homing is a runtime behaviour, and this format has no runtime behaviours - a level is data, so
+    // the curve has to be BAKED into position keys at author time. That is why Steps exists and why
+    // it is capped: LevelRules.MaxObjectKeys is 32 per track, so a bullet cannot carry more than
+    // that many baked positions no matter how smooth the author would like the arc to be.
+
+    /// <summary>
+    /// A burst of bullets that curve toward a target, their pursuit curve baked into position
+    /// keyframes.
+    /// </summary>
+    public class BulletHomingGenerator : BaseSpawnGenerator<BulletHomingGenerator.Parameters>
+    {
+        public override string NameKey => "gen_bullet_homing";
+
+        public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
+            .Order(nameof(Parameters.BurstCount), nameof(Parameters.Spread), nameof(Parameters.LaunchAngle),
+                nameof(Parameters.OriginX), nameof(Parameters.OriginY),
+                nameof(Parameters.TargetX), nameof(Parameters.TargetY),
+                nameof(Parameters.Speed), nameof(Parameters.TurnRate),
+                nameof(Parameters.TravelFrames), nameof(Parameters.StaggerFrames),
+                nameof(Parameters.Steps), nameof(Parameters.FaceTravel))
+            .Order(SpawnParameters.FieldOrder)
+            .Range(nameof(Parameters.BurstCount), 1, 128)
+            .Range(nameof(Parameters.Spread), 0f, 360f)
+            .Range(nameof(Parameters.LaunchAngle), -3600f, 3600f)
+            .Range(nameof(Parameters.Speed), 0.01f, 100f)
+            .Range(nameof(Parameters.TurnRate), 0f, 180f)
+            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.Steps), MinSteps, MaxSteps)
+            .Unit(nameof(Parameters.Spread), "deg")
+            .Unit(nameof(Parameters.LaunchAngle), "deg")
+            .Unit(nameof(Parameters.TurnRate), "deg/step")
+            .Unit(nameof(Parameters.TravelFrames), "frames")
+            .Unit(nameof(Parameters.StaggerFrames), "frames")
+            .Build();
+
+        protected override void Generate(GeneratorContext context, Parameters parameters)
+        {
+            var burst = Burst(parameters.BurstCount);
+            var steps = Steps(parameters.Steps);
+            var travel = Travel(parameters.TravelFrames);
+            var stagger = Stagger(parameters.StaggerFrames);
+
+            for (var i = 0; i < burst; i++)
+            {
+                var launchAngle = parameters.LaunchAngle + Offset(i, burst, parameters.Spread);
+                var spawnFrame = context.StartFrame + i * stagger;
+                var obj = Spawn(context, parameters, $"homing_{i}", spawnFrame, spawnFrame + travel);
+
+                var span = obj.EndFrame - obj.StartFrame;
+                var x = parameters.OriginX;
+                var y = parameters.OriginY;
+                var angle = launchAngle;
+
+                AddPosition(obj, x, y, obj.StartFrame);
+                if (parameters.FaceTravel) AddRotation(obj, angle, obj.StartFrame);
+                if (span <= 0) continue;
+
+                // One simulation step per keyframe: turn toward the target by at most TurnRate, then
+                // advance. Steps are spread evenly over the lifetime, so Speed is per step rather
+                // than per frame - fewer steps means each one covers more ground.
+                for (var step = 1; step <= steps; step++)
+                {
+                    var toTarget = (float)(Math.Atan2(parameters.TargetY - y, parameters.TargetX - x)
+                                           * (180.0 / Math.PI));
+                    angle = TurnToward(angle, toTarget, parameters.TurnRate);
+                    Direction(angle, out var dirX, out var dirY);
+                    x += dirX * parameters.Speed;
+                    y += dirY * parameters.Speed;
+
+                    var frame = obj.StartFrame + (int)Math.Round(span * (step / (double)steps));
+                    if (frame <= obj.StartFrame) continue; // collapsed onto the spawn frame - skip
+                    if (frame > obj.EndFrame) frame = obj.EndFrame;
+
+                    // Rounding can land two consecutive steps on the same frame when the lifetime is
+                    // shorter than the step count; Frame must stay unique within a track.
+                    if (obj.Positions[obj.Positions.Count - 1].Frame == frame) continue;
+
+                    AddPosition(obj, x, y, frame);
+                    if (parameters.FaceTravel) AddRotation(obj, angle, frame);
+                }
+            }
+        }
+
+        // Walks the same simulation as Generate, minus the writes: the number of baked keys depends
+        // on frame rounding and on the duplicate-frame skips above, so counting it any other way
+        // would be a guess.
+        protected override GeneratorCost EstimateTyped(GeneratorContext context, Parameters parameters)
+        {
+            var burst = Burst(parameters.BurstCount);
+            var steps = Steps(parameters.Steps);
+            var travel = Travel(parameters.TravelFrames);
+            var stagger = Stagger(parameters.StaggerFrames);
+            var keys = 0;
+
+            for (var i = 0; i < burst; i++)
+            {
+                var spawnFrame = ClampFrame(context, context.StartFrame + i * stagger);
+                var endFrame = ClampFrame(context, spawnFrame + travel);
+                var span = endFrame - spawnFrame;
+
+                var perKey = parameters.FaceTravel ? 2 : 1;
+                keys += 2 + perKey; // size + colour + spawn position (+ rotation)
+                if (span <= 0) continue;
+
+                var lastFrame = spawnFrame;
+                for (var step = 1; step <= steps; step++)
+                {
+                    var frame = spawnFrame + (int)Math.Round(span * (step / (double)steps));
+                    if (frame <= spawnFrame) continue;
+                    if (frame > endFrame) frame = endFrame;
+                    if (frame == lastFrame) continue;
+
+                    lastFrame = frame;
+                    keys += perKey;
+                }
+            }
+            return new GeneratorCost(burst, keys);
+        }
+
+        /// <summary> Even fan around the launch angle: a single bullet fires straight ahead, N
+        /// bullets share the spread symmetrically. </summary>
+        private static float Offset(int index, int count, float spread)
+            => count <= 1 ? 0f : (index / (float)(count - 1) - 0.5f) * spread;
+
+        /// <summary> Rotates `from` toward `to` by at most maxDelta degrees, taking the short way
+        /// around so a bullet never spins the long way to reach a target just behind it. </summary>
+        private static float TurnToward(float from, float to, float maxDelta)
+        {
+            var delta = (to - from) % 360f;
+            if (delta > 180f) delta -= 360f;
+            if (delta < -180f) delta += 360f;
+            if (delta > maxDelta) delta = maxDelta;
+            if (delta < -maxDelta) delta = -maxDelta;
+            return from + delta;
+        }
+
+        private const int MinSteps = 2;
+        private const int MaxSteps = LevelRules.MaxObjectKeys - 2; // room for the spawn key and a spare
+
+        private static int Burst(int value) => value < 1 ? 1 : value;
+        private static int Travel(int value) => value < 1 ? 1 : value;
+        private static int Stagger(int value) => value < 0 ? 0 : value;
+        private static int Steps(int value)
+            => value < MinSteps ? MinSteps : value > MaxSteps ? MaxSteps : value;
+
+        public class Parameters : SpawnParameters
+        {
+            public int BurstCount = 6;
+            public float Spread = 90f;
+            public float LaunchAngle = 90f;
+            public float OriginX;
+            public float OriginY = 6f;
+            public float TargetX;
+            public float TargetY = -6f;
+            public float Speed = 1.2f;
+            public float TurnRate = 12f;
+            public int TravelFrames = 90;
+            public int StaggerFrames = 0;
+            public int Steps = 12;
+            public bool FaceTravel = true;
+        }
+    }
+}

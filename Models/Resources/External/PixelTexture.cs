@@ -8,8 +8,8 @@ namespace BH.SDK.Models.Resources
 {
     /// <summary>
     /// A raw image in memory - the Unity-free counterpart of Texture2D, used by tooling that
-    /// generates or reads image data (see TextureToObjectsGenerator). Not part of the level format:
-    /// a level stores a TextureResource pointing at a file, never pixels.
+    /// generates or reads image data (see Generators/, gen_texture_objects). Not part of the level
+    /// format: a level stores a TextureResource pointing at a file, never pixels.
     /// </summary>
     public class PixelTexture : ICopyable<PixelTexture>, IEquatable<PixelTexture>
     {

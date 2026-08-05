@@ -1,0 +1,104 @@
+using System;
+using System.Collections.Generic;
+using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Objects;
+
+namespace BH.SDK.Generators.Modifiers
+{
+    /// <summary> Which of an object's keyframe tracks a modifier should touch. </summary>
+    [Flags]
+    public enum ObjectTrackMask
+    {
+        None = 0,
+
+        Positions = 1 << 0,
+        Rotations = 1 << 1,
+        Scales = 1 << 2,
+        Sizes = 1 << 3,
+        AnchorsMin = 1 << 4,
+        AnchorsMax = 1 << 5,
+        Pivots = 1 << 6,
+
+        /// <summary> TextureObject.Colors / TextObject.Colors - the type-specific tracks. </summary>
+        Colors = 1 << 7,
+
+        /// <summary> TextureObject.UVs. </summary>
+        UVs = 1 << 8,
+
+        /// <summary> TextObject.FontSizes. </summary>
+        FontSizes = 1 << 9,
+
+        Transform = Positions | Rotations | Scales | Sizes,
+        Layout = AnchorsMin | AnchorsMax | Pivots,
+        All = Transform | Layout | Colors | UVs | FontSizes,
+    }
+
+    // Every track on a RectObject is a List<T> of something implementing IFrame, but they are ten
+    // separate properties of four unrelated element types - so anything wanting to work "on the
+    // object's tracks" generically either writes the same ten-branch switch (every modifier, once
+    // each) or gets it from here, once.
+    //
+    // IList<IFrame> would have been the tidy signature and is not available: List<PosKey> is not
+    // IList<IFrame>, and copying each track into a temporary list would break the whole point,
+    // which is mutating the real keyframes in place.
+
+    /// <summary>
+    /// Enumerates an object's keyframe tracks by mask, so a modifier can read or rewrite frames
+    /// without knowing which concrete keyframe types the object happens to carry.
+    /// </summary>
+    public static class ObjectTracks
+    {
+        /// <summary> Every selected track of this object, as (frame-reader, frame-writer) pairs over
+        /// the live keyframes. </summary>
+        public static IEnumerable<Track> Of(RectObject obj, ObjectTrackMask mask)
+        {
+            if (obj == null) yield break;
+
+            if (Has(mask, ObjectTrackMask.Positions)) yield return Wrap(obj.Positions);
+            if (Has(mask, ObjectTrackMask.Rotations)) yield return Wrap(obj.Rotations);
+            if (Has(mask, ObjectTrackMask.Scales)) yield return Wrap(obj.Scales);
+            if (Has(mask, ObjectTrackMask.Sizes)) yield return Wrap(obj.Sizes);
+            if (Has(mask, ObjectTrackMask.AnchorsMin)) yield return Wrap(obj.AnchorsMin);
+            if (Has(mask, ObjectTrackMask.AnchorsMax)) yield return Wrap(obj.AnchorsMax);
+            if (Has(mask, ObjectTrackMask.Pivots)) yield return Wrap(obj.Pivots);
+
+            switch (obj)
+            {
+                case TextureObject texture:
+                    if (Has(mask, ObjectTrackMask.Colors)) yield return Wrap(texture.Colors);
+                    if (Has(mask, ObjectTrackMask.UVs)) yield return Wrap(texture.UVs);
+                    break;
+                case TextObject text:
+                    if (Has(mask, ObjectTrackMask.Colors)) yield return Wrap(text.Colors);
+                    if (Has(mask, ObjectTrackMask.FontSizes)) yield return Wrap(text.FontSizes);
+                    break;
+            }
+        }
+
+        /// <summary> One track, reduced to what a frame-level modifier needs: how many keys there
+        /// are, what frame each sits on, and how to move it. </summary>
+        public readonly struct Track
+        {
+            public readonly int Count;
+            private readonly Func<int, int> _frameAt;
+            private readonly Action<int, int> _setFrameAt;
+
+            public Track(int count, Func<int, int> frameAt, Action<int, int> setFrameAt)
+            {
+                Count = count;
+                _frameAt = frameAt;
+                _setFrameAt = setFrameAt;
+            }
+
+            public int FrameAt(int index) => _frameAt(index);
+            public void SetFrameAt(int index, int frame) => _setFrameAt(index, frame);
+        }
+
+        private static Track Wrap<TKey>(List<TKey> track) where TKey : IFrame
+            => new(track?.Count ?? 0,
+                index => track[index].Frame,
+                (index, frame) => track[index].Frame = frame);
+
+        private static bool Has(ObjectTrackMask mask, ObjectTrackMask flag) => (mask & flag) != 0;
+    }
+}

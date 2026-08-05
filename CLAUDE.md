@@ -73,9 +73,32 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
 - **Services/** — `SerializationService`-adjacent but SDK-root-level: `CryptographyService`
   (AES-256-CBC), `ModificationService` (reflection path-based get/set, see "Modification system"
   below), `TextFormatService` (`{variable}` string templating).
-- **Generators/** — `BaseGenerator<T>`/`BaseLevelGenerator<T>` (partial-reload / full-reload level
-  content generators) + concrete examples (`EmptyLevelGenerator`, `TestLevelGenerator`,
-  `TextureToObjectsGenerator`). Has its own `README.md`.
+- **Generators/** — authoring automation: a generator produces level content from a few parameters.
+  Non-generic `IGenerator` root (so `GeneratorRegistry`'s reflection scan and a reflection-built
+  form are possible) split into `ILevelGenerator` (builds a whole `Level`+`LevelMeta`) and
+  `IScopeGenerator` (`Content`/`Modifier`, writes into an existing scope), with
+  `BaseLevelGenerator<T>`/`BaseContentGenerator<T>`/`BaseModifier<T>` as the bases anyone actually
+  derives from. **All mutation goes through `GeneratorContext`**, which journals it into a
+  `GeneratorChangeLog` — that journal *is* undo, and writing to the model directly silently breaks
+  it. Also: `GeneratorHints` (form order/ranges/units/visibility, since parameter classes carry no
+  attributes), `GeneratorCost`/`GeneratorRequirements`, `GeneratorRandom` (deterministic xorshift32
+  — `System.Random`'s sequence isn't contractually stable and `UnityEngine.Random` isn't reachable).
+  Subfolders: `Spawn/` (`SpawnParameters` + `BaseSpawnGenerator<T>` — the shared object template and
+  the mint/parent/frame bookkeeping, so a concrete generator is only placement math), `External/`
+  (the `IAudioFileInput`/`IWaveformInput`/`IBeatFramesInput`/`IPixelTextureInput` interfaces a
+  generator implements to say "this parameter comes from the host" — matched by interface, not by
+  field name, so a rename is a compile error), `Modifiers/` (`ObjectTrackMask`/`ObjectTracks` —
+  generic enumeration of an object's ten keyframe tracks, plus the modifiers themselves),
+  `Geometry/`, `Bullets/`, `Audio/`, `Textures/`, `Utility/` (the concrete generators — 17 of them,
+  the roster the design document calls complete). Two rules a spawning generator must get right:
+  **angles are degrees**
+  (matching `AngleKey`; the Unity project converts to radians at its own runtime boundary), and
+  **a lifetime clamped to one frame gets one key per track**, not two — see
+  `BaseSpawnGenerator.CanAnimate`, and note that `Estimate` has to apply the same clamp. A third,
+  format-wide: **`FrameLength` is a count**, so the last legal frame is `FrameLength - 1`
+  (`RuleLevelFrame`'s upper bound is exclusive).
+  Has its own `README.md`; full design in the consuming project's
+  `docs/superpowers/specs/2026-08-05-sdk-generators-design.md`.
 - **Roslyn/** — a *separate* asmdef (`BulletHeroSDK.Roslyn`, Editor-only, `autoReferenced: false`),
   entirely `#if BHSDK_ROSLYN`-gated (that define is never set inside the Unity project, so this
   compiles to an empty assembly here — it's meant for a standalone analyzer-package build of the SDK
