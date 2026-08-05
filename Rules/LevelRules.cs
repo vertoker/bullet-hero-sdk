@@ -22,6 +22,6 @@
         // looks at the number. The real ceiling is per-device and applied at runtime; the hint
         // itself is advisory and never trusted on its own.
         public const int MinCapacityHint = 0;
-        public const int MaxCapacityHint = 1_000_000;
+        public const int MaxCapacityHint = 1_048_576; // 2^20
     }
 }

@@ -24,12 +24,10 @@ namespace BH.SDK.Models.Game
     [DataVersion(DataDomains.GameEvents, 1, 0)]
     public class GameEvents : IModel<GameEvents>
     {
-        // only for editor
-
         /// <summary> Named timeline bookmarks for the mapper. Zero gameplay effect - the player
         /// deserializes them and ignores them. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxMarkerEvents)]
-        [RuleCollectionUnique(nameof(Checkpoint.Frame))]
+        [RuleCollectionUnique(nameof(Marker.Frame))]
         [JsonProperty(Names.Markers)]
         public List<Marker> Markers { get; set; }
 
@@ -40,11 +38,11 @@ namespace BH.SDK.Models.Game
         [JsonProperty(Names.Checkpoints)]
         public List<Checkpoint> Checkpoints { get; set; }
 
-        // limitations for screen will be chosen by mappers
-
         /// <summary> How the visible area is constrained over time (None / fixed aspect / aspect
-        /// bounds), so a level authored for one aspect ratio stays playable on any device. </summary>
+        /// bounds), so a level authored for one aspect ratio stays playable on any device
+        /// (limitations for screen will be chosen by mappers) </summary>
         [RuleNotNull(typeof(ScreenLimitFixed))]
+        [RuleCollectionUnique(nameof(ScreenLimitKey.Frame))]
         [JsonProperty(Names.ScreenLimits)]
         public List<ScreenLimitKey> ScreenLimits { get; set; }
 

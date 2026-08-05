@@ -42,10 +42,7 @@ namespace BH.SDK.Models.Game
         [JsonProperty(Names.PlayerEvents)]
         public PlayerEvents PlayerEvents { get; set; }
         
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ObjectId)
-        // Placed PrefabObject instances live directly in here too (GetModelType() ==
-        // ObjectType.PrefabObject) - see IObjectScope's own comment.
-
+        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own id)
         /// <summary> Every object in the level, flat and keyed by id - hierarchy is expressed through
         /// each object's ParentObjectId, not by nesting. </summary>
         [RuleNotNull]

@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 
 namespace BH.SDK.Models
 {
-    // TODO allow null objects, this will save many space on serialization
     // TODO add MORE rules
 
     /// <summary>
