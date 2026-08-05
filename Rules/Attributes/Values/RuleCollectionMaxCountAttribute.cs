@@ -25,13 +25,15 @@ namespace BH.SDK.Rules.Attributes
             var value = property.GetValue(target);
             if (value == null) return;
 
-            if (value is IList list)
+            // Array before IList, same reason as in RuleCollectionCount: an array is an IList too,
+            // but a fixed-size one, so trimming it means replacing it through the property setter.
+            if (value is Array array)
+            {
+                FixArray(array, property, target);
+            }
+            else if (value is IList list)
             {
                 FixList(list, property);
-            }
-            else if (property.PropertyType.IsArray)
-            {
-                FixArray((Array)value, property, target);
             }
         }
 

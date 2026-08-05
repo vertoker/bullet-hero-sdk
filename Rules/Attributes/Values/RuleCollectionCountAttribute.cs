@@ -26,13 +26,16 @@ namespace BH.SDK.Rules.Attributes
             var value = property.GetValue(target);
             if (value == null) return;
 
-            if (value is IList list)
+            // Array is tested first because it also implements IList - an IList-first branch swallows
+            // every array and then throws on RemoveAt/Add, since an array is fixed-size. Resizing an
+            // array means writing a new one back through the property, never mutating it in place.
+            if (value is Array array)
+            {
+                FixArray(array, property, target);
+            }
+            else if (value is IList list)
             {
                 FixList(list, property);
-            }
-            else if (property.PropertyType.IsArray)
-            {
-                FixArray((Array)value, property, target);
             }
         }
 

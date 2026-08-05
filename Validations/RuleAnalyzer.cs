@@ -65,8 +65,17 @@ namespace BH.SDK.Validations
             var result = new List<RuleIssue>(8);
 
             // Cat.Meow("Analyze");
-            AnalyzeRecursive(obj, settings, result, RuleContext.ForRoot(obj));
-            _trace.Clear();
+            try
+            {
+                AnalyzeRecursive(obj, settings, result, RuleContext.ForRoot(obj));
+            }
+            finally
+            {
+                // A misapplied rule aborts the walk by design, and the analyzer is meant to be
+                // reusable afterwards - so the trace is reset unconditionally, not only on success.
+                // Leaving it behind poisons every later issue's path with a dead prefix.
+                _trace.Clear();
+            }
 
             return result;
         }
@@ -106,97 +115,110 @@ namespace BH.SDK.Validations
 
             var objProperties = GetObjProperties(targetType);
 
-            var nextObjects = _nextObjectsPool.Pop();
-            foreach (var property in objProperties)
+            // The pool is a reuse optimization, never a capacity limit: a graph deeper than the
+            // prewarmed count is legal, so an exhausted pool allocates instead of throwing. Returning
+            // the buffer through finally is what keeps it a pool at all - the misapplied-rule throw
+            // below is by design, and leaking one buffer per such throw drained a shared analyzer
+            // dry, after which every later Analyze died on an empty stack instead of reporting rules.
+            var nextObjects = _nextObjectsPool.Count > 0
+                ? _nextObjectsPool.Pop()
+                : new List<(object, PropertyInfo)>(8);
+
+            try
             {
-                var rules = GetRules(property);
-                var nextObj = property.GetValue(target);
-                _trace.Add(new RulePath(property));
-
-                var hasInvalidRule = false;
-                foreach (var rule in rules)
+                foreach (var property in objProperties)
                 {
-                    // TODO move to Roslyn Analyzer, this must not be in runtime
-                    if (!rule.IsValidType(property))
+                    var rules = GetRules(property);
+                    var nextObj = property.GetValue(target);
+                    _trace.Add(new RulePath(property));
+
+                    var hasInvalidRule = false;
+                    foreach (var rule in rules)
                     {
-                        throw new ArgumentException($"Can't apply rule {rule.GetType().Name} " +
-                                                 $"to type {nextObj?.GetType().Name}, path: {_trace.GetPath()}");
+                        // TODO move to Roslyn Analyzer, this must not be in runtime
+                        if (!rule.IsValidType(property))
+                        {
+                            throw new ArgumentException($"Can't apply rule {rule.GetType().Name} " +
+                                                     $"to type {nextObj?.GetType().Name}, path: {_trace.GetPath()}");
+                        }
+
+                        if (!settings.Reports(rule.Group)) continue;
+
+                        if (!rule.IsValid(nextObj, context))
+                        {
+                            hasInvalidRule = true;
+                            var issue = new RuleIssue(rule, context, new List<RulePath>(_trace));
+                            result.Add(issue);
+                            Cat.MeowWarn(issue);
+
+                            if (!settings.analyzeAllPropertyRules) break;
+                        }
                     }
 
-                    if (!settings.Reports(rule.Group)) continue;
-
-                    if (!rule.IsValid(nextObj, context))
+                    if (hasInvalidRule)
                     {
-                        hasInvalidRule = true;
-                        var issue = new RuleIssue(rule, context, new List<RulePath>(_trace));
-                        result.Add(issue);
-                        Cat.MeowWarn(issue);
-
-                        if (!settings.analyzeAllPropertyRules) break;
+                        if (settings.analyzeAllRecursiveRules && nextObj != null)
+                            nextObjects.Add((nextObj, property));
                     }
-                }
-
-                if (hasInvalidRule)
-                {
-                    if (settings.analyzeAllRecursiveRules && nextObj != null)
+                    else if (nextObj != null)
+                    {
                         nextObjects.Add((nextObj, property));
-                }
-                else if (nextObj != null)
-                {
-                    nextObjects.Add((nextObj, property));
-                }
+                    }
 
-                _trace.RemoveAt(_trace.Count - 1);
-            }
-
-            foreach (var (nextObj, nextProp) in nextObjects)
-            {
-                if (nextObj is IList list)
-                {
-                    for (var i = 0; i < list.Count; i++)
-                    {
-                        _trace.Add(new RulePath(nextProp, i));
-                        AnalyzeRecursive(list[i], settings, result, context);
-                        _trace.RemoveAt(_trace.Count - 1);
-                    }
-                }
-                else if (nextObj is IDictionary dictionary)
-                {
-                    // Values only, deliberately. A RulePath addresses "this property, at this key",
-                    // which is how RuleFixer finds its way back to a value - there is no way to
-                    // express "the key itself", so an issue raised on a key would be repaired into
-                    // the value instead. Keys stay safe without the walk: every key in the format is
-                    // an id struct, and a struct can never be a [RuleContainer] anyway (it is boxed
-                    // on the way in, so any Fix would write into a copy and vanish). Anything a key
-                    // needs checking for - above all whether it agrees with its value's own id - is
-                    // relational, and belongs to the graph pass rather than here.
-                    foreach (DictionaryEntry entry in dictionary)
-                    {
-                        _trace.Add(new RulePath(nextProp, entry.Key));
-                        AnalyzeRecursive(entry.Value, settings, result, context);
-                        _trace.RemoveAt(_trace.Count - 1);
-                    }
-                }
-                else if (nextObj.GetType().IsArray)
-                {
-                    var array = (Array)nextObj;
-                    for (var i = 0; i < array.Length; i++)
-                    {
-                        _trace.Add(new RulePath(nextProp, i));
-                        AnalyzeRecursive(array.GetValue(i), settings, result, context);
-                        _trace.RemoveAt(_trace.Count - 1);
-                    }
-                }
-                else
-                {
-                    _trace.Add(new RulePath(nextProp));
-                    AnalyzeRecursive(nextObj, settings, result, context);
                     _trace.RemoveAt(_trace.Count - 1);
                 }
-            }
 
-            nextObjects.Clear();
-            _nextObjectsPool.Push(nextObjects);
+                foreach (var (nextObj, nextProp) in nextObjects)
+                {
+                    if (nextObj is IList list)
+                    {
+                        for (var i = 0; i < list.Count; i++)
+                        {
+                            _trace.Add(new RulePath(nextProp, i));
+                            AnalyzeRecursive(list[i], settings, result, context);
+                            _trace.RemoveAt(_trace.Count - 1);
+                        }
+                    }
+                    else if (nextObj is IDictionary dictionary)
+                    {
+                        // Values only, deliberately. A RulePath addresses "this property, at this key",
+                        // which is how RuleFixer finds its way back to a value - there is no way to
+                        // express "the key itself", so an issue raised on a key would be repaired into
+                        // the value instead. Keys stay safe without the walk: every key in the format is
+                        // an id struct, and a struct can never be a [RuleContainer] anyway (it is boxed
+                        // on the way in, so any Fix would write into a copy and vanish). Anything a key
+                        // needs checking for - above all whether it agrees with its value's own id - is
+                        // relational, and belongs to the graph pass rather than here.
+                        foreach (DictionaryEntry entry in dictionary)
+                        {
+                            _trace.Add(new RulePath(nextProp, entry.Key));
+                            AnalyzeRecursive(entry.Value, settings, result, context);
+                            _trace.RemoveAt(_trace.Count - 1);
+                        }
+                    }
+                    else if (nextObj.GetType().IsArray)
+                    {
+                        var array = (Array)nextObj;
+                        for (var i = 0; i < array.Length; i++)
+                        {
+                            _trace.Add(new RulePath(nextProp, i));
+                            AnalyzeRecursive(array.GetValue(i), settings, result, context);
+                            _trace.RemoveAt(_trace.Count - 1);
+                        }
+                    }
+                    else
+                    {
+                        _trace.Add(new RulePath(nextProp));
+                        AnalyzeRecursive(nextObj, settings, result, context);
+                        _trace.RemoveAt(_trace.Count - 1);
+                    }
+                }
+            }
+            finally
+            {
+                nextObjects.Clear();
+                _nextObjectsPool.Push(nextObjects);
+            }
         }
 
         private PropertyInfo[] GetObjProperties(Type objType)
