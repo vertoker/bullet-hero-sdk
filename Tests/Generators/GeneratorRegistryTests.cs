@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BH.SDK.Generators;
+using BH.SDK.Models.Interfaces.Values;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests.Generators
@@ -90,6 +92,68 @@ namespace BH.SDK.Tests.Generators
                 AssertOrderCoversFields(generator);
         }
 
+        // A field left out of every Section still renders - in the default section, at the bottom -
+        // so the mistake is invisible in a host until someone wonders why a Main field sank.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void HintsSections_CoverEveryParameterField()
+        {
+            foreach (var generator in GeneratorRegistry.All)
+            {
+                foreach (var field in ParameterFields(generator))
+                {
+                    Assert.IsTrue(generator.Hints.Sections.ContainsKey(field.Name),
+                        $"{generator.NameKey}: field '{field.Name}' is in no Hints.Section");
+                }
+            }
+        }
+
+        // An unbounded number is a level the format rejects one keystroke later: a host clamps
+        // writes against Hints.Ranges and has nothing to clamp against without one. Types that carry
+        // their own bounds (bool, enum, ids) are exempt; everything an author can type a number into
+        // is not.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void EveryNumericField_HasARange()
+        {
+            foreach (var generator in GeneratorRegistry.All)
+            {
+                foreach (var field in ParameterFields(generator))
+                {
+                    if (!NeedsRange(field.FieldType)) continue;
+                    Assert.IsTrue(generator.Hints.TryGetRange(field.Name, out _),
+                        $"{generator.NameKey}: field '{field.Name}' has no Hints.Range");
+                }
+            }
+        }
+
+        private static bool NeedsRange(Type type)
+            => type == typeof(int) || type == typeof(uint) || type == typeof(float) || type == typeof(double)
+               || typeof(IFloat).IsAssignableFrom(type) || typeof(IInt).IsAssignableFrom(type)
+               || typeof(IVector2).IsAssignableFrom(type) || typeof(IVector3).IsAssignableFrom(type);
+
+        // A parameters class hiding an inherited field of the same name breaks the whole
+        // name-keyed design: two FieldInfos answer to one name, so a form binds one of them at
+        // random and every hint keyed on that name hits both. TextureObjectsGenerator did exactly
+        // this with SpawnParameters.Texture before its own image field was renamed to Image.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void ParameterFields_DoNotShadowAnInheritedField()
+        {
+            foreach (var generator in GeneratorRegistry.All)
+            {
+                var names = ParameterFields(generator).Select(field => field.Name).ToList();
+                CollectionAssert.AllItemsAreUnique(names,
+                    $"{generator.NameKey}: a parameter field shadows an inherited one");
+            }
+        }
+
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
@@ -132,11 +196,12 @@ namespace BH.SDK.Tests.Generators
                 Assert.IsInstanceOf<IScopeGenerator>(generator);
         }
 
+        private static IEnumerable<FieldInfo> ParameterFields(IGenerator generator)
+            => generator.ParametersType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+
         private static void AssertOrderCoversFields(IGenerator generator)
         {
-            var fields = generator.ParametersType
-                .GetFields(BindingFlags.Public | BindingFlags.Instance)
-                .Select(field => field.Name);
+            var fields = ParameterFields(generator).Select(field => field.Name);
             var ordered = new HashSet<string>(generator.Hints.Order);
 
             foreach (var field in fields)

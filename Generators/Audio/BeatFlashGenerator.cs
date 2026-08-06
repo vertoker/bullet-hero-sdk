@@ -25,8 +25,10 @@ namespace BH.SDK.Generators.Audio
             GeneratorRequirements.LevelScope | GeneratorRequirements.ExternalAnalysis;
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.BaseZoom), nameof(Parameters.ZoomPunch), nameof(Parameters.DecayFrames),
-                nameof(Parameters.Shake), nameof(Parameters.ShakeIntensity), nameof(Parameters.ShakeSpeed),
+            .Section(GeneratorSections.Main, nameof(Parameters.BaseZoom), nameof(Parameters.ZoomPunch),
+                nameof(Parameters.DecayFrames))
+            .Section(GeneratorSections.Additional, nameof(Parameters.Shake),
+                nameof(Parameters.ShakeIntensity), nameof(Parameters.ShakeSpeed),
                 nameof(Parameters.ClearRange), nameof(Parameters.BeatFrames))
             .Range(nameof(Parameters.BaseZoom), ValueRules.MinZoom, ValueRules.MaxZoom)
             .Range(nameof(Parameters.ZoomPunch), 0f, ValueRules.MaxZoom)

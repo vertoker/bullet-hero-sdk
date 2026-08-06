@@ -12,16 +12,19 @@ namespace BH.SDK.Generators.Geometry
         public override string NameKey => "gen_grid";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Columns), nameof(Parameters.Rows),
-                nameof(Parameters.SpacingX), nameof(Parameters.SpacingY),
-                nameof(Parameters.OriginX), nameof(Parameters.OriginY), nameof(Parameters.Centered))
-            .Order(SpawnParameters.FieldOrder)
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Columns), nameof(Parameters.Rows),
+                nameof(Parameters.SpacingX), nameof(Parameters.SpacingY))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.OriginX), nameof(Parameters.OriginY),
+                nameof(Parameters.Centered))
             .Range(nameof(Parameters.Columns), 1, 256)
             .Range(nameof(Parameters.Rows), 1, 256)
             .Range(nameof(Parameters.SpacingX), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.SpacingY), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.OriginX), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.OriginY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

@@ -1,5 +1,6 @@
 using System;
 using BH.SDK.Generators.Spawn;
+using BH.SDK.Rules;
 
 namespace BH.SDK.Generators.Geometry
 {
@@ -30,11 +31,13 @@ namespace BH.SDK.Generators.Geometry
         public override string NameKey => "gen_fractal";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Type), nameof(Parameters.Depth), nameof(Parameters.Scale),
-                nameof(Parameters.Thickness), nameof(Parameters.Rotation),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Type), nameof(Parameters.Depth),
+                nameof(Parameters.Scale))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.Thickness), nameof(Parameters.Rotation),
                 nameof(Parameters.CenterX), nameof(Parameters.CenterY),
                 nameof(Parameters.BranchAngle), nameof(Parameters.BranchScale))
-            .Order(SpawnParameters.FieldOrder)
             .Range(nameof(Parameters.Depth), 0, MaxDepth)
             .Range(nameof(Parameters.Scale), 0.01f, 1000f)
             .Range(nameof(Parameters.Thickness), 0.01f, 100f)
@@ -45,6 +48,10 @@ namespace BH.SDK.Generators.Geometry
             .VisibleWhen(nameof(Parameters.BranchAngle), p => ((Parameters)p).Type == FractalType.Tree)
             .VisibleWhen(nameof(Parameters.BranchScale), p => ((Parameters)p).Type == FractalType.Tree)
             .VisibleWhen(nameof(Parameters.Thickness), p => ((Parameters)p).Type != FractalType.Sierpinski)
+            .Range(nameof(Parameters.Rotation), -3600f, 3600f)
+            .Range(nameof(Parameters.CenterX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.CenterY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

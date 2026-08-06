@@ -38,6 +38,109 @@ namespace BH.SDK.Tests.Generators
             return obj;
         }
 
+        // Grouping is context-level, so it works for every generator without one of them knowing
+        // about it - which is exactly what has to be proven here rather than per generator.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Grouping_WrapsEverythingCreatedInOneContainer()
+        {
+            var level = CreateLevel();
+            var host = AddObject(level, "host", 0);
+            var context = new GeneratorContext(level, 10, 90, host.ObjectId, layer: 5, groupName: "Radial");
+
+            var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
+
+            Assert.AreEqual(4, result.CreatedIds.Length, "3 objects + 1 container");
+
+            var group = level.Game.Objects.Values.Single(o => o.Name == "Radial");
+            Assert.AreEqual(host.ObjectId, group.ParentObjectId, "the container takes the author's parent");
+            Assert.AreEqual(10, group.StartFrame);
+            Assert.AreEqual(90, group.EndFrame);
+            Assert.AreEqual(0, group.Layer, "Layer is parent-relative - a container repeating it would double it");
+
+            foreach (var id in result.CreatedIds)
+            {
+                if (id == group.ObjectId) continue;
+                Assert.AreEqual(group.ObjectId, level.Game.Objects[id].ParentObjectId);
+                Assert.AreEqual(5, level.Game.Objects[id].Layer, "children keep the context layer");
+            }
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void Grouping_Off_ParentsDirectlyToTheGivenParent()
+        {
+            var level = CreateLevel();
+            var host = AddObject(level, "host", 0);
+            var context = new GeneratorContext(level, 0, 60, host.ObjectId);
+
+            var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 2 });
+
+            Assert.AreEqual(2, result.CreatedIds.Length);
+            foreach (var id in result.CreatedIds)
+                Assert.AreEqual(host.ObjectId, level.Game.Objects[id].ParentObjectId);
+        }
+
+        // An empty container is worse than no container: it looks like the run half-worked.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void Grouping_CreatesNothingWhenTheRunCreatesNothing()
+        {
+            var level = CreateLevel();
+            var context = new GeneratorContext(level, 0, 60, groupName: "Radial");
+
+            var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 0 });
+
+            Assert.IsEmpty(result.CreatedIds);
+            Assert.IsEmpty(level.Game.Objects);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void Grouping_IsCountedByEstimate_AndOnlyWhenSomethingIsCreated()
+        {
+            var level = CreateLevel();
+            var generator = new SpawnTestGenerator();
+
+            var grouped = new GeneratorContext(level, 0, 60, groupName: "Radial");
+            Assert.AreEqual(4, generator.Estimate(grouped, new SpawnTestGenerator.Parameters { Count = 3 }).Objects);
+
+            var empty = new GeneratorContext(level, 0, 60, groupName: "Radial");
+            Assert.AreEqual(0, generator.Estimate(empty, new SpawnTestGenerator.Parameters { Count = 0 }).Objects);
+
+            var plain = new GeneratorContext(level, 0, 60);
+            Assert.AreEqual(3, generator.Estimate(plain, new SpawnTestGenerator.Parameters { Count = 3 }).Objects);
+        }
+
+        // The container goes through Create like everything else, so undo has to take it with it -
+        // otherwise an undone run leaves an empty object behind.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Grouping_Undo_RemovesTheContainerToo()
+        {
+            var level = CreateLevel();
+            var context = new GeneratorContext(level, 0, 60, groupName: "Radial");
+
+            var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
+            Assert.AreEqual(4, level.Game.Objects.Count);
+
+            result.Log.Revert();
+            Assert.IsEmpty(level.Game.Objects);
+
+            result.Log.Reapply();
+            Assert.AreEqual(4, level.Game.Objects.Count);
+        }
+
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]

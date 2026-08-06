@@ -80,11 +80,19 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   `BaseLevelGenerator<T>`/`BaseContentGenerator<T>`/`BaseModifier<T>` as the bases anyone actually
   derives from. **All mutation goes through `GeneratorContext`**, which journals it into a
   `GeneratorChangeLog` — that journal *is* undo, and writing to the model directly silently breaks
-  it. Also: `GeneratorHints` (form order/ranges/units/visibility, since parameter classes carry no
-  attributes), `GeneratorCost`/`GeneratorRequirements`, `GeneratorRandom` (deterministic xorshift32
+  it. The context also owns **grouping**: given a `groupName`, `context.Parent` lazily creates one
+  container `RectObject` (Layer 0 — Layer is parent-relative, the children already carry
+  `context.Layer`) and returns it, so every generator that parents to `context.Parent` gets
+  "wrap this run in one object" for free, including future ones; `BaseScopeGenerator.Estimate` adds
+  the container's object, and a run that creates nothing creates no container either. Also: `GeneratorHints` (form order/**sections**/ranges/units/visibility, since parameter
+  classes carry no attributes — `Section(key, fields)` is `Order` plus a header, so grouping can't
+  disagree with ordering; `GeneratorSections.Main`/`Additional` is the shipped vocabulary, and a
+  parameters class must never shadow an inherited field, since everything here is keyed by field
+  NAME), `GeneratorCost`/`GeneratorRequirements`, `GeneratorRandom` (deterministic xorshift32
   — `System.Random`'s sequence isn't contractually stable and `UnityEngine.Random` isn't reachable).
   Subfolders: `Spawn/` (`SpawnParameters` + `BaseSpawnGenerator<T>` — the shared object template and
-  the mint/parent/frame bookkeeping, so a concrete generator is only placement math), `External/`
+  the mint/parent/frame bookkeeping, so a concrete generator is only placement math; its
+  `MainFields`/`AdditionalFields` are spliced into each generator's own `Section` calls), `External/`
   (the `IAudioFileInput`/`IWaveformInput`/`IBeatFramesInput`/`IPixelTextureInput` interfaces a
   generator implements to say "this parameter comes from the host" — matched by interface, not by
   field name, so a rename is a compile error), `Modifiers/` (`ObjectTrackMask`/`ObjectTracks` —

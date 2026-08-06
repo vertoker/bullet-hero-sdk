@@ -33,8 +33,9 @@ namespace BH.SDK.Generators.Audio
         public override GeneratorRequirements Requirements => GeneratorRequirements.ExternalAnalysis;
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.LevelName), nameof(Parameters.LevelDescription),
-                nameof(Parameters.Framerate), nameof(Parameters.OffsetSeconds), nameof(Parameters.TailSeconds),
+            .Section(GeneratorSections.Main, nameof(Parameters.LevelName), nameof(Parameters.Framerate))
+            .Section(GeneratorSections.Additional, nameof(Parameters.LevelDescription),
+                nameof(Parameters.OffsetSeconds), nameof(Parameters.TailSeconds),
                 nameof(Parameters.AudioPath), nameof(Parameters.UriType), nameof(Parameters.DurationSeconds))
             .Range(nameof(Parameters.Framerate), FrameRules.MinFramerate, FrameRules.MaxFramerate)
             .Range(nameof(Parameters.OffsetSeconds), AudioRules.MinOffsetTime, AudioRules.MaxOffsetTime)
@@ -47,6 +48,7 @@ namespace BH.SDK.Generators.Audio
             .Hidden(nameof(Parameters.AudioPath))
             .Hidden(nameof(Parameters.UriType))
             .Hidden(nameof(Parameters.DurationSeconds))
+            .Range(nameof(Parameters.DurationSeconds), 0f, 3600f)
             .Build();
 
         protected override GeneratedLevel CreateTyped(Parameters parameters)

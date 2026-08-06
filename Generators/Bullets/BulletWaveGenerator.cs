@@ -20,18 +20,24 @@ namespace BH.SDK.Generators.Bullets
         public override string NameKey => "gen_bullet_wave";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Count), nameof(Parameters.Spacing),
-                nameof(Parameters.FromX), nameof(Parameters.FromY),
-                nameof(Parameters.ToX), nameof(Parameters.ToY),
-                nameof(Parameters.TravelFrames), nameof(Parameters.StaggerFrames),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Count), nameof(Parameters.Spacing),
+                nameof(Parameters.TravelFrames))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.FromX), nameof(Parameters.FromY),
+                nameof(Parameters.ToX), nameof(Parameters.ToY), nameof(Parameters.StaggerFrames),
                 nameof(Parameters.Ease), nameof(Parameters.FaceTravel))
-            .Order(SpawnParameters.FieldOrder)
             .Range(nameof(Parameters.Count), 1, 512)
             .Range(nameof(Parameters.Spacing), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameLength)
             .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameLength)
             .Unit(nameof(Parameters.TravelFrames), "frames")
             .Unit(nameof(Parameters.StaggerFrames), "frames")
+            .Range(nameof(Parameters.FromX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.FromY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.ToX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.ToY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

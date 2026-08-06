@@ -11,6 +11,10 @@ namespace BH.SDK.Generators
     // Order is mandatory rather than optional. Type.GetFields() order is explicitly unspecified by
     // the CLI - it happens to be declaration order on today's runtimes and is free to stop being
     // that after a recompile - so without Order the form's field order is a coin flip.
+    //
+    // Section is Order plus a header: it lists fields exactly like Order does and additionally says
+    // which group they belong to, so grouping can never disagree with ordering the way two separate
+    // mechanisms would. A generator states its sections in the order a form shows them, Main first.
 
     /// <summary>
     /// Presentation facts about a generator's parameter fields that the fields' own types can't
@@ -23,6 +27,10 @@ namespace BH.SDK.Generators
         /// after the listed ones, in reflection order - a test asserts every generator lists all of
         /// its own fields, so that fallback only ever covers a mistake. </summary>
         public IReadOnlyList<string> Order { get; }
+
+        /// <summary> Field name -> the section key it was listed under. A field listed through plain
+        /// Order instead of Section isn't in here at all - see SectionOf. </summary>
+        public IReadOnlyDictionary<string, string> Sections { get; }
 
         /// <summary> Field name -> label key override. Without one, a host humanizes
         /// "{NameKey}_{field}" itself. </summary>
@@ -52,6 +60,7 @@ namespace BH.SDK.Generators
         public static readonly GeneratorHints Empty = new Builder().Build();
 
         private GeneratorHints(IReadOnlyList<string> order,
+            IReadOnlyDictionary<string, string> sections,
             IReadOnlyDictionary<string, string> labels,
             IReadOnlyDictionary<string, GeneratorRange> ranges,
             IReadOnlyDictionary<string, float> steps,
@@ -60,6 +69,7 @@ namespace BH.SDK.Generators
             IReadOnlyDictionary<string, IReadOnlyList<GeneratorChoice>> choices)
         {
             Order = order;
+            Sections = sections;
             Labels = labels;
             Ranges = ranges;
             Steps = steps;
@@ -67,6 +77,11 @@ namespace BH.SDK.Generators
             Visible = visible;
             Choices = choices;
         }
+
+        /// <summary> The section a field belongs to. An unlisted field falls into
+        /// GeneratorSections.Default rather than a group of its own. </summary>
+        public string SectionOf(string field)
+            => Sections.TryGetValue(field, out var section) ? section : GeneratorSections.Default;
 
         public bool TryGetRange(string field, out GeneratorRange range) => Ranges.TryGetValue(field, out range);
         public bool TryGetStep(string field, out float step) => Steps.TryGetValue(field, out step);
@@ -85,6 +100,7 @@ namespace BH.SDK.Generators
         public sealed class Builder
         {
             private readonly List<string> _order = new();
+            private readonly Dictionary<string, string> _sections = new();
             private readonly Dictionary<string, string> _labels = new();
             private readonly Dictionary<string, GeneratorRange> _ranges = new();
             private readonly Dictionary<string, float> _steps = new();
@@ -95,6 +111,16 @@ namespace BH.SDK.Generators
             public Builder Order(params string[] fields)
             {
                 _order.AddRange(fields);
+                return this;
+            }
+
+            /// <summary> Lists fields exactly like Order does and puts them under one header. Call it
+            /// more than once with the same key to add to that section - a spawning generator does
+            /// exactly that, splicing SpawnParameters' shared fields in before its own. </summary>
+            public Builder Section(string section, params string[] fields)
+            {
+                _order.AddRange(fields);
+                foreach (var field in fields) _sections[field] = section;
                 return this;
             }
             public Builder Label(string field, string labelKey)
@@ -133,8 +159,26 @@ namespace BH.SDK.Generators
                 return this;
             }
 
-            public GeneratorHints Build() => new(_order, _labels, _ranges, _steps, _units, _visible, _choices);
+            public GeneratorHints Build()
+                => new(_order, _sections, _labels, _ranges, _steps, _units, _visible, _choices);
         }
+    }
+
+    /// <summary> The section vocabulary every shipped generator uses. Keys are label keys, never
+    /// display strings - a host humanizes/localizes them exactly like a generator's NameKey. </summary>
+    public static class GeneratorSections
+    {
+        /// <summary> What the generator is fundamentally driven by: the resources it spawns with and
+        /// the few numbers deciding how much of what appears. An author who edits nothing else still
+        /// gets a sensible result. </summary>
+        public const string Main = "gen_section_main";
+
+        /// <summary> Placement, timing, easing, per-mode switches - everything tuning a result the
+        /// Main fields already define. </summary>
+        public const string Additional = "gen_section_additional";
+
+        /// <summary> Where a field listed through plain Order lands. </summary>
+        public const string Default = Additional;
     }
 
     /// <summary> Inclusive numeric bounds for one parameter field. </summary>

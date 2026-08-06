@@ -343,7 +343,7 @@ namespace BH.SDK.Tests.Generators
             var generator = new TextureObjectsGenerator();
             var parameters = new TextureObjectsGenerator.Parameters
             {
-                Texture = SolidRow(4, 4, new Pixel(255, 255, 255, 255)),
+                Image = SolidRow(4, 4, new Pixel(255, 255, 255, 255)),
                 TargetWidth = 4, TargetHeight = 4, PixelSize = 1f, MergeRuns = true,
             };
 
@@ -367,7 +367,7 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
             {
-                Texture = SolidRow(4, 4, new Pixel(255, 255, 255, 255)),
+                Image = SolidRow(4, 4, new Pixel(255, 255, 255, 255)),
                 TargetWidth = 4, TargetHeight = 4, PixelSize = 1f, MergeRuns = false,
             });
 
@@ -387,7 +387,7 @@ namespace BH.SDK.Tests.Generators
 
             new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
             {
-                Texture = texture, TargetWidth = 4, TargetHeight = 1, PixelSize = 1f, MergeRuns = true,
+                Image = texture, TargetWidth = 4, TargetHeight = 1, PixelSize = 1f, MergeRuns = true,
             });
 
             Assert.AreEqual(2, level.Game.Objects.Count, "the transparent gap splits the row in two");
@@ -406,7 +406,7 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
             {
-                Texture = SolidRow(128, 128, new Pixel(255, 0, 0, 255)),
+                Image = SolidRow(128, 128, new Pixel(255, 0, 0, 255)),
                 TargetWidth = 8, TargetHeight = 8, PixelSize = 1f, MergeRuns = true,
             });
 
@@ -428,7 +428,7 @@ namespace BH.SDK.Tests.Generators
 
             new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
             {
-                Texture = SolidRow(2, 1, new Pixel(255, 0, 0, 255)),
+                Image = SolidRow(2, 1, new Pixel(255, 0, 0, 255)),
                 TargetWidth = 2, TargetHeight = 1, PixelSize = 1f,
                 UseThemeRef = true, Theme = themeId,
             });
@@ -450,7 +450,7 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
             {
-                Texture = SolidRow(2, 1, new Pixel(255, 0, 0, 255)),
+                Image = SolidRow(2, 1, new Pixel(255, 0, 0, 255)),
                 TargetWidth = 2, TargetHeight = 1, PixelSize = 1f,
                 UseThemeRef = true, Theme = ThemeId.NewGuid(),
             });

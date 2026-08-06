@@ -42,7 +42,8 @@ namespace BH.SDK.Generators.Modifiers
         public override string NameKey => "mod_stagger";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.StepFrames), nameof(Parameters.Order), nameof(Parameters.Reverse),
+            .Section(GeneratorSections.Main, nameof(Parameters.StepFrames), nameof(Parameters.Order))
+            .Section(GeneratorSections.Additional, nameof(Parameters.Reverse),
                 nameof(Parameters.ShiftBounds), nameof(Parameters.ShiftKeyframes),
                 nameof(Parameters.Tracks), nameof(Parameters.OriginX), nameof(Parameters.OriginY))
             .Range(nameof(Parameters.StepFrames), -FrameRules.MaxFrameLength, FrameRules.MaxFrameLength)

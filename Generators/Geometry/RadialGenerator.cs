@@ -11,16 +11,20 @@ namespace BH.SDK.Generators.Geometry
         public override string NameKey => "gen_radial";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Count), nameof(Parameters.Radius),
-                nameof(Parameters.StartAngle), nameof(Parameters.Arc),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Count), nameof(Parameters.Radius))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.StartAngle), nameof(Parameters.Arc),
                 nameof(Parameters.CenterX), nameof(Parameters.CenterY), nameof(Parameters.FaceCenter))
-            .Order(SpawnParameters.FieldOrder)
             .Range(nameof(Parameters.Count), 1, 1024)
             .Range(nameof(Parameters.Radius), 0f, ValueRules.MaxPos)
             .Range(nameof(Parameters.StartAngle), -3600f, 3600f)
             .Range(nameof(Parameters.Arc), -3600f, 3600f)
             .Unit(nameof(Parameters.StartAngle), "deg")
             .Unit(nameof(Parameters.Arc), "deg")
+            .Range(nameof(Parameters.CenterX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.CenterY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

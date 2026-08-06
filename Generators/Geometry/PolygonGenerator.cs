@@ -16,16 +16,21 @@ namespace BH.SDK.Generators.Geometry
         public override string NameKey => "gen_polygon";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Sides), nameof(Parameters.Radius), nameof(Parameters.Rotation),
-                nameof(Parameters.CenterX), nameof(Parameters.CenterY),
-                nameof(Parameters.AsOutline), nameof(Parameters.PointsPerEdge))
-            .Order(SpawnParameters.FieldOrder)
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Sides), nameof(Parameters.Radius),
+                nameof(Parameters.AsOutline))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.Rotation),
+                nameof(Parameters.CenterX), nameof(Parameters.CenterY), nameof(Parameters.PointsPerEdge))
             .Range(nameof(Parameters.Sides), MinSides, 64)
             .Range(nameof(Parameters.Radius), 0f, ValueRules.MaxPos)
             .Range(nameof(Parameters.Rotation), -3600f, 3600f)
             .Range(nameof(Parameters.PointsPerEdge), 1, 64)
             .Unit(nameof(Parameters.Rotation), "deg")
             .VisibleWhen(nameof(Parameters.PointsPerEdge), p => ((Parameters)p).AsOutline)
+            .Range(nameof(Parameters.CenterX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.CenterY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

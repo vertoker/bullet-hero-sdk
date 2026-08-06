@@ -33,7 +33,10 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
     public override GeneratorHints Hints => HintsValue;
 
     private static readonly GeneratorHints HintsValue = new GeneratorHints.Builder()
-        .Order(nameof(Parameters.Count), nameof(Parameters.Radius))
+        .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+        .Section(GeneratorSections.Main, nameof(Parameters.Count), nameof(Parameters.Radius))
+        .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+        .Section(GeneratorSections.Additional, nameof(Parameters.CenterX), nameof(Parameters.CenterY))
         .Range(nameof(Parameters.Count), 1, 512)
         .Unit(nameof(Parameters.Radius), "px")
         .Build();
@@ -69,8 +72,18 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
 - **Mutate only through `GeneratorContext`.** It records every change in a `GeneratorChangeLog`,
   which is the entire undo story. Touching the model directly compiles, runs, and silently breaks
   undo — there is no way for the SDK to detect it.
-- **`Hints.Order` must list every field.** `Type.GetFields()` order is unspecified by the CLI; a
-  form built without `Order` can reshuffle itself on a recompile.
+- **Every field must be listed, and listed under a section.** `Type.GetFields()` order is
+  unspecified by the CLI, so a form built without `Order`/`Section` can reshuffle itself on a
+  recompile. `Section(key, fields)` is `Order` plus a header - use it, and keep plain `Order` for
+  the rare field that belongs to no group. Sections are shown in the order they are first declared,
+  `Main` (the resources and the few numbers that decide how much of what appears) before
+  `Additional` (placement, timing, easing, per-mode switches). A spawning generator splices
+  `SpawnParameters.MainFields`/`AdditionalFields` into its own two calls.
+- **A parameters class must not shadow an inherited field.** Everything is keyed by field NAME, so
+  two fields called `Texture` mean one form row bound at random and one hint hitting both.
+- **Every number needs a `Range`.** A host clamps writes against `Hints.Ranges` and has nothing to
+  clamp against without one, so an unbounded field becomes a level the format rejects. Enforced by a
+  test, and it covers `IFloat`/`IVector2`/`IVector3` fields too, not just `int`/`float`.
 - **Parameters are public mutable fields** with a parameterless constructor. That is what a form
   binds to and what a preset serializes.
 - **`Estimate` must match what `Run` produces.** A host shows the estimate before running and
@@ -80,6 +93,10 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
   there instead of running it into a null.
 - **Randomness comes from `context.CreateRandom()`**, not `System.Random`. Same seed, same level,
   on every runtime.
+- **Parent what you create to `context.Parent`** — every generator already does, and that one line
+  is what makes host-side grouping work: with grouping on, `Parent` is a container object the
+  context creates once, on first use, so a whole run can be moved as one thing. A generator that
+  parents to `ObjectId.Null` by hand opts itself out of a feature it never had to implement.
 
 ## Folders
 

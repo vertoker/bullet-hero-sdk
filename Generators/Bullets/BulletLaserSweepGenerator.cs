@@ -20,12 +20,14 @@ namespace BH.SDK.Generators.Bullets
         public override string NameKey => "gen_bullet_laser_sweep";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Length), nameof(Parameters.Width), nameof(Parameters.WarnWidth),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Length), nameof(Parameters.Width),
+                nameof(Parameters.WarnFrames), nameof(Parameters.FireFrames))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.WarnWidth),
                 nameof(Parameters.StartAngle), nameof(Parameters.EndAngle),
                 nameof(Parameters.OriginX), nameof(Parameters.OriginY),
-                nameof(Parameters.WarnFrames), nameof(Parameters.FireFrames),
                 nameof(Parameters.WarnAlpha), nameof(Parameters.Ease))
-            .Order(SpawnParameters.FieldOrder)
             .Range(nameof(Parameters.Length), 0.01f, ValueRules.MaxSca)
             .Range(nameof(Parameters.Width), 0.01f, ValueRules.MaxSca)
             .Range(nameof(Parameters.WarnWidth), 0.01f, ValueRules.MaxSca)
@@ -38,6 +40,9 @@ namespace BH.SDK.Generators.Bullets
             .Unit(nameof(Parameters.EndAngle), "deg")
             .Unit(nameof(Parameters.WarnFrames), "frames")
             .Unit(nameof(Parameters.FireFrames), "frames")
+            .Range(nameof(Parameters.OriginX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.OriginY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

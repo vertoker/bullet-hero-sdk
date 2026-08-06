@@ -10,6 +10,20 @@ namespace BH.SDK.Generators.Audio
     // decoder. With no peaks supplied this produces nothing at all, deliberately: a waveform of
     // invented numbers is worse than an empty run, because it looks like it worked.
 
+    /// <summary> Which side of the baseline the bars grow on - the baseline being OriginY, the axis
+    /// the whole chart is read against. </summary>
+    public enum WaveformAlign
+    {
+        /// <summary> Bars stand on the axis and grow up. </summary>
+        Bottom,
+
+        /// <summary> Bars are centred on the axis and grow both ways, spanning twice the height. </summary>
+        Center,
+
+        /// <summary> Bars hang from the axis and grow down. </summary>
+        Top,
+    }
+
     /// <summary>
     /// A bar chart of a track's waveform, as real level objects - the song's shape becomes scenery.
     /// </summary>
@@ -20,11 +34,12 @@ namespace BH.SDK.Generators.Audio
         public override GeneratorRequirements Requirements => GeneratorRequirements.ExternalAnalysis;
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.BarCount), nameof(Parameters.BarWidth), nameof(Parameters.Spacing),
-                nameof(Parameters.Height), nameof(Parameters.MinHeight),
-                nameof(Parameters.OriginX), nameof(Parameters.OriginY),
-                nameof(Parameters.Mirrored), nameof(Parameters.Source), nameof(Parameters.Peaks))
-            .Order(SpawnParameters.FieldOrder)
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Source), nameof(Parameters.BarCount),
+                nameof(Parameters.BarWidth), nameof(Parameters.Height), nameof(Parameters.Align))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.Spacing), nameof(Parameters.MinHeight),
+                nameof(Parameters.OriginX), nameof(Parameters.OriginY), nameof(Parameters.Peaks))
             .Range(nameof(Parameters.BarCount), 0, 512)
             .Range(nameof(Parameters.BarWidth), 0.01f, ValueRules.MaxSca)
             .Range(nameof(Parameters.Spacing), 0f, ValueRules.MaxPos)
@@ -33,6 +48,9 @@ namespace BH.SDK.Generators.Audio
             // Source stays visible - which track to visualize is an authoring choice; the sampled
             // peaks behind it are not.
             .Hidden(nameof(Parameters.Peaks))
+            .Range(nameof(Parameters.OriginX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.OriginY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)
@@ -47,13 +65,19 @@ namespace BH.SDK.Generators.Audio
             {
                 var peak = PeakAt(parameters, bars, i);
                 var height = parameters.MinHeight + peak * parameters.Height;
-                if (parameters.Mirrored) height *= 2f;
+                if (parameters.Align == WaveformAlign.Center) height *= 2f;
 
                 var x = left + i * (parameters.BarWidth + parameters.Spacing);
 
-                // A non-mirrored bar grows upward from the baseline, so its centre sits half a
-                // height above it; a mirrored one is centred on the baseline itself.
-                var y = parameters.Mirrored ? parameters.OriginY : parameters.OriginY + height * 0.5f;
+                // An object's own position is its CENTRE, so growing from the axis means offsetting
+                // by half the bar - only a Center-aligned bar sits on the axis itself. This is the
+                // whole difference between the three alignments; nothing else about a bar changes.
+                var y = parameters.Align switch
+                {
+                    WaveformAlign.Bottom => parameters.OriginY + height * 0.5f,
+                    WaveformAlign.Top => parameters.OriginY - height * 0.5f,
+                    _ => parameters.OriginY,
+                };
 
                 var obj = Spawn(context, parameters, $"waveform_{i}", context.StartFrame, context.EndFrame);
                 AddPosition(obj, x, y, obj.StartFrame);
@@ -109,8 +133,11 @@ namespace BH.SDK.Generators.Audio
             public float Height = 6f;
             public float MinHeight = 0.1f;
             public float OriginX;
+
+            /// <summary> The axis every bar is measured from - see WaveformAlign. </summary>
             public float OriginY = -6f;
-            public bool Mirrored;
+
+            public WaveformAlign Align = WaveformAlign.Bottom;
 
             public AudioResourceId Source = AudioResourceId.Null;
             public float[] Peaks = System.Array.Empty<float>();

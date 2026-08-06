@@ -10,9 +10,12 @@ namespace BH.SDK.Generators.Spawn
     // each parameters class. Reflection over a derived parameters class returns inherited public
     // fields too, so a form picks these up with no extra work.
     //
-    // The one thing inheritance does NOT solve is ordering: Hints.Order must list every field,
-    // inherited ones included, so FieldOrder below exists to be appended to each generator's own
-    // Order call instead of spelling the four names out again per generator.
+    // The one thing inheritance does NOT solve is listing: Hints must name every field, inherited
+    // ones included, so the two arrays below exist to be spliced into each generator's own Section
+    // calls instead of spelling the four names out again per generator. They are split by section
+    // rather than being one list, because these four don't belong together in a form: WHAT is drawn
+    // and what it collides with are the generator's resources (Main, spliced in before the
+    // generator's own numbers), while its size and tint only tune the look (Additional).
 
     /// <summary>
     /// The object template shared by every generator that spawns objects: what is drawn, how big,
@@ -23,6 +26,9 @@ namespace BH.SDK.Generators.Spawn
         /// <summary> Image every spawned object draws. </summary>
         public TextureResourceId Texture = TextureResourceId.Square;
 
+        /// <summary> Collision shape, or Null for pure decoration. </summary>
+        public ColliderId Collider = ColliderId.Null;
+
         /// <summary> Size of one object. Polymorphic on purpose - RandomRect here is what makes a
         /// field of bullets look hand-placed instead of stamped. </summary>
         public IVector2 Size = new Vector2Value(1f, 1f);
@@ -31,14 +37,17 @@ namespace BH.SDK.Generators.Spawn
         /// palette instead of freezing a literal colour. </summary>
         public IColor4 Color = new Color4Value(1f, 1f, 1f, 1f);
 
-        /// <summary> Collision shape, or Null for pure decoration. </summary>
-        public ColliderId Collider = ColliderId.Null;
-
-        /// <summary> The inherited fields, in the order a form should show them - append to each
-        /// generator's own Hints.Order so it never has to name them one by one. </summary>
-        public static readonly string[] FieldOrder =
+        /// <summary> The inherited resources - splice into each generator's own Main section. </summary>
+        public static readonly string[] MainFields =
         {
-            nameof(Texture), nameof(Size), nameof(Color), nameof(Collider),
+            nameof(Texture), nameof(Collider),
+        };
+
+        /// <summary> The inherited look-of-it fields - splice into each generator's own Additional
+        /// section. </summary>
+        public static readonly string[] AdditionalFields =
+        {
+            nameof(Size), nameof(Color),
         };
     }
 }

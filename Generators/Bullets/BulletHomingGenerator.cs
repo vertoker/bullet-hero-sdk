@@ -19,13 +19,14 @@ namespace BH.SDK.Generators.Bullets
         public override string NameKey => "gen_bullet_homing";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.BurstCount), nameof(Parameters.Spread), nameof(Parameters.LaunchAngle),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.BurstCount), nameof(Parameters.Speed),
+                nameof(Parameters.TravelFrames))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.Spread), nameof(Parameters.LaunchAngle),
                 nameof(Parameters.OriginX), nameof(Parameters.OriginY),
-                nameof(Parameters.TargetX), nameof(Parameters.TargetY),
-                nameof(Parameters.Speed), nameof(Parameters.TurnRate),
-                nameof(Parameters.TravelFrames), nameof(Parameters.StaggerFrames),
-                nameof(Parameters.Steps), nameof(Parameters.FaceTravel))
-            .Order(SpawnParameters.FieldOrder)
+                nameof(Parameters.TargetX), nameof(Parameters.TargetY), nameof(Parameters.TurnRate),
+                nameof(Parameters.StaggerFrames), nameof(Parameters.Steps), nameof(Parameters.FaceTravel))
             .Range(nameof(Parameters.BurstCount), 1, 128)
             .Range(nameof(Parameters.Spread), 0f, 360f)
             .Range(nameof(Parameters.LaunchAngle), -3600f, 3600f)
@@ -39,6 +40,11 @@ namespace BH.SDK.Generators.Bullets
             .Unit(nameof(Parameters.TurnRate), "deg/step")
             .Unit(nameof(Parameters.TravelFrames), "frames")
             .Unit(nameof(Parameters.StaggerFrames), "frames")
+            .Range(nameof(Parameters.OriginX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.OriginY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.TargetX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.TargetY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

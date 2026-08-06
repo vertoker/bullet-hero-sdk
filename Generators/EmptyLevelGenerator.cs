@@ -17,8 +17,9 @@ namespace BH.SDK.Generators
         public override GeneratorHints Hints => HintsValue;
 
         private static readonly GeneratorHints HintsValue = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.LevelName), nameof(Parameters.LevelDescription),
-                nameof(Parameters.Framerate), nameof(Parameters.FrameLength))
+            .Section(GeneratorSections.Main, nameof(Parameters.LevelName), nameof(Parameters.Framerate),
+                nameof(Parameters.FrameLength))
+            .Section(GeneratorSections.Additional, nameof(Parameters.LevelDescription))
             .Range(nameof(Parameters.Framerate), FrameRules.MinFramerate, FrameRules.MaxFramerate)
             .Range(nameof(Parameters.FrameLength), FrameRules.MinFrameLength, FrameRules.MaxFrameLength)
             .Unit(nameof(Parameters.FrameLength), "frames")

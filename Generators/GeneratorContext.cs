@@ -56,8 +56,27 @@ namespace BH.SDK.Generators
         /// <summary> Last frame the run should write to. </summary>
         public int EndFrame { get; }
 
-        /// <summary> Parent every created object should attach to. ObjectId.Null means scope root. </summary>
-        public ObjectId Parent { get; }
+        // Grouping lives here rather than in each generator's parameters for the same reason
+        // StartFrame/Layer/Seed do: every generator that creates anything wants it, and a per-
+        // generator copy would be one more field to forget. Because every generator already parents
+        // what it creates to context.Parent (that is the contract), routing Parent through a lazily
+        // created container is all it takes - no generator changes, including future ones.
+        //
+        // Lazy on purpose: a run that creates nothing (gen_audio_waveform with no peaks) must not
+        // leave an empty container behind. It is also why the group only appears once something asks
+        // for Parent, and why Estimate adds its object only when the run itself produces objects.
+
+        /// <summary> Parent every created object should attach to. ObjectId.Null means scope root.
+        /// With grouping on, reading this creates (once) the container object and returns it. </summary>
+        public ObjectId Parent => _groupName == null ? _parent : EnsureGroup();
+
+        /// <summary> Whether this run wraps everything it creates in one container object. </summary>
+        public bool IsGrouping => _groupName != null;
+
+        private readonly ObjectId _parent;
+        private readonly string _groupName;
+        private ObjectId _group;
+        private bool _groupCreated;
 
         /// <summary> Base layer for created objects. Parent-relative, like Layer everywhere else. </summary>
         public int Layer { get; }
@@ -78,9 +97,10 @@ namespace BH.SDK.Generators
 
         /// <summary> Level-scope run. Objects land in level.Game, ids come from level.Settings. </summary>
         public GeneratorContext(Level level, int startFrame, int endFrame,
-            ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null)
+            ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
+            string groupName = null)
             : this(level.Game, level.Settings, level.Settings, level.Resources, level.Game, level.Audio,
-                startFrame, endFrame, parent, layer, seed, selection)
+                startFrame, endFrame, parent, layer, seed, selection, groupName)
         {
         }
 
@@ -88,15 +108,16 @@ namespace BH.SDK.Generators
         /// handed one of these by accident. </summary>
         public GeneratorContext(IObjectScope scope, IObjectIdCounter counter, LevelSettings settings,
             LevelResources resources, int startFrame, int endFrame,
-            ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null)
+            ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
+            string groupName = null)
             : this(scope, counter, settings, resources, null, null,
-                startFrame, endFrame, parent, layer, seed, selection)
+                startFrame, endFrame, parent, layer, seed, selection, groupName)
         {
         }
 
         private GeneratorContext(IObjectScope scope, IObjectIdCounter counter, LevelSettings settings,
             LevelResources resources, GameLevel game, AudioLevel audio, int startFrame, int endFrame,
-            ObjectId parent, int layer, uint seed, IReadOnlyList<ObjectId> selection)
+            ObjectId parent, int layer, uint seed, IReadOnlyList<ObjectId> selection, string groupName)
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             Counter = counter ?? throw new ArgumentNullException(nameof(counter));
@@ -107,10 +128,30 @@ namespace BH.SDK.Generators
 
             StartFrame = startFrame;
             EndFrame = endFrame;
-            Parent = parent;
+            _parent = parent;
             Layer = layer;
             Seed = seed;
             Selection = selection ?? Array.Empty<ObjectId>();
+            _groupName = string.IsNullOrEmpty(groupName) ? null : groupName;
+        }
+
+        // The container carries Layer ZERO, not this context's Layer: Layer is parent-relative
+        // everywhere in the format, and the generator already puts context.Layer on every child - a
+        // group repeating it would double the whole run's draw order.
+        private ObjectId EnsureGroup()
+        {
+            if (_groupCreated) return _group;
+            _groupCreated = true;
+
+            var group = Create<RectObject>();
+            group.ParentObjectId = _parent;
+            group.Name = _groupName;
+            group.StartFrame = StartFrame;
+            group.EndFrame = EndFrame;
+            group.Layer = 0;
+
+            _group = group.ObjectId;
+            return _group;
         }
 
         /// <summary> A fresh RNG on this context's seed. Take one per generator run, not per object,

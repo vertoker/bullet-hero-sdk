@@ -12,15 +12,21 @@ namespace BH.SDK.Generators.Geometry
         public override string NameKey => "gen_spiral";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Count), nameof(Parameters.RadiusStart), nameof(Parameters.RadiusEnd),
-                nameof(Parameters.Turns), nameof(Parameters.StartAngle),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Count), nameof(Parameters.RadiusStart),
+                nameof(Parameters.RadiusEnd), nameof(Parameters.Turns))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.StartAngle),
                 nameof(Parameters.CenterX), nameof(Parameters.CenterY), nameof(Parameters.FaceOutward))
-            .Order(SpawnParameters.FieldOrder)
             .Range(nameof(Parameters.Count), 1, 1024)
             .Range(nameof(Parameters.RadiusStart), 0f, ValueRules.MaxPos)
             .Range(nameof(Parameters.RadiusEnd), 0f, ValueRules.MaxPos)
             .Range(nameof(Parameters.Turns), -32f, 32f)
             .Unit(nameof(Parameters.StartAngle), "deg")
+            .Range(nameof(Parameters.StartAngle), -3600f, 3600f)
+            .Range(nameof(Parameters.CenterX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.CenterY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

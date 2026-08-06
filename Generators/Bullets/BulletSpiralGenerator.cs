@@ -13,12 +13,14 @@ namespace BH.SDK.Generators.Bullets
         public override string NameKey => "gen_bullet_spiral";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Count), nameof(Parameters.AngularStep), nameof(Parameters.StartAngle),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Count), nameof(Parameters.AngularStep),
                 nameof(Parameters.RadiusStart), nameof(Parameters.RadiusEnd),
+                nameof(Parameters.TravelFrames))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.StartAngle),
                 nameof(Parameters.CenterX), nameof(Parameters.CenterY),
-                nameof(Parameters.TravelFrames), nameof(Parameters.StaggerFrames),
-                nameof(Parameters.Ease), nameof(Parameters.FaceOutward))
-            .Order(SpawnParameters.FieldOrder)
+                nameof(Parameters.StaggerFrames), nameof(Parameters.Ease), nameof(Parameters.FaceOutward))
             .Range(nameof(Parameters.Count), 1, 512)
             .Range(nameof(Parameters.AngularStep), -360f, 360f)
             .Range(nameof(Parameters.RadiusStart), 0f, ValueRules.MaxPos)
@@ -29,6 +31,10 @@ namespace BH.SDK.Generators.Bullets
             .Unit(nameof(Parameters.StartAngle), "deg")
             .Unit(nameof(Parameters.TravelFrames), "frames")
             .Unit(nameof(Parameters.StaggerFrames), "frames")
+            .Range(nameof(Parameters.StartAngle), -3600f, 3600f)
+            .Range(nameof(Parameters.CenterX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.CenterY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

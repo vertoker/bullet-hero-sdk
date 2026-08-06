@@ -36,8 +36,9 @@ namespace BH.SDK.Generators.Modifiers
         public override string NameKey => "mod_quantize_keyframes";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.UseBpm), nameof(Parameters.Bpm), nameof(Parameters.Division),
-                nameof(Parameters.StepFrames), nameof(Parameters.OffsetFrames),
+            .Section(GeneratorSections.Main, nameof(Parameters.UseBpm), nameof(Parameters.Bpm),
+                nameof(Parameters.Division), nameof(Parameters.StepFrames))
+            .Section(GeneratorSections.Additional, nameof(Parameters.OffsetFrames),
                 nameof(Parameters.Mode), nameof(Parameters.Tracks))
             .Range(nameof(Parameters.Bpm), 1f, 1000f)
             .Range(nameof(Parameters.Division), 1, 64)

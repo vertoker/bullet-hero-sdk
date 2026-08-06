@@ -17,11 +17,12 @@ namespace BH.SDK.Generators.Bullets
         public override string NameKey => "gen_bullet_rain";
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.Count), nameof(Parameters.AreaLeft), nameof(Parameters.AreaRight),
-                nameof(Parameters.TopY), nameof(Parameters.BottomY),
-                nameof(Parameters.TravelFrames), nameof(Parameters.SpreadFrames),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Count), nameof(Parameters.TravelFrames))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.AreaLeft), nameof(Parameters.AreaRight),
+                nameof(Parameters.TopY), nameof(Parameters.BottomY), nameof(Parameters.SpreadFrames),
                 nameof(Parameters.TravelJitter), nameof(Parameters.Ease))
-            .Order(SpawnParameters.FieldOrder)
             .Range(nameof(Parameters.Count), 1, 1024)
             .Range(nameof(Parameters.AreaLeft), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.AreaRight), ValueRules.MinPos, ValueRules.MaxPos)
@@ -32,6 +33,7 @@ namespace BH.SDK.Generators.Bullets
             .Range(nameof(Parameters.TravelJitter), 0f, 1f)
             .Unit(nameof(Parameters.TravelFrames), "frames")
             .Unit(nameof(Parameters.SpreadFrames), "frames")
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)

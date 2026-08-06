@@ -33,23 +33,27 @@ namespace BH.SDK.Generators.Textures
         public override GeneratorRequirements Requirements => GeneratorRequirements.ExternalAnalysis;
 
         public override GeneratorHints Hints { get; } = new GeneratorHints.Builder()
-            .Order(nameof(Parameters.TargetWidth), nameof(Parameters.TargetHeight),
-                nameof(Parameters.PixelSize), nameof(Parameters.OriginX), nameof(Parameters.OriginY),
+            .Section(GeneratorSections.Main, SpawnParameters.MainFields)
+            .Section(GeneratorSections.Main, nameof(Parameters.Source), nameof(Parameters.TargetWidth),
+                nameof(Parameters.TargetHeight), nameof(Parameters.PixelSize))
+            .Section(GeneratorSections.Additional, SpawnParameters.AdditionalFields)
+            .Section(GeneratorSections.Additional, nameof(Parameters.OriginX), nameof(Parameters.OriginY),
                 nameof(Parameters.AlphaThreshold), nameof(Parameters.MergeRuns),
-                nameof(Parameters.UseThemeRef), nameof(Parameters.Theme),
-                nameof(Parameters.Source), nameof(Parameters.Texture))
-            .Order(SpawnParameters.FieldOrder)
+                nameof(Parameters.UseThemeRef), nameof(Parameters.Theme), nameof(Parameters.Image))
             .Range(nameof(Parameters.TargetWidth), 1, MaxSide)
             .Range(nameof(Parameters.TargetHeight), 1, MaxSide)
             .Range(nameof(Parameters.PixelSize), 0.01f, ValueRules.MaxSca)
             .Range(nameof(Parameters.AlphaThreshold), 0f, 1f)
             .VisibleWhen(nameof(Parameters.Theme), p => ((Parameters)p).UseThemeRef)
             // Source stays VISIBLE - which image to convert is the author's decision. Only the
-            // decoded pixels behind it are the host's, and those are what Texture holds.
-            .Hidden(nameof(Parameters.Texture))
+            // decoded pixels behind it are the host's, and those are what Image holds.
+            .Hidden(nameof(Parameters.Image))
             // Size and Collider come from SpawnParameters but mean nothing here: every object is
             // sized to its own run, and a picture is decoration.
             .Hidden(nameof(SpawnParameters.Size))
+            .Range(nameof(Parameters.OriginX), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(Parameters.OriginY), ValueRules.MinPos, ValueRules.MaxPos)
+            .Range(nameof(SpawnParameters.Size), ValueRules.MinSca, ValueRules.MaxSca)
             .Build();
 
         protected override void Generate(GeneratorContext context, Parameters parameters)
@@ -109,7 +113,7 @@ namespace BH.SDK.Generators.Textures
         private static List<Run> BuildRuns(Parameters parameters)
         {
             var runs = new List<Run>();
-            var source = parameters.Texture;
+            var source = parameters.Image;
             if (source?.Pixels == null || source.Width <= 0 || source.Height <= 0) return runs;
 
             var width = TargetWidth(parameters);
@@ -218,9 +222,9 @@ namespace BH.SDK.Generators.Textures
         private const int KeysPerRun = 3; // position + size + colour
 
         private static int TargetWidth(Parameters parameters)
-            => Side(parameters.TargetWidth, parameters.Texture?.Width ?? 0);
+            => Side(parameters.TargetWidth, parameters.Image?.Width ?? 0);
         private static int TargetHeight(Parameters parameters)
-            => Side(parameters.TargetHeight, parameters.Texture?.Height ?? 0);
+            => Side(parameters.TargetHeight, parameters.Image?.Height ?? 0);
 
         /// <summary> A requested side of zero means "use the source's own", still capped. </summary>
         private static int Side(int requested, int sourceSide)
@@ -246,7 +250,12 @@ namespace BH.SDK.Generators.Textures
             public ThemeId Theme = ThemeId.Null;
 
             public TextureResourceId Source = TextureResourceId.Null;
-            public PixelTexture Texture;
+
+            // NOT named Texture, even though the interface member is: SpawnParameters already has a
+            // Texture (the image each block draws), and a form reflects fields by NAME - a shadowing
+            // field makes one of the two unreachable and every hint keyed "Texture" hit both.
+            /// <summary> The decoded source image, filled by the host. </summary>
+            public PixelTexture Image;
 
             TextureResourceId IPixelTextureInput.Source
             {
@@ -255,8 +264,8 @@ namespace BH.SDK.Generators.Textures
             }
             PixelTexture IPixelTextureInput.Texture
             {
-                get => Texture;
-                set => Texture = value;
+                get => Image;
+                set => Image = value;
             }
         }
     }

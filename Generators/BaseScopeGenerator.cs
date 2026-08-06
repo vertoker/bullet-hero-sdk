@@ -25,8 +25,16 @@ namespace BH.SDK.Generators
         /// most cases on their own. </summary>
         protected virtual TParams CreateDefaults() => new();
 
+        // The grouping container is the context's object, not the generator's, so it is added here
+        // rather than in every EstimateTyped - and only when the run produces something, matching
+        // GeneratorContext's lazy creation (a run that creates nothing creates no container either).
         public GeneratorCost Estimate(GeneratorContext context, object parameters)
-            => EstimateTyped(context, Cast(parameters));
+        {
+            var cost = EstimateTyped(context, Cast(parameters));
+            return context is { IsGrouping: true } && cost.Objects > 0
+                ? cost + new GeneratorCost(1)
+                : cost;
+        }
 
         public GeneratorResult Run(GeneratorContext context, object parameters)
         {
