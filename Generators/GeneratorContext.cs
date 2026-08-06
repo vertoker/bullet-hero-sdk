@@ -8,6 +8,7 @@ using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Resources;
 using BH.SDK.Models.SettingGroups;
+using BH.SDK.Rules;
 
 namespace BH.SDK.Generators
 {
@@ -73,13 +74,35 @@ namespace BH.SDK.Generators
         /// <summary> Whether this run wraps everything it creates in one container object. </summary>
         public bool IsGrouping => _groupName != null;
 
+        // Layer splitting is the same kind of run-wide option as grouping, and deliberately NOT
+        // something a generator implements: a generator knows the order it created things in and
+        // nothing else, while "one layer per object" is a decision about the whole run. Doing it as
+        // a pass over the journal AFTER Generate keeps every generator free of it - including ones
+        // that write Layer themselves - and keeps the layers contiguous in creation order.
+
+        /// <summary> Whether every object this run creates gets its own Layer, stepping up from
+        /// Layer, instead of all of them sharing one. </summary>
+        public bool IsSplittingLayers { get; }
+
         private readonly ObjectId _parent;
         private readonly string _groupName;
         private ObjectId _group;
         private bool _groupCreated;
 
-        /// <summary> Base layer for created objects. Parent-relative, like Layer everywhere else. </summary>
+        /// <summary> Base layer the author asked for, as an EFFECTIVE (parent-chain-summed) value -
+        /// that is what a layer means to the person typing it. Write LocalLayer onto an object, not
+        /// this. </summary>
         public int Layer { get; }
+
+        // Layer is parent-relative in this format: an object's effective draw order is its own Layer
+        // plus every ancestor's. So writing the author's number straight onto a child parented under
+        // anything non-zero silently offsets the whole run by the parent's layer - which is exactly
+        // what "layer is computed without the parent" looked like. Subtracting the chain once here
+        // keeps the effective result equal to what was asked for, whatever the run is parented to.
+
+        /// <summary> Layer to actually write on a created object: the author's Layer expressed
+        /// relative to whatever this run parents to. </summary>
+        public int LocalLayer => Layer - ParentLayerSum();
 
         /// <summary> Seed for GeneratorRandom - same seed, same output, always. </summary>
         public uint Seed { get; }
@@ -98,9 +121,9 @@ namespace BH.SDK.Generators
         /// <summary> Level-scope run. Objects land in level.Game, ids come from level.Settings. </summary>
         public GeneratorContext(Level level, int startFrame, int endFrame,
             ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
-            string groupName = null)
+            string groupName = null, bool splitLayers = false)
             : this(level.Game, level.Settings, level.Settings, level.Resources, level.Game, level.Audio,
-                startFrame, endFrame, parent, layer, seed, selection, groupName)
+                startFrame, endFrame, parent, layer, seed, selection, groupName, splitLayers)
         {
         }
 
@@ -109,15 +132,16 @@ namespace BH.SDK.Generators
         public GeneratorContext(IObjectScope scope, IObjectIdCounter counter, LevelSettings settings,
             LevelResources resources, int startFrame, int endFrame,
             ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
-            string groupName = null)
+            string groupName = null, bool splitLayers = false)
             : this(scope, counter, settings, resources, null, null,
-                startFrame, endFrame, parent, layer, seed, selection, groupName)
+                startFrame, endFrame, parent, layer, seed, selection, groupName, splitLayers)
         {
         }
 
         private GeneratorContext(IObjectScope scope, IObjectIdCounter counter, LevelSettings settings,
             LevelResources resources, GameLevel game, AudioLevel audio, int startFrame, int endFrame,
-            ObjectId parent, int layer, uint seed, IReadOnlyList<ObjectId> selection, string groupName)
+            ObjectId parent, int layer, uint seed, IReadOnlyList<ObjectId> selection, string groupName,
+            bool splitLayers)
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             Counter = counter ?? throw new ArgumentNullException(nameof(counter));
@@ -133,6 +157,47 @@ namespace BH.SDK.Generators
             Seed = seed;
             Selection = selection ?? Array.Empty<ObjectId>();
             _groupName = string.IsNullOrEmpty(groupName) ? null : groupName;
+            IsSplittingLayers = splitLayers;
+        }
+
+        // Runs after Generate rather than inside Create, because "the Nth object of this run" only
+        // exists once the run is over - and because a generator that writes Layer itself (every
+        // spawning one does, from context.Layer) would otherwise overwrite whatever Create handed
+        // out. The container keeps Layer 0: it is the parent, and Layer is parent-relative.
+
+        /// <summary> Gives every object this run created its own Layer, stepping up from Layer in
+        /// creation order. Called once by the base generator after Generate; a no-op when splitting
+        /// is off. </summary>
+        public void ApplyLayerSplit()
+        {
+            if (!IsSplittingLayers) return;
+
+            var baseLayer = LocalLayer;
+            var step = 0;
+            foreach (var id in Log.GetCreatedIds())
+            {
+                if (id == _group) continue;
+                if (!Scope.Objects.TryGetValue(id, out var obj)) continue;
+
+                var layer = baseLayer + step++;
+                obj.Layer = layer > ValueRules.MaxLayer ? ValueRules.MaxLayer : layer;
+            }
+        }
+
+        // The group container is excluded deliberately: it is created with Layer 0 precisely so it
+        // adds nothing to its children's effective layer. A malformed parent chain (a cycle) is
+        // bounded rather than trusted - this walks author data.
+        private int ParentLayerSum()
+        {
+            var sum = 0;
+            var id = _parent;
+            for (var guard = 0; guard < LevelRules.MaxObjectDepth; guard++)
+            {
+                if (!id.IsNotNull() || !Scope.Objects.TryGetValue(id, out var parent)) break;
+                sum += parent.Layer;
+                id = parent.ParentObjectId;
+            }
+            return sum;
         }
 
         // The container carries Layer ZERO, not this context's Layer: Layer is parent-relative

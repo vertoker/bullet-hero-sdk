@@ -170,11 +170,14 @@ namespace BH.SDK.Generators.Modifiers
             public StaggerOrder Order = StaggerOrder.Selection;
             public bool Reverse;
 
-            /// <summary> Delays when the object exists. </summary>
+            /// <summary> Delays when the object exists. Because a keyframe's Frame is LOCAL to its
+            /// object, this already carries the whole animation with it - which is why it, and not
+            /// ShiftKeyframes, is the one that is on by default. </summary>
             public bool ShiftBounds = true;
 
-            /// <summary> Delays what the object does. </summary>
-            public bool ShiftKeyframes = true;
+            /// <summary> Delays what the object does WITHIN its own lifetime, on top of any bounds
+            /// shift. Off by default: with bounds shifting too, this delays the motion twice. </summary>
+            public bool ShiftKeyframes;
 
             public ObjectTrackMask Tracks = ObjectTrackMask.All;
             public float OriginX;

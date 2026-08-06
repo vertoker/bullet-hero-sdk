@@ -41,6 +41,11 @@ namespace BH.SDK.Generators
             if (context == null) throw new ArgumentNullException(nameof(context));
 
             Generate(context, Cast(parameters));
+
+            // After Generate, never inside it: layer splitting numbers the run's objects in creation
+            // order, and a generator writing obj.Layer = context.Layer would overwrite it otherwise.
+            context.ApplyLayerSplit();
+
             return new GeneratorResult(context.Log.GetCreatedIds(), context.Log);
         }
 

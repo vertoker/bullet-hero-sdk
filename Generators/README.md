@@ -97,6 +97,9 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
   is what makes host-side grouping work: with grouping on, `Parent` is a container object the
   context creates once, on first use, so a whole run can be moved as one thing. A generator that
   parents to `ObjectId.Null` by hand opts itself out of a feature it never had to implement.
+  **Layer splitting** (one layer per created object, stepping up from `context.Layer`) needs nothing
+  from a generator at all: `BaseScopeGenerator.Run` applies it over the journal after `Generate`,
+  precisely so it also wins over generators that write `Layer` themselves.
 
 ## Folders
 
@@ -156,10 +159,25 @@ peaks from the audio timeline's own `AudioWaveformCache`, beat frames from the l
 (there is no beat detector — markers are the beat grid this project actually has), pixels from a
 registered texture, and an audio path from the native file picker.
 
-## Two things a spawning generator must get right
+## Three things a spawning generator must get right
 
-- **Angles are degrees**, matching `AngleKey`'s own contract. The Unity project converts to radians
-  at its runtime boundary; converting here makes every rotation come out ~57x too small.
+- **A keyframe's `Frame` is LOCAL to its object** — the runtime reads it back as
+  `obj.StartFrame + Frame`. `BaseSpawnGenerator`'s `AddPosition`/`AddRotation`/`AddSize`/`AddColor`
+  take an ABSOLUTE frame and convert; anything writing `obj.Positions.Add` by hand must do the same,
+  and a modifier snapping to a level-wide grid has to convert the other way first
+  (`mod_quantize_keyframes`). Getting this wrong is invisible in every other check: the objects
+  appear, in the right place, with the right lifetime — and then never move, because their keys sit
+  past their own death. A sweep test asserts every created key lands inside
+  `[0, EndFrame - StartFrame]`.
+- **Placement math is degrees, storage is RADIANS.** Every hand-authored rotation in a real level is
+  a multiple of π (a full turn is 6.2831855), and the Unity project converts to degrees only at its
+  inspector boundary. `AddRotation` takes degrees and converts; writing an `AngleKey` by hand without
+  converting stores 45 *radians* — the object spins at ~2578°, which is what "the rotation values are
+  5k–15k" looked like.
+- **A staggered generator must not spawn past its window.** `CanSpawn` is the check (strictly before
+  `EndFrame`, since a bullet needs a frame to travel in); without it the overflow clamps onto the
+  last frame as one-frame ghosts flashing after the pattern is over, and `Estimate` has to apply the
+  same check so it counts what the run actually creates.
 - **A lifetime clamped to a single frame gets ONE key per track.** `BaseSpawnGenerator.CanAnimate`
   is the check; two keys on the same frame violate `[RuleCollectionUnique]`, and `Estimate` has to
   apply the same clamp or it drifts from reality exactly where the window truncates the pattern.

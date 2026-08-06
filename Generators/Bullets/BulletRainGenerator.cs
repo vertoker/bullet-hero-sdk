@@ -54,6 +54,7 @@ namespace BH.SDK.Generators.Bullets
                 if (travel < 1) travel = 1;
 
                 var spawnFrame = context.StartFrame + delay;
+                if (!CanSpawn(context, spawnFrame)) continue; // scattered past the window - drop it, do not stack it on the end
                 var obj = Spawn(context, parameters, $"rain_{i}", spawnFrame, spawnFrame + travel);
                 AddPosition(obj, x, parameters.TopY, obj.StartFrame);
 
@@ -70,6 +71,7 @@ namespace BH.SDK.Generators.Bullets
             var count = Count(parameters.Count);
             var random = context.CreateRandom();
             var keys = 0;
+            var objects = 0;
 
             for (var i = 0; i < count; i++)
             {
@@ -80,11 +82,14 @@ namespace BH.SDK.Generators.Bullets
                 var travel = (int)(Travel(parameters.TravelFrames) * jitter);
                 if (travel < 1) travel = 1;
 
+                if (!CanSpawn(context, context.StartFrame + delay)) continue;
+                objects++;
+
                 var spawnFrame = ClampFrame(context, context.StartFrame + delay);
                 var endFrame = ClampFrame(context, spawnFrame + travel);
                 keys += 2 + (CanAnimate(spawnFrame, endFrame) ? 2 : 1); // size + colour + position(s)
             }
-            return new GeneratorCost(count, keys);
+            return new GeneratorCost(objects, keys);
         }
 
         private static int Count(int value) => value < 1 ? 1 : value;

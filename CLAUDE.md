@@ -84,7 +84,14 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   container `RectObject` (Layer 0 — Layer is parent-relative, the children already carry
   `context.Layer`) and returns it, so every generator that parents to `context.Parent` gets
   "wrap this run in one object" for free, including future ones; `BaseScopeGenerator.Estimate` adds
-  the container's object, and a run that creates nothing creates no container either. Also: `GeneratorHints` (form order/**sections**/ranges/units/visibility, since parameter
+  the container's object, and a run that creates nothing creates no container either. `Layer` is the
+  author's **effective** number while `LocalLayer` is what an object actually stores (`Layer` minus
+  the parent chain's sum) — Layer being parent-relative, writing the raw number under a non-zero
+  parent offsets the whole run. **Layer
+  splitting** is the same shape: `ApplyLayerSplit` runs over the journal after `Generate`
+  (`BaseScopeGenerator.Run`), giving each created object its own `Layer` stepping up from
+  `context.Layer` — after, so it also wins over a generator that writes `Layer` itself, and skipping
+  the container for the same parent-relative reason. Also: `GeneratorHints` (form order/**sections**/ranges/units/visibility, since parameter
   classes carry no attributes — `Section(key, fields)` is `Order` plus a header, so grouping can't
   disagree with ordering; `GeneratorSections.Main`/`Additional` is the shipped vocabulary, and a
   parameters class must never shadow an inherited field, since everything here is keyed by field
@@ -98,9 +105,15 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   field name, so a rename is a compile error), `Modifiers/` (`ObjectTrackMask`/`ObjectTracks` —
   generic enumeration of an object's ten keyframe tracks, plus the modifiers themselves),
   `Geometry/`, `Bullets/`, `Audio/`, `Textures/`, `Utility/` (the concrete generators — 17 of them,
-  the roster the design document calls complete). Two rules a spawning generator must get right:
-  **angles are degrees**
-  (matching `AngleKey`; the Unity project converts to radians at its own runtime boundary), and
+  the roster the design document calls complete). Three rules a spawning generator must get right:
+  **a keyframe's `Frame` is LOCAL to its owning object** (the runtime reads `obj.StartFrame + Frame`,
+  so an absolute frame yields objects that spawn correctly and then never move — `BaseSpawnGenerator`'s
+  `Add*` helpers convert, `mod_quantize_keyframes` converts the other way to snap against the level's
+  own grid, and a sweep test pins it),
+  **placement math is in degrees but rotation is STORED IN RADIANS**
+  (`AddRotation` converts; a raw 45 becomes 45 radians ≈ 2578°, and the Unity project converts back
+  to degrees only at its inspector boundary), **a staggered generator must not spawn past its
+  window** (`CanSpawn` — the overflow used to clamp onto the last frame as one-frame ghosts), and
   **a lifetime clamped to one frame gets one key per track**, not two — see
   `BaseSpawnGenerator.CanAnimate`, and note that `Estimate` has to apply the same clamp. A third,
   format-wide: **`FrameLength` is a count**, so the last legal frame is `FrameLength - 1`

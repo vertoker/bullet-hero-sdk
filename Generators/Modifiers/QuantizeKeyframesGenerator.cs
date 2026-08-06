@@ -61,15 +61,22 @@ namespace BH.SDK.Generators.Modifiers
                 if (!context.Objects.ContainsKey(id)) continue;
 
                 var obj = context.Edit(id);
+
+                // A keyframe's Frame is LOCAL to its object, but a beat grid is a property of the
+                // LEVEL's timeline - snapping the local number would put every object on a grid
+                // offset by its own StartFrame, so two objects starting a beat and a half apart
+                // would quantize to two different grids. Everything below therefore works in global
+                // frames and converts back on write.
                 foreach (var track in ObjectTracks.Of(obj, parameters.Tracks))
                 {
                     var taken = new HashSet<int>();
-                    for (var i = 0; i < track.Count; i++) taken.Add(track.FrameAt(i));
+                    for (var i = 0; i < track.Count; i++) taken.Add(obj.StartFrame + track.FrameAt(i));
 
                     for (var i = 0; i < track.Count; i++)
                     {
-                        var frame = track.FrameAt(i);
+                        var frame = obj.StartFrame + track.FrameAt(i);
                         var snapped = Snap(frame, step, parameters.OffsetFrames, parameters.Mode);
+                        if (snapped < obj.StartFrame) snapped = obj.StartFrame; // a key cannot precede its object
                         if (snapped == frame) continue;
 
                         // The grid line is already occupied by a key this pass is not moving (or has
@@ -78,7 +85,7 @@ namespace BH.SDK.Generators.Modifiers
 
                         taken.Remove(frame);
                         taken.Add(snapped);
-                        track.SetFrameAt(i, snapped);
+                        track.SetFrameAt(i, snapped - obj.StartFrame);
                     }
                 }
             }

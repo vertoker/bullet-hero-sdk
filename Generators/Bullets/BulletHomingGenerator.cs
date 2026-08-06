@@ -58,6 +58,7 @@ namespace BH.SDK.Generators.Bullets
             {
                 var launchAngle = parameters.LaunchAngle + Offset(i, burst, parameters.Spread);
                 var spawnFrame = context.StartFrame + i * stagger;
+                if (!CanSpawn(context, spawnFrame)) break; // stagger ran past the window - no ghost on its last frame
                 var obj = Spawn(context, parameters, $"homing_{i}", spawnFrame, spawnFrame + travel);
 
                 var span = obj.EndFrame - obj.StartFrame;
@@ -86,8 +87,10 @@ namespace BH.SDK.Generators.Bullets
                     if (frame > obj.EndFrame) frame = obj.EndFrame;
 
                     // Rounding can land two consecutive steps on the same frame when the lifetime is
-                    // shorter than the step count; Frame must stay unique within a track.
-                    if (obj.Positions[obj.Positions.Count - 1].Frame == frame) continue;
+                    // shorter than the step count; Frame must stay unique within a track. The stored
+                    // frame is object-LOCAL (see BaseSpawnGenerator's header), so the comparison has
+                    // to happen in that same space rather than against the absolute one.
+                    if (obj.Positions[obj.Positions.Count - 1].Frame == LocalFrame(obj, frame)) continue;
 
                     AddPosition(obj, x, y, frame);
                     if (parameters.FaceTravel) AddRotation(obj, angle, frame);
@@ -105,9 +108,13 @@ namespace BH.SDK.Generators.Bullets
             var travel = Travel(parameters.TravelFrames);
             var stagger = Stagger(parameters.StaggerFrames);
             var keys = 0;
+            var objects = 0;
 
             for (var i = 0; i < burst; i++)
             {
+                if (!CanSpawn(context, context.StartFrame + i * stagger)) break;
+                objects++;
+
                 var spawnFrame = ClampFrame(context, context.StartFrame + i * stagger);
                 var endFrame = ClampFrame(context, spawnFrame + travel);
                 var span = endFrame - spawnFrame;
@@ -128,7 +135,7 @@ namespace BH.SDK.Generators.Bullets
                     keys += perKey;
                 }
             }
-            return new GeneratorCost(burst, keys);
+            return new GeneratorCost(objects, keys);
         }
 
         /// <summary> Even fan around the launch angle: a single bullet fires straight ahead, N

@@ -67,6 +67,7 @@ namespace BH.SDK.Generators.Bullets
             {
                 var offset = (i - (count - 1) * 0.5f) * parameters.Spacing;
                 var spawnFrame = context.StartFrame + i * stagger;
+                if (!CanSpawn(context, spawnFrame)) break; // stagger ran past the window - no ghost on its last frame
 
                 var obj = Spawn(context, parameters, $"wave_{i}", spawnFrame, spawnFrame + travel);
                 AddPosition(obj, parameters.FromX + normalX * offset, parameters.FromY + normalY * offset,
@@ -90,13 +91,18 @@ namespace BH.SDK.Generators.Bullets
             var perObject = 2 + (parameters.FaceTravel ? 1 : 0); // size + colour (+ rotation)
 
             var keys = 0;
+
+            var objects = 0;
             for (var i = 0; i < count; i++)
             {
+                if (!CanSpawn(context, context.StartFrame + i * stagger)) break;
+                objects++;
+
                 var spawnFrame = ClampFrame(context, context.StartFrame + i * stagger);
                 var endFrame = ClampFrame(context, spawnFrame + travel);
                 keys += perObject + (CanAnimate(spawnFrame, endFrame) ? 2 : 1);
             }
-            return new GeneratorCost(count, keys);
+            return new GeneratorCost(objects, keys);
         }
 
         private static int Count(int value) => value < 1 ? 1 : value;

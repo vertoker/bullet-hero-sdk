@@ -31,6 +31,9 @@ namespace BH.SDK.Tests.Generators
 
         private static Vector2Value PositionAt(RectObject obj, int index) => (Vector2Value)obj.Positions[index].Pos;
 
+        /// <summary> Degrees -> the radians an AngleKey actually stores (see BaseSpawnGenerator). </summary>
+        private static float Rad(float degrees) => (float)(degrees * (System.Math.PI / 180.0));
+
         #region Wave
 
         [Test]
@@ -113,8 +116,14 @@ namespace BH.SDK.Tests.Generators
 
             var actualKeys = level.Game.Objects.Values.Sum(obj =>
                 obj.Positions.Count + obj.Sizes.Count + ((TextureObject)obj).Colors.Count);
-            Assert.AreEqual(6, level.Game.Objects.Count);
+            // Only the bullets with room to travel exist: a stagger of 10 over [100, 120] fits two
+            // (100 and 110), while 120 onwards used to be clamped onto the last frame as one-frame
+            // ghosts flashing after the pattern was over.
+            Assert.AreEqual(2, level.Game.Objects.Count);
+            Assert.AreEqual(2, estimate.Objects);
             Assert.AreEqual(actualKeys, estimate.Keyframes);
+            CollectionAssert.IsEmpty(level.Game.Objects.Values.Where(o => o.StartFrame == o.EndFrame).ToList(),
+                "no one-frame ghosts");
 
             foreach (var obj in level.Game.Objects.Values)
             {
@@ -144,7 +153,8 @@ namespace BH.SDK.Tests.Generators
             var angles = level.Game.Objects.Values
                 .Select(obj => ((FloatValue)obj.Rotations[0].Angle).Value)
                 .OrderBy(a => a).ToList();
-            CollectionAssert.AreEqual(new[] { 0f, 90f, 180f, 270f }, angles);
+            // Stored as RADIANS - the format's own unit; the generator's math stays in degrees.
+            CollectionAssert.AreEqual(new[] { Rad(0f), Rad(90f), Rad(180f), Rad(270f) }, angles);
         }
 
         [Test]
@@ -208,8 +218,8 @@ namespace BH.SDK.Tests.Generators
 
             var fire = level.Game.Objects.Values.Single();
             Assert.AreEqual(2, fire.Rotations.Count);
-            Assert.AreEqual(0f, ((FloatValue)fire.Rotations[0].Angle).Value, 0.001f);
-            Assert.AreEqual(90f, ((FloatValue)fire.Rotations[1].Angle).Value, 0.001f);
+            Assert.AreEqual(Rad(0f), ((FloatValue)fire.Rotations[0].Angle).Value, 0.001f);
+            Assert.AreEqual(Rad(90f), ((FloatValue)fire.Rotations[1].Angle).Value, 0.001f);
 
             // The beam extends out of the origin, so its midpoint sits half a length along it.
             Assert.AreEqual(5f, PositionAt(fire, 0).X, 0.001f);
@@ -347,7 +357,7 @@ namespace BH.SDK.Tests.Generators
             var angles = level.Game.Objects.Values
                 .Select(obj => ((FloatValue)obj.Rotations[0].Angle).Value)
                 .OrderBy(a => a).ToList();
-            CollectionAssert.AreEqual(new[] { 45f, 90f, 135f }, angles);
+            CollectionAssert.AreEqual(new[] { Rad(45f), Rad(90f), Rad(135f) }, angles);
         }
 
         private static float Distance(Vector2Value from, float x, float y)

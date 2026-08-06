@@ -151,7 +151,8 @@ namespace BH.SDK.Tests.Generators
                 Assert.AreEqual(1, obj.Rotations.Count);
 
             var first = level.Game.Objects.Values.First(obj => AngleOf(obj) < 0.01f);
-            Assert.AreEqual(180f, ((FloatValue)first.Rotations[0].Angle).Value, 0.01f);
+            // Stored as RADIANS - the unit the format itself uses (see BaseSpawnGenerator).
+            Assert.AreEqual((float)System.Math.PI, ((FloatValue)first.Rotations[0].Angle).Value, 0.01f);
         }
 
         private static float AngleOf(RectObject obj)

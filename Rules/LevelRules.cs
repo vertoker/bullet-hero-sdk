@@ -22,10 +22,18 @@ namespace BH.SDK.Rules
         // below what would exhaust a phone.
         public const int MaxObjects = 262_144;
 
-        // Longest parent chain. Depth is walked per object per frame (a child's transform and layer
-        // are the sum up its chain), and without a bound a pathological chain is only caught by a
-        // stack overflow. Cycles are a graph invariant and checked separately.
-        public const int MaxObjectDepth = 64;
+        // Longest parent chain AUTHORED CONTENT may have. Depth is walked per object per frame (a
+        // child's transform and layer are the sum up its chain), so the real ceiling is the
+        // consumer's: the Unity player walks it into a fixed stackalloc of
+        // LevelPlayerSettings.MaxChildInherit (16) and, past that, composes an object against a
+        // mid-chain ancestor instead of its root.
+        //
+        // This is that ceiling MINUS ONE. The editor parents its own overlays (the selection
+        // outline's marching-ants segments, the gizmo handles) one level under the selected object,
+        // so a level authored right at the runtime cap would push its own overlay past it - the
+        // object would render correctly and its selection border would not. Cycles are a graph
+        // invariant and checked separately.
+        public const int MaxObjectDepth = 15;
 
         public const int MaxAudioTracks = 512;
         public const int MaxResourcesMeta = 512;

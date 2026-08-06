@@ -120,6 +120,59 @@ namespace BH.SDK.Tests.Generators
             Assert.AreEqual(3, generator.Estimate(plain, new SpawnTestGenerator.Parameters { Count = 3 }).Objects);
         }
 
+        // Splitting is a property of the RUN, not of any generator: SpawnTestGenerator writes
+        // context.Layer onto every object it makes, and the split still wins because it runs after
+        // Generate.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void LayerSplit_GivesEveryCreatedObjectItsOwnLayer()
+        {
+            var level = CreateLevel();
+            var context = new GeneratorContext(level, 0, 60, layer: 7, splitLayers: true);
+
+            var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
+
+            var layers = result.CreatedIds.Select(id => level.Game.Objects[id].Layer).ToList();
+            CollectionAssert.AreEqual(new[] { 7, 8, 9 }, layers);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void LayerSplit_Off_LeavesEveryObjectOnTheContextLayer()
+        {
+            var level = CreateLevel();
+            var context = new GeneratorContext(level, 0, 60, layer: 7);
+
+            var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
+
+            foreach (var id in result.CreatedIds)
+                Assert.AreEqual(7, level.Game.Objects[id].Layer);
+        }
+
+        // The container is the parent, and Layer is parent-relative - stepping it too would push its
+        // whole subtree up by one on top of each child's own step.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void LayerSplit_SkipsTheGroupContainer()
+        {
+            var level = CreateLevel();
+            var context = new GeneratorContext(level, 0, 60, layer: 2, groupName: "Radial", splitLayers: true);
+
+            new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
+
+            var group = level.Game.Objects.Values.Single(o => o.Name == "Radial");
+            Assert.AreEqual(0, group.Layer);
+
+            var children = level.Game.Objects.Values.Where(o => o != group).Select(o => o.Layer).OrderBy(l => l);
+            CollectionAssert.AreEqual(new[] { 2, 3, 4 }, children.ToList());
+        }
+
         // The container goes through Create like everything else, so undo has to take it with it -
         // otherwise an undone run leaves an empty object behind.
         [Test]

@@ -217,9 +217,35 @@ namespace BH.SDK.Tests.Generators
             Assert.AreEqual(0, a.StartFrame);
             Assert.AreEqual(5, b.StartFrame);
             Assert.AreEqual(10, c.StartFrame);
+
+            // A keyframe's Frame is LOCAL to its object, so shifting the bounds already carried every
+            // key with it - in global terms b's key now lands on 5 and c's on 10, while the stored
+            // number stays what it was. Shifting the keys too (ShiftKeyframes, off by default) would
+            // delay the motion a SECOND time, inside the object's own lifetime.
             CollectionAssert.AreEqual(new[] { 0 }, FramesOf(a));
-            CollectionAssert.AreEqual(new[] { 5 }, FramesOf(b));
-            CollectionAssert.AreEqual(new[] { 10 }, FramesOf(c));
+            CollectionAssert.AreEqual(new[] { 0 }, FramesOf(b));
+            CollectionAssert.AreEqual(new[] { 0 }, FramesOf(c));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Stagger_ShiftKeyframes_DelaysTheMotionInsideTheObject()
+        {
+            var level = CreateLevel();
+            var a = AddObject(level, 0, 0f, 0);
+            var b = AddObject(level, 1, 0f, 0);
+
+            new StaggerGenerator().Run(Context(level, a.ObjectId, b.ObjectId),
+                new StaggerGenerator.Parameters
+                {
+                    StepFrames = 5, Order = StaggerOrder.Selection,
+                    ShiftBounds = false, ShiftKeyframes = true,
+                });
+
+            Assert.AreEqual(0, b.StartFrame, "bounds untouched");
+            CollectionAssert.AreEqual(new[] { 5 }, FramesOf(b), "the key moved inside the same lifetime");
         }
 
         // Ordering is the whole point of the modifier: the same selection staggered by layer and by
@@ -303,7 +329,8 @@ namespace BH.SDK.Tests.Generators
                 new StaggerGenerator.Parameters { StepFrames = 500, Order = StaggerOrder.Selection });
 
             Assert.AreEqual(99, b.StartFrame, "FrameLength is a count - the last legal frame is 99");
-            Assert.AreEqual(99, b.Positions[0].Frame);
+            Assert.AreEqual(10, b.Positions[0].Frame,
+                "the key is local to the object, so a bounds shift moves it without rewriting it");
         }
 
         [Test]

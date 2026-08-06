@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BH.SDK.Generators;
 using BH.SDK.Generators.External;
+using BH.SDK.Generators.Modifiers;
 using BH.SDK.Models;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Keyframes;
@@ -191,6 +192,42 @@ namespace BH.SDK.Tests.Generators
                     Assert.LessOrEqual(obj.StartFrame, obj.EndFrame, $"{generator.NameKey}: {obj.Name} inverted");
                     Assert.GreaterOrEqual(obj.Layer, ValueRules.MinLayer, $"{generator.NameKey}: {obj.Name} layer");
                     Assert.LessOrEqual(obj.Layer, ValueRules.MaxLayer, $"{generator.NameKey}: {obj.Name} layer");
+                }
+            }
+        }
+
+        // A keyframe's Frame is LOCAL to its object (the runtime reads it back as obj.StartFrame +
+        // Frame), and writing an absolute one is invisible in every other check here: the object is
+        // created, framed and validated correctly, it just never reaches its own keys and therefore
+        // never moves. Every animated generator shipped with an absolute frame once; this is what
+        // stops the next one.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void EveryCreatedObject_KeepsItsKeyframesLocalToItsOwnLifetime()
+        {
+            foreach (var generator in ScopeGenerators)
+            {
+                var level = CreateSeededLevel();
+                var result = generator.Run(CreateContext(level), CreateFilledParameters(generator));
+
+                foreach (var id in result.CreatedIds)
+                {
+                    var obj = level.Game.Objects[id];
+                    var span = obj.EndFrame - obj.StartFrame;
+
+                    foreach (var track in ObjectTracks.Of(obj, ObjectTrackMask.All))
+                    {
+                        for (var i = 0; i < track.Count; i++)
+                        {
+                            var frame = track.FrameAt(i);
+                            Assert.GreaterOrEqual(frame, 0, $"{generator.NameKey}: {obj.Name} key before its start");
+                            Assert.LessOrEqual(frame, span,
+                                $"{generator.NameKey}: {obj.Name} key at {frame} is past its own {span}-frame " +
+                                "lifetime - an absolute frame was stored where a local one belongs");
+                        }
+                    }
                 }
             }
         }

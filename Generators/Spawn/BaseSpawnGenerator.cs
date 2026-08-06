@@ -13,9 +13,19 @@ namespace BH.SDK.Generators.Spawn
     // the template's texture/size/colour/collider, and only then place it. Concentrating that here
     // leaves a concrete generator as pure placement math, which is the part worth reading.
     //
-    // Angles are DEGREES throughout this layer, matching AngleKey's own contract ("target rotation
-    // in degrees"). The Unity project converts to radians at its own runtime boundary; a generator
-    // must not do that conversion itself, or every rotation it writes comes out ~57x too small.
+    // Placement math is written in DEGREES here because that is what the maths reads like, but the
+    // format STORES RADIANS: every hand-authored rotation in a real level is a multiple of PI (a
+    // full turn is 6.2831855, not 360), and the Unity project converts to degrees only at its
+    // inspector boundary. AddRotation is the single place that conversion happens - a generator
+    // writing an AngleKey by hand must convert too, or a 45 comes out as 45 RADIANS, i.e. ~2578
+    // degrees, and the object spins wildly.
+    //
+    // Frames come into these helpers ABSOLUTE (a generator thinks in the context's window) and are
+    // stored LOCAL, because that is what a keyframe's Frame means in this format: the runtime reads
+    // it back as obj.StartFrame + key.Frame (Unity side: FrameMath/FrameUtils.ToGlobalFrame). Storing
+    // an absolute frame is not a visible error - the object simply never reaches its own keys, so it
+    // spawns correctly and then never moves. Every Add*/SetSize below converts; a generator writing
+    // obj.Positions.Add itself has to do the same, and the sweep test checks the result.
 
     /// <summary>
     /// Base for content generators that spawn objects from a shared template.
@@ -31,7 +41,7 @@ namespace BH.SDK.Generators.Spawn
             var obj = context.Create<TextureObject>();
             obj.ParentObjectId = context.Parent;
             obj.Name = name;
-            obj.Layer = ClampLayer(context.Layer);
+            obj.Layer = ClampLayer(context.LocalLayer);
             obj.StartFrame = ClampFrame(context, startFrame);
             obj.EndFrame = ClampFrame(context, Math.Max(endFrame, startFrame));
             obj.TextureResourceId = parameters.Texture;
@@ -49,25 +59,29 @@ namespace BH.SDK.Generators.Spawn
         protected static void AddPosition(TextureObject obj, float x, float y, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
-            obj.Positions.Add(new PosKey(new Vector2Value(ClampPos(x), ClampPos(y)), frame, ease));
+            obj.Positions.Add(new PosKey(new Vector2Value(ClampPos(x), ClampPos(y)), LocalFrame(obj, frame), ease));
         }
 
+        /// <summary> Takes DEGREES and stores the radians the format actually holds. </summary>
         protected static void AddRotation(TextureObject obj, float degrees, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
-            obj.Rotations.Add(new AngleKey(new FloatValue(degrees), frame, ease));
+            obj.Rotations.Add(new AngleKey(new FloatValue(ToRadians(degrees)), LocalFrame(obj, frame), ease));
         }
+
+        protected static float ToRadians(float degrees) => (float)(degrees * (Math.PI / 180.0));
 
         protected static void AddSize(TextureObject obj, IVector2 size, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
-            obj.Sizes.Add(new ScaKey(size?.Copy() ?? new Vector2Value(1f, 1f), frame, ease));
+            obj.Sizes.Add(new ScaKey(size?.Copy() ?? new Vector2Value(1f, 1f), LocalFrame(obj, frame), ease));
         }
 
         protected static void AddSize(TextureObject obj, float width, float height, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
-            obj.Sizes.Add(new ScaKey(new Vector2Value(ClampSize(width), ClampSize(height)), frame, ease));
+            obj.Sizes.Add(new ScaKey(new Vector2Value(ClampSize(width), ClampSize(height)),
+                LocalFrame(obj, frame), ease));
         }
 
         /// <summary> Replaces the template size Spawn already wrote, for generators whose objects are
@@ -82,7 +96,8 @@ namespace BH.SDK.Generators.Spawn
         protected static void AddColor(TextureObject obj, IColor4 color, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
-            obj.Colors.Add(new Color4Key(color?.Copy() ?? new Color4Value(1f, 1f, 1f, 1f), frame, ease));
+            obj.Colors.Add(new Color4Key(color?.Copy() ?? new Color4Value(1f, 1f, 1f, 1f),
+                LocalFrame(obj, frame), ease));
         }
 
         protected static void AddColor(TextureObject obj, IColor4 color, float alpha, int frame,
@@ -90,7 +105,18 @@ namespace BH.SDK.Generators.Spawn
         {
             var faded = color?.Copy() ?? new Color4Value(1f, 1f, 1f, 1f);
             if (faded is Color4Value literal) literal.A = Clamp01(alpha);
-            obj.Colors.Add(new Color4Key(faded, frame, ease));
+            obj.Colors.Add(new Color4Key(faded, LocalFrame(obj, frame), ease));
+        }
+
+        /// <summary> Absolute frame -> the object-relative frame a keyframe actually stores. Clamped
+        /// to the object's own lifetime: a key before its start or after its end is unreachable, and
+        /// the format bounds a keyframe's Frame at zero anyway. </summary>
+        protected static int LocalFrame(RectObject obj, int frame)
+        {
+            var local = frame - obj.StartFrame;
+            var span = obj.EndFrame - obj.StartFrame;
+            if (local < 0) return 0;
+            return local > span ? span : local;
         }
 
         // Degrees in, unit vector out. System.Math is the only trigonometry available here - the
@@ -130,6 +156,15 @@ namespace BH.SDK.Generators.Spawn
         /// there is room for a second keyframe on any of its tracks. A collapsed lifetime must get
         /// ONE key per track - two on the same frame violates RuleCollectionUnique. </summary>
         protected static bool CanAnimate(int startFrame, int endFrame) => endFrame > startFrame;
+
+        /// <summary> Whether a MOVING object that would start at this frame belongs in the run at
+        /// all. A staggered generator asked for more objects than its window has room for used to
+        /// clamp the overflow onto the last frame, which spawned a pile of one-frame ghosts flashing
+        /// after the pattern was over - not spawning them is what the author meant. Strictly before
+        /// the end, because a bullet with no frame to travel in is one of those ghosts. Estimate
+        /// must apply the same check, or it counts objects the run never creates. </summary>
+        protected static bool CanSpawn(GeneratorContext context, int startFrame)
+            => startFrame < context.EndFrame;
 
         private static float Clamp(float value, float min, float max)
             => value < min ? min : value > max ? max : value;
