@@ -81,6 +81,10 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
   `SpawnParameters.MainFields`/`AdditionalFields` into its own two calls.
 - **A parameters class must not shadow an inherited field.** Everything is keyed by field NAME, so
   two fields called `Texture` mean one form row bound at random and one hint hitting both.
+- **`Hints.ReadOnly` shows a field without letting anyone edit it** — for a value the host fills in
+  that the author needs to *read* to make sense of the field beside it (`mod_framerate_remap`'s
+  `CurrentFramerate` next to its target). Not the same as `Visible`, which hides. A generator must
+  still work when nothing filled it in: take the real value off `GeneratorContext`.
 - **Every number needs a `Range`.** A host clamps writes against `Hints.Ranges` and has nothing to
   clamp against without one, so an unbounded field becomes a level the format rejects. Enforced by a
   test, and it covers `IFloat`/`IVector2`/`IVector3` fields too, not just `int`/`float`.
@@ -88,6 +92,12 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
   binds to and what a preset serializes.
 - **`Estimate` must match what `Run` produces.** A host shows the estimate before running and
   refuses when it would blow past `LevelRules.MaxObjects`; a drifting estimate is worse than none.
+- **Override `IsDangerousTyped` when a parameter combination reaches past the window the author is
+  looking at** — deleting or rewriting content they didn't point at. It is `false` by default and is
+  about *these* parameters, not about the generator: `mod_content_remover` answers `true` for `Invert`
+  or a whole-timeline window and `false` for a plain section cut. A host turns it into an explicit
+  confirmation step, not a refusal — the dangerous configurations are usually the wanted ones.
+  Adding objects is never dangerous on its own: that is one undo away.
 - **Declare `GeneratorRequirements.LevelScope`** if you touch `context.Game` or `context.Audio` —
   both are null while a `Prefab` template is the active scope, and a host disables the generator
   there instead of running it into a null.
@@ -109,7 +119,9 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
   `BaseSpawnGenerator<T>`, which handles minting/parenting/framing each object so a concrete
   generator is only placement math.
 - `External/` — the input interfaces a generator implements to say "this parameter comes from the
-  host": `IAudioFileInput`, `IWaveformInput`, `IBeatFramesInput`, `IPixelTextureInput`.
+  host": `IAudioFileInput`, `IWaveformInput`, `IBeatFramesInput`, `IPixelTextureInput`, plus
+  `ICurrentFramerateInput`, which is **not** `ExternalAnalysis`: the value is already on the context,
+  and the interface exists only so a form can display it (see `Hints.ReadOnly`).
 - `Modifiers/` — `ObjectTrackMask` + `ObjectTracks` (enumerate an object's ten keyframe tracks
   generically) and the modifiers themselves.
 - `Geometry/`, `Bullets/`, `Audio/`, `Textures/`, `Utility/` — the concrete generators.
@@ -129,12 +141,23 @@ static field and cannot animate from harmless to lethal), `gen_bullet_rain` (see
 
 **Audio / image** (all `ExternalAnalysis`, see below): `gen_level_audio_file` (a level built around
 a song: clip resource, track, timeline length), `gen_audio_waveform`, `gen_beat_flash` (camera only,
-the one `LevelScope` generator), `gen_texture_objects` (image → objects, run-merged).
+therefore `LevelScope`), `gen_texture_objects` (image → objects, run-merged).
 
-**Modifiers** (edit the selection, create nothing): `mod_quantize_keyframes` (snap keys to a BPM or
-frame-step grid, Nearest/Floor/Ceil, per-track mask — a key whose grid line is already taken stays
-put rather than overwriting the key that got there first), `mod_stagger` (delay each object one step
-further, ordered by selection/layer/x/y/distance; bounds and keyframes shift independently).
+**Modifiers** (edit what is already there, create nothing): `mod_quantize_keyframes` (snap keys to a
+BPM or frame-step grid, Nearest/Floor/Ceil, per-track mask — a key whose grid line is already taken
+stays put rather than overwriting the key that got there first), `mod_stagger` (delay each object one
+step further, ordered by selection/layer/x/y/distance; bounds and keyframes shift independently),
+`mod_content_remover` (delete by frame range — `Invert` on removes everything outside the run's
+window, off removes everything inside it; objects always, audio tracks and level-global event keys on
+request; whole scope rather than the selection). It is the one generator for which the window is an
+instruction rather than a boundary, which is what makes "clean up what the level can no longer play"
+(window = whole level, `Invert` on) and "wipe this section" (the default) the same operation. Content
+only partly overlapping the window survives either mode. `mod_framerate_remap` retimes the level to a
+different framerate: `FrameLength` and every frame number are resampled by `to/from` so the content
+keeps its wall-clock timing, with objects / audio / level-global events each behind their own switch
+(objects on by default). Lowering the framerate is lossy — two frames can land on one, and a track's
+frames must stay unique — so `MaxKeyShift` (default 1) says how far a key may be nudged off its
+sampled frame to find a free slot before it is dropped instead.
 
 **Utility**: `gen_capacity_hint` — recompute `LevelSettings.LimitHints` (peak simultaneous objects
 per type) on demand, so the number is visible while deciding whether a section is too heavy.

@@ -265,11 +265,37 @@ namespace BH.SDK.Generators
             Log.Add(new ObjectDeleted(Scope, id, obj));
         }
 
+        // For the parts of a level that are neither an object, a resource nor a keyframe track -
+        // LevelSettings.Framerate/FrameLength above all. Delegates rather than a property path
+        // because the context has no business knowing which fields of which settings group a future
+        // generator will need, and a journal entry only ever needs "put it back the way it was".
+
+        /// <summary> Journalled write of one plain value. Reads the current value first, so undo
+        /// restores exactly what was there. </summary>
+        public void SetValue<T>(Func<T> read, Action<T> write, T value)
+        {
+            if (read == null || write == null) return;
+
+            var before = read();
+            write(value);
+            Log.Add(new ValueChanged<T>(write, before, value));
+        }
+
         /// <summary> Add a level resource to one of LevelResources' dictionaries. </summary>
         public void AddResource<TId, TResource>(Dictionary<TId, TResource> target, TId id, TResource resource)
         {
             target[id] = resource;
             Log.Add(new ResourceAdded<TId, TResource>(target, id, resource));
+        }
+
+        /// <summary> Remove one entry from a level-owned dictionary - a resource, or a scheduled
+        /// audio track, which is shaped the same way. The removed value lives on in the journal, so
+        /// undo puts it back under the same id. </summary>
+        public void RemoveResource<TId, TResource>(Dictionary<TId, TResource> target, TId id)
+        {
+            if (target == null || !target.TryGetValue(id, out var resource)) return;
+            target.Remove(id);
+            Log.Add(new ResourceRemoved<TId, TResource>(target, id, resource));
         }
 
         // Object-owned keyframe tracks never come through here - they belong to an object, so

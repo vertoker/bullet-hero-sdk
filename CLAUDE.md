@@ -106,8 +106,8 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   generator implements to say "this parameter comes from the host" — matched by interface, not by
   field name, so a rename is a compile error), `Modifiers/` (`ObjectTrackMask`/`ObjectTracks` —
   generic enumeration of an object's ten keyframe tracks, plus the modifiers themselves),
-  `Geometry/`, `Bullets/`, `Audio/`, `Textures/`, `Utility/` (the concrete generators — 17 of them,
-  the roster the design document calls complete). Three rules a spawning generator must get right:
+  `Geometry/`, `Bullets/`, `Audio/`, `Textures/`, `Utility/` (the concrete generators — 19 of them,
+  the roster the design document calls complete plus `mod_content_remover`/`mod_framerate_remap`). Three rules a spawning generator must get right:
   **a keyframe's `Frame` is LOCAL to its owning object** (the runtime reads `obj.StartFrame + Frame`,
   so an absolute frame yields objects that spawn correctly and then never move — `BaseSpawnGenerator`'s
   `Add*` helpers convert, `mod_quantize_keyframes` converts the other way to snap against the level's

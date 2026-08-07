@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BH.SDK.Generators
 {
@@ -55,6 +56,14 @@ namespace BH.SDK.Generators
         /// that is really a closed choice but isn't an enum. </summary>
         public IReadOnlyDictionary<string, IReadOnlyList<GeneratorChoice>> Choices { get; }
 
+        /// <summary> Field names a host must show but must not let anyone edit. Distinct from
+        /// Visible=false, which hides the field: this one is for a value the author needs to SEE to
+        /// make sense of the field next to it (the level's current framerate beside the target one),
+        /// filled in by the host and meaningless to type into. </summary>
+        public IReadOnlyCollection<string> ReadOnly => _readOnly;
+
+        private readonly HashSet<string> _readOnly;
+
         /// <summary> For a generator with no parameters at all. Not a "hints are optional" escape
         /// hatch - a generator WITH fields must list them in Order. </summary>
         public static readonly GeneratorHints Empty = new Builder().Build();
@@ -66,7 +75,8 @@ namespace BH.SDK.Generators
             IReadOnlyDictionary<string, float> steps,
             IReadOnlyDictionary<string, string> units,
             IReadOnlyDictionary<string, Func<object, bool>> visible,
-            IReadOnlyDictionary<string, IReadOnlyList<GeneratorChoice>> choices)
+            IReadOnlyDictionary<string, IReadOnlyList<GeneratorChoice>> choices,
+            HashSet<string> readOnly)
         {
             Order = order;
             Sections = sections;
@@ -76,6 +86,7 @@ namespace BH.SDK.Generators
             Units = units;
             Visible = visible;
             Choices = choices;
+            _readOnly = readOnly;
         }
 
         /// <summary> The section a field belongs to. An unlisted field falls into
@@ -95,6 +106,9 @@ namespace BH.SDK.Generators
         public bool IsVisible(string field, object parameters)
             => !Visible.TryGetValue(field, out var predicate) || predicate(parameters);
 
+        /// <summary> Whether a host must render this field as a display-only value. </summary>
+        public bool IsReadOnly(string field) => ReadOnly.Contains(field);
+
         /// <summary> Fluent construction, so a generator declares its hints as one readonly static
         /// initializer instead of assembling seven dictionaries by hand. </summary>
         public sealed class Builder
@@ -107,6 +121,7 @@ namespace BH.SDK.Generators
             private readonly Dictionary<string, string> _units = new();
             private readonly Dictionary<string, Func<object, bool>> _visible = new();
             private readonly Dictionary<string, IReadOnlyList<GeneratorChoice>> _choices = new();
+            private readonly HashSet<string> _readOnly = new();
 
             public Builder Order(params string[] fields)
             {
@@ -159,8 +174,16 @@ namespace BH.SDK.Generators
                 return this;
             }
 
+            /// <summary> Marks a field display-only: shown, never editable. Still needs listing in
+            /// Order/Section like any other field - it is a real parameter, just not the author's. </summary>
+            public Builder ReadOnly(params string[] fields)
+            {
+                foreach (var field in fields) _readOnly.Add(field);
+                return this;
+            }
+
             public GeneratorHints Build()
-                => new(_order, _sections, _labels, _ranges, _steps, _units, _visible, _choices);
+                => new(_order, _sections, _labels, _ranges, _steps, _units, _visible, _choices, _readOnly);
         }
     }
 

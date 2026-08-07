@@ -41,5 +41,11 @@ namespace BH.SDK.Generators
         /// <summary> What running this would add, without running it. Context is null for a Level
         /// generator (nothing exists yet to run against), so implementations must tolerate that. </summary>
         GeneratorCost Estimate(GeneratorContext context, object parameters);
+
+        /// <summary> Whether THIS configuration destroys or rewrites more than a run normally does,
+        /// so a host should make the author confirm it explicitly. False by default: it is about a
+        /// specific set of parameters, not about the generator - the same generator answers both
+        /// ways depending on what is filled in. Same null-context rule as Estimate. </summary>
+        bool IsDangerous(GeneratorContext context, object parameters);
     }
 }

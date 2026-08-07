@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
@@ -161,6 +162,44 @@ namespace BH.SDK.Generators
 
         public void Revert() => _target.Remove(_id);
         public void Reapply() => _target[_id] = _resource;
+    }
+
+    // The catch-all for a plain field that is neither an object, a resource nor a keyframe - the
+    // level's own Framerate/FrameLength. It holds the writer rather than the owning object, so one
+    // change type covers every such field without the journal knowing any of them by name.
+
+    internal sealed class ValueChanged<T> : IGeneratorChange
+    {
+        private readonly Action<T> _write;
+        private readonly T _before;
+        private readonly T _after;
+
+        public ValueChanged(Action<T> write, T before, T after)
+        {
+            _write = write;
+            _before = before;
+            _after = after;
+        }
+
+        public void Revert() => _write(_before);
+        public void Reapply() => _write(_after);
+    }
+
+    internal sealed class ResourceRemoved<TId, TResource> : IGeneratorChange
+    {
+        private readonly Dictionary<TId, TResource> _target;
+        private readonly TId _id;
+        private readonly TResource _resource;
+
+        public ResourceRemoved(Dictionary<TId, TResource> target, TId id, TResource resource)
+        {
+            _target = target;
+            _id = id;
+            _resource = resource;
+        }
+
+        public void Revert() => _target[_id] = _resource;
+        public void Reapply() => _target.Remove(_id);
     }
 
     // Level-global tracks (GameEvents/CameraEvents/PostProcessingEvents/PlayerEvents) are plain

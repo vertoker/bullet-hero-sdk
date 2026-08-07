@@ -36,6 +36,14 @@ namespace BH.SDK.Generators
                 : cost;
         }
 
+        public bool IsDangerous(GeneratorContext context, object parameters)
+            => IsDangerousTyped(context, Cast(parameters));
+
+        /// <summary> Override only where a parameter combination can destroy or rewrite content the
+        /// author didn't point at - the host turns a true into an explicit confirmation step. Adding
+        /// objects is never dangerous on its own: it is one undo away. </summary>
+        protected virtual bool IsDangerousTyped(GeneratorContext context, TParams parameters) => false;
+
         public GeneratorResult Run(GeneratorContext context, object parameters)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));

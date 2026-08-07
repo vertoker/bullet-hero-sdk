@@ -76,13 +76,12 @@ namespace BH.SDK.Tests.Generators
             return keys;
         }
 
-        /// <summary> Every key a run could have written - object tracks plus the level-global camera
-        /// tracks, since a camera-only generator (gen_beat_flash) creates no objects at all. </summary>
-        private static int CountAllKeys(Level level)
+        /// <summary> The level-global camera tracks, counted apart from object keys because a
+        /// camera-only generator (gen_beat_flash) creates no objects at all. </summary>
+        private static int CountCameraKeys(Level level)
         {
-            var keys = level.Game.Objects.Values.Sum(CountKeys);
             var camera = level.Game.CameraEvents;
-            return keys + camera.Positions.Count + camera.Rotations.Count + camera.Zooms.Count
+            return camera.Positions.Count + camera.Rotations.Count + camera.Zooms.Count
                    + camera.Pivots.Count + camera.Shakes.Count;
         }
 
@@ -141,6 +140,13 @@ namespace BH.SDK.Tests.Generators
             Assert.IsNotEmpty(ScopeGenerators.ToList());
         }
 
+        // GeneratorCost describes what a run ADDS - a Modifier legitimately adds nothing while
+        // changing plenty, and mod_content_remover/mod_framerate_remap actively remove. So additions
+        // are measured directly rather than as a net delta, which a removing generator would drive
+        // negative: the ids the run reports creating, and the keys those new objects plus the
+        // level-global camera tracks came out holding. The one thing this cannot see is a generator
+        // adding keys to an object that already existed - none does, and a Modifier that starts to
+        // would need this measurement rethought rather than the assertion relaxed.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
@@ -153,17 +159,20 @@ namespace BH.SDK.Tests.Generators
                 var context = CreateContext(level);
                 var parameters = CreateFilledParameters(generator);
 
-                var objectsBefore = level.Game.Objects.Count;
-                var keysBefore = CountAllKeys(level);
+                var cameraBefore = CountCameraKeys(level);
 
                 var estimate = generator.Estimate(context, parameters);
-                generator.Run(context, parameters);
+                var result = generator.Run(context, parameters);
 
-                // GeneratorCost describes what a run ADDS, so it is compared against the delta - a
-                // Modifier legitimately adds nothing while changing plenty.
-                Assert.AreEqual(level.Game.Objects.Count - objectsBefore, estimate.Objects,
+                Assert.AreEqual(result.CreatedIds.Length, estimate.Objects,
                     $"{generator.NameKey}: object count");
-                Assert.AreEqual(CountAllKeys(level) - keysBefore, estimate.Keyframes,
+
+                var addedKeys = CountCameraKeys(level) - cameraBefore;
+                foreach (var id in result.CreatedIds)
+                    if (level.Game.Objects.TryGetValue(id, out var obj))
+                        addedKeys += CountKeys(obj);
+
+                Assert.AreEqual(addedKeys, estimate.Keyframes,
                     $"{generator.NameKey}: keyframe count");
             }
         }
@@ -294,7 +303,6 @@ namespace BH.SDK.Tests.Generators
             {
                 var level = CreateSeededLevel();
                 var before = level.Game.Copy();
-                var seeded = level.Game.Objects.Count;
 
                 var result = generator.Run(CreateContext(level), CreateFilledParameters(generator));
                 var after = level.Game.Copy();
@@ -306,7 +314,10 @@ namespace BH.SDK.Tests.Generators
                 result.Log.Reapply();
                 Assert.IsTrue(after.Equals(level.Game),
                     $"{generator.NameKey}: redo must reproduce the run exactly");
-                Assert.AreEqual(seeded + result.CreatedIds.Length, level.Game.Objects.Count,
+
+                // Against what the run actually left behind, not seeded + created: a generator that
+                // removes objects (mod_content_remover) ends with fewer than it started with.
+                Assert.AreEqual(after.Objects.Count, level.Game.Objects.Count,
                     $"{generator.NameKey}: redo object count");
             }
         }

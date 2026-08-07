@@ -92,7 +92,7 @@ namespace BH.SDK.Generators.Textures
         }
 
         /// <summary> One merged horizontal run of same-coloured pixels. </summary>
-        private readonly struct Run
+        private new readonly struct Run
         {
             public readonly int X;
             public readonly int Y;

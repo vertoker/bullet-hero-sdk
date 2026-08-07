@@ -49,6 +49,20 @@ namespace BH.SDK.Generators.External
         int[] BeatFrames { get; set; }
     }
 
+    // The odd one out, and deliberately not part of ExternalAnalysis: a generator can read the
+    // framerate off GeneratorContext.Settings whenever it runs, so nothing about the RUN needs this.
+    // It exists so a FORM can show the number next to the target the author is typing, which is the
+    // only place a "what am I changing it from" reading belongs. A generator implementing it must
+    // still take its own math from the context, never from this field - a host that never filled it
+    // in has to produce a correct run, not a run against a zero.
+
+    /// <summary> A generator whose form wants the current framerate on display beside its own. </summary>
+    public interface ICurrentFramerateInput
+    {
+        /// <summary> The level's framerate as it is right now, mirrored in for display. </summary>
+        int CurrentFramerate { get; set; }
+    }
+
     /// <summary> A generator that turns an image into level content, so it needs the image decoded
     /// by the host (Unity side: PixelTexture from a Texture2D, see UnityExtensions). </summary>
     public interface IPixelTextureInput

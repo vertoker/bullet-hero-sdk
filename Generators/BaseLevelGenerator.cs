@@ -26,6 +26,11 @@ namespace BH.SDK.Generators
         public GeneratorCost Estimate(GeneratorContext context, object parameters)
             => EstimateTyped(Cast(parameters));
 
+        // A level generator builds a NEW level from nothing - there is no existing content for a
+        // parameter combination to destroy, so this stays false for the whole family rather than
+        // being an override point like BaseScopeGenerator's.
+        public bool IsDangerous(GeneratorContext context, object parameters) => false;
+
         public GeneratedLevel Create(object parameters) => CreateTyped(Cast(parameters));
 
         /// <summary> Build the level and its metadata together, so the two can't disagree. </summary>

@@ -76,28 +76,35 @@ namespace BH.SDK.Generators.Modifiers
         }
 
         /// <summary> One track, reduced to what a frame-level modifier needs: how many keys there
-        /// are, what frame each sits on, and how to move it. </summary>
+        /// are, what frame each sits on, how to move it, and how to drop it. </summary>
         public readonly struct Track
         {
             public readonly int Count;
             private readonly Func<int, int> _frameAt;
             private readonly Action<int, int> _setFrameAt;
+            private readonly Action<int> _removeAt;
 
-            public Track(int count, Func<int, int> frameAt, Action<int, int> setFrameAt)
+            public Track(int count, Func<int, int> frameAt, Action<int, int> setFrameAt, Action<int> removeAt)
             {
                 Count = count;
                 _frameAt = frameAt;
                 _setFrameAt = setFrameAt;
+                _removeAt = removeAt;
             }
 
             public int FrameAt(int index) => _frameAt(index);
             public void SetFrameAt(int index, int frame) => _setFrameAt(index, frame);
+
+            /// <summary> Drops one key. Count is a snapshot taken when the track was handed over, so
+            /// a caller that removes must walk indices DOWNWARD and stop using Count afterwards. </summary>
+            public void RemoveAt(int index) => _removeAt(index);
         }
 
         private static Track Wrap<TKey>(List<TKey> track) where TKey : IFrame
             => new(track?.Count ?? 0,
                 index => track[index].Frame,
-                (index, frame) => track[index].Frame = frame);
+                (index, frame) => track[index].Frame = frame,
+                index => track.RemoveAt(index));
 
         private static bool Has(ObjectTrackMask mask, ObjectTrackMask flag) => (mask & flag) != 0;
     }
