@@ -14,8 +14,9 @@ namespace BH.SDK.Rules.Attributes
     // purpose: an unknown discriminator means the file cannot be read at all, an unknown enum FIELD
     // means one value is wrong and the rest of the level is fine.
     //
-    // [Flags] enums are not supported: Enum.IsDefined rejects legitimate combinations. The format
-    // has none today; introducing one means giving it a different rule, not loosening this one.
+    // [Flags] enums are not supported: Enum.IsDefined rejects legitimate combinations. They have
+    // their own rule, RuleEnumFlagsValid, which asks "does this carry an undeclared bit" instead -
+    // don't loosen this one to cover them.
 
     /// <summary>
     /// An enum field must hold a value the enum actually declares. Fix falls back to DefaultValue,

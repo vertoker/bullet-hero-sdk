@@ -411,6 +411,8 @@ namespace BH.SDK.Tests
             meta.LevelDescription = new StringValue("cool description");
             meta.LevelLogo = new ResourceKey(ResourceUriType.DirectUrl, "https://example.com/logo.png");
             meta.LevelLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
+            meta.LevelAgeRating = AgeRating.Age12;
+            meta.LevelContentDescriptors = ContentDescriptor.Violence | ContentDescriptor.FlashingLights;
             meta.LevelAuthors = new List<Author>
             {
                 new(new StringValue("vertoker"), "vertoker.com"),

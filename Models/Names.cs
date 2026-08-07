@@ -410,6 +410,10 @@
         public const string Commercial = "commercial";
         public const string Attribution = "attribution";
         public const string Disclosure = "disclosure";
+        public const string Age = "age";
+        public const string Rating = "rating";
+        public const string Content = "content";
+        public const string Descriptors = "descriptors";
         
         private const string _ = "_";
         
@@ -668,5 +672,7 @@
         public const string RequiresAttribution = Requires + _ + Attribution;
         public const string RequiresSourceDisclosure = Requires + _ + Source + _ + Disclosure;
         public const string RequiresSameLicense = Requires + _ + Same + _ + License;
+        public const string AgeRating = Age + _ + Rating;
+        public const string ContentDescriptors = Content + _ + Descriptors;
     }
 }

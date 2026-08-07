@@ -46,7 +46,9 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   `EffectData`/`CompositeCollider` — resource-level aggregate payloads), `Resources/` (level resource
   dictionaries + `TypedResourceId` family), `SettingGroups/` (⚠️ two unrelated aggregates share this
   folder — `LevelSettings`, per-level, vs. `UserSettings`' sub-groups, per-device — see below),
-  `Meta/` (`Author`, `ResourceMeta` — consumed by `LevelMeta`, itself NOT in this folder),
+  `Meta/` (`Author`, `ResourceMeta` — consumed by `LevelMeta`, itself NOT in this folder; note
+  `ResourceMeta` carries licensing/attribution only — **age rating and content descriptors live on
+  `LevelMeta` alone**, since a rating describes the finished experience, not an asset in isolation),
   `Interfaces/`, `Enum/`, `Primitives/` (id structs). `Models/Names.cs` is the single source of truth
   for every `[JsonProperty]` name (short/abbreviated on purpose — see Serialization).
 - **Serialization/** — `Serializers/` (`SerializationService`, the JSON/BSON entry point),
@@ -443,6 +445,11 @@ type" rule in detail; this section only adds what it doesn't cover.
 `TextRules`) — `EffectRules` is the one exception, constructing default `CurveValue`/`GradientValue`
 model instances. `RuleGroup` (`None/Error/Warning/Advice`) is a severity enum that exists but is
 **never actually set away from its `Error` default** by any current rule attribute.
+
+`RuleEnumValid` covers single-choice enums only; `[Flags]` enums (today: `ContentDescriptor` on
+`LevelMeta`) go through `RuleEnumFlagsValid`, which asks "does this carry an undeclared bit" and
+whose `Fix` masks the unknown bits off instead of falling back to a default. Don't loosen
+`RuleEnumValid` to cover both — `Enum.IsDefined` rejects every legitimate flag combination.
 
 `Rules/Attributes/` are declarative `[RuleXxx]` property attributes (`[AttributeUsage(Property)]`
 only — never fields), all `: BaseRuleAttribute` (`IsValidType`/`IsValid`/`Fix`). `[RuleContainer]`

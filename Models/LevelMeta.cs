@@ -77,6 +77,23 @@ namespace BH.SDK.Models
         [JsonProperty(Names.ResourcesMeta)]
         public List<ResourceMeta> ResourcesMeta { get; set; }
 
+        // Rating lives on the level and only on the level - deliberately not on ResourceMeta. What a
+        // player is warned about is the finished experience, and an asset has no rating of its own:
+        // the same track is menu music in one level and a jump scare in another. Whoever imported it
+        // would have to guess a number, and a guessed number folded into the level's own would make
+        // the level's rating mean nothing.
+
+        /// <summary> Minimum age the level is meant for - what a player is shown before playing. </summary>
+        [RuleEnumValid]
+        [JsonProperty(Names.AgeRating)]
+        public AgeRating LevelAgeRating { get; set; }
+
+        /// <summary> What the level contains beyond the bare age number, including the accessibility
+        /// warnings (flashing visuals, loud audio). </summary>
+        [RuleEnumFlagsValid]
+        [JsonProperty(Names.ContentDescriptors)]
+        public ContentDescriptor LevelContentDescriptors { get; set; }
+
         public LevelMeta()
         {
             LevelId = LevelId.NewId();
@@ -87,9 +104,13 @@ namespace BH.SDK.Models
             LevelLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
             LevelAuthors = new List<Author>();
             ResourcesMeta = new List<ResourceMeta>();
+            LevelAgeRating = AgeRating.Unrated;
+            LevelContentDescriptors = ContentDescriptor.None;
         }
         public LevelMeta(LevelId levelId, IString levelName, IString levelDescription, ResourceKey levelLogo,
-            Version levelVersion, ILicense levelLicense, List<Author> levelAuthors, List<ResourceMeta> resourcesMeta)
+            Version levelVersion, ILicense levelLicense, List<Author> levelAuthors, List<ResourceMeta> resourcesMeta,
+            AgeRating levelAgeRating = AgeRating.Unrated,
+            ContentDescriptor levelContentDescriptors = ContentDescriptor.None)
         {
             LevelId = levelId;
             LevelName = levelName;
@@ -99,6 +120,8 @@ namespace BH.SDK.Models
             LevelLicense = levelLicense;
             LevelAuthors = levelAuthors;
             ResourcesMeta = resourcesMeta;
+            LevelAgeRating = levelAgeRating;
+            LevelContentDescriptors = levelContentDescriptors;
         }
         public void Reset()
         {
@@ -110,30 +133,47 @@ namespace BH.SDK.Models
             LevelLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
             LevelAuthors = new List<Author>();
             ResourcesMeta = new List<ResourceMeta>();
+            LevelAgeRating = AgeRating.Unrated;
+            LevelContentDescriptors = ContentDescriptor.None;
         }
 
         public object Clone() => Copy();
         public LevelMeta Copy() => new(LevelId, LevelName.Copy(), LevelDescription.Copy(),
             LevelLogo.Copy(), (Version)LevelVersion.Clone(), LevelLicense.Copy(),
-            LevelAuthors.CopyList(), ResourcesMeta.CopyList());
+            LevelAuthors.CopyList(), ResourcesMeta.CopyList(),
+            LevelAgeRating, LevelContentDescriptors);
 
         public override bool Equals(object obj) => obj is LevelMeta value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(LevelId, LevelName.Copy(), LevelDescription.Copy(),
-            LevelLogo.Copy(), LevelVersion, LevelLicense.Copy(),
-            LevelAuthors.GetListHashCode(), ResourcesMeta.GetListHashCode());
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(LevelId);
+            hashCode.Add(LevelName);
+            hashCode.Add(LevelDescription);
+            hashCode.Add(LevelLogo);
+            hashCode.Add(LevelVersion);
+            hashCode.Add(LevelLicense);
+            hashCode.Add(LevelAuthors.GetListHashCode());
+            hashCode.Add(ResourcesMeta.GetListHashCode());
+            hashCode.Add((int)LevelAgeRating);
+            hashCode.Add((int)LevelContentDescriptors);
+            return hashCode.ToHashCode();
+        }
 
         public bool Equals(LevelMeta other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            var result = LevelId.Equals(other.LevelId) 
+            var result = LevelId.Equals(other.LevelId)
                          && LevelName.Equals(other.LevelName)
                          && LevelDescription.Equals(other.LevelDescription)
                          && LevelLogo.Equals(other.LevelLogo)
                          && LevelVersion.Equals(other.LevelVersion)
                          && LevelLicense.Equals(other.LevelLicense)
                          && LevelAuthors.ListEquals(other.LevelAuthors)
-                         && ResourcesMeta.ListEquals(other.ResourcesMeta);
+                         && ResourcesMeta.ListEquals(other.ResourcesMeta)
+                         && LevelAgeRating == other.LevelAgeRating
+                         && LevelContentDescriptors == other.LevelContentDescriptors;
             return result;
         }
     }

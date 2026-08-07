@@ -57,6 +57,7 @@ namespace BH.SDK.Tests.Rules
             { typeof(RuleParentObjectIdValidAttribute), nameof(RuleParentObjectIdValidTests) },
 
             { typeof(RuleEnumValidAttribute), nameof(RuleEnumValidTests) },
+            { typeof(RuleEnumFlagsValidAttribute), nameof(RuleEnumFlagsValidTests) },
             { typeof(RuleFiniteAttribute), nameof(RuleFiniteTests) },
             { typeof(RuleIVector2OrderedAttribute), nameof(RuleIVector2OrderedTests) },
             { typeof(RuleCollectionMinCountAttribute), nameof(RuleCollectionMinCountTests) },
