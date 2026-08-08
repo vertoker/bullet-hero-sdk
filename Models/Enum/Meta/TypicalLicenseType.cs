@@ -103,16 +103,9 @@ namespace BH.SDK.Models.Enum.Meta
         /// <summary> Creative Commons Attribution-NonCommercial-NoDerivation v3.0
         /// (https://creativecommons.org/licenses/by-nc-nd/3.0/) </summary>
         CC_BY_NC_ND_3_0 = 112,
-        
-        
-        // Commercial music licenses for non-commercial games
-        
-        /// <summary> Standard YouTube License, require author permission
-        /// (https://support.google.com/youtube/answer/2797468) </summary>
-        YT = 150,
-        
-        // NCS = 150,
-        // SoundBible = 151,
-        // DL_Sounds = 152,
+
+        // YouTube/SoundCloud/Spotify can't be here, it's a PLATFORM/SOURCE rather than a
+        // license: a work taken from one of them carries no terms at all, so it belongs to
+        // NoSpecifiedLicense - which now names the platform itself, via NoLicenseSourceType
     }
 }

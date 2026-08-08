@@ -51,11 +51,36 @@ namespace BH.SDK.Models.Meta
         [JsonProperty(Names.Url)]
         public string ResourceUrl { get; set; }
 
-        /// <summary> Terms the work is distributed under. Defaults to a typical CC license rather
-        /// than "unspecified", so an unfilled record still states something. </summary>
+        // Unspecified is the only honest default here, and it used to be CC BY-NC. An unfilled record
+        // is a record nobody read the terms of, and defaulting it to a real license made the file
+        // state, on the author's behalf, something they never checked - about a work that is usually
+        // someone else's. A publish profile can then refuse the level, which is the correct outcome;
+        // a level wrongly labelled CC BY-NC is indistinguishable from one that genuinely is, and no
+        // later pass can tell the two apart. Note this matches what RuleNotNull already repaired a
+        // null into, so the constructor and the rule finally agree.
+
+        /// <summary> Terms the work is distributed under. Unspecified until the author states
+        /// otherwise - it means "unknown", never "permitted". </summary>
         [RuleNotNull(typeof(NoSpecifiedLicense))]
         [JsonProperty(Names.License)]
         public ILicense ResourceLicense { get; set; }
+
+        /// <summary> Permissions from rights holders covering this resource - Option B of the
+        /// licensing policy, for works whose own license does not allow redistribution. </summary>
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxPermissions), RuleCollectionNoNullItems]
+        [JsonProperty(Names.Permissions)]
+        public List<PermissionGrant> ResourcePermissions { get; set; }
+
+        // Identity of the BYTES, not of the record. A takedown names a work, and answering it means
+        // finding every level carrying that work - by name it is a guess, by hash it is a lookup.
+        // Plural because one resource can be several files (a track re-encoded per platform) and each
+        // has its own digest. Format is "<algorithm>:<hex>" so the algorithm can change without
+        // breaking what is already stored.
+
+        /// <summary> Content hashes of the files behind this resource ("sha256:ab12..."). </summary>
+        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxHashes), RuleCollectionNoNullItems]
+        [JsonProperty(Names.Hashes)]
+        public List<string> ResourceHashes { get; set; }
 
         /// <summary> Human-readable provenance strings (where it was taken from), localizable. Free
         /// text for a reader, unlike the machine-usable URIs in Resource.Sources. </summary>
@@ -74,9 +99,7 @@ namespace BH.SDK.Models.Meta
         // level, not of an asset in isolation: the same track is menu music in one level and a jump
         // scare in another. Per-resource ratings would also have to be guessed by whoever imported
         // the asset, and a guessed number folded into the level's own would make it meaningless.
-
-        // TODO add method for author permission to use resource (for whole BH or several levels / unlimited or time limit)
-
+        
         public ResourceMeta()
         {
             ResourceType = ResourceType.Bytes;
@@ -84,13 +107,16 @@ namespace BH.SDK.Models.Meta
             ResourceTitle = new StringValue();
             ResourceDescription = new StringValue();
             ResourceUrl = string.Empty;
-            ResourceLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
+            ResourceLicense = new NoSpecifiedLicense();
             ResourceSources = new List<IString>();
             ResourceAuthors = new List<Author>();
+            ResourcePermissions = new List<PermissionGrant>();
+            ResourceHashes = new List<string>();
         }
         public ResourceMeta(ResourceType resourceType, TypedResourceId resourceId, IString resourceTitle,
             IString resourceDescription, string resourceUrl, ILicense resourceLicense,
-            List<IString> resourceSources, List<Author> resourceAuthors)
+            List<IString> resourceSources, List<Author> resourceAuthors,
+            List<PermissionGrant> resourcePermissions = null, List<string> resourceHashes = null)
         {
             ResourceType = resourceType;
             ResourceId = resourceId;
@@ -100,6 +126,8 @@ namespace BH.SDK.Models.Meta
             ResourceLicense = resourceLicense;
             ResourceSources = resourceSources;
             ResourceAuthors = resourceAuthors;
+            ResourcePermissions = resourcePermissions ?? new List<PermissionGrant>();
+            ResourceHashes = resourceHashes ?? new List<string>();
         }
         public void Reset()
         {
@@ -108,15 +136,32 @@ namespace BH.SDK.Models.Meta
             ResourceTitle = new StringValue();
             ResourceDescription = new StringValue();
             ResourceUrl = string.Empty;
-            ResourceLicense = new TypicalLicense(TypicalLicenseType.CC_BY_NC_4_0);
+            ResourceLicense = new NoSpecifiedLicense();
             ResourceSources.Clear();
             ResourceAuthors.Clear();
+            ResourcePermissions.Clear();
+            ResourceHashes.Clear();
+        }
+
+        /// <summary> A permission that still stands at the given UTC time, if this record holds one.
+        /// An unset `now` means "no clock available" and never lapses a grant. </summary>
+        public bool TryGetActivePermission(DateTime now, out PermissionGrant grant)
+        {
+            foreach (var permission in ResourcePermissions)
+            {
+                if (permission == null || !permission.IsActiveAt(now)) continue;
+                grant = permission;
+                return true;
+            }
+            grant = null;
+            return false;
         }
 
         public object Clone() => Copy();
         public ResourceMeta Copy() => new(ResourceType, ResourceId, ResourceTitle.Copy(),
             ResourceDescription.Copy(), ResourceUrl, ResourceLicense.Copy(),
-            ResourceSources.CopyList(), ResourceAuthors.CopyList());
+            ResourceSources.CopyList(), ResourceAuthors.CopyList(),
+            ResourcePermissions.CopyList(), new List<string>(ResourceHashes));
 
         public override bool Equals(object obj)
         {
@@ -127,9 +172,18 @@ namespace BH.SDK.Models.Meta
         }
         public override int GetHashCode()
         {
-            return HashCode.Combine((int)ResourceType, ResourceId, ResourceTitle,
-                ResourceDescription, ResourceUrl, ResourceLicense,
-                ResourceSources.GetListHashCode(), ResourceAuthors.GetListHashCode());
+            var hashCode = new HashCode();
+            hashCode.Add((int)ResourceType);
+            hashCode.Add(ResourceId);
+            hashCode.Add(ResourceTitle);
+            hashCode.Add(ResourceDescription);
+            hashCode.Add(ResourceUrl);
+            hashCode.Add(ResourceLicense);
+            hashCode.Add(ResourceSources.GetListHashCode());
+            hashCode.Add(ResourceAuthors.GetListHashCode());
+            hashCode.Add(ResourcePermissions.GetListHashCode());
+            hashCode.Add(ResourceHashes.GetListHashCode());
+            return hashCode.ToHashCode();
         }
 
         public bool Equals(ResourceMeta other)
@@ -143,7 +197,9 @@ namespace BH.SDK.Models.Meta
                    && ResourceUrl.Equals(other.ResourceUrl)
                    && ResourceLicense.Equals(other.ResourceLicense)
                    && ResourceSources.ListEquals(other.ResourceSources)
-                   && ResourceAuthors.ListEquals(other.ResourceAuthors);
+                   && ResourceAuthors.ListEquals(other.ResourceAuthors)
+                   && ResourcePermissions.ListEquals(other.ResourcePermissions)
+                   && ResourceHashes.ListEquals(other.ResourceHashes);
         }
     }
 }

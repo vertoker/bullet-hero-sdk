@@ -418,7 +418,24 @@
         public const string Rating = "rating";
         public const string Content = "content";
         public const string Descriptors = "descriptors";
-        
+        public const string Hashes = "hashes";
+        public const string Grantor = "grantor";
+        public const string Permission = "permission";
+        public const string Permissions = "permissions";
+        public const string Granted = "granted";
+        public const string Expires = "expires";
+        public const string At = "at";
+        public const string Proof = "proof";
+        public const string Scope = "scope";
+        public const string Trust = "trust";
+        public const string Domains = "domains";
+        public const string Note = "note";
+        public const string Profile = "profile";
+        public const string Unknown = "unknown";
+        public const string Licenses = "licenses";
+        public const string Bytes = "bytes";
+        public const string Total = "total";
+
         private const string _ = "_";
         
         // ---------------------------------------------------------------------------------------------
@@ -676,5 +693,28 @@
         public const string RequiresSameLicense = Requires + _ + Same + _ + License;
         public const string AgeRating = Age + _ + Rating;
         public const string ContentDescriptors = Content + _ + Descriptors;
+        public const string PermissionScope = Permission + _ + Scope;
+        public const string GrantedAt = Granted + _ + At;
+        public const string ExpiresAt = Expires + _ + At;
+        public const string ProofUrl = Proof + _ + Url;
+        public const string ProofText = Proof + _ + Text;
+
+        // Publishing
+
+        public const string ProfileKey = Profile + _ + Key;
+        public const string AllowedLicenses = Allow + _ + Licenses;
+        public const string AllowedUriTypes = Allow + _ + Uri + _ + Type;
+        public const string AllowUnknownLicense = Allow + _ + Unknown + _ + License;
+        public const string AllowPermissionInstead = Allow + _ + Permission;
+        public const string RequireResourceMeta = Require + _ + Resource + _ + Meta;
+        public const string RequireResourceUrl = Require + _ + Resource + _ + Url;
+        public const string RequireAttribution = Require + _ + Attribution;
+        public const string RequireAgeRating = Require + _ + Age + _ + Rating;
+        public const string RequireLevelAuthors = Require + _ + Authors;
+        public const string RequireHashes = Require + _ + Hashes;
+        public const string UnknownSourceTrust = Unknown + _ + Source + _ + Trust;
+        public const string MaxResourceBytes = Max + _ + Resource + _ + Bytes;
+        public const string MaxDataFileBytes = Max + _ + Data + _ + Bytes;
+        public const string MaxTotalBytes = Max + _ + Total + _ + Bytes;
     }
 }

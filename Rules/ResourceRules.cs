@@ -12,6 +12,21 @@ namespace BH.SDK.Rules
 
         public const int MaxAuthors = 16;
 
+        // Content hashes of the actual bytes behind ONE resource, and the permissions covering it.
+        // Both are plural for the same reason Resource.Sources is: one resource can be several files
+        // (a track re-encoded per platform), and one file can need permission from more than one
+        // rights holder (composer and performer). Small caps - past a handful of either, the record
+        // has stopped describing one resource.
+        public const int MaxHashes = 8;
+        public const int MaxPermissions = 8;
+
+        // "sha256:" plus 64 hex characters is 71; the rest is headroom for a longer digest later.
+        public const int MaxHashLength = 128;
+
+        // A quoted permission is a mail or a DM, not a contract - long enough to hold the exchange,
+        // short enough that nobody pastes a whole thread into every level file.
+        public const int MaxProofText = 8192;
+
         // Per-category caps on a level's own resource dictionaries. These bound what a level may
         // REFERENCE, not what it may ship: every entry is a user-defined (negative-id) resource the
         // loader has to resolve before playback starts, so the count is load time, not frame time.
