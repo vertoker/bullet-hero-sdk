@@ -15,7 +15,7 @@ namespace BH.SDK.Generators.Audio
 {
     // The single most common way a level actually begins: pick a song, get a level whose timeline
     // already matches it. Doing that by hand means creating a level, importing the clip, adding a
-    // track, and computing FrameLength from a duration nobody has in front of them.
+    // track, and computing FrameDuration from a duration nobody has in front of them.
     //
     // The SDK cannot measure that duration - it has no decoder, on purpose - so DurationSeconds is
     // an ExternalAnalysis input the host fills in (see IAudioFileInput). A duration of zero is not
@@ -56,7 +56,7 @@ namespace BH.SDK.Generators.Audio
             var framerate = Framerate(parameters.Framerate);
             var level = new Level();
             level.Settings.Framerate = framerate;
-            level.Settings.FrameLength = FrameLength(parameters, framerate);
+            level.Settings.FrameDuration = FrameDuration(parameters, framerate);
 
             var resourceId = new AudioResourceId(AudioResourceId.MaxUserDefinedValue);
             level.Resources.Audios[resourceId] = new AudioResource(resourceId, new List<ResourceKey>
@@ -64,12 +64,13 @@ namespace BH.SDK.Generators.Audio
                 new(parameters.UriType, parameters.AudioPath ?? string.Empty),
             });
 
-            // FrameLength is a COUNT, so the last playable frame is FrameLength - 1 - RuleLevelFrame
-            // treats the upper bound as exclusive, and a track ending exactly on FrameLength is the
-            // easiest off-by-one in the whole format to write by accident.
+            // The track covers the whole timeline: a span of FrameDuration frames starting at zero,
+            // so it ends exactly on the level's end boundary and its last sounding frame is
+            // FrameDuration - 1. This used to be the easiest off-by-one in the format to write by
+            // accident, back when the end was a separate inclusive field.
             var audioId = level.Settings.GetNextAudioId();
             level.Audio.Tracks[audioId] = new LevelTrack(audioId, resourceId,
-                FrameRules.MinFrame, level.Settings.FrameLength - 1, parameters.OffsetSeconds,
+                new FrameSpan(FrameRules.MinFrame, level.Settings.FrameDuration), parameters.OffsetSeconds,
                 AudioRules.MinAudioLayer, TrackName(parameters), new LevelTrackEffects());
 
             var meta = new LevelMeta
@@ -85,14 +86,14 @@ namespace BH.SDK.Generators.Audio
 
         /// <summary> Song length plus the tail, in frames - the tail is what leaves room to author
         /// an ending after the music stops instead of cutting the level off on the last beat. </summary>
-        private static int FrameLength(Parameters parameters, int framerate)
+        private static int FrameDuration(Parameters parameters, int framerate)
         {
             var seconds = parameters.DurationSeconds > 0f ? parameters.DurationSeconds : DefaultSeconds;
             var tail = parameters.TailSeconds > 0f ? parameters.TailSeconds : 0f;
             var frames = (int)Math.Ceiling((seconds + tail) * framerate);
 
-            if (frames < FrameRules.MinFrameLength) frames = FrameRules.MinFrameLength;
-            if (frames > FrameRules.MaxFrameLength) frames = FrameRules.MaxFrameLength;
+            if (frames < FrameRules.MinFrameDuration) frames = FrameRules.MinFrameDuration;
+            if (frames > FrameRules.MaxFrameDuration) frames = FrameRules.MaxFrameDuration;
             return frames;
         }
 

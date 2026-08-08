@@ -47,11 +47,10 @@ namespace BH.SDK.Generators.Audio
 
             if (parameters.ClearRange)
             {
-                var start = context.StartFrame;
-                var end = context.EndFrame;
-                context.RemoveLevelKeys(camera.Zooms, key => key.Frame >= start && key.Frame <= end);
+                var window = context.Span;
+                context.RemoveLevelKeys(camera.Zooms, key => window.Contains(key.Frame));
                 if (parameters.Shake)
-                    context.RemoveLevelKeys(camera.Shakes, key => key.Frame >= start && key.Frame <= end);
+                    context.RemoveLevelKeys(camera.Shakes, key => window.Contains(key.Frame));
             }
 
             var zoomFrames = OccupiedFrames(camera.Zooms.Count, camera.Zooms, key => key.Frame);
@@ -61,7 +60,7 @@ namespace BH.SDK.Generators.Audio
             foreach (var beat in PlannedBeats(context, parameters))
             {
                 var release = beat + decay;
-                if (release > context.EndFrame) release = context.EndFrame;
+                if (release > context.Span.LastFrame) release = context.Span.LastFrame;
 
                 // Beats closer together than the decay would want two keys on one frame; the first
                 // one there wins, since a punch that already started matters more than its tail.
@@ -96,16 +95,16 @@ namespace BH.SDK.Generators.Audio
             var zoomFrames = new HashSet<int>();
             var shakeFrames = new HashSet<int>();
             foreach (var key in camera.Zooms)
-                if (!parameters.ClearRange || key.Frame < context.StartFrame || key.Frame > context.EndFrame)
+                if (!parameters.ClearRange || !context.Span.Contains(key.Frame))
                     zoomFrames.Add(key.Frame);
             foreach (var key in camera.Shakes)
-                if (!parameters.ClearRange || key.Frame < context.StartFrame || key.Frame > context.EndFrame)
+                if (!parameters.ClearRange || !context.Span.Contains(key.Frame))
                     shakeFrames.Add(key.Frame);
 
             foreach (var beat in PlannedBeats(context, parameters))
             {
                 var release = beat + decay;
-                if (release > context.EndFrame) release = context.EndFrame;
+                if (release > context.Span.LastFrame) release = context.Span.LastFrame;
 
                 if (zoomFrames.Add(beat)) keys++;
                 if (zoomFrames.Add(release)) keys++;
@@ -126,7 +125,7 @@ namespace BH.SDK.Generators.Audio
             var emitted = 0;
             foreach (var beat in beats)
             {
-                if (beat < context.StartFrame || beat > context.EndFrame) continue;
+                if (!context.Span.Contains(beat)) continue;
                 if (emitted >= MaxBeats) yield break;
                 emitted++;
                 yield return beat;

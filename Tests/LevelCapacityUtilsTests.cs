@@ -20,7 +20,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Easy)]
         public void GetPeak_NoIntervals_ReturnsZero()
         {
-            var peak = LevelCapacityUtils.GetPeak(new List<int>(), new List<int>());
+            var peak = LevelCapacityUtils.GetPeak(new List<FrameSpan>());
             Assert.AreEqual(0, peak);
         }
 
@@ -30,8 +30,11 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Easy)]
         public void GetPeak_DisjointIntervals_ReturnsOne()
         {
-            // [0,10] then [11,20] - never alive at the same frame
-            var peak = LevelCapacityUtils.GetPeak(new[] { 0, 11 }, new[] { 10, 20 });
+            // [0,11) then [11,21) - never alive at the same frame
+            var peak = LevelCapacityUtils.GetPeak(new[]
+            {
+                FrameSpan.FromBounds(0, 11), FrameSpan.FromBounds(11, 21),
+            });
             Assert.AreEqual(1, peak);
         }
 
@@ -39,11 +42,15 @@ namespace BH.SDK.Tests
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Easy)]
-        public void GetPeak_TouchingIntervals_BothEndsInclusive_ReturnsTwo()
+        public void GetPeak_AdjacentSpans_ShareNoFrame_ReturnsOne()
         {
-            // [0,10] and [10,20] share frame 10 - inclusive bounds mean they do overlap there
-            var peak = LevelCapacityUtils.GetPeak(new[] { 0, 10 }, new[] { 10, 20 });
-            Assert.AreEqual(2, peak);
+            // The regression FrameSpan exists for: [0,10) and [10,20) meet without overlapping, so
+            // two objects authored back to back never need two slots at once.
+            var peak = LevelCapacityUtils.GetPeak(new[]
+            {
+                FrameSpan.FromBounds(0, 10), FrameSpan.FromBounds(10, 20),
+            });
+            Assert.AreEqual(1, peak);
         }
 
         [Test]
@@ -52,7 +59,10 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Easy)]
         public void GetPeak_NestedIntervals_ReturnsDepth()
         {
-            var peak = LevelCapacityUtils.GetPeak(new[] { 0, 1, 2 }, new[] { 100, 50, 10 });
+            var peak = LevelCapacityUtils.GetPeak(new[]
+            {
+                FrameSpan.FromBounds(0, 100), FrameSpan.FromBounds(1, 50), FrameSpan.FromBounds(2, 10),
+            });
             Assert.AreEqual(3, peak);
         }
 
@@ -62,7 +72,10 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Easy)]
         public void GetPeak_SingleFrameIntervals_OnSameFrame_ReturnsCount()
         {
-            var peak = LevelCapacityUtils.GetPeak(new[] { 5, 5, 5 }, new[] { 5, 5, 5 });
+            var peak = LevelCapacityUtils.GetPeak(new[]
+            {
+                new FrameSpan(5, 1), new FrameSpan(5, 1), new FrameSpan(5, 1),
+            });
             Assert.AreEqual(3, peak);
         }
 
@@ -72,8 +85,11 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Easy)]
         public void GetPeak_PeakIsNotTotalCount()
         {
-            // three objects, but never more than two at once: [0,10] [5,15] [20,30]
-            var peak = LevelCapacityUtils.GetPeak(new[] { 0, 5, 20 }, new[] { 10, 15, 30 });
+            // three objects, but never more than two at once: [0,10) [5,15) [20,30)
+            var peak = LevelCapacityUtils.GetPeak(new[]
+            {
+                FrameSpan.FromBounds(0, 10), FrameSpan.FromBounds(5, 15), FrameSpan.FromBounds(20, 30),
+            });
             Assert.AreEqual(2, peak);
         }
 
@@ -81,11 +97,16 @@ namespace BH.SDK.Tests
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Easy)]
-        public void GetPeak_InvertedInterval_IsIgnored()
+        public void GetPeak_SingleFrameSpans_AreCountedWhereTheyLand()
         {
-            // EndFrame < StartFrame - the object is never alive, so it must not take a slot
-            var peak = LevelCapacityUtils.GetPeak(new[] { 0, 10 }, new[] { 10, 5 });
-            Assert.AreEqual(1, peak);
+            // A degenerate interval is no longer representable - FrameSpan clamps Duration to at
+            // least one - so the case this used to guard against cannot reach the sweep at all.
+            // What is worth pinning instead is that a one-frame object still occupies its frame.
+            var peak = LevelCapacityUtils.GetPeak(new[]
+            {
+                new FrameSpan(0, 10), new FrameSpan(9, 1),
+            });
+            Assert.AreEqual(2, peak);
         }
 
         #endregion
@@ -185,8 +206,7 @@ namespace BH.SDK.Tests
         private static void AddObject(Level level, RectObject levelObject, int id, int startFrame, int endFrame)
         {
             levelObject.ObjectId = new ObjectId(id);
-            levelObject.StartFrame = startFrame;
-            levelObject.EndFrame = endFrame;
+            levelObject.Span = FrameSpan.FromBounds(startFrame, endFrame);
             level.Game.Objects.Add(levelObject.ObjectId, levelObject);
         }
         private static void AddTrack(Level level, int id, int startFrame, int endFrame)
@@ -195,8 +215,7 @@ namespace BH.SDK.Tests
             {
                 AudioId = new AudioId(id),
                 AudioResourceId = AudioResourceId.Null,
-                StartFrame = startFrame,
-                EndFrame = endFrame,
+                Span = FrameSpan.FromBounds(startFrame, endFrame),
             };
             level.Audio.Tracks.Add(track.AudioId, track);
         }

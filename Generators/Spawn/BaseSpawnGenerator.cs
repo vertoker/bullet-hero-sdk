@@ -3,6 +3,7 @@ using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 
@@ -22,7 +23,7 @@ namespace BH.SDK.Generators.Spawn
     //
     // Frames come into these helpers ABSOLUTE (a generator thinks in the context's window) and are
     // stored LOCAL, because that is what a keyframe's Frame means in this format: the runtime reads
-    // it back as obj.StartFrame + key.Frame (Unity side: FrameMath/FrameUtils.ToGlobalFrame). Storing
+    // it back as obj.Span.StartFrame + key.Frame (Unity side: FrameMath/FrameUtils.ToGlobalFrame). Storing
     // an absolute frame is not a visible error - the object simply never reaches its own keys, so it
     // spawns correctly and then never moves. Every Add*/SetSize below converts; a generator writing
     // obj.Positions.Add itself has to do the same, and the sweep test checks the result.
@@ -34,27 +35,22 @@ namespace BH.SDK.Generators.Spawn
         where TParams : SpawnParameters, new()
     {
         /// <summary> Creates one templated object, already parented, framed and given its size and
-        /// colour at startFrame. Placement (position/rotation) is the caller's job. </summary>
+        /// colour on its first frame. Placement (position/rotation) is the caller's job. </summary>
         protected static TextureObject Spawn(GeneratorContext context, SpawnParameters parameters,
-            string name, int startFrame, int endFrame)
+            string name, in FrameSpan span)
         {
             var obj = context.Create<TextureObject>();
             obj.ParentObjectId = context.Parent;
             obj.Name = name;
             obj.Layer = ClampLayer(context.LocalLayer);
-            obj.StartFrame = ClampFrame(context, startFrame);
-            obj.EndFrame = ClampFrame(context, Math.Max(endFrame, startFrame));
+            obj.Span = ClampSpan(context, span);
             obj.TextureResourceId = parameters.Texture;
             obj.ColliderId = parameters.Collider;
 
-            AddSize(obj, parameters.Size, obj.StartFrame);
-            AddColor(obj, parameters.Color, obj.StartFrame);
+            AddSize(obj, parameters.Size, obj.Span.StartFrame);
+            AddColor(obj, parameters.Color, obj.Span.StartFrame);
             return obj;
         }
-
-        /// <summary> Object count that fits in the context's own frame range - a generator staggering
-        /// its output over time asks this before deciding how much it can actually place. </summary>
-        protected static int FrameSpan(GeneratorContext context) => Math.Max(context.EndFrame - context.StartFrame, 0);
 
         protected static void AddPosition(TextureObject obj, float x, float y, int frame,
             EaseType ease = FrameRules.DefaultEase)
@@ -90,7 +86,7 @@ namespace BH.SDK.Generators.Spawn
         protected static void SetSize(TextureObject obj, float width, float height)
         {
             obj.Sizes.Clear();
-            AddSize(obj, width, height, obj.StartFrame);
+            AddSize(obj, width, height, obj.Span.StartFrame);
         }
 
         protected static void AddColor(TextureObject obj, IColor4 color, int frame,
@@ -113,10 +109,11 @@ namespace BH.SDK.Generators.Spawn
         /// the format bounds a keyframe's Frame at zero anyway. </summary>
         protected static int LocalFrame(RectObject obj, int frame)
         {
-            var local = frame - obj.StartFrame;
-            var span = obj.EndFrame - obj.StartFrame;
+            var local = obj.Span.ToLocalFrame(frame);
             if (local < 0) return 0;
-            return local > span ? span : local;
+
+            var lastLocal = obj.Span.FrameDuration - 1;
+            return local > lastLocal ? lastLocal : local;
         }
 
         // Degrees in, unit vector out. System.Math is the only trigonometry available here - the
@@ -149,13 +146,18 @@ namespace BH.SDK.Generators.Spawn
         // of two, and an estimate that ignored that would drift from reality by exactly the amount
         // the clamp removed.
         protected static int ClampFrame(GeneratorContext context, int frame)
-            => frame < context.StartFrame ? context.StartFrame
-                : frame > context.EndFrame ? context.EndFrame : frame;
+            => frame < context.Span.StartFrame ? context.Span.StartFrame
+                : frame > context.Span.LastFrame ? context.Span.LastFrame : frame;
+
+        /// <summary> A whole lifetime cut down to the context's window, exactly the way Spawn does
+        /// it - an Estimate measuring the same object has to apply this too. </summary>
+        protected static FrameSpan ClampSpan(GeneratorContext context, in FrameSpan span)
+            => span.ClampedInto(context.Span);
 
         /// <summary> True when an object's clamped lifetime still spans more than one frame, i.e.
         /// there is room for a second keyframe on any of its tracks. A collapsed lifetime must get
         /// ONE key per track - two on the same frame violates RuleCollectionUnique. </summary>
-        protected static bool CanAnimate(int startFrame, int endFrame) => endFrame > startFrame;
+        protected static bool CanAnimate(in FrameSpan span) => span.FrameDuration > FrameRules.MinFrameDuration;
 
         /// <summary> Whether a MOVING object that would start at this frame belongs in the run at
         /// all. A staggered generator asked for more objects than its window has room for used to
@@ -164,7 +166,7 @@ namespace BH.SDK.Generators.Spawn
         /// the end, because a bullet with no frame to travel in is one of those ghosts. Estimate
         /// must apply the same check, or it counts objects the run never creates. </summary>
         protected static bool CanSpawn(GeneratorContext context, int startFrame)
-            => startFrame < context.EndFrame;
+            => startFrame < context.Span.EndFrame;
 
         private static float Clamp(float value, float min, float max)
             => value < min ? min : value > max ? max : value;

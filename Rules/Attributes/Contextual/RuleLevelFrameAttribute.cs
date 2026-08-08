@@ -5,7 +5,7 @@ using BH.SDK.Utils;
 namespace BH.SDK.Rules.Attributes
 {
     // Bounded by the timeline of the scope currently being walked, not by "the level's" - a frame
-    // inside a prefab template belongs to that template's own FrameLength, and measuring it against
+    // inside a prefab template belongs to that template's own FrameDuration, and measuring it against
     // the level's would let a 10-frame template hold a keyframe at frame 500.
     //
     // A root with no timeline at all (LevelMeta, UserSettings, a standalone value model) still gets
@@ -14,8 +14,8 @@ namespace BH.SDK.Rules.Attributes
     // informative, since Fix had nothing to clamp against either.
 
     /// <summary>
-    /// A frame must sit inside its own scope's timeline: [0, FrameLength). The upper bound is
-    /// exclusive - FrameLength is a count, so the last playable frame is FrameLength - 1.
+    /// A frame must sit inside its own scope's timeline: [0, FrameDuration). The upper bound is
+    /// exclusive - FrameDuration is a count, so the last playable frame is FrameDuration - 1.
     /// </summary>
     [AttributeUsage(PropertyTarget)]
     public class RuleLevelFrameAttribute : BasePropertyRuleAttribute
@@ -30,7 +30,7 @@ namespace BH.SDK.Rules.Attributes
             if (value is not int frame || frame < FrameRules.MinFrame) return false;
             if (context is not { HasScope: true }) return true;
 
-            return frame < context.FrameLength;
+            return frame < context.FrameDuration;
         }
 
         protected override void FixInternal(object target, PropertyInfo property, RuleContext context)
@@ -38,8 +38,8 @@ namespace BH.SDK.Rules.Attributes
             if (property.GetValue(target) is not int frame) return;
 
             var hasTimeline = context is { HasScope: true }
-                              && context.FrameLength >= FrameRules.MinFrameLength;
-            var maxFrame = hasTimeline ? context.FrameLength - 1 : int.MaxValue;
+                              && context.FrameDuration >= FrameRules.MinFrameDuration;
+            var maxFrame = hasTimeline ? context.FrameDuration - 1 : int.MaxValue;
 
             if (frame < FrameRules.MinFrame || frame > maxFrame)
                 property.SetValue(target, BHSDKMath.Clamp(frame, FrameRules.MinFrame, maxFrame));

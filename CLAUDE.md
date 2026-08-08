@@ -106,9 +106,11 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   generator implements to say "this parameter comes from the host" — matched by interface, not by
   field name, so a rename is a compile error), `Modifiers/` (`ObjectTrackMask`/`ObjectTracks` —
   generic enumeration of an object's ten keyframe tracks, plus the modifiers themselves),
-  `Geometry/`, `Bullets/`, `Audio/`, `Textures/`, `Utility/` (the concrete generators — 19 of them,
-  the roster the design document calls complete plus `mod_content_remover`/`mod_framerate_remap`). Three rules a spawning generator must get right:
-  **a keyframe's `Frame` is LOCAL to its owning object** (the runtime reads `obj.StartFrame + Frame`,
+  `Geometry/`, `Bullets/`, `Audio/`, `Textures/`, `Utility/` (the concrete generators — 20 of them,
+  the roster the design document calls complete plus `mod_content_remover`/`mod_framerate_remap` and
+  `mod_span_fit`, which fits every child's lifetime to its parent's and is what replaced the removed
+  `GraphRule.ChildSpanOutsideParent` and its auto-repair). Three rules a spawning generator must get right:
+  **a keyframe's `Frame` is LOCAL to its owning object** (the runtime reads `obj.Span.StartFrame + Frame`,
   so an absolute frame yields objects that spawn correctly and then never move — `BaseSpawnGenerator`'s
   `Add*` helpers convert, `mod_quantize_keyframes` converts the other way to snap against the level's
   own grid, and a sweep test pins it),
@@ -118,7 +120,7 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   window** (`CanSpawn` — the overflow used to clamp onto the last frame as one-frame ghosts), and
   **a lifetime clamped to one frame gets one key per track**, not two — see
   `BaseSpawnGenerator.CanAnimate`, and note that `Estimate` has to apply the same clamp. A third,
-  format-wide: **`FrameLength` is a count**, so the last legal frame is `FrameLength - 1`
+  format-wide: **`FrameDuration` is a count**, so the last legal frame is `FrameDuration - 1`
   (`RuleLevelFrame`'s upper bound is exclusive).
   Has its own `README.md`; full design in the consuming project's
   `docs/superpowers/specs/2026-08-05-sdk-generators-design.md`.
@@ -146,7 +148,7 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
 ## Object model (`Models/Objects/`)
 
 `RectObject` is the base of every placeable scene object: `ObjectId`, `ParentObjectId`, `Name`,
-`Visible`, `StartFrame`/`EndFrame`/`Layer`, plus the shared keyframe tracks
+`Visible`, `Span` (a half-open `FrameSpan`), `Layer`, plus the shared keyframe tracks
 (`Positions`/`Rotations`/`Scales`/`Sizes`/`AnchorsMin`/`AnchorsMax`/`Pivots`). Empty keyframe lists
 are valid (mirrors Unity project's `defaults.xxx` fallback convention). Subclasses, each overriding
 `GetModelType() : ObjectType`: `TextureObject`, `EffectObject` (thin — just an `EffectId` pointing
@@ -181,7 +183,7 @@ meaningless (e.g. `PrefabRoot` at level scope) — a known leniency gap, not yet
 ## Prefab system
 
 `Prefab` (`Models/Objects/Prefab.cs`, a `Level.Resources.Prefabs` entry) is the *template*: its own
-`Objects`/`ObjectIdCounter`, plus its own authored `Name`/`FrameLength`. `PrefabObject` (a
+`Objects`/`ObjectIdCounter`, plus its own authored `Name`/`FrameDuration`. `PrefabObject` (a
 `RectObject` subclass) is the *placement*: `PrefabId` (which template) +
 `Dictionary<ObjectId, ObjectId> ObjectIds` (template-inner id → this placement's own materialized
 outer id) + `Dictionary<ModificationKey, Modification> Modifications` (per-instance field overrides,
@@ -316,7 +318,7 @@ alongside `ThemeKeyframe` (which *is* a real track) in the same `GameEvents` cla
 
 ## `Models/SettingGroups/` — one folder, two unrelated aggregates
 
-`LevelSettings` (`Level.Settings`, per-level: `Framerate`, `FrameLength`, `ObjectIdCounter`,
+`LevelSettings` (`Level.Settings`, per-level: `Framerate`, `FrameDuration`, `ObjectIdCounter`,
 `AudioIdCounter` — the `IObjectIdCounter` implementation — plus `Capacity`, a `LevelCapacityHint`)
 has nothing to do with the rest of this
 folder (`GeneralSettings`/`ControlsSettings`/`AudioSettings`/`GraphicsSettings`/
@@ -455,7 +457,7 @@ whose `Fix` masks the unknown bits off instead of falling back to a default. Don
 only — never fields), all `: BaseRuleAttribute` (`IsValidType`/`IsValid`/`Fix`). `[RuleContainer]`
 (a bare class-level marker) opts a type into the reflective walk — applied broadly across `Models/`
 (156+ files), not just a handful of aggregate roots. `Rules/Attributes/Contextual/` need the root
-`Level` as context (`RuleLevelFrameAttribute` checks against `Level.Settings.FrameLength`,
+`Level` as context (`RuleLevelFrameAttribute` checks against `Level.Settings.FrameDuration`,
 `RuleObjectIdValidAttribute`/`RuleParentObjectIdValidAttribute` check `ObjectId` validity/parent
 rules) — both still carry a `// TODO add complex check for parenting and ids uniqueness`, because a
 property attribute only ever sees one property at a time. **Cross-object invariants are implemented,

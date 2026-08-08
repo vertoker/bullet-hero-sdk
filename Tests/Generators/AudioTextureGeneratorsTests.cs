@@ -28,11 +28,11 @@ namespace BH.SDK.Tests.Generators
         {
             var level = new Level();
             level.Settings.Framerate = 60;
-            level.Settings.FrameLength = 600;
+            level.Settings.FrameDuration = 600;
             return level;
         }
 
-        private static GeneratorContext Context(Level level) => new(level, Start, End);
+        private static GeneratorContext Context(Level level) => new(level, FrameSpan.FromBounds(Start, End));
 
         #region gen_level_audio_file
 
@@ -54,7 +54,7 @@ namespace BH.SDK.Tests.Generators
             var (level, meta) = generator.Create(parameters);
 
             Assert.AreEqual(60, level.Settings.Framerate);
-            Assert.AreEqual(720, level.Settings.FrameLength, "(10 + 2) seconds at 60 fps");
+            Assert.AreEqual(720, level.Settings.FrameDuration, "(10 + 2) seconds at 60 fps");
 
             var resource = level.Resources.Audios.Values.Single();
             Assert.IsTrue(resource.AudioResourceId.IsUserDefined(), "a level's own clip is user-defined");
@@ -63,9 +63,9 @@ namespace BH.SDK.Tests.Generators
 
             var track = level.Audio.Tracks.Values.Single();
             Assert.AreEqual(resource.AudioResourceId, track.AudioResourceId);
-            Assert.AreEqual(FrameRules.MinFrame, track.StartFrame);
-            Assert.AreEqual(level.Settings.FrameLength - 1, track.EndFrame,
-                "FrameLength is a count - the last playable frame is one less (see RuleLevelFrame)");
+            Assert.AreEqual(FrameRules.MinFrame, track.Span.StartFrame);
+            Assert.AreEqual(level.Settings.FrameDuration, track.Span.EndFrame,
+                "the track covers the whole timeline, and a span's end IS the timeline's length");
 
             Assert.AreEqual("theme song", ((StringValue)meta.LevelName).Value,
                 "an untitled level is named after its song");
@@ -99,8 +99,8 @@ namespace BH.SDK.Tests.Generators
             var generator = new AudioFileLevelGenerator();
             var (level, _) = generator.Create(generator.CreateDefaultParameters());
 
-            Assert.GreaterOrEqual(level.Settings.FrameLength, FrameRules.MinFrameLength);
-            Assert.Greater(level.Settings.FrameLength, 1);
+            Assert.GreaterOrEqual(level.Settings.FrameDuration, FrameRules.MinFrameDuration);
+            Assert.Greater(level.Settings.FrameDuration, 1);
         }
 
         [Test]
@@ -253,7 +253,7 @@ namespace BH.SDK.Tests.Generators
             zooms.Add(new ZoomKey(new FloatValue(4f), 500));
             var snapshot = level.Game.CameraEvents.Copy();
 
-            var context = new GeneratorContext(level, 0, 240);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 240));
             var result = new BeatFlashGenerator().Run(context, new BeatFlashGenerator.Parameters
             {
                 BeatFrames = new[] { 60 }, DecayFrames = 10, Shake = false, ClearRange = true,
@@ -298,7 +298,7 @@ namespace BH.SDK.Tests.Generators
         public void BeatFlash_IgnoresBeatsOutsideTheWindow()
         {
             var level = CreateLevel();
-            new BeatFlashGenerator().Run(new GeneratorContext(level, 100, 200),
+            new BeatFlashGenerator().Run(new GeneratorContext(level, FrameSpan.FromBounds(100, 200)),
                 new BeatFlashGenerator.Parameters
                 {
                     BeatFrames = new[] { 10, 150, 500 }, DecayFrames = 5, Shake = false,

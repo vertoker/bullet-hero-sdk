@@ -20,7 +20,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = new Level();
             level.Settings.Framerate = 60;
-            level.Settings.FrameLength = 600;
+            level.Settings.FrameDuration = 600;
             return level;
         }
 
@@ -31,8 +31,7 @@ namespace BH.SDK.Tests.Generators
                 ObjectId = level.Settings.GetNextObjectId(),
                 Name = name,
                 Layer = layer,
-                StartFrame = 0,
-                EndFrame = 60,
+                Span = FrameSpan.FromBounds(0, 60),
             };
             level.Game.Objects.Add(obj.ObjectId, obj);
             return obj;
@@ -48,7 +47,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var host = AddObject(level, "host", 0);
-            var context = new GeneratorContext(level, 10, 90, host.ObjectId, layer: 5, groupName: "Radial");
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(10, 90), host.ObjectId, layer: 5, groupName: "Radial");
 
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
 
@@ -56,8 +55,8 @@ namespace BH.SDK.Tests.Generators
 
             var group = level.Game.Objects.Values.Single(o => o.Name == "Radial");
             Assert.AreEqual(host.ObjectId, group.ParentObjectId, "the container takes the author's parent");
-            Assert.AreEqual(10, group.StartFrame);
-            Assert.AreEqual(90, group.EndFrame);
+            Assert.AreEqual(10, group.Span.StartFrame);
+            Assert.AreEqual(90, group.Span.EndFrame);
             Assert.AreEqual(0, group.Layer, "Layer is parent-relative - a container repeating it would double it");
 
             foreach (var id in result.CreatedIds)
@@ -76,7 +75,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var host = AddObject(level, "host", 0);
-            var context = new GeneratorContext(level, 0, 60, host.ObjectId);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), host.ObjectId);
 
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 2 });
 
@@ -93,7 +92,7 @@ namespace BH.SDK.Tests.Generators
         public void Grouping_CreatesNothingWhenTheRunCreatesNothing()
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 0, 60, groupName: "Radial");
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), groupName: "Radial");
 
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 0 });
 
@@ -110,13 +109,13 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             var generator = new SpawnTestGenerator();
 
-            var grouped = new GeneratorContext(level, 0, 60, groupName: "Radial");
+            var grouped = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), groupName: "Radial");
             Assert.AreEqual(4, generator.Estimate(grouped, new SpawnTestGenerator.Parameters { Count = 3 }).Objects);
 
-            var empty = new GeneratorContext(level, 0, 60, groupName: "Radial");
+            var empty = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), groupName: "Radial");
             Assert.AreEqual(0, generator.Estimate(empty, new SpawnTestGenerator.Parameters { Count = 0 }).Objects);
 
-            var plain = new GeneratorContext(level, 0, 60);
+            var plain = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
             Assert.AreEqual(3, generator.Estimate(plain, new SpawnTestGenerator.Parameters { Count = 3 }).Objects);
         }
 
@@ -130,7 +129,7 @@ namespace BH.SDK.Tests.Generators
         public void LayerSplit_GivesEveryCreatedObjectItsOwnLayer()
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 0, 60, layer: 7, splitLayers: true);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), layer: 7, splitLayers: true);
 
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
 
@@ -145,7 +144,7 @@ namespace BH.SDK.Tests.Generators
         public void LayerSplit_Off_LeavesEveryObjectOnTheContextLayer()
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 0, 60, layer: 7);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), layer: 7);
 
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
 
@@ -162,7 +161,7 @@ namespace BH.SDK.Tests.Generators
         public void LayerSplit_SkipsTheGroupContainer()
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 0, 60, layer: 2, groupName: "Radial", splitLayers: true);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), layer: 2, groupName: "Radial", splitLayers: true);
 
             new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
 
@@ -182,7 +181,7 @@ namespace BH.SDK.Tests.Generators
         public void Grouping_Undo_RemovesTheContainerToo()
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 0, 60, groupName: "Radial");
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), groupName: "Radial");
 
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
             Assert.AreEqual(4, level.Game.Objects.Count);
@@ -202,7 +201,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var before = level.Settings.ObjectIdCounter;
-            var context = new GeneratorContext(level, 0, 60);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
 
             var generator = new SpawnTestGenerator();
             var result = generator.Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
@@ -221,14 +220,14 @@ namespace BH.SDK.Tests.Generators
         public void CreatedObjects_StayWithinContextBoundsAndLayer()
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 120, 240, ObjectId.Null, 7);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(120, 240), ObjectId.Null, 7);
 
             new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 5 });
 
             foreach (var obj in level.Game.Objects.Values)
             {
-                Assert.GreaterOrEqual(obj.StartFrame, 120);
-                Assert.LessOrEqual(obj.EndFrame, 240);
+                Assert.GreaterOrEqual(obj.Span.StartFrame, 120);
+                Assert.LessOrEqual(obj.Span.EndFrame, 240);
                 Assert.AreEqual(7, obj.Layer);
             }
         }
@@ -242,7 +241,7 @@ namespace BH.SDK.Tests.Generators
         public void Estimate_MatchesWhatRunActuallyProduces()
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 0, 60);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
             var parameters = new SpawnTestGenerator.Parameters { Count = 17 };
             var generator = new SpawnTestGenerator();
 
@@ -268,7 +267,7 @@ namespace BH.SDK.Tests.Generators
             var snapshot = level.Game.Copy();
             var counterBefore = level.Settings.ObjectIdCounter;
 
-            var context = new GeneratorContext(level, 0, 60);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 6 });
 
             Assert.AreEqual(7, level.Game.Objects.Count);
@@ -289,7 +288,7 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             AddObject(level, "existing", 0);
 
-            var context = new GeneratorContext(level, 0, 60);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 6 });
             var afterRun = level.Game.Copy();
 
@@ -308,7 +307,7 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             var pristine = level.Game.Copy();
 
-            var context = new GeneratorContext(level, 0, 60);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
             var result = new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 4 });
             var afterRun = level.Game.Copy();
 
@@ -331,7 +330,7 @@ namespace BH.SDK.Tests.Generators
             var a = AddObject(level, "a", 1);
             var b = AddObject(level, "b", 2);
 
-            var context = new GeneratorContext(level, 0, 60,
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60),
                 selection: new List<ObjectId> { a.ObjectId, b.ObjectId });
             var result = new RenameTestModifier().Run(context,
                 new RenameTestModifier.Parameters { Prefix = "x", Layer = 9 });
@@ -357,7 +356,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var obj = AddObject(level, "original", 3);
-            var context = new GeneratorContext(level, 0, 60);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
 
             context.Edit(obj.ObjectId).Name = "first";
             context.Edit(obj.ObjectId).Name = "second";
@@ -375,7 +374,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var obj = AddObject(level, "doomed", 4);
-            var context = new GeneratorContext(level, 0, 60);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60));
 
             context.Delete(obj.ObjectId);
             Assert.IsFalse(level.Game.Objects.ContainsKey(obj.ObjectId));
@@ -400,7 +399,7 @@ namespace BH.SDK.Tests.Generators
             zooms.Add(new ZoomKey(new FloatValue(1f), 500));
             var snapshot = level.Game.CameraEvents.Copy();
 
-            var context = new GeneratorContext(level, 0, 100);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 100));
             var result = new CameraFlashTestGenerator().Run(context, new CameraFlashTestGenerator.Parameters
             {
                 Frames = new[] { 30, 40 },
@@ -426,7 +425,7 @@ namespace BH.SDK.Tests.Generators
             var prefab = new Prefab { PrefabId = PrefabId.NewGuid(), Name = "template" };
             var level = CreateLevel();
 
-            var context = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, 0, 60);
+            var context = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, FrameSpan.FromBounds(0, 60));
 
             Assert.IsNull(context.Game, "A prefab template has no level-global event tracks");
             Assert.IsNull(context.Audio, "A prefab template has no audio");
@@ -444,7 +443,7 @@ namespace BH.SDK.Tests.Generators
         {
             var prefab = new Prefab { PrefabId = PrefabId.NewGuid(), Name = "template" };
             var level = CreateLevel();
-            var context = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, 0, 60);
+            var context = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, FrameSpan.FromBounds(0, 60));
 
             new SpawnTestGenerator().Run(context, new SpawnTestGenerator.Parameters { Count = 3 });
 

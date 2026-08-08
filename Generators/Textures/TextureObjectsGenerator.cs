@@ -73,15 +73,15 @@ namespace BH.SDK.Generators.Textures
             var index = 0;
             foreach (var run in runs)
             {
-                var obj = Spawn(context, parameters, $"pixels_{index++}", context.StartFrame, context.EndFrame);
+                var obj = Spawn(context, parameters, $"pixels_{index++}", context.Span);
                 var centerX = offsetX + (run.X + (run.Length - 1) * 0.5f) * parameters.PixelSize;
                 var centerY = offsetY - run.Y * parameters.PixelSize;
 
-                AddPosition(obj, centerX, centerY, obj.StartFrame);
+                AddPosition(obj, centerX, centerY, obj.Span.StartFrame);
                 SetSize(obj, run.Length * parameters.PixelSize, parameters.PixelSize);
 
                 obj.Colors.Clear();
-                AddColor(obj, ResolveColor(run.Color, palette), obj.StartFrame);
+                AddColor(obj, ResolveColor(run.Color, palette), obj.Span.StartFrame);
             }
         }
 

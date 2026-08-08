@@ -128,9 +128,9 @@ namespace BH.SDK.Tests.Rules
         [Category(Metadata.Category.Normal)]
         public void TestFrameBoundsAgree()
         {
-            Assert.AreEqual(FrameRules.MaxFrameLength - 1, FrameRules.MaxFrame,
-                "The last playable frame is one below the length, because FrameLength is a count");
-            Assert.AreEqual(FrameRules.MaxFrameLength, PrefabRules.MaxFrameLength,
+            Assert.AreEqual(FrameRules.MaxFrameDuration - 1, FrameRules.MaxFrame,
+                "The last playable frame is one below the length, because FrameDuration is a count");
+            Assert.AreEqual(FrameRules.MaxFrameDuration, PrefabRules.MaxFrameDuration,
                 "A template's timeline is measured in the same frames as a level's");
         }
 

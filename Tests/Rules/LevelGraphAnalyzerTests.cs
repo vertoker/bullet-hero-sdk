@@ -35,6 +35,38 @@ namespace BH.SDK.Tests.Rules
         private static RectObject Obj(int id, int parent = ObjectId.NullValue)
             => new() { ObjectId = new ObjectId(id), ParentObjectId = new ObjectId(parent) };
 
+        // A child reaching outside its parent is legal authored data, not a finding: the overhang is
+        // resolved away on read and simply never plays. This used to be reported as advice, which
+        // meant a level behaving exactly as designed logged an issue on every single load - fitting
+        // the lifetimes is now an edit the author asks for (mod_span_fit).
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void TestChildSpanOutsideParentIsNotReported()
+        {
+            var parent = Obj(1);
+            parent.Span = FrameSpan.FromBounds(10, 40);
+            var child = Obj(2, 1);
+            child.Span = FrameSpan.FromBounds(20, 60);
+
+            AssertClean(LevelWith(parent, child));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void TestChildSpanInsideParentIsClean()
+        {
+            var parent = Obj(1);
+            parent.Span = FrameSpan.FromBounds(10, 40);
+            var child = Obj(2, 1);
+            child.Span = FrameSpan.FromBounds(20, 30);
+
+            CollectionAssert.IsEmpty(Analyzer.Analyze(LevelWith(parent, child)));
+        }
+
         private static void AssertReports(Level level, GraphRule expected)
         {
             var issues = Analyzer.Analyze(level);

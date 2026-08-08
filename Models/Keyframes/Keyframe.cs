@@ -19,7 +19,7 @@ namespace BH.SDK.Models.Keyframes
         public const int DefaultFrame = 0;
         public const EaseType DefaultEase = EaseType.Linear;
 
-        /// <summary> Level frame this key sits on, bounded by LevelSettings.FrameLength. </summary>
+        /// <summary> Level frame this key sits on, bounded by LevelSettings.FrameDuration. </summary>
         [RuleLevelFrame]
         [JsonProperty(Names.FrameShort)]
         public int Frame { get; set; }

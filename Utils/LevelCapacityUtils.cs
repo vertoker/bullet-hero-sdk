@@ -3,6 +3,7 @@ using BH.SDK.Models;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.SettingGroups;
 
 namespace BH.SDK.Utils
@@ -21,9 +22,9 @@ namespace BH.SDK.Utils
     {
         /// <summary>
         /// Peak simultaneous usage across the whole level. O(n log n) - a sweep over each family's
-        /// [StartFrame, EndFrame] intervals, both ends inclusive (matching how playback queries a
-        /// frame). Placed prefabs need no special handling: their contents are materialized into the
-        /// same Objects dictionary as everything else.
+        /// half-open FrameSpan, so two objects meeting end to start are never counted as
+        /// simultaneous. Placed prefabs need no special handling: their contents are materialized
+        /// into the same Objects dictionary as everything else.
         /// </summary>
         public static LevelLimitHints GetPeakUsage(Level level)
         {
@@ -63,38 +64,35 @@ namespace BH.SDK.Utils
         }
 
         /// <summary>
-        /// Peak simultaneous usage of a single family, given raw [start, end] frame pairs (both ends
-        /// inclusive). Exposed for callers measuring something the level model doesn't describe.
+        /// Peak simultaneous usage of a single family, given raw spans. Exposed for callers
+        /// measuring something the level model doesn't describe.
         /// </summary>
-        public static int GetPeak(IReadOnlyList<int> startFrames, IReadOnlyList<int> endFrames)
+        public static int GetPeak(IReadOnlyList<FrameSpan> spans)
         {
             var sweep = new IntervalSweep();
-            var count = startFrames.Count < endFrames.Count ? startFrames.Count : endFrames.Count;
-            for (var i = 0; i < count; i++)
-                sweep.Add(startFrames[i], endFrames[i]);
+            for (var i = 0; i < spans.Count; i++)
+                sweep.Add(spans[i]);
             return sweep.GetPeak();
         }
 
         /// <summary>
-        /// Classic sweep line over inclusive frame intervals. Ends are stored as "end + 1" (the first
-        /// frame the object is gone), which makes the ordering between an end and a start on the same
-        /// frame unambiguous: two objects sharing a single frame do overlap on it.
+        /// Classic sweep line. A FrameSpan's end is already the first frame the object is gone, so
+        /// the ordering between an end and a start landing on the same frame needs no correction:
+        /// an object ending there and one starting there are never alive at the same time.
         /// </summary>
         private struct IntervalSweep
         {
             private List<int> _starts;
             private List<int> _ends;
 
-            public void Add(IFrameBounds bounds) => Add(bounds.StartFrame, bounds.EndFrame);
-            public void Add(int startFrame, int endFrame)
+            public void Add(IFrameBounds bounds) => Add(bounds.Span);
+            public void Add(in FrameSpan span)
             {
-                if (endFrame < startFrame) return; // degenerate interval - the object is never alive
-
                 _starts ??= new List<int>();
                 _ends ??= new List<int>();
 
-                _starts.Add(startFrame);
-                _ends.Add(endFrame + 1);
+                _starts.Add(span.StartFrame);
+                _ends.Add(span.EndFrame);
             }
 
             public int GetPeak()

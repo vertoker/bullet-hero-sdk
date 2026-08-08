@@ -41,11 +41,11 @@ namespace BH.SDK.Generators.Geometry
             for (var column = 0; column < columns; column++)
             {
                 var obj = Spawn(context, parameters, $"grid_{column}_{row}",
-                    context.StartFrame, context.EndFrame);
+                    context.Span);
                 AddPosition(obj,
                     parameters.OriginX + offsetX + column * parameters.SpacingX,
                     parameters.OriginY + offsetY + row * parameters.SpacingY,
-                    obj.StartFrame);
+                    obj.Span.StartFrame);
             }
         }
 

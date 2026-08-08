@@ -40,13 +40,13 @@ namespace BH.SDK.Generators.Geometry
                 var radius = Lerp(parameters.RadiusStart, parameters.RadiusEnd, t);
                 Direction(angle, out var dirX, out var dirY);
 
-                var obj = Spawn(context, parameters, $"spiral_{i}", context.StartFrame, context.EndFrame);
+                var obj = Spawn(context, parameters, $"spiral_{i}", context.Span);
                 AddPosition(obj,
                     parameters.CenterX + dirX * radius,
                     parameters.CenterY + dirY * radius,
-                    obj.StartFrame);
+                    obj.Span.StartFrame);
 
-                if (parameters.FaceOutward) AddRotation(obj, angle, obj.StartFrame);
+                if (parameters.FaceOutward) AddRotation(obj, angle, obj.Span.StartFrame);
             }
         }
 

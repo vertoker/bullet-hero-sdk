@@ -90,8 +90,8 @@ namespace BH.SDK.Tests.Rules
         [Category(Metadata.Category.Hard)]
         public void TestStandalonePrefab()
         {
-            var prefab = new Prefab { PrefabId = PrefabId.NewGuid(), FrameLength = 100 };
-            var inner = new RectObject { ObjectId = new ObjectId(1), EndFrame = 50 };
+            var prefab = new Prefab { PrefabId = PrefabId.NewGuid(), FrameDuration = 100 };
+            var inner = new RectObject { ObjectId = new ObjectId(1), Span = new FrameSpan(0, 51) };
             prefab.Objects.Add(inner.ObjectId, inner);
             prefab.ObjectIdCounter = 2;
 

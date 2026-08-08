@@ -9,7 +9,7 @@ namespace BH.SDK.Tests.Rules
 
     /// <summary>
     /// RulePropertyOrder: two properties of one object form an ordered pair. Covers every "these two
-    /// fields are a range" invariant - Min/Max, StartFrame/EndFrame, aspect bounds, camera sizes.
+    /// fields are a range" invariant - Min/Max, aspect bounds, camera sizes.
     /// </summary>
     public class RulePropertyOrderTests : BaseRuleTests
     {

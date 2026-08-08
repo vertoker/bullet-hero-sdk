@@ -328,6 +328,10 @@
         public const string Fps = "fps";
         public const string Length = "length";
         public const string LengthShort = "len";
+        public const string Duration = "duration";
+        public const string DurationShort = "dur";
+        public const string Span = "span";
+        public const string SpanShort = "sp";
         public const string Screen = "screen";
         public const string Event = "event";
         public const string Events = "events";
@@ -422,7 +426,7 @@
         // ---------------------------------------------------------------------------------------------
 
         public const string IsLocal = Is + _ + Local;
-        public const string FrameLengthShort = FrameShort + _ + LengthShort;
+        public const string FrameDurationShort = FrameShort + _ + DurationShort;
         public const string ScreenLimit = Screen + _ + Limit;
         public const string ScreenLimits = Screen + _ + Limits;
         
@@ -485,8 +489,6 @@
         
         public const string LocalFrame = Local + _ + Frame;
         public const string LocalFrameShort = LocalShort + FrameShort;
-        public const string StartFrameShort = StartShort + FrameShort;
-        public const string EndFrameShort = EndShort + FrameShort;
         public const string StopLocalFrame = Stop + _ + LocalFrame;
         public const string HasStopLocalFrame = Has + _ + StopLocalFrame;
         public const string OffsetTime = Offset + _ + Time;

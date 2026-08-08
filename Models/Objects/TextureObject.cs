@@ -24,15 +24,7 @@ namespace BH.SDK.Models.Objects
     public class TextureObject : RectObject, IModel<TextureObject>, IUpdatable<TextureObject>
     {
         public override ObjectType GetModelType() => ObjectType.TextureObject;
-
-        // Deliberately NOT [RuleIPrimitiveGuidNotNull], unlike most IPrimitiveGuid properties here
-        // (PrefabObject.PrefabId is the other exception): Null is a normal authored state in this
-        // one ("no collision"), not an unset reference. Both the constructor and Reset() default to
-        // it, the runtime collision jobs skip on !IsEnabled(), and the editor's collision toggle
-        // writes Null to turn collision off - so the rule would flag ordinary decoration objects,
-        // and its Fix would assign a random Guid, silently giving them a nonexistent collider
-        // (and damage) instead.
-
+        
         /// <summary> Collision shape from the shared library. Null means the object is decoration -
         /// drawn, never collided with. </summary>
         [JsonProperty(Names.ColliderId)]
@@ -64,11 +56,11 @@ namespace BH.SDK.Models.Objects
             Colors = new List<IColor4X4Key>();
             UVs = new List<UVKey>();
         }
-        public TextureObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+        public TextureObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
             ColliderId colliderId, TextureResourceId textureResourceId, List<IColor4X4Key> colors, List<UVKey> uvs)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
+            : base(objectId, parentObjectId, name, visible, span, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             ColliderId = colliderId;
@@ -89,7 +81,7 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         TextureObject ICopyable<TextureObject>.Copy() => CopyImpl();
         
-        private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+        private TextureObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
             ColliderId, TextureResourceId, Colors.CopyList(), UVs.CopyList());

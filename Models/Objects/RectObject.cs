@@ -22,7 +22,6 @@ namespace BH.SDK.Models.Objects
     /// not "data is missing".
     /// </summary>
     [RuleContainer]
-    [RulePropertyOrder(nameof(RectObject.StartFrame), nameof(RectObject.EndFrame))]
     public class RectObject : IFrameBounds, INameable, IModel<RectObject>, IUpdatable<RectObject>
     {
         public virtual ObjectType GetModelType() => ObjectType.RectObject;
@@ -49,16 +48,10 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.VisibleShort)]
         public bool Visible { get; set; }
 
-        /// <summary> First frame the object exists on. Outside its frame bounds the object is not
-        /// simulated at all, which is what keeps a long level cheap. </summary>
-        [RuleLevelFrame]
-        [JsonProperty(Names.StartFrameShort)]
-        public int StartFrame { get; set; }
-
-        /// <summary> Last frame the object exists on. </summary>
-        [RuleLevelFrame]
-        [JsonProperty(Names.EndFrameShort)]
-        public int EndFrame { get; set; }
+        /// <summary> Half-open lifetime [Start, End) on the owning scope's timeline. Outside it the
+        /// object is not simulated at all, which is what keeps a long level cheap. </summary>
+        [JsonProperty(Names.SpanShort)]
+        public FrameSpan Span { get; set; }
 
         /// <summary> Draw order among siblings - higher draws in front. Static here; LayerKey
         /// animates it where a track is wired up. </summary>
@@ -120,8 +113,7 @@ namespace BH.SDK.Models.Objects
             ParentObjectId = ObjectId.Null;
             Name = string.Empty;
             Visible = true;
-            StartFrame = FrameRules.MinFrame;
-            EndFrame = FrameRules.MinFrame;
+            Span = new FrameSpan();
             Layer = ValueRules.DefaultLayer;
             
             Positions = new List<PosKey>();
@@ -132,7 +124,7 @@ namespace BH.SDK.Models.Objects
             AnchorsMax = new List<AlignmentKey>();
             Pivots = new List<AlignmentKey>();
         }
-        public RectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+        public RectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots)
         {
@@ -140,8 +132,7 @@ namespace BH.SDK.Models.Objects
             ParentObjectId = parentObjectId;
             Name = name;
             Visible = visible;
-            StartFrame = startFrame;
-            EndFrame = endFrame;
+            Span = span;
             Layer = layer;
             
             Positions = positions;
@@ -158,8 +149,7 @@ namespace BH.SDK.Models.Objects
             ParentObjectId = ObjectId.Null;
             Name = string.Empty;
             Visible = true;
-            StartFrame = FrameRules.MinFrame;
-            EndFrame = FrameRules.MinFrame;
+            Span = new FrameSpan();
             Layer = ValueRules.DefaultLayer;
             
             Positions.Clear();
@@ -174,7 +164,7 @@ namespace BH.SDK.Models.Objects
         public virtual object Clone() => CopyImpl();
         public virtual RectObject Copy() => CopyImpl();
         
-        private RectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+        private RectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList());
         
@@ -184,8 +174,7 @@ namespace BH.SDK.Models.Objects
             ParentObjectId = src.ParentObjectId;
             Name = src.Name;
             Visible = src.Visible;
-            StartFrame = src.StartFrame;
-            EndFrame = src.EndFrame;
+            Span = src.Span;
             Layer = src.Layer;
             
             Positions = src.Positions.CopyList();
@@ -206,8 +195,7 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(ParentObjectId);
             hashCode.Add(Name);
             hashCode.Add(Visible);
-            hashCode.Add(StartFrame);
-            hashCode.Add(EndFrame);
+            hashCode.Add(Span);
             hashCode.Add(Layer);
             
             hashCode.Add(Positions.GetListHashCode());
@@ -236,8 +224,7 @@ namespace BH.SDK.Models.Objects
                          && ParentObjectId.Equals(other.ParentObjectId)
                          && Name.Equals(other.Name)
                          && Visible == other.Visible
-                         && StartFrame.Equals(other.StartFrame)
-                         && EndFrame.Equals(other.EndFrame)
+                         && Span.Equals(other.Span)
                          // rect content
                          && Positions.ListEquals(other.Positions)
                          && Layer.Equals(other.Layer)

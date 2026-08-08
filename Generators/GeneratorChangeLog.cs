@@ -165,7 +165,7 @@ namespace BH.SDK.Generators
     }
 
     // The catch-all for a plain field that is neither an object, a resource nor a keyframe - the
-    // level's own Framerate/FrameLength. It holds the writer rather than the owning object, so one
+    // level's own Framerate/FrameDuration. It holds the writer rather than the owning object, so one
     // change type covers every such field without the journal knowing any of them by name.
 
     internal sealed class ValueChanged<T> : IGeneratorChange

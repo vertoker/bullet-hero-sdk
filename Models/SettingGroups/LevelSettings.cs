@@ -17,7 +17,7 @@ namespace BH.SDK.Models.SettingGroups
     /// </summary>
     [RuleContainer]
     [DataVersion(DataDomains.LevelSettings, 1, 0)]
-    public class LevelSettings : IObjectIdCounter, IFrameLength, IModel<LevelSettings>
+    public class LevelSettings : IObjectIdCounter, IFrameDuration, IModel<LevelSettings>
     {
         /// <summary> Frames per second the level is authored in - fixes what one frame means, and so
         /// what every keyframe's Frame refers to. Not a rendering framerate. </summary>
@@ -26,9 +26,9 @@ namespace BH.SDK.Models.SettingGroups
         public int Framerate { get; set; }
 
         /// <summary> Total length of the level in frames; every keyframe is validated against it. </summary>
-        [RuleInRange(FrameRules.MinFrameLength, FrameRules.MaxFrameLength)]
-        [JsonProperty(Names.FrameLengthShort)]
-        public int FrameLength { get; set; }
+        [RuleInRange(FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration)]
+        [JsonProperty(Names.FrameDurationShort)]
+        public int FrameDuration { get; set; }
 
         /// <summary> Next free object id. Only ever grows - ids of deleted objects are never reused,
         /// so a stale reference can't silently point at a different object. </summary>
@@ -53,34 +53,34 @@ namespace BH.SDK.Models.SettingGroups
         public LevelSettings()
         {
             Framerate = 60;
-            FrameLength = Framerate * 10;
+            FrameDuration = Framerate * 10;
             ObjectIdCounter = ObjectId.MinLevelValue;
             AudioIdCounter = AudioId.MinValue;
             LimitHints = new LevelLimitHints();
         }
-        public LevelSettings(int framerate, int frameLength, int objectIdCounter, int audioIdCounter)
-            : this(framerate, frameLength, objectIdCounter, audioIdCounter, new LevelLimitHints()) { }
+        public LevelSettings(int framerate, int frameDuration, int objectIdCounter, int audioIdCounter)
+            : this(framerate, frameDuration, objectIdCounter, audioIdCounter, new LevelLimitHints()) { }
         
-        public LevelSettings(int framerate, int frameLength, int objectIdCounter, int audioIdCounter,
+        public LevelSettings(int framerate, int frameDuration, int objectIdCounter, int audioIdCounter,
             LevelLimitHints limitHints)
         {
             Framerate = framerate;
-            FrameLength = frameLength;
+            FrameDuration = frameDuration;
             ObjectIdCounter = objectIdCounter;
             AudioIdCounter = audioIdCounter;
             LimitHints = limitHints;
         }
 
         public object Clone() => Copy();
-        public LevelSettings Copy() => new(Framerate, FrameLength, ObjectIdCounter, AudioIdCounter, LimitHints?.Copy());
+        public LevelSettings Copy() => new(Framerate, FrameDuration, ObjectIdCounter, AudioIdCounter, LimitHints?.Copy());
 
         public override bool Equals(object obj) => obj is LevelSettings value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Framerate, FrameLength, ObjectIdCounter, AudioIdCounter, LimitHints);
+        public override int GetHashCode() => HashCode.Combine(Framerate, FrameDuration, ObjectIdCounter, AudioIdCounter, LimitHints);
 
         public void Reset()
         {
             Framerate = 60;
-            FrameLength = Framerate * 10;
+            FrameDuration = Framerate * 10;
             ObjectIdCounter = ObjectId.MinLevelValue;
             AudioIdCounter = AudioId.MinValue;
             LimitHints = new LevelLimitHints();
@@ -91,7 +91,7 @@ namespace BH.SDK.Models.SettingGroups
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = Framerate.Equals(other.Framerate)
-                          && FrameLength.Equals(other.FrameLength)
+                          && FrameDuration.Equals(other.FrameDuration)
                           && ObjectIdCounter.Equals(other.ObjectIdCounter)
                           && AudioIdCounter.Equals(other.AudioIdCounter)
                           && Equals(LimitHints, other.LimitHints);

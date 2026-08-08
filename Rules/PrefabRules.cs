@@ -5,10 +5,10 @@ namespace BH.SDK.Rules
         // A Prefab template has no Framerate of its own (unlike LevelSettings) to scale a "10
         // seconds" default by, so this is a flat frame count instead - matches LevelSettings'
         // own default (60fps * 10s) at a nominal 60fps.
-        public const int DefaultFrameLength = 600;
+        public const int DefaultFrameDuration = 600;
 
         // A template's timeline is bounded exactly like a level's - same frames, same timeline UI.
-        public const int MaxFrameLength = FrameRules.MaxFrameLength;
+        public const int MaxFrameDuration = FrameRules.MaxFrameDuration;
 
         // A template is just another object scope, so it inherits the level's own object budget
         // rather than getting a separate (and inevitably drifting) number.

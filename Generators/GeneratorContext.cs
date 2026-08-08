@@ -51,14 +51,12 @@ namespace BH.SDK.Generators
         /// <summary> Scheduled audio. NULL in Prefab Mode, same reason as Game. </summary>
         public AudioLevel Audio { get; }
 
-        /// <summary> First frame the run should write to. </summary>
-        public int StartFrame { get; }
-
-        /// <summary> Last frame the run should write to. </summary>
-        public int EndFrame { get; }
+        /// <summary> Half-open window the run should write into. Nothing a generator creates may
+        /// fall outside it - see BaseSpawnGenerator.ClampSpan. </summary>
+        public FrameSpan Span { get; }
 
         // Grouping lives here rather than in each generator's parameters for the same reason
-        // StartFrame/Layer/Seed do: every generator that creates anything wants it, and a per-
+        // Span/Layer/Seed do: every generator that creates anything wants it, and a per-
         // generator copy would be one more field to forget. Because every generator already parents
         // what it creates to context.Parent (that is the contract), routing Parent through a lazily
         // created container is all it takes - no generator changes, including future ones.
@@ -119,27 +117,27 @@ namespace BH.SDK.Generators
         public GeneratorChangeLog Log { get; } = new();
 
         /// <summary> Level-scope run. Objects land in level.Game, ids come from level.Settings. </summary>
-        public GeneratorContext(Level level, int startFrame, int endFrame,
+        public GeneratorContext(Level level, FrameSpan span,
             ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
             string groupName = null, bool splitLayers = false)
             : this(level.Game, level.Settings, level.Settings, level.Resources, level.Game, level.Audio,
-                startFrame, endFrame, parent, layer, seed, selection, groupName, splitLayers)
+                span, parent, layer, seed, selection, groupName, splitLayers)
         {
         }
 
         /// <summary> Prefab-template run: Game/Audio stay null, so a LevelScope generator can't be
         /// handed one of these by accident. </summary>
         public GeneratorContext(IObjectScope scope, IObjectIdCounter counter, LevelSettings settings,
-            LevelResources resources, int startFrame, int endFrame,
+            LevelResources resources, FrameSpan span,
             ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
             string groupName = null, bool splitLayers = false)
             : this(scope, counter, settings, resources, null, null,
-                startFrame, endFrame, parent, layer, seed, selection, groupName, splitLayers)
+                span, parent, layer, seed, selection, groupName, splitLayers)
         {
         }
 
         private GeneratorContext(IObjectScope scope, IObjectIdCounter counter, LevelSettings settings,
-            LevelResources resources, GameLevel game, AudioLevel audio, int startFrame, int endFrame,
+            LevelResources resources, GameLevel game, AudioLevel audio, FrameSpan span,
             ObjectId parent, int layer, uint seed, IReadOnlyList<ObjectId> selection, string groupName,
             bool splitLayers)
         {
@@ -150,8 +148,7 @@ namespace BH.SDK.Generators
             Game = game;
             Audio = audio;
 
-            StartFrame = startFrame;
-            EndFrame = endFrame;
+            Span = span;
             _parent = parent;
             Layer = layer;
             Seed = seed;
@@ -211,8 +208,7 @@ namespace BH.SDK.Generators
             var group = Create<RectObject>();
             group.ParentObjectId = _parent;
             group.Name = _groupName;
-            group.StartFrame = StartFrame;
-            group.EndFrame = EndFrame;
+            group.Span = Span;
             group.Layer = 0;
 
             _group = group.ObjectId;
@@ -223,7 +219,7 @@ namespace BH.SDK.Generators
         /// or every object gets the same number. </summary>
         public GeneratorRandom CreateRandom() => new(Seed);
 
-        // Deliberately does NOT set StartFrame/EndFrame/Layer/ParentObjectId - the generator does,
+        // Deliberately does NOT set Span/Layer/ParentObjectId - the generator does,
         // from this context's own inputs, because "spread objects across the range" and "put them
         // all on the same frame" are both legitimate and only the generator knows which it means.
         // It also can't use LevelUtils.SetObjectId: that overload takes LevelSettings specifically,
@@ -266,7 +262,7 @@ namespace BH.SDK.Generators
         }
 
         // For the parts of a level that are neither an object, a resource nor a keyframe track -
-        // LevelSettings.Framerate/FrameLength above all. Delegates rather than a property path
+        // LevelSettings.Framerate/FrameDuration above all. Delegates rather than a property path
         // because the context has no business knowing which fields of which settings group a future
         // generator will need, and a journal entry only ever needs "put it back the way it was".
 

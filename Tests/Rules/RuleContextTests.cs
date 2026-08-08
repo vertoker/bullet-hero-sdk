@@ -1,5 +1,6 @@
 using System;
 using BH.SDK.Models;
+using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
@@ -25,7 +26,7 @@ namespace BH.SDK.Tests.Rules
         public void TestLevelRootPairsGameAndSettings()
         {
             var level = new Level();
-            level.Settings.FrameLength = 250;
+            level.Settings.FrameDuration = 250;
 
             var context = RuleContext.ForRoot(level);
 
@@ -34,7 +35,7 @@ namespace BH.SDK.Tests.Rules
             Assert.AreSame(level, context.Root);
             Assert.AreSame(level, context.Level);
             Assert.AreSame(level.Game, context.Objects);
-            Assert.AreEqual(250, context.FrameLength);
+            Assert.AreEqual(250, context.FrameDuration);
         }
 
         [Test]
@@ -43,14 +44,14 @@ namespace BH.SDK.Tests.Rules
         [Category(Metadata.Category.Easy)]
         public void TestPrefabRootIsItsOwnScope()
         {
-            var prefab = new Prefab { FrameLength = 42 };
+            var prefab = new Prefab { FrameDuration = 42 };
 
             var context = RuleContext.ForRoot(prefab);
 
             Assert.IsTrue(context.HasScope);
             Assert.IsTrue(context.IsPrefabScope);
             Assert.AreSame(prefab, context.Objects);
-            Assert.AreEqual(42, context.FrameLength);
+            Assert.AreEqual(42, context.FrameDuration);
             Assert.IsNull(context.Level, "A standalone template has no level around it");
         }
 
@@ -68,7 +69,7 @@ namespace BH.SDK.Tests.Rules
             Assert.IsFalse(context.IsPrefabScope);
             Assert.IsNull(context.Level);
             Assert.IsNull(context.Objects);
-            Assert.AreEqual(0, context.FrameLength);
+            Assert.AreEqual(0, context.FrameDuration);
         }
 
         // Descending into a template swaps everything scope-local but keeps the level, which
@@ -81,15 +82,15 @@ namespace BH.SDK.Tests.Rules
         public void TestWithScopeKeepsLevelAndRoot()
         {
             var level = new Level();
-            level.Settings.FrameLength = 250;
-            var prefab = new Prefab { FrameLength = 42 };
+            level.Settings.FrameDuration = 250;
+            var prefab = new Prefab { FrameDuration = 42 };
 
             var context = RuleContext.ForRoot(level).WithScope(prefab);
 
             Assert.AreSame(level, context.Root);
             Assert.AreSame(level, context.Level);
             Assert.AreSame(prefab, context.Objects);
-            Assert.AreEqual(42, context.FrameLength);
+            Assert.AreEqual(42, context.FrameDuration);
             Assert.IsTrue(context.IsPrefabScope);
         }
 
@@ -102,13 +103,13 @@ namespace BH.SDK.Tests.Rules
         public void TestWithScopeDoesNotMutateOriginal()
         {
             var level = new Level();
-            level.Settings.FrameLength = 250;
+            level.Settings.FrameDuration = 250;
             var outer = RuleContext.ForRoot(level);
 
-            var inner = outer.WithScope(new Prefab { FrameLength = 42 });
+            var inner = outer.WithScope(new Prefab { FrameDuration = 42 });
 
             Assert.AreNotSame(outer, inner);
-            Assert.AreEqual(250, outer.FrameLength);
+            Assert.AreEqual(250, outer.FrameDuration);
             Assert.IsFalse(outer.IsPrefabScope);
             Assert.AreSame(level.Game, outer.Objects);
         }
@@ -122,16 +123,18 @@ namespace BH.SDK.Tests.Rules
         public void TestAnalyzerRebasesInsideTemplate()
         {
             var atLevel = new Level();
-            atLevel.Settings.FrameLength = 100;
-            var levelObject = new RectObject { ObjectId = new ObjectId(1), EndFrame = 50 };
+            atLevel.Settings.FrameDuration = 100;
+            var levelObject = new RectObject { ObjectId = new ObjectId(1) };
+            levelObject.Positions.Add(new PosKey { Frame = 50 });
             atLevel.Game.Objects.Add(levelObject.ObjectId, levelObject);
 
             AssertValid(atLevel);
 
             var withTemplate = new Level();
-            withTemplate.Settings.FrameLength = 100;
-            var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameLength = 10 };
-            var innerObject = new RectObject { ObjectId = new ObjectId(1), EndFrame = 50 };
+            withTemplate.Settings.FrameDuration = 100;
+            var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameDuration = 10 };
+            var innerObject = new RectObject { ObjectId = new ObjectId(1) };
+            innerObject.Positions.Add(new PosKey { Frame = 50 });
             prefab.Objects.Add(innerObject.ObjectId, innerObject);
             withTemplate.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 

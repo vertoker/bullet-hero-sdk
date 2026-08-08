@@ -31,7 +31,16 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
 
-        // TODO add a contextual Rule validating this whole dictionary (key must equal value's own ObjectId)
+        // This template's own local timeline length - has no live placement to derive one from
+        // (a template can be referenced by many/zero placements), so it's authored directly,
+        // mirroring LevelSettings.FrameDuration. Used both as the recommended/default duration for a
+        // newly-placed PrefabObject and as the Prefab Timeline's own editing bound.
+
+        /// <summary> Length of the template's own timeline, in frames. </summary>
+        [RuleInRange(FrameRules.MinFrameDuration, PrefabRules.MaxFrameDuration)]
+        [JsonProperty(Names.FrameDurationShort)]
+        public int FrameDuration { get; set; }
+        
         // Nested PrefabObject placements (instances of OTHER prefabs, placed inside this template)
         // live directly in here too, already fully materialized - see IObjectScope's own comment.
 
@@ -52,16 +61,6 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.ObjectIdCounter)]
         public int ObjectIdCounter { get; set; }
 
-        // This template's own local timeline length - has no live placement to derive one from
-        // (a template can be referenced by many/zero placements), so it's authored directly,
-        // mirroring LevelSettings.FrameLength. Used both as the recommended/default duration for a
-        // newly-placed PrefabObject and as the Prefab Timeline's own editing bound.
-
-        /// <summary> Length of the template's own timeline, in frames. </summary>
-        [RuleInRange(FrameRules.MinFrameLength, PrefabRules.MaxFrameLength)]
-        [JsonProperty(Names.FrameLengthShort)]
-        public int FrameLength { get; set; }
-
         public ObjectId GetNextObjectId() => new(ObjectIdCounter++);
 
         public Prefab()
@@ -70,15 +69,15 @@ namespace BH.SDK.Models.Objects
             Name = string.Empty;
             Objects = new Dictionary<ObjectId, RectObject>();
             ObjectIdCounter = ObjectId.MinLevelValue;
-            FrameLength = PrefabRules.DefaultFrameLength;
+            FrameDuration = PrefabRules.DefaultFrameDuration;
         }
-        public Prefab(PrefabId prefabId, string name, Dictionary<ObjectId, RectObject> objects, int objectIdCounter, int frameLength)
+        public Prefab(PrefabId prefabId, string name, Dictionary<ObjectId, RectObject> objects, int objectIdCounter, int frameDuration)
         {
             PrefabId = prefabId;
             Name = name;
             Objects = objects;
             ObjectIdCounter = objectIdCounter;
-            FrameLength = frameLength;
+            FrameDuration = frameDuration;
         }
         public void Reset()
         {
@@ -86,15 +85,15 @@ namespace BH.SDK.Models.Objects
             Name = string.Empty;
             Objects.Clear();
             ObjectIdCounter = ObjectId.MinLevelValue;
-            FrameLength = PrefabRules.DefaultFrameLength;
+            FrameDuration = PrefabRules.DefaultFrameDuration;
         }
 
         public object Clone() => Copy();
-        public Prefab Copy() => new(PrefabId, Name, Objects.CopyDictionary(), ObjectIdCounter, FrameLength);
+        public Prefab Copy() => new(PrefabId, Name, Objects.CopyDictionary(), ObjectIdCounter, FrameDuration);
 
         public override bool Equals(object obj) => obj is Prefab value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(PrefabId, Name,
-            Objects.GetDictionaryHashCode(), ObjectIdCounter, FrameLength);
+            Objects.GetDictionaryHashCode(), ObjectIdCounter, FrameDuration);
 
         public bool Equals(Prefab other)
         {
@@ -104,7 +103,7 @@ namespace BH.SDK.Models.Objects
                          && Name.Equals(other.Name)
                          && Objects.DictionaryEquals(other.Objects)
                          && ObjectIdCounter.Equals(other.ObjectIdCounter)
-                         && FrameLength.Equals(other.FrameLength);
+                         && FrameDuration.Equals(other.FrameDuration);
             return result;
         }
     }

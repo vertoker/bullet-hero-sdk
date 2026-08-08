@@ -1,6 +1,7 @@
 using System.Linq;
 using BH.SDK.Generators;
 using BH.SDK.Models;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using NUnit.Framework;
 
@@ -15,14 +16,14 @@ namespace BH.SDK.Tests.Generators
         private static Level CreateLevel()
         {
             var level = new Level();
-            level.Settings.FrameLength = 600;
+            level.Settings.FrameDuration = 600;
             return level;
         }
 
         private static float[] RunScatter(uint seed)
         {
             var level = CreateLevel();
-            var context = new GeneratorContext(level, 0, 60, seed: seed);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(0, 60), seed: seed);
             new ScatterTestGenerator().Run(context, new ScatterTestGenerator.Parameters { Count = 16 });
 
             return level.Game.Objects.Values

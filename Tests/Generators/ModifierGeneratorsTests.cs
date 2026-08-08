@@ -21,7 +21,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = new Level();
             level.Settings.Framerate = framerate;
-            level.Settings.FrameLength = 600;
+            level.Settings.FrameDuration = 600;
             return level;
         }
 
@@ -32,8 +32,7 @@ namespace BH.SDK.Tests.Generators
                 ObjectId = level.Settings.GetNextObjectId(),
                 Name = $"obj_{layer}",
                 Layer = layer,
-                StartFrame = 0,
-                EndFrame = 200,
+                Span = FrameSpan.FromBounds(0, 200),
             };
             foreach (var frame in frames)
                 obj.Positions.Add(new PosKey(new Vector2Value(x, 0f), frame));
@@ -42,7 +41,7 @@ namespace BH.SDK.Tests.Generators
         }
 
         private static GeneratorContext Context(Level level, params ObjectId[] selection)
-            => new(level, 0, 300, selection: selection.ToList());
+            => new(level, FrameSpan.FromBounds(0, 300), selection: selection.ToList());
 
         private static List<int> FramesOf(RectObject obj) => obj.Positions.Select(key => key.Frame).ToList();
 
@@ -214,9 +213,9 @@ namespace BH.SDK.Tests.Generators
             new StaggerGenerator().Run(Context(level, a.ObjectId, b.ObjectId, c.ObjectId),
                 new StaggerGenerator.Parameters { StepFrames = 5, Order = StaggerOrder.Selection });
 
-            Assert.AreEqual(0, a.StartFrame);
-            Assert.AreEqual(5, b.StartFrame);
-            Assert.AreEqual(10, c.StartFrame);
+            Assert.AreEqual(0, a.Span.StartFrame);
+            Assert.AreEqual(5, b.Span.StartFrame);
+            Assert.AreEqual(10, c.Span.StartFrame);
 
             // A keyframe's Frame is LOCAL to its object, so shifting the bounds already carried every
             // key with it - in global terms b's key now lands on 5 and c's on 10, while the stored
@@ -244,7 +243,7 @@ namespace BH.SDK.Tests.Generators
                     ShiftBounds = false, ShiftKeyframes = true,
                 });
 
-            Assert.AreEqual(0, b.StartFrame, "bounds untouched");
+            Assert.AreEqual(0, b.Span.StartFrame, "bounds untouched");
             CollectionAssert.AreEqual(new[] { 5 }, FramesOf(b), "the key moved inside the same lifetime");
         }
 
@@ -264,9 +263,9 @@ namespace BH.SDK.Tests.Generators
             new StaggerGenerator().Run(Context(level, left.ObjectId, middle.ObjectId, right.ObjectId),
                 new StaggerGenerator.Parameters { StepFrames = 10, Order = StaggerOrder.PositionX });
 
-            Assert.AreEqual(0, left.StartFrame, "leftmost goes first");
-            Assert.AreEqual(10, middle.StartFrame);
-            Assert.AreEqual(20, right.StartFrame);
+            Assert.AreEqual(0, left.Span.StartFrame, "leftmost goes first");
+            Assert.AreEqual(10, middle.Span.StartFrame);
+            Assert.AreEqual(20, right.Span.StartFrame);
         }
 
         [Test]
@@ -285,8 +284,8 @@ namespace BH.SDK.Tests.Generators
                     StepFrames = 8, Order = StaggerOrder.Selection, Reverse = true,
                 });
 
-            Assert.AreEqual(8, a.StartFrame);
-            Assert.AreEqual(0, b.StartFrame);
+            Assert.AreEqual(8, a.Span.StartFrame);
+            Assert.AreEqual(0, b.Span.StartFrame);
         }
 
         // The two halves are separately useful: bounds decide WHEN an object exists, keyframes
@@ -308,7 +307,7 @@ namespace BH.SDK.Tests.Generators
                     ShiftBounds = true, ShiftKeyframes = false,
                 });
 
-            Assert.AreEqual(6, b.StartFrame);
+            Assert.AreEqual(6, b.Span.StartFrame);
             Assert.AreEqual(40, b.Positions[0].Frame, "keyframes stay where they were");
         }
 
@@ -319,16 +318,21 @@ namespace BH.SDK.Tests.Generators
         public void Stagger_ClampsToTheLevelTimeline()
         {
             var level = CreateLevel();
-            level.Settings.FrameLength = 100;
+            level.Settings.FrameDuration = 100;
             var a = AddObject(level, 0, 0f, 10);
             var b = AddObject(level, 1, 0f, 10);
-            a.EndFrame = 90;
-            b.EndFrame = 90;
+            a.Span = FrameSpan.FromBounds(0, 91);
+            b.Span = FrameSpan.FromBounds(0, 91);
 
             new StaggerGenerator().Run(Context(level, a.ObjectId, b.ObjectId),
                 new StaggerGenerator.Parameters { StepFrames = 500, Order = StaggerOrder.Selection });
 
-            Assert.AreEqual(99, b.StartFrame, "FrameLength is a count - the last legal frame is 99");
+            // The whole lifetime is what gets clamped, not each edge on its own: a 91-frame object
+            // pushed past the end of a 100-frame timeline lands at 9, still 91 frames long. Clamping
+            // the edges separately - what the old StartFrame/EndFrame pair did - squashed it onto
+            // frame 99 and silently threw its animation away.
+            Assert.AreEqual(9, b.Span.StartFrame, "the object keeps its duration and stops at the end");
+            Assert.AreEqual(100, b.Span.EndFrame);
             Assert.AreEqual(10, b.Positions[0].Frame,
                 "the key is local to the object, so a bounds shift moves it without rewriting it");
         }

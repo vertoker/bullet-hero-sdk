@@ -50,8 +50,7 @@ namespace BH.SDK.Tests
                 ParentObjectId = new ObjectId(5),
                 Name = "TestEffect",
                 Visible = false,
-                StartFrame = 5,
-                EndFrame = 300,
+                Span = new FrameSpan(5, 296),
                 Layer = 3,
                 EffectId = EffectId.NewGuid(),
             };
@@ -296,7 +295,7 @@ namespace BH.SDK.Tests
             trackEffects.Normalize.MaximumAmp = 15f;
             trackEffects.ParamEQ.CenterFreq = 3000f;
 
-            var track = new LevelTrack(new AudioId(1), new AudioResourceId(-1), 0, 10,
+            var track = new LevelTrack(new AudioId(1), new AudioResourceId(-1), FrameSpan.FromBounds(0, 11),
                 0f, 0, "track", trackEffects);
             level.Audio.Tracks.Add(track.AudioId, track);
 
@@ -395,7 +394,7 @@ namespace BH.SDK.Tests
             }));
 
             var trackEffects = new LevelTrackEffects();
-            var track = new LevelTrack(new AudioId(1), new AudioResourceId(0), 0, 1000,
+            var track = new LevelTrack(new AudioId(1), new AudioResourceId(0), FrameSpan.FromBounds(0, 1001),
                 0f, 0, "track", trackEffects);
             level.Audio.Tracks.Add(track.AudioId, track);
 

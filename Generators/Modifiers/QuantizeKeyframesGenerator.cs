@@ -42,8 +42,8 @@ namespace BH.SDK.Generators.Modifiers
                 nameof(Parameters.Mode), nameof(Parameters.Tracks))
             .Range(nameof(Parameters.Bpm), 1f, 1000f)
             .Range(nameof(Parameters.Division), 1, 64)
-            .Range(nameof(Parameters.StepFrames), 1, FrameRules.MaxFrameLength)
-            .Range(nameof(Parameters.OffsetFrames), -FrameRules.MaxFrameLength, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.StepFrames), 1, FrameRules.MaxFrameDuration)
+            .Range(nameof(Parameters.OffsetFrames), -FrameRules.MaxFrameDuration, FrameRules.MaxFrameDuration)
             .Unit(nameof(Parameters.StepFrames), "frames")
             .Unit(nameof(Parameters.OffsetFrames), "frames")
             .VisibleWhen(nameof(Parameters.Bpm), p => ((Parameters)p).UseBpm)
@@ -64,19 +64,19 @@ namespace BH.SDK.Generators.Modifiers
 
                 // A keyframe's Frame is LOCAL to its object, but a beat grid is a property of the
                 // LEVEL's timeline - snapping the local number would put every object on a grid
-                // offset by its own StartFrame, so two objects starting a beat and a half apart
+                // offset by its own span start, so two objects starting a beat and a half apart
                 // would quantize to two different grids. Everything below therefore works in global
                 // frames and converts back on write.
                 foreach (var track in ObjectTracks.Of(obj, parameters.Tracks))
                 {
                     var taken = new HashSet<int>();
-                    for (var i = 0; i < track.Count; i++) taken.Add(obj.StartFrame + track.FrameAt(i));
+                    for (var i = 0; i < track.Count; i++) taken.Add(obj.Span.StartFrame + track.FrameAt(i));
 
                     for (var i = 0; i < track.Count; i++)
                     {
-                        var frame = obj.StartFrame + track.FrameAt(i);
+                        var frame = obj.Span.StartFrame + track.FrameAt(i);
                         var snapped = Snap(frame, step, parameters.OffsetFrames, parameters.Mode);
-                        if (snapped < obj.StartFrame) snapped = obj.StartFrame; // a key cannot precede its object
+                        if (snapped < obj.Span.StartFrame) snapped = obj.Span.StartFrame; // a key cannot precede its object
                         if (snapped == frame) continue;
 
                         // The grid line is already occupied by a key this pass is not moving (or has
@@ -85,7 +85,7 @@ namespace BH.SDK.Generators.Modifiers
 
                         taken.Remove(frame);
                         taken.Add(snapped);
-                        track.SetFrameAt(i, snapped - obj.StartFrame);
+                        track.SetFrameAt(i, snapped - obj.Span.StartFrame);
                     }
                 }
             }

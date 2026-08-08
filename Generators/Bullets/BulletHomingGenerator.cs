@@ -1,6 +1,7 @@
 using System;
 using BH.SDK.Generators.Spawn;
 using BH.SDK.Models.Enum;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Generators.Bullets
@@ -32,8 +33,8 @@ namespace BH.SDK.Generators.Bullets
             .Range(nameof(Parameters.LaunchAngle), -3600f, 3600f)
             .Range(nameof(Parameters.Speed), 0.01f, 100f)
             .Range(nameof(Parameters.TurnRate), 0f, 180f)
-            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameLength)
-            .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameDuration)
+            .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameDuration)
             .Range(nameof(Parameters.Steps), MinSteps, MaxSteps)
             .Unit(nameof(Parameters.Spread), "deg")
             .Unit(nameof(Parameters.LaunchAngle), "deg")
@@ -57,18 +58,20 @@ namespace BH.SDK.Generators.Bullets
             for (var i = 0; i < burst; i++)
             {
                 var launchAngle = parameters.LaunchAngle + Offset(i, burst, parameters.Spread);
-                var spawnFrame = context.StartFrame + i * stagger;
+                var spawnFrame = context.Span.StartFrame + i * stagger;
                 if (!CanSpawn(context, spawnFrame)) break; // stagger ran past the window - no ghost on its last frame
-                var obj = Spawn(context, parameters, $"homing_{i}", spawnFrame, spawnFrame + travel);
+                var obj = Spawn(context, parameters, $"homing_{i}", new FrameSpan(spawnFrame, travel));
 
-                var span = obj.EndFrame - obj.StartFrame;
+                // Frames of MOVEMENT, one less than the lifetime: the first frame is the spawn
+                // position, so a bullet alive for N frames has N-1 frames left to travel in.
+                var travelFrames = obj.Span.FrameDuration - 1;
                 var x = parameters.OriginX;
                 var y = parameters.OriginY;
                 var angle = launchAngle;
 
-                AddPosition(obj, x, y, obj.StartFrame);
-                if (parameters.FaceTravel) AddRotation(obj, angle, obj.StartFrame);
-                if (span <= 0) continue;
+                AddPosition(obj, x, y, obj.Span.StartFrame);
+                if (parameters.FaceTravel) AddRotation(obj, angle, obj.Span.StartFrame);
+                if (!CanAnimate(obj.Span)) continue;
 
                 // One simulation step per keyframe: turn toward the target by at most TurnRate, then
                 // advance. Steps are spread evenly over the lifetime, so Speed is per step rather
@@ -82,9 +85,9 @@ namespace BH.SDK.Generators.Bullets
                     x += dirX * parameters.Speed;
                     y += dirY * parameters.Speed;
 
-                    var frame = obj.StartFrame + (int)Math.Round(span * (step / (double)steps));
-                    if (frame <= obj.StartFrame) continue; // collapsed onto the spawn frame - skip
-                    if (frame > obj.EndFrame) frame = obj.EndFrame;
+                    var frame = obj.Span.StartFrame + (int)Math.Round(travelFrames * (step / (double)steps));
+                    if (frame <= obj.Span.StartFrame) continue; // collapsed onto the spawn frame - skip
+                    if (frame > obj.Span.LastFrame) frame = obj.Span.LastFrame;
 
                     // Rounding can land two consecutive steps on the same frame when the lifetime is
                     // shorter than the step count; Frame must stay unique within a track. The stored
@@ -112,23 +115,23 @@ namespace BH.SDK.Generators.Bullets
 
             for (var i = 0; i < burst; i++)
             {
-                if (!CanSpawn(context, context.StartFrame + i * stagger)) break;
+                if (!CanSpawn(context, context.Span.StartFrame + i * stagger)) break;
                 objects++;
 
-                var spawnFrame = ClampFrame(context, context.StartFrame + i * stagger);
-                var endFrame = ClampFrame(context, spawnFrame + travel);
-                var span = endFrame - spawnFrame;
+                var spawnFrame = ClampFrame(context, context.Span.StartFrame + i * stagger);
+                var span = ClampSpan(context, new FrameSpan(spawnFrame, travel));
+                var travelFrames = span.FrameDuration - 1;
 
                 var perKey = parameters.FaceTravel ? 2 : 1;
                 keys += 2 + perKey; // size + colour + spawn position (+ rotation)
-                if (span <= 0) continue;
+                if (!CanAnimate(span)) continue;
 
                 var lastFrame = spawnFrame;
                 for (var step = 1; step <= steps; step++)
                 {
-                    var frame = spawnFrame + (int)Math.Round(span * (step / (double)steps));
+                    var frame = spawnFrame + (int)Math.Round(travelFrames * (step / (double)steps));
                     if (frame <= spawnFrame) continue;
-                    if (frame > endFrame) frame = endFrame;
+                    if (frame > span.LastFrame) frame = span.LastFrame;
                     if (frame == lastFrame) continue;
 
                     lastFrame = frame;

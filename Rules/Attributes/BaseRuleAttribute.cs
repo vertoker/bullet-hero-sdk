@@ -6,8 +6,8 @@ namespace BH.SDK.Rules.Attributes
     //
     // - BasePropertyRuleAttribute sees ONE value ("is this frame inside the timeline") and is what
     //   almost every rule needs.
-    // - BaseObjectRuleAttribute sees the whole object ("is Min below Max", "is StartFrame below
-    //   EndFrame") and exists because a property rule structurally cannot: it receives the value and
+    // - BaseObjectRuleAttribute sees the whole object ("is Min below Max", "is one property below
+    //   another") and exists because a property rule structurally cannot: it receives the value and
     //   the context, never the sibling it has to be compared against.
     //
     // This class holds only what both share, so RuleIssue and the severity filter can treat any rule

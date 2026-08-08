@@ -10,7 +10,7 @@ namespace BH.SDK.Rules
     //   contextual rule report false failures that no Fix could ever clear, because they all began
     //   with `context is Level`.
     // - Descending into a Prefab never changed the context, so a template's own frames were measured
-    //   against the LEVEL's FrameLength instead of the template's own.
+    //   against the LEVEL's FrameDuration instead of the template's own.
     //
     // Instances are immutable: entering a nested scope produces a new context rather than mutating
     // this one, so a RuleIssue can hold on to the exact context its rule saw and RuleFixer can
@@ -34,7 +34,7 @@ namespace BH.SDK.Rules
         public IObjectScope Objects { get; }
 
         /// <summary> Timeline length of the scope being walked, in frames. </summary>
-        public int FrameLength { get; }
+        public int FrameDuration { get; }
 
         /// <summary> Whether the current scope is a prefab template rather than the level itself.
         /// PrefabRoot as a parent only means anything here. </summary>
@@ -46,12 +46,12 @@ namespace BH.SDK.Rules
         public bool HasScope { get; }
 
         private RuleContext(object root, Level level, IObjectScope objects,
-            int frameLength, bool isPrefabScope, bool hasScope)
+            int frameDuration, bool isPrefabScope, bool hasScope)
         {
             Root = root;
             Level = level;
             Objects = objects;
-            FrameLength = frameLength;
+            FrameDuration = frameDuration;
             IsPrefabScope = isPrefabScope;
             HasScope = hasScope;
         }
@@ -63,11 +63,11 @@ namespace BH.SDK.Rules
             {
                 case Level level:
                     return new RuleContext(level, level, level.Game,
-                        level.Settings.FrameLength, false, true);
+                        level.Settings.FrameDuration, false, true);
 
                 // A standalone template validates against its own timeline, with no level around it.
                 case IFrameScope scope:
-                    return new RuleContext(root, null, scope, scope.FrameLength, true, true);
+                    return new RuleContext(root, null, scope, scope.FrameDuration, true, true);
 
                 default:
                     return new RuleContext(root, null, null, 0, false, false);
@@ -79,7 +79,7 @@ namespace BH.SDK.Rules
         public RuleContext WithScope(IFrameScope scope)
         {
             if (scope == null) return this;
-            return new RuleContext(Root, Level, scope, scope.FrameLength, true, true);
+            return new RuleContext(Root, Level, scope, scope.FrameDuration, true, true);
         }
     }
 }

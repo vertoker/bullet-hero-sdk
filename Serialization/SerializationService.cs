@@ -90,6 +90,7 @@ namespace BH.SDK.Serialization
                 new PrimitiveIntConverter(),
                 new PrimitiveGuidConverter(),
                 new PrimitiveFloatConverter(),
+                new FrameSpanConverter(),
 
                 new IntConverter(),
                 new FloatConverter(),

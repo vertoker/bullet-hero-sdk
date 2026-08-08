@@ -14,7 +14,7 @@ namespace BH.SDK.Models.Values
     /// <summary>
     /// A whole animation curve stored as data, used inside effects (particle angle/scale over life).
     /// Different axis from the level timeline: its Time is normalized 0..1 progress of a particle,
-    /// not a level frame - which is why it needs its own wrap modes instead of StartFrame/EndFrame.
+    /// not a level frame - which is why it needs its own wrap modes instead of a FrameSpan.
     /// </summary>
     [RuleContainer]
     public class CurveValue : IModel<CurveValue>

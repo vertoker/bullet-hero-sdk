@@ -19,13 +19,13 @@ namespace BH.SDK.Tests.Generators
             var generator = new EmptyLevelGenerator();
             var parameters = (EmptyLevelGenerator.Parameters)generator.CreateDefaultParameters();
             parameters.Framerate = 120;
-            parameters.FrameLength = 2400;
+            parameters.FrameDuration = 2400;
 
             var (level, meta) = generator.Create(parameters);
 
             Assert.IsEmpty(level.Game.Objects);
             Assert.AreEqual(120, level.Settings.Framerate);
-            Assert.AreEqual(2400, level.Settings.FrameLength);
+            Assert.AreEqual(2400, level.Settings.FrameDuration);
             Assert.IsNotNull(meta);
         }
 

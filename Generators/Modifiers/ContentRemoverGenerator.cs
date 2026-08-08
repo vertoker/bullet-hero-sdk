@@ -7,17 +7,18 @@ using BH.SDK.Rules;
 namespace BH.SDK.Generators.Modifiers
 {
     // The one generator that only ever DELETES, and the only one for which the context window is an
-    // instruction rather than a boundary. Everywhere else [StartFrame, EndFrame] says where new
+    // instruction rather than a boundary. Everywhere else the context span says where new
     // content may be written; here it says which content is being talked about - which is what makes
     // "clean up everything the level can no longer play" (window = whole level, Invert on) and "wipe
     // this section" (window = the section, Invert off) the same operation with one flag between them.
     // A host that offers a whole-level switch on its window - the in-game editor does - gets the
-    // first for free without this generator knowing anything about a level's own FrameLength.
+    // first for free without this generator knowing anything about a level's own FrameDuration.
     //
-    // Partial overlap survives BOTH modes on purpose, and the asymmetry in Doomed() is what
-    // implements it: Invert deletes what shares NO frame with the window, and its opposite deletes
-    // only what lies WHOLLY inside it. Making both tests "overlaps" would mean an object hanging over
-    // the edge is deleted whichever way the flag is set, which is not a mode - it is a trap.
+    // Partial overlap survives BOTH modes on purpose, and the asymmetry in WindowSelection.Selects
+    // is what implements it: Invert deletes what shares NO frame with the window, and its opposite
+    // deletes only what lies WHOLLY inside it. Making both tests "overlaps" would mean an object
+    // hanging over the edge is deleted whichever way the flag is set, which is not a mode - it is a
+    // trap. mod_span_fit selects the objects it fits through the very same helper.
     //
     // Deleting is never per-object: an object being removed may still PARENT one that is staying,
     // and dropping it alone leaves a dangling ParentObjectId that LevelGraphAnalyzer then reports -
@@ -54,13 +55,11 @@ namespace BH.SDK.Generators.Modifiers
 
         protected override void Generate(GeneratorContext context, Parameters parameters)
         {
-            var start = context.StartFrame;
-            var end = context.EndFrame;
-            if (end < start) return;
+            var window = context.Span;
 
-            if (parameters.Objects) RemoveObjects(context, start, end, parameters.Invert);
-            if (parameters.Audio) RemoveAudioTracks(context, start, end, parameters.Invert);
-            if (parameters.EventFrames) RemoveEventKeys(context, start, end, parameters.Invert);
+            if (parameters.Objects) RemoveObjects(context, window, parameters.Invert);
+            if (parameters.Audio) RemoveAudioTracks(context, window, parameters.Invert);
+            if (parameters.EventFrames) RemoveEventKeys(context, window, parameters.Invert);
         }
 
         // Deletes only. GeneratorCost describes what a run ADDS, and reporting anything here would
@@ -77,24 +76,24 @@ namespace BH.SDK.Generators.Modifiers
             => parameters.Invert || CoversWholeTimeline(context);
 
         // The active timeline, not always the level's: inside Prefab Mode the window is bounded by
-        // the template's own FrameLength (Prefab implements IFrameLength, Level.Game doesn't), which
+        // the template's own FrameDuration (Prefab implements IFrameDuration, Level.Game doesn't), which
         // is the same rule the editor's own window clamp uses.
         private static bool CoversWholeTimeline(GeneratorContext context)
         {
             if (context == null) return false;
 
-            var frameLength = context.Scope is IFrameLength scope
-                ? scope.FrameLength
-                : context.Settings?.FrameLength ?? 0;
+            var frameDuration = context.Scope is IFrameDuration scope
+                ? scope.FrameDuration
+                : context.Settings?.FrameDuration ?? 0;
 
-            return context.StartFrame <= FrameRules.MinFrame && context.EndFrame >= frameLength - 1;
+            return context.Span.StartFrame <= FrameRules.MinFrame && context.Span.EndFrame >= frameDuration;
         }
 
-        private static void RemoveObjects(GeneratorContext context, int start, int end, bool invert)
+        private static void RemoveObjects(GeneratorContext context, in FrameSpan window, bool invert)
         {
             var keep = new HashSet<ObjectId>();
             foreach (var pair in context.Objects)
-                if (!Doomed(pair.Value.StartFrame, pair.Value.EndFrame, start, end, invert))
+                if (!Doomed(pair.Value.Span, window, invert))
                     KeepWithAncestors(context, keep, pair.Key);
 
             KeepMaterializedChildren(context, keep);
@@ -108,7 +107,7 @@ namespace BH.SDK.Generators.Modifiers
             foreach (var id in doomed) context.Delete(id);
         }
 
-        private static void RemoveAudioTracks(GeneratorContext context, int start, int end, bool invert)
+        private static void RemoveAudioTracks(GeneratorContext context, in FrameSpan window, bool invert)
         {
             // Null in Prefab Mode - a template has objects but no scheduled audio, so there is
             // nothing to remove rather than something to refuse.
@@ -116,7 +115,7 @@ namespace BH.SDK.Generators.Modifiers
 
             var doomed = new List<AudioId>();
             foreach (var pair in context.Audio.Tracks)
-                if (Doomed(pair.Value.StartFrame, pair.Value.EndFrame, start, end, invert))
+                if (Doomed(pair.Value.Span, window, invert))
                     doomed.Add(pair.Key);
 
             foreach (var id in doomed) context.RemoveResource(context.Audio.Tracks, id);
@@ -125,53 +124,53 @@ namespace BH.SDK.Generators.Modifiers
         /// <summary> Every level-global track, all 25 of them. They carry no owning object, so they
         /// go through RemoveLevelKeys rather than riding along on an Edit. Null in Prefab Mode, same
         /// as audio. </summary>
-        private static void RemoveEventKeys(GeneratorContext context, int start, int end, bool invert)
+        private static void RemoveEventKeys(GeneratorContext context, in FrameSpan window, bool invert)
         {
             if (context.Game == null) return;
 
             var events = context.Game.Events;
-            Trim(context, events.Markers, start, end, invert);
-            Trim(context, events.Checkpoints, start, end, invert);
-            Trim(context, events.ScreenLimits, start, end, invert);
-            Trim(context, events.Backgrounds, start, end, invert);
-            Trim(context, events.Themes, start, end, invert);
+            Trim(context, events.Markers, window, invert);
+            Trim(context, events.Checkpoints, window, invert);
+            Trim(context, events.ScreenLimits, window, invert);
+            Trim(context, events.Backgrounds, window, invert);
+            Trim(context, events.Themes, window, invert);
 
             var camera = context.Game.CameraEvents;
-            Trim(context, camera.Positions, start, end, invert);
-            Trim(context, camera.Rotations, start, end, invert);
-            Trim(context, camera.Zooms, start, end, invert);
-            Trim(context, camera.Pivots, start, end, invert);
-            Trim(context, camera.Shakes, start, end, invert);
+            Trim(context, camera.Positions, window, invert);
+            Trim(context, camera.Rotations, window, invert);
+            Trim(context, camera.Zooms, window, invert);
+            Trim(context, camera.Pivots, window, invert);
+            Trim(context, camera.Shakes, window, invert);
 
             var post = context.Game.PostProcessingEvents;
-            Trim(context, post.Blooms, start, end, invert);
-            Trim(context, post.Chromatics, start, end, invert);
-            Trim(context, post.Vignettes, start, end, invert);
-            Trim(context, post.Lenses, start, end, invert);
-            Trim(context, post.Grains, start, end, invert);
-            Trim(context, post.MotionBlurs, start, end, invert);
-            Trim(context, post.ColorCurveses, start, end, invert);
-            Trim(context, post.LiftGammaGains, start, end, invert);
-            Trim(context, post.ShadowsMidtonesHighlightses, start, end, invert);
-            Trim(context, post.WhiteBalances, start, end, invert);
-            Trim(context, post.AnalogGlitches, start, end, invert);
-            Trim(context, post.DigitalGlitches, start, end, invert);
+            Trim(context, post.Blooms, window, invert);
+            Trim(context, post.Chromatics, window, invert);
+            Trim(context, post.Vignettes, window, invert);
+            Trim(context, post.Lenses, window, invert);
+            Trim(context, post.Grains, window, invert);
+            Trim(context, post.MotionBlurs, window, invert);
+            Trim(context, post.ColorCurveses, window, invert);
+            Trim(context, post.LiftGammaGains, window, invert);
+            Trim(context, post.ShadowsMidtonesHighlightses, window, invert);
+            Trim(context, post.WhiteBalances, window, invert);
+            Trim(context, post.AnalogGlitches, window, invert);
+            Trim(context, post.DigitalGlitches, window, invert);
 
             var player = context.Game.PlayerEvents;
-            Trim(context, player.Visibles, start, end, invert);
-            Trim(context, player.Controls, start, end, invert);
-            Trim(context, player.Collisions, start, end, invert);
+            Trim(context, player.Visibles, window, invert);
+            Trim(context, player.Controls, window, invert);
+            Trim(context, player.Collisions, window, invert);
         }
 
         /// <summary> A keyframe is a point, so "overlaps the window" and "lies inside it" are the same
         /// question - the two modes are exact opposites here, with no partial case in between. </summary>
-        private static void Trim<TKey>(GeneratorContext context, List<TKey> track, int start, int end, bool invert)
+        private static void Trim<TKey>(GeneratorContext context, List<TKey> track, FrameSpan window, bool invert)
             where TKey : IFrame
         {
             if (track == null) return;
             context.RemoveLevelKeys(track, key => invert
-                ? key.Frame < start || key.Frame > end
-                : key.Frame >= start && key.Frame <= end);
+                ? !window.Contains(key.Frame)
+                : window.Contains(key.Frame));
         }
 
         /// <summary> Marks a surviving object and everything it hangs off, so a parent is never
@@ -214,12 +213,10 @@ namespace BH.SDK.Generators.Modifiers
             }
         }
 
-        /// <summary> Whether a [objectStart, objectEnd] lifetime is what this run removes: with Invert,
-        /// one sharing no frame at all with the window; without it, one lying wholly inside. </summary>
-        private static bool Doomed(int objectStart, int objectEnd, int start, int end, bool invert)
-            => invert
-                ? objectStart > end || objectEnd < start
-                : objectStart >= start && objectEnd <= end;
+        /// <summary> Whether a lifetime is what this run removes: with Invert, one sharing no frame
+        /// at all with the window; without it, one lying wholly inside. </summary>
+        private static bool Doomed(in FrameSpan span, in FrameSpan window, bool invert)
+            => WindowSelection.Selects(span, window, invert);
 
         public class Parameters
         {

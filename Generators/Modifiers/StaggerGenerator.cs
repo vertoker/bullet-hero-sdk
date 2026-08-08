@@ -46,7 +46,7 @@ namespace BH.SDK.Generators.Modifiers
             .Section(GeneratorSections.Additional, nameof(Parameters.Reverse),
                 nameof(Parameters.ShiftBounds), nameof(Parameters.ShiftKeyframes),
                 nameof(Parameters.Tracks), nameof(Parameters.OriginX), nameof(Parameters.OriginY))
-            .Range(nameof(Parameters.StepFrames), -FrameRules.MaxFrameLength, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.StepFrames), -FrameRules.MaxFrameDuration, FrameRules.MaxFrameDuration)
             .Range(nameof(Parameters.OriginX), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.OriginY), ValueRules.MinPos, ValueRules.MaxPos)
             .Unit(nameof(Parameters.StepFrames), "frames")
@@ -72,10 +72,7 @@ namespace BH.SDK.Generators.Modifiers
                 var obj = context.Edit(ordered[i]);
 
                 if (parameters.ShiftBounds)
-                {
-                    obj.StartFrame = Clamp(obj.StartFrame + delta, maxFrame);
-                    obj.EndFrame = Clamp(obj.EndFrame + delta, maxFrame);
-                }
+                    obj.Span = ShiftBounded(obj.Span, delta, maxFrame);
 
                 if (!parameters.ShiftKeyframes) continue;
 
@@ -157,12 +154,23 @@ namespace BH.SDK.Generators.Modifiers
 
         private static int MaxFrame(GeneratorContext context)
         {
-            var length = context?.Settings?.FrameLength ?? FrameRules.MinFrameLength;
-            return length - 1; // FrameLength is a count - see RuleLevelFrame
+            var length = context?.Settings?.FrameDuration ?? FrameRules.MinFrameDuration;
+            return length - 1; // FrameDuration is a count - see RuleLevelFrame
         }
 
         private static int Clamp(int frame, int maxFrame)
             => frame < FrameRules.MinFrame ? FrameRules.MinFrame : frame > maxFrame ? maxFrame : frame;
+
+        // The whole lifetime moves as one. Clamping the two edges separately - which is what the
+        // old StartFrame/EndFrame pair invited - squashed an object into a single frame as soon as
+        // the run reached the end of the timeline, silently deleting its animation.
+        private static FrameSpan ShiftBounded(in FrameSpan span, int delta, int maxFrame)
+        {
+            var lastStart = maxFrame + 1 - span.FrameDuration;
+            var start = span.StartFrame + delta;
+            if (lastStart >= FrameRules.MinFrame && start > lastStart) start = lastStart;
+            return span.WithStart(start);
+        }
 
         public class Parameters
         {

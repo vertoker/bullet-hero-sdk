@@ -22,12 +22,12 @@ namespace BH.SDK.Tests.Generators
         {
             var level = new Level();
             level.Settings.Framerate = 60;
-            level.Settings.FrameLength = 600;
+            level.Settings.FrameDuration = 600;
             return level;
         }
 
         private static GeneratorContext Context(Level level, int start = Start, int end = End, uint seed = 42u)
-            => new(level, start, end, seed: seed);
+            => new(level, FrameSpan.FromBounds(start, end), seed: seed);
 
         private static Vector2Value PositionAt(RectObject obj, int index) => (Vector2Value)obj.Positions[index].Pos;
 
@@ -53,8 +53,8 @@ namespace BH.SDK.Tests.Generators
             Assert.AreEqual(2, bullet.Positions.Count);
             Assert.AreEqual(-5f, PositionAt(bullet, 0).X, 0.001f);
             Assert.AreEqual(5f, PositionAt(bullet, 1).X, 0.001f);
-            Assert.AreEqual(0, bullet.StartFrame);
-            Assert.AreEqual(60, bullet.EndFrame);
+            Assert.AreEqual(0, bullet.Span.StartFrame);
+            Assert.AreEqual(60, bullet.Span.EndFrame);
         }
 
         // Spacing spreads bullets ACROSS the travel direction. Firing along X must therefore vary Y,
@@ -91,7 +91,7 @@ namespace BH.SDK.Tests.Generators
                 Count = 4, TravelFrames = 30, StaggerFrames = 5, Spacing = 1f,
             });
 
-            var starts = level.Game.Objects.Values.Select(obj => obj.StartFrame).OrderBy(f => f).ToList();
+            var starts = level.Game.Objects.Values.Select(obj => obj.Span.StartFrame).OrderBy(f => f).ToList();
             CollectionAssert.AreEqual(new[] { 0, 5, 10, 15 }, starts);
         }
 
@@ -122,12 +122,13 @@ namespace BH.SDK.Tests.Generators
             Assert.AreEqual(2, level.Game.Objects.Count);
             Assert.AreEqual(2, estimate.Objects);
             Assert.AreEqual(actualKeys, estimate.Keyframes);
-            CollectionAssert.IsEmpty(level.Game.Objects.Values.Where(o => o.StartFrame == o.EndFrame).ToList(),
+            CollectionAssert.IsEmpty(
+                level.Game.Objects.Values.Where(o => o.Span.FrameDuration == FrameRules.MinFrameDuration).ToList(),
                 "no one-frame ghosts");
 
             foreach (var obj in level.Game.Objects.Values)
             {
-                Assert.LessOrEqual(obj.EndFrame, 120);
+                Assert.LessOrEqual(obj.Span.EndFrame, 120);
                 CollectionAssert.AllItemsAreUnique(obj.Positions.Select(key => key.Frame).ToList());
             }
         }
@@ -201,7 +202,7 @@ namespace BH.SDK.Tests.Generators
             var fire = objects.Single(obj => obj.Name.Contains("fire"));
             Assert.AreEqual(ColliderId.Null, warn.ColliderId);
             Assert.AreEqual(collider, fire.ColliderId);
-            Assert.AreEqual(warn.EndFrame, fire.StartFrame, "the warning must end exactly as firing starts");
+            Assert.AreEqual(warn.Span.EndFrame, fire.Span.StartFrame, "the warning must end exactly as firing starts");
         }
 
         [Test]

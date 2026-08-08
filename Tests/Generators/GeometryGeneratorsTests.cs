@@ -2,6 +2,7 @@ using System.Linq;
 using BH.SDK.Generators.Geometry;
 using BH.SDK.Models;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using NUnit.Framework;
 
@@ -16,11 +17,11 @@ namespace BH.SDK.Tests.Generators
         {
             var level = new Level();
             level.Settings.Framerate = 60;
-            level.Settings.FrameLength = 600;
+            level.Settings.FrameDuration = 600;
             return level;
         }
 
-        private static BH.SDK.Generators.GeneratorContext Context(Level level) => new(level, 0, 120);
+        private static BH.SDK.Generators.GeneratorContext Context(Level level) => new(level, FrameSpan.FromBounds(0, 120));
 
         private static Vector2Value PositionOf(RectObject obj) => (Vector2Value)obj.Positions[0].Pos;
 

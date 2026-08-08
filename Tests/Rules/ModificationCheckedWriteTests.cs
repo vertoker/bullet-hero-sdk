@@ -9,8 +9,8 @@ namespace BH.SDK.Tests.Rules
 {
     // A per-instance override is the one write in the whole format that reaches a model without
     // passing anything that could judge it - ModificationService resolves a path and assigns. So an
-    // override could hold a frame past the end of the timeline while the level it belongs to
-    // validated clean, and nothing would notice until playback.
+    // override could hold a value outside its property's declared range while the level it belongs
+    // to validated clean, and nothing would notice until playback.
 
     /// <summary>
     /// ModificationService.IsValueAllowed / SetValueChecked: the rules of the target property,
@@ -25,10 +25,10 @@ namespace BH.SDK.Tests.Rules
             return service;
         }
 
-        private static RuleContext ContextOfLength(int frameLength)
+        private static RuleContext ContextOfLength(int frameDuration)
         {
             var level = new Level();
-            level.Settings.FrameLength = frameLength;
+            level.Settings.FrameDuration = frameDuration;
             return RuleContext.ForRoot(level);
         }
 
@@ -41,23 +41,24 @@ namespace BH.SDK.Tests.Rules
             var service = ServiceFor(typeof(RectObject));
             var obj = new RectObject { ObjectId = new ObjectId(1) };
 
-            Assert.IsTrue(service.SetValueChecked(obj, 50, Names.EndFrameShort, ContextOfLength(100)));
-            Assert.AreEqual(50, obj.EndFrame);
+            Assert.IsTrue(service.SetValueChecked(obj, 50, Names.Layer, ContextOfLength(100)));
+            Assert.AreEqual(50, obj.Layer);
         }
 
-        // The case the whole feature exists for: a frame outside the level's timeline, arriving
+        // The case the whole feature exists for: a value outside what the property allows, arriving
         // through an override rather than through the editor.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Normal)]
-        public void TestOutOfRangeFrameIsRefused()
+        public void TestOutOfRangeValueIsRefused()
         {
             var service = ServiceFor(typeof(RectObject));
-            var obj = new RectObject { ObjectId = new ObjectId(1), EndFrame = 10 };
+            var obj = new RectObject { ObjectId = new ObjectId(1), Layer = 10 };
 
-            Assert.IsFalse(service.SetValueChecked(obj, 500, Names.EndFrameShort, ContextOfLength(100)));
-            Assert.AreEqual(10, obj.EndFrame, "A refused write must change nothing");
+            Assert.IsFalse(service.SetValueChecked(obj, ValueRules.MaxLayer + 1, Names.Layer,
+                ContextOfLength(100)));
+            Assert.AreEqual(10, obj.Layer, "A refused write must change nothing");
         }
 
         [Test]
@@ -98,8 +99,8 @@ namespace BH.SDK.Tests.Rules
             var service = ServiceFor(typeof(RectObject));
             var obj = new RectObject { ObjectId = new ObjectId(1) };
 
-            Assert.IsTrue(service.SetValue(obj, 500, Names.EndFrameShort));
-            Assert.AreEqual(500, obj.EndFrame);
+            Assert.IsTrue(service.SetValue(obj, ValueRules.MaxLayer + 1, Names.Layer));
+            Assert.AreEqual(ValueRules.MaxLayer + 1, obj.Layer);
         }
 
         [Test]

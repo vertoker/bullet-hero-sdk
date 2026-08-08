@@ -1,5 +1,6 @@
 using BH.SDK.Generators.Spawn;
 using BH.SDK.Models.Enum;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Generators.Bullets
@@ -25,8 +26,8 @@ namespace BH.SDK.Generators.Bullets
             .Range(nameof(Parameters.AngularStep), -360f, 360f)
             .Range(nameof(Parameters.RadiusStart), 0f, ValueRules.MaxPos)
             .Range(nameof(Parameters.RadiusEnd), 0f, ValueRules.MaxPos)
-            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameLength)
-            .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameDuration)
+            .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameDuration)
             .Unit(nameof(Parameters.AngularStep), "deg")
             .Unit(nameof(Parameters.StartAngle), "deg")
             .Unit(nameof(Parameters.TravelFrames), "frames")
@@ -47,22 +48,22 @@ namespace BH.SDK.Generators.Bullets
             {
                 var angle = parameters.StartAngle + parameters.AngularStep * i;
                 Direction(angle, out var dirX, out var dirY);
-                var spawnFrame = context.StartFrame + i * stagger;
+                var spawnFrame = context.Span.StartFrame + i * stagger;
                 if (!CanSpawn(context, spawnFrame)) break; // stagger ran past the window - no ghost on its last frame
 
-                var obj = Spawn(context, parameters, $"spiral_{i}", spawnFrame, spawnFrame + travel);
+                var obj = Spawn(context, parameters, $"spiral_{i}", new FrameSpan(spawnFrame, travel));
                 AddPosition(obj,
                     parameters.CenterX + dirX * parameters.RadiusStart,
                     parameters.CenterY + dirY * parameters.RadiusStart,
-                    obj.StartFrame);
+                    obj.Span.StartFrame);
 
-                if (CanAnimate(obj.StartFrame, obj.EndFrame))
+                if (CanAnimate(obj.Span))
                     AddPosition(obj,
                         parameters.CenterX + dirX * parameters.RadiusEnd,
                         parameters.CenterY + dirY * parameters.RadiusEnd,
-                        obj.EndFrame, parameters.Ease);
+                        obj.Span.LastFrame, parameters.Ease);
 
-                if (parameters.FaceOutward) AddRotation(obj, angle, obj.StartFrame);
+                if (parameters.FaceOutward) AddRotation(obj, angle, obj.Span.StartFrame);
             }
         }
 
@@ -78,12 +79,11 @@ namespace BH.SDK.Generators.Bullets
             var objects = 0;
             for (var i = 0; i < count; i++)
             {
-                if (!CanSpawn(context, context.StartFrame + i * stagger)) break;
+                if (!CanSpawn(context, context.Span.StartFrame + i * stagger)) break;
                 objects++;
 
-                var spawnFrame = ClampFrame(context, context.StartFrame + i * stagger);
-                var endFrame = ClampFrame(context, spawnFrame + travel);
-                keys += perObject + (CanAnimate(spawnFrame, endFrame) ? 2 : 1);
+                var span = ClampSpan(context, new FrameSpan(ClampFrame(context, context.Span.StartFrame + i * stagger), travel));
+                keys += perObject + (CanAnimate(span) ? 2 : 1);
             }
             return new GeneratorCost(objects, keys);
         }

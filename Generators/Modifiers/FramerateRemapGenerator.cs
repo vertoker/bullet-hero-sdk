@@ -9,7 +9,7 @@ namespace BH.SDK.Generators.Modifiers
 {
     // Changing Framerate alone reinterprets every frame number in the level: at 30 fps a key on frame
     // 60 is two seconds in, at 60 fps it is one. So this remaps the numbers instead - frame * to / from
-    // - and the level plays the same as before at a different sampling rate. FrameLength is remapped
+    // - and the level plays the same as before at a different sampling rate. FrameDuration is remapped
     // unconditionally, with no switch of its own, because it is the same statement as Framerate: a
     // timeline keeping its old length while its framerate doubles is a level that got twice as short,
     // which nobody asks for by changing a framerate.
@@ -60,15 +60,15 @@ namespace BH.SDK.Generators.Modifiers
             var to = Math.Clamp(parameters.Framerate, FrameRules.MinFramerate, FrameRules.MaxFramerate);
             if (from < FrameRules.MinFramerate || to == from) return;
 
-            var frameLength = Math.Clamp(Remap(settings.FrameLength, from, to),
-                FrameRules.MinFrameLength, FrameRules.MaxFrameLength);
-            var last = frameLength - 1;
+            var frameDuration = Math.Clamp(Remap(settings.FrameDuration, from, to),
+                FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration);
+            var last = frameDuration - 1;
             var shift = Math.Clamp(parameters.MaxKeyShift, 0, last);
 
             // Both through the journal: a framerate left behind by an undo is a level that plays at
             // one rate with frame numbers written for another.
             context.SetValue(() => settings.Framerate, value => settings.Framerate = value, to);
-            context.SetValue(() => settings.FrameLength, value => settings.FrameLength = value, frameLength);
+            context.SetValue(() => settings.FrameDuration, value => settings.FrameDuration = value, frameDuration);
 
             if (parameters.RemapObjects) RemapObjects(context, from, to, shift, last);
             if (parameters.RemapAudio) RemapAudio(context, from, to, shift, last);
@@ -95,10 +95,7 @@ namespace BH.SDK.Generators.Modifiers
             {
                 var obj = context.Edit(id);
 
-                var start = ClampFrame(Remap(obj.StartFrame, from, to), last);
-                var end = ClampFrame(Remap(obj.EndFrame, from, to), last);
-                obj.StartFrame = start;
-                obj.EndFrame = end < start ? start : end;
+                obj.Span = RemapSpan(obj.Span, from, to, last);
 
                 foreach (var track in ObjectTracks.Of(obj, ObjectTrackMask.All))
                     RemapObjectTrack(track, from, to, shift, last);
@@ -111,14 +108,10 @@ namespace BH.SDK.Generators.Modifiers
 
             foreach (var track in context.Audio.Tracks.Values)
             {
-                var start = ClampFrame(Remap(track.StartFrame, from, to), last);
-                var end = ClampFrame(Remap(track.EndFrame, from, to), last);
-                if (end < start) end = start;
-
                 // OffsetTime is seconds INTO the clip, not a level frame - it survives a framerate
                 // change untouched, and remapping it would move the playhead inside the audio.
-                context.SetValue(() => track.StartFrame, value => track.StartFrame = value, start);
-                context.SetValue(() => track.EndFrame, value => track.EndFrame = value, end);
+                var span = RemapSpan(track.Span, from, to, last);
+                context.SetValue(() => track.Span, value => track.Span = value, span);
 
                 if (track.Effects == null) continue;
                 RemapKeyList(context, track.Effects.Volumes, from, to, shift, last);
@@ -273,6 +266,17 @@ namespace BH.SDK.Generators.Modifiers
             if (from == to) return frame;
             var value = (double)frame * to / from;
             return (int)Math.Round(value, MidpointRounding.AwayFromZero);
+        }
+
+        // Both edges are remapped and the result rebuilt, rather than remapping the start and
+        // scaling the duration: rounding then happens once per edge, exactly as it did when the two
+        // were separate fields, so no object drifts by a frame relative to its own keyframes. The
+        // end is clamped one higher than the start because it is an exclusive boundary.
+        private static FrameSpan RemapSpan(in FrameSpan span, int from, int to, int last)
+        {
+            var start = ClampFrame(Remap(span.StartFrame, from, to), last);
+            var end = ClampFrame(Remap(span.EndFrame, from, to), last + 1);
+            return FrameSpan.FromBounds(start, end, span.Anchors);
         }
 
         private static int ClampFrame(int frame, int last)

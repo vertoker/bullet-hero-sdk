@@ -18,14 +18,15 @@ namespace BH.SDK.Tests.Generators
     // switches are independent, and that the journal can put a deleted audio track back.
     public class ContentRemoverGeneratorTests
     {
-        private const int FrameLength = 600;
-        private const int Last = FrameLength - 1;
+        private const int FrameDuration = 600;
+        // The exclusive end of the whole-level window: a span ends ON the timeline's length.
+        private const int WholeEnd = FrameDuration;
 
         private static Level CreateLevel()
         {
             var level = new Level();
             level.Settings.Framerate = 60;
-            level.Settings.FrameLength = FrameLength;
+            level.Settings.FrameDuration = FrameDuration;
             return level;
         }
 
@@ -37,8 +38,7 @@ namespace BH.SDK.Tests.Generators
                 ObjectId = level.Settings.GetNextObjectId(),
                 ParentObjectId = parent,
                 Name = name,
-                StartFrame = startFrame,
-                EndFrame = endFrame,
+                Span = FrameSpan.FromBounds(startFrame, endFrame),
             };
             level.Game.Objects.Add(obj.ObjectId, obj);
             return obj;
@@ -50,8 +50,7 @@ namespace BH.SDK.Tests.Generators
             {
                 ObjectId = level.Settings.GetNextObjectId(),
                 Name = "placement",
-                StartFrame = startFrame,
-                EndFrame = endFrame,
+                Span = FrameSpan.FromBounds(startFrame, endFrame),
             };
             level.Game.Objects.Add(placement.ObjectId, placement);
             return placement;
@@ -62,8 +61,7 @@ namespace BH.SDK.Tests.Generators
             var track = new LevelTrack
             {
                 AudioId = level.Settings.GetNextAudioId(),
-                StartFrame = startFrame,
-                EndFrame = endFrame,
+                Span = FrameSpan.FromBounds(startFrame, endFrame),
                 Name = "track",
             };
             level.Audio.Tracks.Add(track.AudioId, track);
@@ -73,10 +71,10 @@ namespace BH.SDK.Tests.Generators
         /// <summary> Defaults to the whole level as the window - what the editor's "Whole Level"
         /// switch produces. Every test passes its mode explicitly; see DefaultsToRemovingInside. </summary>
         private static GeneratorResult Run(Level level, ContentRemoverGenerator.Parameters parameters = null,
-            int start = 0, int end = Last)
+            int start = 0, int end = WholeEnd)
         {
             var generator = new ContentRemoverGenerator();
-            var context = new GeneratorContext(level, start, end);
+            var context = new GeneratorContext(level, FrameSpan.FromBounds(start, end));
             return generator.Run(context, parameters ?? new ContentRemoverGenerator.Parameters());
         }
 
@@ -127,7 +125,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var inside = AddObject(level, 0, 100);
-            var outside = AddObject(level, FrameLength, FrameLength + 100);
+            var outside = AddObject(level, FrameDuration, FrameDuration + 100);
 
             Run(level, Outside());
 
@@ -195,7 +193,7 @@ namespace BH.SDK.Tests.Generators
         public void KeepsARemovableParentOfASurvivingChild()
         {
             var level = CreateLevel();
-            var parent = AddObject(level, FrameLength, FrameLength + 50, name: "parent");
+            var parent = AddObject(level, FrameDuration, FrameDuration + 50, name: "parent");
             var child = AddObject(level, 0, 100, parent.ObjectId, "child");
 
             Run(level, Outside());
@@ -212,8 +210,8 @@ namespace BH.SDK.Tests.Generators
         public void RemovesAWholeSubtreeWhenNothingInItSurvives()
         {
             var level = CreateLevel();
-            var parent = AddObject(level, FrameLength, FrameLength + 50, name: "parent");
-            var child = AddObject(level, FrameLength + 10, FrameLength + 20, parent.ObjectId, "child");
+            var parent = AddObject(level, FrameDuration, FrameDuration + 50, name: "parent");
+            var child = AddObject(level, FrameDuration + 10, FrameDuration + 20, parent.ObjectId, "child");
 
             Run(level, Outside());
 
@@ -232,7 +230,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var placement = AddPlacement(level, 0, 100);
-            var materialized = AddObject(level, FrameLength, FrameLength + 10, placement.ObjectId, "inner");
+            var materialized = AddObject(level, FrameDuration, FrameDuration + 10, placement.ObjectId, "inner");
             placement.ObjectIds.Add(new ObjectId(1), materialized.ObjectId);
 
             Run(level, Outside());
@@ -249,8 +247,8 @@ namespace BH.SDK.Tests.Generators
         public void LeavesAudioAndEventsAloneByDefault()
         {
             var level = CreateLevel();
-            var track = AddTrack(level, FrameLength, FrameLength + 100);
-            level.Game.Events.Markers.Add(new Marker("late", string.Empty, new Color4Value(), FrameLength));
+            var track = AddTrack(level, FrameDuration, FrameDuration + 100);
+            level.Game.Events.Markers.Add(new Marker("late", string.Empty, new Color4Value(), FrameDuration));
 
             Run(level, Outside());
 
@@ -266,7 +264,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var inside = AddTrack(level, 0, 200);
-            var outside = AddTrack(level, FrameLength, FrameLength + 100);
+            var outside = AddTrack(level, FrameDuration, FrameDuration + 100);
 
             Run(level, Outside(objects: false, audio: true));
 
@@ -282,11 +280,11 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             level.Game.Events.Markers.Add(new Marker("kept", string.Empty, new Color4Value(), 100));
-            level.Game.Events.Markers.Add(new Marker("cut", string.Empty, new Color4Value(), FrameLength));
-            level.Game.Events.Checkpoints.Add(new Checkpoint { Frame = FrameLength + 5 });
+            level.Game.Events.Markers.Add(new Marker("cut", string.Empty, new Color4Value(), FrameDuration));
+            level.Game.Events.Checkpoints.Add(new Checkpoint { Frame = FrameDuration + 5 });
             level.Game.CameraEvents.Zooms.Add(new ZoomKey { Frame = 50 });
-            level.Game.CameraEvents.Zooms.Add(new ZoomKey { Frame = FrameLength + 50 });
-            level.Game.PlayerEvents.Visibles.Add(new BoolKey { Frame = FrameLength });
+            level.Game.CameraEvents.Zooms.Add(new ZoomKey { Frame = FrameDuration + 50 });
+            level.Game.PlayerEvents.Visibles.Add(new BoolKey { Frame = FrameDuration });
 
             Run(level, Outside(objects: false, events: true));
 
@@ -315,7 +313,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, new ContentRemoverGenerator.Parameters
             {
                 Invert = false, Objects = false, EventFrames = true,
-            }, 100, 200);
+            }, 100, 201);
 
             Assert.AreEqual(1, level.Game.Events.Markers.Count);
             Assert.AreEqual("before", level.Game.Events.Markers[0].Name);
@@ -331,8 +329,8 @@ namespace BH.SDK.Tests.Generators
         public void UndoRestoresEverythingItRemoved()
         {
             var level = CreateLevel();
-            var outsideObject = AddObject(level, FrameLength, FrameLength + 10);
-            var outsideTrack = AddTrack(level, FrameLength, FrameLength + 10);
+            var outsideObject = AddObject(level, FrameDuration, FrameDuration + 10);
+            var outsideTrack = AddTrack(level, FrameDuration, FrameDuration + 10);
             var before = level.Game.Copy();
 
             var result = Run(level, Outside(audio: true));
@@ -354,8 +352,8 @@ namespace BH.SDK.Tests.Generators
         #region IsDangerous
 
         private static bool IsDangerous(Level level, ContentRemoverGenerator.Parameters parameters,
-            int start = 0, int end = Last)
-            => new ContentRemoverGenerator().IsDangerous(new GeneratorContext(level, start, end), parameters);
+            int start = 0, int end = WholeEnd)
+            => new ContentRemoverGenerator().IsDangerous(new GeneratorContext(level, FrameSpan.FromBounds(start, end)), parameters);
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -390,19 +388,19 @@ namespace BH.SDK.Tests.Generators
             Assert.IsFalse(IsDangerous(level, Inside(), 100, 200));
         }
 
-        // Prefab Mode: the window is bounded by the template's own FrameLength, so "the whole
+        // Prefab Mode: the window is bounded by the template's own FrameDuration, so "the whole
         // timeline" is the template's, not the hosting level's much longer one.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Normal)]
-        public void Dangerous_InPrefabScope_MeasuredAgainstTheTemplateFrameLength()
+        public void Dangerous_InPrefabScope_MeasuredAgainstTheTemplateFrameDuration()
         {
             var level = CreateLevel();
-            var prefab = new Prefab { FrameLength = 100 };
+            var prefab = new Prefab { FrameDuration = 100 };
 
-            var whole = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, 0, 99);
-            var section = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, 0, 50);
+            var whole = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, FrameSpan.FromBounds(0, 100));
+            var section = new GeneratorContext(prefab, prefab, level.Settings, level.Resources, FrameSpan.FromBounds(0, 50));
             var generator = new ContentRemoverGenerator();
 
             Assert.IsTrue(generator.IsDangerous(whole, Inside()));

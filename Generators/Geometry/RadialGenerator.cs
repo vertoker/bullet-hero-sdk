@@ -42,15 +42,15 @@ namespace BH.SDK.Generators.Geometry
                 var angle = parameters.StartAngle + parameters.Arc * (i / (float)divisor);
                 Direction(angle, out var dirX, out var dirY);
 
-                var obj = Spawn(context, parameters, $"radial_{i}", context.StartFrame, context.EndFrame);
+                var obj = Spawn(context, parameters, $"radial_{i}", context.Span);
                 AddPosition(obj,
                     parameters.CenterX + dirX * parameters.Radius,
                     parameters.CenterY + dirY * parameters.Radius,
-                    obj.StartFrame);
+                    obj.Span.StartFrame);
 
                 // "Facing the centre" is the outward direction turned around - the texture's own
                 // forward is +X, so the angle IS the outward one and 180 flips it inward.
-                if (parameters.FaceCenter) AddRotation(obj, angle + 180f, obj.StartFrame);
+                if (parameters.FaceCenter) AddRotation(obj, angle + 180f, obj.Span.StartFrame);
             }
         }
 

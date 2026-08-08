@@ -1,6 +1,7 @@
 using System;
 using BH.SDK.Generators.Spawn;
 using BH.SDK.Models.Enum;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Generators.Bullets
@@ -29,8 +30,8 @@ namespace BH.SDK.Generators.Bullets
                 nameof(Parameters.Ease), nameof(Parameters.FaceTravel))
             .Range(nameof(Parameters.Count), 1, 512)
             .Range(nameof(Parameters.Spacing), ValueRules.MinPos, ValueRules.MaxPos)
-            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameLength)
-            .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameDuration)
+            .Range(nameof(Parameters.StaggerFrames), 0, FrameRules.MaxFrameDuration)
             .Unit(nameof(Parameters.TravelFrames), "frames")
             .Unit(nameof(Parameters.StaggerFrames), "frames")
             .Range(nameof(Parameters.FromX), ValueRules.MinPos, ValueRules.MaxPos)
@@ -66,20 +67,20 @@ namespace BH.SDK.Generators.Bullets
             for (var i = 0; i < count; i++)
             {
                 var offset = (i - (count - 1) * 0.5f) * parameters.Spacing;
-                var spawnFrame = context.StartFrame + i * stagger;
+                var spawnFrame = context.Span.StartFrame + i * stagger;
                 if (!CanSpawn(context, spawnFrame)) break; // stagger ran past the window - no ghost on its last frame
 
-                var obj = Spawn(context, parameters, $"wave_{i}", spawnFrame, spawnFrame + travel);
+                var obj = Spawn(context, parameters, $"wave_{i}", new FrameSpan(spawnFrame, travel));
                 AddPosition(obj, parameters.FromX + normalX * offset, parameters.FromY + normalY * offset,
-                    obj.StartFrame);
+                    obj.Span.StartFrame);
 
                 // A bullet whose lifetime the context window truncated to a single frame gets only
                 // its start position - a second key on the same frame would break Frame uniqueness.
-                if (CanAnimate(obj.StartFrame, obj.EndFrame))
+                if (CanAnimate(obj.Span))
                     AddPosition(obj, parameters.ToX + normalX * offset, parameters.ToY + normalY * offset,
-                        obj.EndFrame, parameters.Ease);
+                        obj.Span.LastFrame, parameters.Ease);
 
-                if (parameters.FaceTravel) AddRotation(obj, angle, obj.StartFrame);
+                if (parameters.FaceTravel) AddRotation(obj, angle, obj.Span.StartFrame);
             }
         }
 
@@ -95,12 +96,11 @@ namespace BH.SDK.Generators.Bullets
             var objects = 0;
             for (var i = 0; i < count; i++)
             {
-                if (!CanSpawn(context, context.StartFrame + i * stagger)) break;
+                if (!CanSpawn(context, context.Span.StartFrame + i * stagger)) break;
                 objects++;
 
-                var spawnFrame = ClampFrame(context, context.StartFrame + i * stagger);
-                var endFrame = ClampFrame(context, spawnFrame + travel);
-                keys += perObject + (CanAnimate(spawnFrame, endFrame) ? 2 : 1);
+                var span = ClampSpan(context, new FrameSpan(ClampFrame(context, context.Span.StartFrame + i * stagger), travel));
+                keys += perObject + (CanAnimate(span) ? 2 : 1);
             }
             return new GeneratorCost(objects, keys);
         }

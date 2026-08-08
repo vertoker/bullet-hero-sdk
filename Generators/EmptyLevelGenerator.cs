@@ -18,11 +18,11 @@ namespace BH.SDK.Generators
 
         private static readonly GeneratorHints HintsValue = new GeneratorHints.Builder()
             .Section(GeneratorSections.Main, nameof(Parameters.LevelName), nameof(Parameters.Framerate),
-                nameof(Parameters.FrameLength))
+                nameof(Parameters.FrameDuration))
             .Section(GeneratorSections.Additional, nameof(Parameters.LevelDescription))
             .Range(nameof(Parameters.Framerate), FrameRules.MinFramerate, FrameRules.MaxFramerate)
-            .Range(nameof(Parameters.FrameLength), FrameRules.MinFrameLength, FrameRules.MaxFrameLength)
-            .Unit(nameof(Parameters.FrameLength), "frames")
+            .Range(nameof(Parameters.FrameDuration), FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration)
+            .Unit(nameof(Parameters.FrameDuration), "frames")
             .Unit(nameof(Parameters.Framerate), "fps")
             .Build();
 
@@ -30,7 +30,7 @@ namespace BH.SDK.Generators
         {
             var level = new Level();
             level.Settings.Framerate = parameters.Framerate;
-            level.Settings.FrameLength = parameters.FrameLength;
+            level.Settings.FrameDuration = parameters.FrameDuration;
 
             var meta = new LevelMeta
             {
@@ -51,7 +51,7 @@ namespace BH.SDK.Generators
             public IString LevelName = new StringValue();
             public IString LevelDescription = new StringValue();
             public int Framerate = DefaultFramerate;
-            public int FrameLength = DefaultFramerate * DefaultSeconds;
+            public int FrameDuration = DefaultFramerate * DefaultSeconds;
 
             private const int DefaultFramerate = 60;
             private const int DefaultSeconds = 10;

@@ -8,6 +8,7 @@ using BH.SDK.Models.Audio;
 using BH.SDK.Models.Events;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 using NUnit.Framework;
@@ -29,13 +30,13 @@ namespace BH.SDK.Tests.Generators
     public class FramerateRemapGeneratorTests
     {
         private const int Framerate = 60;
-        private const int FrameLength = 600;
+        private const int FrameDuration = 600;
 
         private static Level CreateLevel()
         {
             var level = new Level();
             level.Settings.Framerate = Framerate;
-            level.Settings.FrameLength = FrameLength;
+            level.Settings.FrameDuration = FrameDuration;
             return level;
         }
 
@@ -53,7 +54,7 @@ namespace BH.SDK.Tests.Generators
         private static GeneratorResult Run(Level level, FramerateRemapGenerator.Parameters parameters)
         {
             var generator = new FramerateRemapGenerator();
-            var context = new GeneratorContext(level, 0, level.Settings.FrameLength - 1);
+            var context = new GeneratorContext(level, new FrameSpan(0, level.Settings.FrameDuration));
             return generator.Run(context, parameters);
         }
 
@@ -64,8 +65,7 @@ namespace BH.SDK.Tests.Generators
             {
                 ObjectId = level.Settings.GetNextObjectId(),
                 Name = "obj",
-                StartFrame = startFrame,
-                EndFrame = endFrame,
+                Span = FrameSpan.FromBounds(startFrame, endFrame),
             };
             foreach (var frame in positionFrames)
                 obj.Positions.Add(new PosKey(new Vector2Value(frame, 0f), frame));
@@ -79,8 +79,7 @@ namespace BH.SDK.Tests.Generators
             var track = new LevelTrack
             {
                 AudioId = level.Settings.GetNextAudioId(),
-                StartFrame = startFrame,
-                EndFrame = endFrame,
+                Span = FrameSpan.FromBounds(startFrame, endFrame),
                 Name = "track",
                 OffsetTime = 1.25f,
             };
@@ -110,10 +109,10 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(30));
 
             Assert.AreEqual(30, level.Settings.Framerate);
-            Assert.AreEqual(FrameLength / 2, level.Settings.FrameLength);
+            Assert.AreEqual(FrameDuration / 2, level.Settings.FrameDuration);
         }
 
-        /// <summary> FrameLength scales with no switch of its own: a timeline keeping its old length
+        /// <summary> FrameDuration scales with no switch of its own: a timeline keeping its old length
         /// at twice the framerate is a level that silently got twice as short. </summary>
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -126,7 +125,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(120));
 
             Assert.AreEqual(120, level.Settings.Framerate);
-            Assert.AreEqual(FrameLength * 2, level.Settings.FrameLength);
+            Assert.AreEqual(FrameDuration * 2, level.Settings.FrameDuration);
         }
 
         [Test]
@@ -142,7 +141,7 @@ namespace BH.SDK.Tests.Generators
             var result = Run(level, Params(Framerate));
 
             Assert.AreEqual(Framerate, level.Settings.Framerate);
-            Assert.AreEqual(FrameLength, level.Settings.FrameLength);
+            Assert.AreEqual(FrameDuration, level.Settings.FrameDuration);
             Assert.AreEqual(0, result.Log.Count, "a no-op run must journal nothing");
             Assert.IsTrue(before.Equals(level.Game));
             Assert.AreEqual(3, ((TextureObject)level.Game.Objects[obj.ObjectId]).Positions.Count);
@@ -178,7 +177,7 @@ namespace BH.SDK.Tests.Generators
 
             Run(level, parameters);
 
-            Assert.AreEqual(FrameLength / 2, level.Settings.FrameLength);
+            Assert.AreEqual(FrameDuration / 2, level.Settings.FrameDuration);
             Assert.AreEqual(50, ((TextureObject)level.Game.Objects[obj.ObjectId]).Positions[0].Frame);
         }
 
@@ -198,8 +197,8 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(30));
 
             var remapped = (TextureObject)level.Game.Objects[obj.ObjectId];
-            Assert.AreEqual(30, remapped.StartFrame);
-            Assert.AreEqual(150, remapped.EndFrame);
+            Assert.AreEqual(30, remapped.Span.StartFrame);
+            Assert.AreEqual(150, remapped.Span.EndFrame);
             CollectionAssert.AreEqual(new[] { 0, 10, 50 }, Frames(remapped.Positions));
         }
 
@@ -216,13 +215,13 @@ namespace BH.SDK.Tests.Generators
 
             var untouched = (TextureObject)level.Game.Objects[obj.ObjectId];
             Assert.AreEqual(30, level.Settings.Framerate, "the framerate itself still changes");
-            Assert.AreEqual(60, untouched.StartFrame);
-            Assert.AreEqual(300, untouched.EndFrame);
+            Assert.AreEqual(60, untouched.Span.StartFrame);
+            Assert.AreEqual(300, untouched.Span.EndFrame);
             CollectionAssert.AreEqual(new[] { 0, 20, 100 }, Frames(untouched.Positions));
         }
 
         /// <summary> Nothing may end up past the timeline it was just resampled into - the format
-        /// rejects a frame outside [0, FrameLength) ([RuleLevelFrame]). </summary>
+        /// rejects a frame outside [0, FrameDuration) ([RuleLevelFrame]). </summary>
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
@@ -230,15 +229,15 @@ namespace BH.SDK.Tests.Generators
         public void KeepsEverythingInsideTheNewTimeline()
         {
             var level = CreateLevel();
-            AddObject(level, 0, FrameLength - 1, 0, FrameLength - 1);
+            AddObject(level, 0, FrameDuration - 1, 0, FrameDuration - 1);
 
             Run(level, Params(30));
 
-            var last = level.Settings.FrameLength - 1;
+            var last = level.Settings.FrameDuration - 1;
             foreach (var obj in level.Game.Objects.Values)
             {
-                Assert.LessOrEqual(obj.EndFrame, last);
-                Assert.GreaterOrEqual(obj.StartFrame, FrameRules.MinFrame);
+                Assert.LessOrEqual(obj.Span.EndFrame, last + 1);
+                Assert.GreaterOrEqual(obj.Span.StartFrame, FrameRules.MinFrame);
                 foreach (var track in ObjectTracks.Of(obj, ObjectTrackMask.All))
                     for (var i = 0; i < track.Count; i++)
                     {
@@ -396,8 +395,7 @@ namespace BH.SDK.Tests.Generators
                 {
                     ObjectId = level.Settings.GetNextObjectId(),
                     Name = "dense",
-                    StartFrame = 0,
-                    EndFrame = 400,
+                    Span = FrameSpan.FromBounds(0, 400),
                 };
                 for (var frame = 0; frame < 200; frame++)
                     obj.Positions.Add(new PosKey(new Vector2Value(frame, 0f), frame));
@@ -408,7 +406,7 @@ namespace BH.SDK.Tests.Generators
                 var frames = Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions);
                 CollectionAssert.AllItemsAreUnique(frames, $"{Framerate}->{target}, shift {shift}");
 
-                var last = level.Settings.FrameLength - 1;
+                var last = level.Settings.FrameDuration - 1;
                 foreach (var frame in frames)
                 {
                     Assert.GreaterOrEqual(frame, FrameRules.MinFrame, $"{Framerate}->{target}");
@@ -440,8 +438,7 @@ namespace BH.SDK.Tests.Generators
                 {
                     ObjectId = level.Settings.GetNextObjectId(),
                     Name = "dense",
-                    StartFrame = 0,
-                    EndFrame = 400,
+                    Span = FrameSpan.FromBounds(0, 400),
                 };
 
                 var ideals = new HashSet<int>();
@@ -491,8 +488,8 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(30, audio: true));
 
             var remapped = level.Audio.Tracks[track.AudioId];
-            Assert.AreEqual(30, remapped.StartFrame);
-            Assert.AreEqual(150, remapped.EndFrame);
+            Assert.AreEqual(30, remapped.Span.StartFrame);
+            Assert.AreEqual(150, remapped.Span.EndFrame);
             CollectionAssert.AreEqual(new[] { 0, 10, 50 },
                 new List<int> { remapped.Effects.Volumes[0].Frame, remapped.Effects.Volumes[1].Frame,
                     remapped.Effects.Volumes[2].Frame });
@@ -526,8 +523,8 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(30));
 
             var untouched = level.Audio.Tracks[track.AudioId];
-            Assert.AreEqual(60, untouched.StartFrame);
-            Assert.AreEqual(300, untouched.EndFrame);
+            Assert.AreEqual(60, untouched.Span.StartFrame);
+            Assert.AreEqual(300, untouched.Span.EndFrame);
             Assert.AreEqual(100, untouched.Effects.Volumes[2].Frame);
         }
 
@@ -638,7 +635,7 @@ namespace BH.SDK.Tests.Generators
             result.Log.Revert();
 
             Assert.AreEqual(Framerate, level.Settings.Framerate);
-            Assert.AreEqual(FrameLength, level.Settings.FrameLength);
+            Assert.AreEqual(FrameDuration, level.Settings.FrameDuration);
             Assert.IsTrue(gameBefore.Equals(level.Game), "revert must restore objects and events exactly");
             Assert.IsTrue(audioBefore.Equals(level.Audio), "revert must restore audio exactly");
             Assert.AreEqual(100, level.Audio.Tracks[track.AudioId].Effects.Volumes[2].Frame);
@@ -646,7 +643,7 @@ namespace BH.SDK.Tests.Generators
             result.Log.Reapply();
 
             Assert.AreEqual(30, level.Settings.Framerate);
-            Assert.AreEqual(FrameLength / 2, level.Settings.FrameLength);
+            Assert.AreEqual(FrameDuration / 2, level.Settings.FrameDuration);
             Assert.IsTrue(gameAfter.Equals(level.Game), "redo must reproduce the run exactly");
             Assert.IsTrue(audioAfter.Equals(level.Audio), "redo must reproduce audio exactly");
         }
@@ -709,7 +706,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             var generator = new FramerateRemapGenerator();
-            var context = new GeneratorContext(level, 0, FrameLength - 1);
+            var context = new GeneratorContext(level, new FrameSpan(0, FrameDuration));
 
             Assert.IsTrue(generator.IsDangerous(context, Params(30)));
             Assert.IsFalse(generator.IsDangerous(context, Params(Framerate)));

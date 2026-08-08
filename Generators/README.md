@@ -47,8 +47,7 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
         {
             var obj = context.Create<TextureObject>();
             obj.ParentObjectId = context.Parent;
-            obj.StartFrame = context.StartFrame;
-            obj.EndFrame = context.EndFrame;
+            obj.Span = context.Span;
             obj.Layer = context.Layer;
             // ... place it on the circle
         }
@@ -152,8 +151,18 @@ window, off removes everything inside it; objects always, audio tracks and level
 request; whole scope rather than the selection). It is the one generator for which the window is an
 instruction rather than a boundary, which is what makes "clean up what the level can no longer play"
 (window = whole level, `Invert` on) and "wipe this section" (the default) the same operation. Content
-only partly overlapping the window survives either mode. `mod_framerate_remap` retimes the level to a
-different framerate: `FrameLength` and every frame number are resampled by `to/from` so the content
+only partly overlapping the window survives either mode — `mod_span_fit` selects what it works on
+through the very same helper (`WindowSelection.Selects`), so "the window names the content" reads the
+same in both. `mod_span_fit` makes every child's lifetime agree with its parent's: `ClampChildren`
+(the default) cuts the children down walking parent-first, so a fit holds all the way down a chain;
+`ExpandParents` stretches the parents out walking child-first, bounded by the active timeline's own
+`FrameDuration`. Anchors are never invented or dropped — an anchor is authored intent. A child
+sharing no frame at all with its parent plays nowhere as it stands, and `Outside` says what becomes
+of it: `Delete` (the default) removes it with its whole subtree, `Clamp` cuts it into the nearest
+parent edge (one frame of it survives), `Skip` leaves it alone. Root objects are never touched —
+nothing bounds them — and a materialized prefab child is clamped rather than deleted, since its
+placement's remap table still points at it. `mod_framerate_remap` retimes the level to a
+different framerate: `FrameDuration` and every frame number are resampled by `to/from` so the content
 keeps its wall-clock timing, with objects / audio / level-global events each behind their own switch
 (objects on by default). Lowering the framerate is lossy — two frames can land on one, and a track's
 frames must stay unique — so `MaxKeyShift` (default 1) says how far a key may be nudged off its
@@ -185,20 +194,20 @@ registered texture, and an audio path from the native file picker.
 ## Three things a spawning generator must get right
 
 - **A keyframe's `Frame` is LOCAL to its object** — the runtime reads it back as
-  `obj.StartFrame + Frame`. `BaseSpawnGenerator`'s `AddPosition`/`AddRotation`/`AddSize`/`AddColor`
+  `obj.Span.StartFrame + Frame`. `BaseSpawnGenerator`'s `AddPosition`/`AddRotation`/`AddSize`/`AddColor`
   take an ABSOLUTE frame and convert; anything writing `obj.Positions.Add` by hand must do the same,
   and a modifier snapping to a level-wide grid has to convert the other way first
   (`mod_quantize_keyframes`). Getting this wrong is invisible in every other check: the objects
   appear, in the right place, with the right lifetime — and then never move, because their keys sit
   past their own death. A sweep test asserts every created key lands inside
-  `[0, EndFrame - StartFrame]`.
+  `[0, FrameDuration)`.
 - **Placement math is degrees, storage is RADIANS.** Every hand-authored rotation in a real level is
   a multiple of π (a full turn is 6.2831855), and the Unity project converts to degrees only at its
   inspector boundary. `AddRotation` takes degrees and converts; writing an `AngleKey` by hand without
   converting stores 45 *radians* — the object spins at ~2578°, which is what "the rotation values are
   5k–15k" looked like.
 - **A staggered generator must not spawn past its window.** `CanSpawn` is the check (strictly before
-  `EndFrame`, since a bullet needs a frame to travel in); without it the overflow clamps onto the
+  the span's end, since a bullet needs a frame to travel in); without it the overflow clamps onto the
   last frame as one-frame ghosts flashing after the pattern is over, and `Estimate` has to apply the
   same check so it counts what the run actually creates.
 - **A lifetime clamped to a single frame gets ONE key per track.** `BaseSpawnGenerator.CanAnimate`

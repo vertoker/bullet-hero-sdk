@@ -111,7 +111,7 @@ namespace BH.SDK.Tests
             var level = serializationService.DeserializeData<Level>(json);
 
             Assert.AreEqual(61, level.Settings.Framerate);
-            Assert.AreEqual(610, level.Settings.FrameLength);
+            Assert.AreEqual(610, level.Settings.FrameDuration);
             Assert.IsNotNull(level.Game);
             Assert.IsNotNull(level.Game.Events);
             Assert.IsNotNull(level.Game.CameraEvents);

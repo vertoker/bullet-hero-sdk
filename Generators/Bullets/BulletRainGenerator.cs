@@ -1,5 +1,6 @@
 using BH.SDK.Generators.Spawn;
 using BH.SDK.Models.Enum;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Generators.Bullets
@@ -28,8 +29,8 @@ namespace BH.SDK.Generators.Bullets
             .Range(nameof(Parameters.AreaRight), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.TopY), ValueRules.MinPos, ValueRules.MaxPos)
             .Range(nameof(Parameters.BottomY), ValueRules.MinPos, ValueRules.MaxPos)
-            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameLength)
-            .Range(nameof(Parameters.SpreadFrames), 0, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.TravelFrames), 1, FrameRules.MaxFrameDuration)
+            .Range(nameof(Parameters.SpreadFrames), 0, FrameRules.MaxFrameDuration)
             .Range(nameof(Parameters.TravelJitter), 0f, 1f)
             .Unit(nameof(Parameters.TravelFrames), "frames")
             .Unit(nameof(Parameters.SpreadFrames), "frames")
@@ -53,13 +54,13 @@ namespace BH.SDK.Generators.Bullets
                 var travel = (int)(Travel(parameters.TravelFrames) * jitter);
                 if (travel < 1) travel = 1;
 
-                var spawnFrame = context.StartFrame + delay;
+                var spawnFrame = context.Span.StartFrame + delay;
                 if (!CanSpawn(context, spawnFrame)) continue; // scattered past the window - drop it, do not stack it on the end
-                var obj = Spawn(context, parameters, $"rain_{i}", spawnFrame, spawnFrame + travel);
-                AddPosition(obj, x, parameters.TopY, obj.StartFrame);
+                var obj = Spawn(context, parameters, $"rain_{i}", new FrameSpan(spawnFrame, travel));
+                AddPosition(obj, x, parameters.TopY, obj.Span.StartFrame);
 
-                if (CanAnimate(obj.StartFrame, obj.EndFrame))
-                    AddPosition(obj, x, parameters.BottomY, obj.EndFrame, parameters.Ease);
+                if (CanAnimate(obj.Span))
+                    AddPosition(obj, x, parameters.BottomY, obj.Span.LastFrame, parameters.Ease);
             }
         }
 
@@ -82,12 +83,11 @@ namespace BH.SDK.Generators.Bullets
                 var travel = (int)(Travel(parameters.TravelFrames) * jitter);
                 if (travel < 1) travel = 1;
 
-                if (!CanSpawn(context, context.StartFrame + delay)) continue;
+                if (!CanSpawn(context, context.Span.StartFrame + delay)) continue;
                 objects++;
 
-                var spawnFrame = ClampFrame(context, context.StartFrame + delay);
-                var endFrame = ClampFrame(context, spawnFrame + travel);
-                keys += 2 + (CanAnimate(spawnFrame, endFrame) ? 2 : 1); // size + colour + position(s)
+                var span = ClampSpan(context, new FrameSpan(ClampFrame(context, context.Span.StartFrame + delay), travel));
+                keys += 2 + (CanAnimate(span) ? 2 : 1); // size + colour + position(s)
             }
             return new GeneratorCost(objects, keys);
         }

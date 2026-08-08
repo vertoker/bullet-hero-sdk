@@ -105,6 +105,14 @@ namespace BH.SDK.Validations.Graph
                     return;
                 }
 
+                // A child whose span reaches outside its parent's is deliberately NOT reported. It is
+                // legal authored data: a consumer resolves the containment on read rather than
+                // storing the clipped value (the Unity project's FrameSpanFitMath), so the overhang
+                // never plays and comes back the moment the parent grows again. Saying so on every
+                // load turned out to be noise about content that is behaving exactly as designed -
+                // fitting the lifetimes is now an edit the author asks for (mod_span_fit), not a
+                // finding that follows them around.
+
                 current = parent;
             }
 

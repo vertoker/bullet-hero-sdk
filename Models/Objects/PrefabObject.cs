@@ -62,11 +62,11 @@ namespace BH.SDK.Models.Objects
             ObjectIds = new Dictionary<ObjectId, ObjectId>();
             Modifications = new Dictionary<ModificationKey, Modification>();
         }
-        public PrefabObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame, int endFrame, int layer,
+        public PrefabObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
             PrefabId prefabId, Dictionary<ObjectId, ObjectId> objectIds, Dictionary<ModificationKey, Modification> modifications)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
+            : base(objectId, parentObjectId, name, visible, span, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             PrefabId = prefabId;
@@ -85,7 +85,7 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         PrefabObject ICopyable<PrefabObject>.Copy() => CopyImpl();
 
-        private PrefabObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+        private PrefabObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
             PrefabId, ObjectIds.CopyDictionaryUnmanaged(), Modifications.CopyDictionaryManaged());

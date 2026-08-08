@@ -16,7 +16,6 @@ namespace BH.SDK.Models.Audio
     /// Stored in AudioLevel.Tracks; several tracks may overlap, separated by AudioLayer.
     /// </summary>
     [RuleContainer]
-    [RulePropertyOrder(nameof(LevelTrack.StartFrame), nameof(LevelTrack.EndFrame))]
     public class LevelTrack : IFrameBounds, INameable, IModel<LevelTrack>
     {
         // Same logic as RectObject.ObjectId, but only for audio and much simpler
@@ -39,20 +38,15 @@ namespace BH.SDK.Models.Audio
         [JsonProperty(Names.AudioResourceId)]
         public AudioResourceId AudioResourceId { get; set; }
 
-        /// <summary> Level frame the clip starts sounding at. </summary>
-        [RuleLevelFrame]
-        [JsonProperty(Names.StartFrameShort)]
-        public int StartFrame { get; set; }
-
-        /// <summary> Level frame the clip is cut off at, even if the clip itself is longer. </summary>
-        [RuleLevelFrame]
-        [JsonProperty(Names.EndFrameShort)]
-        public int EndFrame { get; set; }
+        /// <summary> Half-open stretch of the level timeline the clip sounds over, cutting it off at
+        /// the end even if the clip itself is longer. </summary>
+        [JsonProperty(Names.SpanShort)]
+        public FrameSpan Span { get; set; }
 
         // Offset for audio clip itself. Frames tells where boundaries of track in level,
         // OffsetTime tells from which time starts clip itself
 
-        /// <summary> Seconds skipped inside the clip at StartFrame. Frames place the track on the level
+        /// <summary> Seconds skipped inside the clip at the span's start. Frames place the track on the level
         /// timeline, this places the playhead inside the clip - the two are independent. </summary>
         [RuleInRange(AudioRules.MinOffsetTime, AudioRules.MaxOffsetTime)]
         [JsonProperty(Names.OffsetTime)]
@@ -83,20 +77,18 @@ namespace BH.SDK.Models.Audio
         {
             AudioId = AudioId.Null;
             AudioResourceId = AudioResourceId.Null;
-            StartFrame = FrameRules.MinFrame;
-            EndFrame = FrameRules.MinFrame;
+            Span = new FrameSpan();
             OffsetTime = AudioRules.OffsetTimeDefault;
             AudioLayer = AudioRules.MinAudioLayer;
             Name = string.Empty;
             Effects = new LevelTrackEffects();
         }
-        public LevelTrack(AudioId audioId, AudioResourceId audioResourceId, int startFrame, int endFrame,
+        public LevelTrack(AudioId audioId, AudioResourceId audioResourceId, FrameSpan span,
             float offsetTime, int audioLayer, string name, LevelTrackEffects effects)
         {
             AudioId = audioId;
             AudioResourceId = audioResourceId;
-            StartFrame = startFrame;
-            EndFrame = endFrame;
+            Span = span;
             OffsetTime = offsetTime;
             AudioLayer = audioLayer;
             Name = name;
@@ -106,8 +98,7 @@ namespace BH.SDK.Models.Audio
         {
             AudioId = AudioId.Null;
             AudioResourceId = AudioResourceId.Null;
-            StartFrame = FrameRules.MinFrame;
-            EndFrame = FrameRules.MinFrame;
+            Span = new FrameSpan();
             OffsetTime = AudioRules.OffsetTimeDefault;
             AudioLayer = AudioRules.MinAudioLayer;
             Name = string.Empty;
@@ -115,20 +106,19 @@ namespace BH.SDK.Models.Audio
         }
 
         public object Clone() => Copy();
-        public LevelTrack Copy() => new(AudioId, AudioResourceId, StartFrame, EndFrame,
+        public LevelTrack Copy() => new(AudioId, AudioResourceId, Span,
             OffsetTime, AudioLayer, Name, Effects.Copy());
 
         public override bool Equals(object obj) => obj is LevelTrack value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(AudioId,
-            StartFrame, EndFrame, OffsetTime, AudioResourceId, AudioLayer, Name, Effects);
+            Span, OffsetTime, AudioResourceId, AudioLayer, Name, Effects);
 
         public bool Equals(LevelTrack other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = AudioId.Equals(other.AudioId)
-                         && StartFrame.Equals(other.StartFrame)
-                         && EndFrame.Equals(other.EndFrame)
+                         && Span.Equals(other.Span)
                          && OffsetTime.Equals(other.OffsetTime)
                          && AudioResourceId.Equals(other.AudioResourceId)
                          && AudioLayer.Equals(other.AudioLayer)

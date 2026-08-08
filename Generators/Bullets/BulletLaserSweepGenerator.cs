@@ -33,8 +33,8 @@ namespace BH.SDK.Generators.Bullets
             .Range(nameof(Parameters.WarnWidth), 0.01f, ValueRules.MaxSca)
             .Range(nameof(Parameters.StartAngle), -3600f, 3600f)
             .Range(nameof(Parameters.EndAngle), -3600f, 3600f)
-            .Range(nameof(Parameters.WarnFrames), 0, FrameRules.MaxFrameLength)
-            .Range(nameof(Parameters.FireFrames), 1, FrameRules.MaxFrameLength)
+            .Range(nameof(Parameters.WarnFrames), 0, FrameRules.MaxFrameDuration)
+            .Range(nameof(Parameters.FireFrames), 1, FrameRules.MaxFrameDuration)
             .Range(nameof(Parameters.WarnAlpha), 0f, 1f)
             .Unit(nameof(Parameters.StartAngle), "deg")
             .Unit(nameof(Parameters.EndAngle), "deg")
@@ -50,26 +50,28 @@ namespace BH.SDK.Generators.Bullets
             var warnFrames = Frames(parameters.WarnFrames, 0);
             var fireFrames = Frames(parameters.FireFrames, 1);
 
-            var warnStart = context.StartFrame;
+            var warnStart = context.Span.StartFrame;
             var fireStart = warnStart + warnFrames;
 
             if (warnFrames > 0)
             {
-                var warn = Spawn(context, parameters, "laser_warn", warnStart, fireStart);
+                // The telegraph ends exactly where the beam begins and they never share a frame -
+                // which is what a half-open span buys: warn covers [warnStart, fireStart).
+                var warn = Spawn(context, parameters, "laser_warn", new FrameSpan(warnStart, warnFrames));
                 warn.ColliderId = ColliderId.Null; // telegraph only - never collides, whatever the template says
                 SetSize(warn, parameters.Length, parameters.WarnWidth);
-                PlaceBeam(warn, parameters, parameters.StartAngle, warn.StartFrame);
-                RecolorFaded(warn, parameters, warn.StartFrame);
+                PlaceBeam(warn, parameters, parameters.StartAngle, warn.Span.StartFrame);
+                RecolorFaded(warn, parameters, warn.Span.StartFrame);
             }
 
-            var fire = Spawn(context, parameters, "laser_fire", fireStart, fireStart + fireFrames);
+            var fire = Spawn(context, parameters, "laser_fire", new FrameSpan(fireStart, fireFrames));
             SetSize(fire, parameters.Length, parameters.Width);
-            PlaceBeam(fire, parameters, parameters.StartAngle, fire.StartFrame);
+            PlaceBeam(fire, parameters, parameters.StartAngle, fire.Span.StartFrame);
 
             // Position and rotation animate together: the beam pivots around its origin, so its
             // midpoint travels along an arc rather than staying put.
-            if (CanAnimate(fire.StartFrame, fire.EndFrame))
-                PlaceBeam(fire, parameters, parameters.EndAngle, fire.EndFrame, parameters.Ease);
+            if (CanAnimate(fire.Span))
+                PlaceBeam(fire, parameters, parameters.EndAngle, fire.Span.LastFrame, parameters.Ease);
         }
 
         protected override GeneratorCost EstimateTyped(GeneratorContext context, Parameters parameters)
@@ -77,12 +79,12 @@ namespace BH.SDK.Generators.Bullets
             var warnFrames = Frames(parameters.WarnFrames, 0);
             var fireFrames = Frames(parameters.FireFrames, 1);
 
-            var fireStart = ClampFrame(context, context.StartFrame + warnFrames);
-            var fireEnd = ClampFrame(context, fireStart + fireFrames);
+            var fireStart = ClampFrame(context, context.Span.StartFrame + warnFrames);
+            var fireSpan = ClampSpan(context, new FrameSpan(fireStart, fireFrames));
 
             var objects = warnFrames > 0 ? 2 : 1;
             var keys = warnFrames > 0 ? WarnKeys : 0;
-            keys += 3 + (CanAnimate(fireStart, fireEnd) ? 2 : 0); // position + rotation + size (+ pair)
+            keys += 3 + (CanAnimate(fireSpan) ? 2 : 0); // position + rotation + size (+ pair)
             keys += 1; // colour
             return new GeneratorCost(objects, keys);
         }

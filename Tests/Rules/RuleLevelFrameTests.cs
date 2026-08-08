@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using BH.SDK.Models;
+using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
@@ -30,15 +31,15 @@ namespace BH.SDK.Tests.Rules
 
         private static PropertyInfo FrameProperty => typeof(FrameModel).GetProperty(nameof(FrameModel.Frame));
 
-        private static Level LevelOfLength(int frameLength)
+        private static Level LevelOfLength(int frameDuration)
         {
             var level = new Level();
-            level.Settings.FrameLength = frameLength;
+            level.Settings.FrameDuration = frameDuration;
             return level;
         }
 
-        private static RuleContext LevelContext(int frameLength)
-            => RuleContext.ForRoot(LevelOfLength(frameLength));
+        private static RuleContext LevelContext(int frameDuration)
+            => RuleContext.ForRoot(LevelOfLength(frameDuration));
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -52,8 +53,8 @@ namespace BH.SDK.Tests.Rules
             Assert.IsTrue(Rule.IsValid(50, context));
         }
 
-        // The upper bound is exclusive: FrameLength is a count, so the last playable frame is
-        // FrameLength - 1.
+        // The upper bound is exclusive: FrameDuration is a count, so the last playable frame is
+        // FrameDuration - 1.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
@@ -99,7 +100,7 @@ namespace BH.SDK.Tests.Rules
         [Category(Metadata.Category.Easy)]
         public void TestStandalonePrefabUsesOwnLength()
         {
-            var context = RuleContext.ForRoot(new Prefab { FrameLength = 10 });
+            var context = RuleContext.ForRoot(new Prefab { FrameDuration = 10 });
 
             Assert.IsTrue(Rule.IsValid(9, context));
             Assert.IsFalse(Rule.IsValid(10, context));
@@ -114,8 +115,9 @@ namespace BH.SDK.Tests.Rules
         public void TestPrefabInsideLevelUsesTemplateLength()
         {
             var level = LevelOfLength(100);
-            var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameLength = 10 };
-            var inner = new RectObject { ObjectId = new ObjectId(1), StartFrame = 0, EndFrame = 50 };
+            var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameDuration = 10 };
+            var inner = new RectObject { ObjectId = new ObjectId(1) };
+            inner.Positions.Add(new PosKey { Frame = 50 });
             prefab.Objects.Add(inner.ObjectId, inner);
             level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
 
@@ -123,7 +125,7 @@ namespace BH.SDK.Tests.Rules
             CollectionAssert.IsNotEmpty(issues);
 
             Fix(level);
-            Assert.AreEqual(9, inner.EndFrame);
+            Assert.AreEqual(9, inner.Positions[0].Frame);
         }
 
         // With no scope to measure against - a LevelMeta, a UserSettings, a bare value model - the
@@ -162,14 +164,15 @@ namespace BH.SDK.Tests.Rules
         public void TestThroughAnalyzerOnRealLevel()
         {
             var level = LevelOfLength(100);
-            var invalid = new RectObject { ObjectId = new ObjectId(1), StartFrame = 0, EndFrame = 500 };
+            var invalid = new RectObject { ObjectId = new ObjectId(1) };
+            invalid.Positions.Add(new PosKey { Frame = 500 });
             level.Game.Objects.Add(invalid.ObjectId, invalid);
 
             var issues = Analyze(level);
             CollectionAssert.IsNotEmpty(issues);
 
             Fix(level);
-            Assert.AreEqual(99, invalid.EndFrame);
+            Assert.AreEqual(99, invalid.Positions[0].Frame);
         }
 
         // Validating a template on its own no longer reports false failures - the whole reason the
@@ -180,8 +183,8 @@ namespace BH.SDK.Tests.Rules
         [Category(Metadata.Category.Normal)]
         public void TestThroughAnalyzerOnStandalonePrefab()
         {
-            var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameLength = 10 };
-            var inner = new RectObject { ObjectId = new ObjectId(1), StartFrame = 0, EndFrame = 5 };
+            var prefab = new Prefab { PrefabId = new PrefabId(Guid.NewGuid()), FrameDuration = 10 };
+            var inner = new RectObject { ObjectId = new ObjectId(1), Span = FrameSpan.FromBounds(0, 6) };
             prefab.Objects.Add(inner.ObjectId, inner);
 
             AssertValid(prefab);

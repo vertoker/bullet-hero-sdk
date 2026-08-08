@@ -1,6 +1,7 @@
 using BH.SDK.Generators;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 
 namespace BH.SDK.Tests.Generators
@@ -30,10 +31,9 @@ namespace BH.SDK.Tests.Generators
                 var obj = context.Create<RectObject>();
                 obj.ParentObjectId = context.Parent;
                 obj.Name = $"spawn_{i}";
-                obj.StartFrame = context.StartFrame;
-                obj.EndFrame = context.EndFrame;
+                obj.Span = context.Span;
                 obj.Layer = context.Layer;
-                obj.Positions.Add(new PosKey(new Vector2Value(i, 0f), context.StartFrame));
+                obj.Positions.Add(new PosKey(new Vector2Value(i, 0f), context.Span.StartFrame));
             }
         }
 
@@ -95,8 +95,8 @@ namespace BH.SDK.Tests.Generators
 
             if (parameters.ClearRange)
             {
-                var start = context.StartFrame;
-                var end = context.EndFrame;
+                var start = context.Span.StartFrame;
+                var end = context.Span.EndFrame;
                 context.RemoveLevelKeys(zooms, key => key.Frame >= start && key.Frame <= end);
             }
 
@@ -130,11 +130,10 @@ namespace BH.SDK.Tests.Generators
             for (var i = 0; i < parameters.Count; i++)
             {
                 var obj = context.Create<RectObject>();
-                obj.StartFrame = context.StartFrame;
-                obj.EndFrame = context.EndFrame;
+                obj.Span = context.Span;
                 obj.Positions.Add(new PosKey(
                     new Vector2Value(random.NextFloat(-100f, 100f), random.NextFloat(-100f, 100f)),
-                    context.StartFrame));
+                    context.Span.StartFrame));
             }
         }
 

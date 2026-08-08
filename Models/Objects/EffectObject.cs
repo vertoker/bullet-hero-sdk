@@ -32,10 +32,9 @@ namespace BH.SDK.Models.Objects
         {
             EffectId = EffectId.Null;
         }
-        public EffectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, int startFrame,
-            int endFrame, int layer, List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
+        public EffectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer, List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots, EffectId effectId)
-            : base(objectId, parentObjectId, name, visible, startFrame, endFrame, layer,
+            : base(objectId, parentObjectId, name, visible, span, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             EffectId = effectId;
@@ -50,7 +49,7 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         EffectObject ICopyable<EffectObject>.Copy() => CopyImpl();
         
-        private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, StartFrame, EndFrame, Layer,
+        private EffectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(), EffectId);
         

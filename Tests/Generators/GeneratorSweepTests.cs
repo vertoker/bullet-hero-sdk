@@ -7,6 +7,7 @@ using BH.SDK.Models;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Models.Resources;
 using BH.SDK.Rules;
@@ -28,8 +29,8 @@ namespace BH.SDK.Tests.Generators
     // which is what makes it verifiable outside a live Unity Editor.
     public class GeneratorSweepTests
     {
-        private const int StartFrame = 30;
-        private const int EndFrame = 210;
+        private const int WindowStart = 30;
+        private const int WindowEnd = 210;
 
         private static IEnumerable<IScopeGenerator> ScopeGenerators =>
             GeneratorRegistry.All.OfType<IScopeGenerator>();
@@ -38,12 +39,12 @@ namespace BH.SDK.Tests.Generators
         {
             var level = new Level();
             level.Settings.Framerate = 60;
-            level.Settings.FrameLength = 600;
+            level.Settings.FrameDuration = 600;
             return level;
         }
 
         private static GeneratorContext CreateContext(Level level, uint seed = 12345u) =>
-            new(level, StartFrame, EndFrame, seed: seed);
+            new(level, FrameSpan.FromBounds(WindowStart, WindowEnd), seed: seed);
 
         // A Modifier edits what is already there, so every sweep runs against a level that already
         // has content - otherwise mod_* would be swept over an empty scope and prove nothing.
@@ -57,12 +58,11 @@ namespace BH.SDK.Tests.Generators
                     ObjectId = level.Settings.GetNextObjectId(),
                     Name = $"seed_{i}",
                     Layer = i,
-                    StartFrame = StartFrame + i,
-                    EndFrame = EndFrame - i,
+                    Span = FrameSpan.FromBounds(WindowStart + i, WindowEnd - i),
                 };
-                obj.Positions.Add(new PosKey(new Vector2Value(i, i), StartFrame + i));
-                obj.Positions.Add(new PosKey(new Vector2Value(i + 1, i), StartFrame + i + 7));
-                obj.Sizes.Add(new ScaKey(new Vector2Value(1f, 1f), StartFrame + i));
+                obj.Positions.Add(new PosKey(new Vector2Value(i, i), WindowStart + i));
+                obj.Positions.Add(new PosKey(new Vector2Value(i + 1, i), WindowStart + i + 7));
+                obj.Sizes.Add(new ScaKey(new Vector2Value(1f, 1f), WindowStart + i));
                 level.Game.Objects.Add(obj.ObjectId, obj);
             }
             return level;
@@ -107,7 +107,7 @@ namespace BH.SDK.Tests.Generators
             if (parameters is IBeatFramesInput beats)
             {
                 var frames = new List<int>();
-                for (var frame = StartFrame; frame <= EndFrame; frame += 24) frames.Add(frame);
+                for (var frame = WindowStart; frame <= WindowEnd; frame += 24) frames.Add(frame);
                 beats.BeatFrames = frames.ToArray();
             }
             if (parameters is IPixelTextureInput image) image.Texture = CreateTestTexture();
@@ -196,16 +196,17 @@ namespace BH.SDK.Tests.Generators
                 foreach (var id in result.CreatedIds)
                 {
                     var obj = level.Game.Objects[id];
-                    Assert.GreaterOrEqual(obj.StartFrame, StartFrame, $"{generator.NameKey}: {obj.Name} start");
-                    Assert.LessOrEqual(obj.EndFrame, EndFrame, $"{generator.NameKey}: {obj.Name} end");
-                    Assert.LessOrEqual(obj.StartFrame, obj.EndFrame, $"{generator.NameKey}: {obj.Name} inverted");
+                    Assert.GreaterOrEqual(obj.Span.StartFrame, WindowStart, $"{generator.NameKey}: {obj.Name} start");
+                    Assert.LessOrEqual(obj.Span.EndFrame, WindowEnd, $"{generator.NameKey}: {obj.Name} end");
+                    Assert.GreaterOrEqual(obj.Span.FrameDuration, FrameRules.MinFrameDuration,
+                        $"{generator.NameKey}: {obj.Name} duration");
                     Assert.GreaterOrEqual(obj.Layer, ValueRules.MinLayer, $"{generator.NameKey}: {obj.Name} layer");
                     Assert.LessOrEqual(obj.Layer, ValueRules.MaxLayer, $"{generator.NameKey}: {obj.Name} layer");
                 }
             }
         }
 
-        // A keyframe's Frame is LOCAL to its object (the runtime reads it back as obj.StartFrame +
+        // A keyframe's Frame is LOCAL to its object (the runtime reads it back as obj.Span.StartFrame +
         // Frame), and writing an absolute one is invisible in every other check here: the object is
         // created, framed and validated correctly, it just never reaches its own keys and therefore
         // never moves. Every animated generator shipped with an absolute frame once; this is what
@@ -224,7 +225,7 @@ namespace BH.SDK.Tests.Generators
                 foreach (var id in result.CreatedIds)
                 {
                     var obj = level.Game.Objects[id];
-                    var span = obj.EndFrame - obj.StartFrame;
+                    var span = obj.Span.EndFrame - obj.Span.StartFrame;
 
                     foreach (var track in ObjectTracks.Of(obj, ObjectTrackMask.All))
                     {

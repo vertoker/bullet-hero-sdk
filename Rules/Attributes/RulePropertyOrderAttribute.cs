@@ -5,7 +5,7 @@ namespace BH.SDK.Rules.Attributes
 {
     // Covers every "these two fields are a range" invariant in the format, of which there were a
     // surprising number and not one of them checked: Min/Max on all four MinMax value types, the
-    // per-component pairs of every Rect, ScreenLimitBounds' aspect pair, StartFrame/EndFrame on
+    // per-component pairs of every Rect, ScreenLimitBounds' aspect pair, and anything else on
     // objects and audio tracks, the editor's camera size pair.
     //
     // One attribute rather than the two the design sketched (a "min/max" one and a "this before

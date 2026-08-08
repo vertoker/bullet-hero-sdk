@@ -79,8 +79,8 @@ namespace BH.SDK.Generators.Audio
                     _ => parameters.OriginY,
                 };
 
-                var obj = Spawn(context, parameters, $"waveform_{i}", context.StartFrame, context.EndFrame);
-                AddPosition(obj, x, y, obj.StartFrame);
+                var obj = Spawn(context, parameters, $"waveform_{i}", context.Span);
+                AddPosition(obj, x, y, obj.Span.StartFrame);
                 SetSize(obj, parameters.BarWidth, height);
             }
         }

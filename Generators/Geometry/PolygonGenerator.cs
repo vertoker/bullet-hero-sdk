@@ -42,8 +42,8 @@ namespace BH.SDK.Generators.Geometry
                 for (var i = 0; i < sides; i++)
                 {
                     VertexAt(parameters, sides, i, out var x, out var y);
-                    var obj = Spawn(context, parameters, $"polygon_{i}", context.StartFrame, context.EndFrame);
-                    AddPosition(obj, x, y, obj.StartFrame);
+                    var obj = Spawn(context, parameters, $"polygon_{i}", context.Span);
+                    AddPosition(obj, x, y, obj.Span.StartFrame);
                 }
                 return;
             }
@@ -60,8 +60,8 @@ namespace BH.SDK.Generators.Geometry
                 {
                     var t = step / (float)perEdge;
                     var obj = Spawn(context, parameters, $"polygon_{edge}_{step}",
-                        context.StartFrame, context.EndFrame);
-                    AddPosition(obj, Lerp(fromX, toX, t), Lerp(fromY, toY, t), obj.StartFrame);
+                        context.Span);
+                    AddPosition(obj, Lerp(fromX, toX, t), Lerp(fromY, toY, t), obj.Span.StartFrame);
                 }
             }
         }

@@ -40,7 +40,7 @@ namespace BH.SDK.Models.Data
         // validating it against the level timeline tied an effect's internal duration to wherever it
         // happened to be placed - and made an EffectData validated on its own fail outright.
 
-        /// <summary> Frame, counted from the object's own StartFrame (local, not level time), where
+        /// <summary> Frame, counted from the object's own span start (local, not level time), where
         /// emission stops - already-spawned particles still finish their lifetime. </summary>
         [RuleInRange(EffectRules.StopLocalFrame_Min, EffectRules.StopLocalFrame_Max)]
         [JsonProperty(Names.StopLocalFrame)]

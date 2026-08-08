@@ -151,8 +151,8 @@ namespace BH.SDK.Generators.Geometry
         {
             if (depth <= 0)
             {
-                var obj = Spawn(context, parameters, $"fractal_{_index++}", context.StartFrame, context.EndFrame);
-                AddPosition(obj, (ax + bx + cx) / 3f, (ay + by + cy) / 3f, obj.StartFrame);
+                var obj = Spawn(context, parameters, $"fractal_{_index++}", context.Span);
+                AddPosition(obj, (ax + bx + cx) / 3f, (ay + by + cy) / 3f, obj.Span.StartFrame);
                 return;
             }
 
@@ -205,9 +205,9 @@ namespace BH.SDK.Generators.Geometry
             var length = (float)Math.Sqrt(dx * dx + dy * dy);
             var angle = (float)(Math.Atan2(dy, dx) * (180.0 / Math.PI));
 
-            var obj = Spawn(context, parameters, $"fractal_{_index++}", context.StartFrame, context.EndFrame);
-            AddPosition(obj, (ax + bx) * 0.5f, (ay + by) * 0.5f, obj.StartFrame);
-            AddRotation(obj, angle, obj.StartFrame);
+            var obj = Spawn(context, parameters, $"fractal_{_index++}", context.Span);
+            AddPosition(obj, (ax + bx) * 0.5f, (ay + by) * 0.5f, obj.Span.StartFrame);
+            AddRotation(obj, angle, obj.Span.StartFrame);
             SetSize(obj, length, parameters.Thickness);
         }
 

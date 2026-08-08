@@ -1,4 +1,5 @@
 ﻿using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.SettingGroups;
 
 namespace BH.SDK.Utils
@@ -13,10 +14,11 @@ namespace BH.SDK.Utils
         {
             obj.ParentObjectId = parentObj.ObjectId;
         }
+        /// <summary> Sets the lifetime from a half-open pair, where endFrame is the first frame the
+        /// object is already gone. </summary>
         public static void SetBounds(this RectObject obj, int startFrame, int endFrame)
         {
-            obj.StartFrame = startFrame;
-            obj.EndFrame = endFrame;
+            obj.Span = FrameSpan.FromBounds(startFrame, endFrame, obj.Span.Anchors);
         }
     }
 }
