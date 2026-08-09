@@ -319,12 +319,21 @@ alongside `ThemeKeyframe` (which *is* a real track) in the same `GameEvents` cla
 ## `Models/SettingGroups/` — one folder, two unrelated aggregates
 
 `LevelSettings` (`Level.Settings`, per-level: `Framerate`, `FrameDuration`, `ObjectIdCounter`,
-`AudioIdCounter` — the `IObjectIdCounter` implementation — plus `Capacity`, a `LevelCapacityHint`)
-has nothing to do with the rest of this
+`AudioIdCounter` — the `IObjectIdCounter` implementation — plus `Capacity`, a `LevelCapacityHint`,
+and `Seed`) has nothing to do with the rest of this
 folder (`GeneralSettings`/`ControlsSettings`/`AudioSettings`/`GraphicsSettings`/
 `GameEditorSettings`), which are all sub-groups of `UserSettings` (per-device, `settings.json`).
 The `UserSettings` sub-groups additionally implement `IMoveable<T>` (`Pull(source)` — an in-place
 merge, distinct from `IModel<T>`'s `Copy`/`Reset`).
+
+`LevelSettings.Seed` is the level's own random seed, and **`LevelRules.InvalidSeed` (0) is its
+default and means "not authored"**, not seed number zero — test it with `LevelRules.IsValidSeed`,
+never with a literal (same shape as `AudioRules.IsActiveMixLevel`). A level ships without one and the
+consumer generates a fresh seed on every load, which is the ordinary case; an author sets it only to
+pin a run down, and a host may still override it per-launch. The consumer side of that three-tier
+ladder lives in the Unity project (`Core`'s `SettingsGroup`, see its CLAUDE.md "Determinism") — the
+format only stores the middle tier. Adding the field needed no migration: the domain stays at
+`(1, 0)` and an older file simply deserializes to 0.
 
 `LevelCapacityHint` (`LevelSettings.Capacity`) is the one **advisory** value in the whole format:
 five peak-simultaneous-object counts (instances/textures/effects/texts/tracks) an editor writes on

@@ -51,6 +51,30 @@ namespace BH.SDK.Tests
             Assert.IsTrue(level.Equals(level2));
         }
 
+        // Seed is the one LevelSettings field whose DEFAULT is the interesting case: a level that
+        // never pinned a seed writes LevelRules.InvalidSeed, and a level written before the field
+        // existed deserializes to the same thing. Both have to survive a round trip as zero, or an
+        // unpinned level would silently become pinned to whatever the reader invented.
+        [TestCase(0)]
+        [TestCase(12345)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void TestLevelSeedRoundTrip(int seed)
+        {
+            var settings = new SerializationSettings(Formatting.Indented);
+            var serializationService = new SerializationService(settings);
+
+            var level = MockData.CreateTestLevel();
+            level.Settings.Seed = seed;
+
+            var json = serializationService.SerializeData(level);
+            var level2 = serializationService.DeserializeData<Level>(json);
+
+            Assert.AreEqual(seed, level2.Settings.Seed);
+            Assert.IsTrue(level.Equals(level2));
+        }
+
         // IDataSerializer (VERSION-UPDATE.md, "Format-agnosticism") is generic per [DataVersion]
         // domain, not per concrete type - exercised here against two unrelated domains (Level and
         // Theme) to prove it isn't hardcoded to either one. Parametrized over SerializationType so

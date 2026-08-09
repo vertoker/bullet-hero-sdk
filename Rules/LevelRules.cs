@@ -46,5 +46,16 @@ namespace BH.SDK.Rules
         // itself is advisory and never trusted on its own.
         public const int MinCapacityHint = 0;
         public const int MaxCapacityHint = 1_048_576; // 2^20
+
+        // Zero is not "seed number zero", it is the absence of a seed - the same convention every
+        // tier of seed resolution follows (per-launch override, then LevelSettings.Seed, then a
+        // freshly generated one), so a consumer only ever has to ask IsValidSeed instead of
+        // spelling out != 0 at each of the three steps. Shaped like AudioRules.IsActiveMixLevel: a
+        // constant plus the one predicate that reads it, rather than a rule attribute, because 0 is
+        // perfectly VALID authored data - it is what an unpinned level stores.
+        public const int NullSeed = 0;
+        public const int MinSeed = 0;
+
+        public static bool IsValidSeed(int seed) => seed != NullSeed;
     }
 }
