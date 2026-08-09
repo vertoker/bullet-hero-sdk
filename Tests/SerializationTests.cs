@@ -52,7 +52,7 @@ namespace BH.SDK.Tests
         }
 
         // Seed is the one LevelSettings field whose DEFAULT is the interesting case: a level that
-        // never pinned a seed writes LevelRules.InvalidSeed, and a level written before the field
+        // never pinned a seed writes LevelRules.NullSeed, and a level written before the field
         // existed deserializes to the same thing. Both have to survive a round trip as zero, or an
         // unpinned level would silently become pinned to whatever the reader invented.
         [TestCase(0)]

@@ -47,7 +47,7 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.LimitHints)]
         public LevelLimitHints LimitHints { get; set; }
 
-        // LevelRules.InvalidSeed (0) is the DEFAULT and means "no seed authored", not "seed number
+        // LevelRules.NullSeed (0) is the DEFAULT and means "no seed authored", not "seed number
         // zero": a level ships without one and the player generates a fresh seed on every load,
         // which is the normal behaviour. An author sets this only to pin a run down - and a host may
         // still override it per-launch, so this is the middle tier of a three-step resolution, never

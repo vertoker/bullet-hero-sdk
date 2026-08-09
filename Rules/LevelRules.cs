@@ -1,3 +1,6 @@
+using System;
+using System.Runtime.CompilerServices;
+
 namespace BH.SDK.Rules
 {
     public static class LevelRules
@@ -53,9 +56,46 @@ namespace BH.SDK.Rules
         // spelling out != 0 at each of the three steps. Shaped like AudioRules.IsActiveMixLevel: a
         // constant plus the one predicate that reads it, rather than a rule attribute, because 0 is
         // perfectly VALID authored data - it is what an unpinned level stores.
+        //
+        // Two ranges, not one, and confusing them is the easy mistake here. [MinSeed, MaxValidSeed]
+        // is what the FIELD accepts, NullSeed included - that is what RuleMin validates and what a
+        // seed input clamps to. [MinValidSeed, MaxValidSeed] is what a REAL seed lives in, and it is
+        // what every generator must draw from: hand a run seed 0 and it silently means "unseeded",
+        // so a generator that could produce it would occasionally produce a run nobody can reproduce.
         public const int NullSeed = 0;
         public const int MinSeed = 0;
 
-        public static bool IsValidSeed(int seed) => seed != NullSeed;
+        public const int MinValidSeed = 1;
+        public const int MaxValidSeed = int.MaxValue;
+
+        /// <summary> Is this a real, usable seed - what a generator must produce and what playback
+        /// ends up running on. NullSeed is NOT one. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsValidSeed(int seed) => seed >= MinValidSeed && seed <= MaxValidSeed;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void AssertSeed(int seed)
+        {
+            if (!IsValidSeed(seed))
+                throw new Exception($"Seed {seed} is outside [{MinValidSeed}, {MaxValidSeed}] - " +
+                                    "0 means unseeded and negative values are never valid");
+        }
+
+        /// <summary> Is this something a seed FIELD may hold - the above, plus NullSeed. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsSeedInput(int seed) => seed >= MinSeed && seed <= MaxValidSeed;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void AssertSeedInput(int seed)
+        {
+            if (!IsSeedInput(seed))
+                throw new Exception($"Seed {seed} is outside [{MinSeed}, {MaxValidSeed}] - " +
+                                    "a seed field takes 0 (unseeded) or a real seed, never a negative");
+        }
+
+        /// <summary> Clamp for a seed INPUT, where NullSeed is a legal "leave it unseeded". </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ClampSeed(int seed) =>
+            seed < MinSeed ? MinSeed : seed > MaxValidSeed ? MaxValidSeed : seed;
     }
 }

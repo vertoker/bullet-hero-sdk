@@ -326,9 +326,15 @@ folder (`GeneralSettings`/`ControlsSettings`/`AudioSettings`/`GraphicsSettings`/
 The `UserSettings` sub-groups additionally implement `IMoveable<T>` (`Pull(source)` — an in-place
 merge, distinct from `IModel<T>`'s `Copy`/`Reset`).
 
-`LevelSettings.Seed` is the level's own random seed, and **`LevelRules.InvalidSeed` (0) is its
+`LevelSettings.Seed` is the level's own random seed, and **`LevelRules.NullSeed` (0) is its
 default and means "not authored"**, not seed number zero — test it with `LevelRules.IsValidSeed`,
-never with a literal (same shape as `AudioRules.IsActiveMixLevel`). A level ships without one and the
+never with a literal (same shape as `AudioRules.IsActiveMixLevel`). `LevelRules` carries **two
+ranges, and conflating them is the mistake to avoid**: `[MinValidSeed, MaxValidSeed]` = `[1,
+int.MaxValue]` is what a REAL seed is and what every generator must draw from (`IsValidSeed`/
+`AssertSeed`), while `[MinSeed, MaxValidSeed]` is what a seed *field* may hold, `NullSeed` included
+(`IsSeedInput`/`AssertSeedInput`/`ClampSeed`, and what `[RuleMin]` validates). A generator that
+could return 0 would occasionally produce a run nobody can reproduce, since 0 reads as "unseeded"
+one level load later. A level ships without one and the
 consumer generates a fresh seed on every load, which is the ordinary case; an author sets it only to
 pin a run down, and a host may still override it per-launch. The consumer side of that three-tier
 ladder lives in the Unity project (`Core`'s `SettingsGroup`, see its CLAUDE.md "Determinism") — the
