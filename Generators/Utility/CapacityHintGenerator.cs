@@ -23,6 +23,12 @@ namespace BH.SDK.Generators.Utility
 
         public override GeneratorHints Hints => GeneratorHints.Empty;
 
+        // LimitHints is a bare field on LevelSettings, so there is nothing here for GeneratorCost to
+        // count and the estimate is permanently Zero. Without this the host's "a run that would add
+        // nothing is refused" rule leaves the button disabled forever - the one generator whose whole
+        // job is invisible to the cost model.
+        public override bool AllowsEmptyRun => true;
+
         protected override void Generate(GeneratorContext context, Parameters parameters)
         {
             var level = LevelOf(context);

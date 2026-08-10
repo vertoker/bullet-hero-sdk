@@ -55,6 +55,37 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.FontSize)]
         public List<FloatKey> FontSizes { get; set; }
 
+        // The two tracks below are per-character effects rather than transform ones, so they are
+        // resolved by the player's text job over the string itself rather than by the usual
+        // keyframe -> transform path. Both default to "off" through TextRules' fallbacks, which is
+        // what keeps text authored before they existed unchanged.
+        //
+        // Their direction/mode lives on each KEY rather than on the object, exactly like Ease: a
+        // track can start writing forward and finish from the centre without being split across two
+        // objects, and between two keys the later one's setting wins.
+
+        /// <summary> How much of the text is written over time, 0..1, each key carrying the
+        /// direction it is written from. </summary>
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
+        [RuleCollectionUnique(nameof(FillmentKey.Frame)), RuleCollectionNoNullItems]
+        [JsonProperty(Names.Fillment)]
+        public List<FillmentKey> Fillments { get; set; }
+
+        /// <summary> How much of the text hides behind AppearingMask over time, 0..1, each key
+        /// carrying the order it hides in. Length is unchanged - a hidden character is substituted,
+        /// not removed. </summary>
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
+        [RuleCollectionUnique(nameof(AppearingKey.Frame)), RuleCollectionNoNullItems]
+        [JsonProperty(Names.Appearing)]
+        public List<AppearingKey> Appearings { get; set; }
+
+        /// <summary> Characters a hidden one is replaced by, picked per character index. One
+        /// character censors, several decode. Object-wide, unlike the mode - it is the text's own
+        /// alphabet, not something to animate. </summary>
+        [RuleNotNull, RuleStringMax(TextRules.MaxAppearingMask)]
+        [JsonProperty(Names.AppearingMask)]
+        public string AppearingMask { get; set; }
+
         /// <summary> Whether long lines wrap at the rect's width instead of overflowing it. </summary>
         [JsonProperty(Names.WordWrap)]
         public bool WordWrap { get; set; }
@@ -75,7 +106,10 @@ namespace BH.SDK.Models.Objects
             FontResourceId = FontResourceId.Default;
             Colors = new List<Color4Key>();
             FontSizes = new List<FloatKey>();
-            
+            Fillments = new List<FillmentKey>();
+            Appearings = new List<AppearingKey>();
+            AppearingMask = TextRules.AppearingMask_Default;
+
             WordWrap = TextRules.WordWrap_Default;
             HorizontalAlignment = TextRules.HorizontalAlignment_Default;
             VerticalAlignment = TextRules.VerticalAlignment_Default;
@@ -83,7 +117,8 @@ namespace BH.SDK.Models.Objects
         public TextObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            IString text, FontResourceId fontResourceId, List<Color4Key> colors, List<FloatKey> fontSizes, bool wordWrap,
+            IString text, FontResourceId fontResourceId, List<Color4Key> colors, List<FloatKey> fontSizes,
+            List<FillmentKey> fillments, List<AppearingKey> appearings, string appearingMask, bool wordWrap,
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment)
             : base(objectId, parentObjectId, name, visible, span, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
@@ -92,6 +127,9 @@ namespace BH.SDK.Models.Objects
             FontResourceId = fontResourceId;
             Colors = colors;
             FontSizes = fontSizes;
+            Fillments = fillments;
+            Appearings = appearings;
+            AppearingMask = appearingMask;
             WordWrap = wordWrap;
             HorizontalAlignment = horizontalAlignment;
             VerticalAlignment = verticalAlignment;
@@ -103,7 +141,10 @@ namespace BH.SDK.Models.Objects
             FontResourceId = FontResourceId.Default;
             Colors.Clear();
             FontSizes.Clear();
-            
+            Fillments.Clear();
+            Appearings.Clear();
+            AppearingMask = TextRules.AppearingMask_Default;
+
             WordWrap = TextRules.WordWrap_Default;
             HorizontalAlignment = TextRules.HorizontalAlignment_Default;
             VerticalAlignment = TextRules.VerticalAlignment_Default;
@@ -116,17 +157,21 @@ namespace BH.SDK.Models.Objects
         private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(), Text.Copy(), FontResourceId,
-            Colors.CopyList(), FontSizes.CopyList(), WordWrap, HorizontalAlignment, VerticalAlignment);
-        
+            Colors.CopyList(), FontSizes.CopyList(), Fillments.CopyList(), Appearings.CopyList(),
+            AppearingMask, WordWrap, HorizontalAlignment, VerticalAlignment);
+
         public void Update(TextObject src)
         {
             base.Update(src);
-            
+
             Text = src.Text.Copy();
             FontResourceId = src.FontResourceId;
             Colors = src.Colors.CopyList();
             FontSizes = src.FontSizes.CopyList();
-            
+            Fillments = src.Fillments.CopyList();
+            Appearings = src.Appearings.CopyList();
+            AppearingMask = src.AppearingMask;
+
             WordWrap = src.WordWrap;
             HorizontalAlignment = src.HorizontalAlignment;
             VerticalAlignment = src.VerticalAlignment;
@@ -141,6 +186,9 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(FontResourceId);
             hashCode.Add(Colors.GetListHashCode());
             hashCode.Add(FontSizes.GetListHashCode());
+            hashCode.Add(Fillments.GetListHashCode());
+            hashCode.Add(Appearings.GetListHashCode());
+            hashCode.Add(AppearingMask);
             hashCode.Add(WordWrap);
             hashCode.Add((int)HorizontalAlignment);
             hashCode.Add((int)VerticalAlignment);
@@ -183,6 +231,9 @@ namespace BH.SDK.Models.Objects
                          && FontResourceId.Equals(other.FontResourceId)
                          && Colors.ListEquals(other.Colors)
                          && FontSizes.ListEquals(other.FontSizes)
+                         && Fillments.ListEquals(other.Fillments)
+                         && Appearings.ListEquals(other.Appearings)
+                         && AppearingMask == other.AppearingMask
                          && WordWrap == other.WordWrap
                          && HorizontalAlignment == other.HorizontalAlignment
                          && VerticalAlignment == other.VerticalAlignment;

@@ -225,6 +225,9 @@
         public const string Texts = "texts";
         public const string Font = "font";
         public const string Fonts = "fonts";
+        public const string Chars = "chars";
+        public const string Fill = "fill";
+        public const string Mask = "mask";
         public const string Direction = "direction";
         public const string Resource = "resource";
         public const string Res = "res";
@@ -531,6 +534,12 @@
         public const string WordWrap = Word + Wrap;
         public const string HorizontalAlignment = HorizontalShort + _ + Alignment;
         public const string VerticalAlignment = VerticalShort + _ + Alignment;
+
+        public const string Fillment = "fillment";
+        public const string Appearing = "appearing";
+        public const string FillDirection = Fill + _ + Direction;
+        public const string AppearingMode = Appearing + _ + ModeShort;
+        public const string AppearingMask = Appearing + _ + Mask;
         public const string OverEdge = Over + _ + Edge;
         public const string UnderEdge = Under + _ + Edge;
         
@@ -540,6 +549,7 @@
         public const string TextureResourceId = Texture + _ + Res + _ + Id;
         public const string TextureResourceUV = Texture + _ + Res + _ + UV;
         public const string FontResourceId = Font + _ + Res + _ + Id;
+        public const string FontCharacters = Font + _ + Chars;
         public const string AudioResourceId = Audio + _ + Res + _ + Id;
         public const string ByteResourceId = Byte + _ + Res + _ + Id;
         public const string TextResourceId = Text + _ + Res + _ + Id;

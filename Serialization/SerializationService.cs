@@ -85,6 +85,7 @@ namespace BH.SDK.Serialization
                 new DictionaryEffectsConverter(),
                 new DictionaryPrefabsConverter(),
                 new DictionaryModificationsConverter(),
+                new DictionaryCachedFontTextsConverter(),
                 new DictionaryAsPairListConverter<ObjectId, ObjectId>(),
 
                 new PrimitiveIntConverter(),

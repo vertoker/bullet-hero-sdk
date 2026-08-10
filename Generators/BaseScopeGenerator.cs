@@ -18,6 +18,11 @@ namespace BH.SDK.Generators
         public virtual GeneratorRequirements Requirements => GeneratorRequirements.None;
         public virtual GeneratorHints Hints => GeneratorHints.Empty;
 
+        /// <summary> True for every Modifier by default - editing and deleting what already exists is
+        /// exactly a zero-cost run. A Content generator that writes something GeneratorCost cannot
+        /// measure overrides this; one that simply produced nothing this time must not. </summary>
+        public virtual bool AllowsEmptyRun => Kind == GeneratorKind.Modifier;
+
         public Type ParametersType => typeof(TParams);
         public object CreateDefaultParameters() => CreateDefaults();
 

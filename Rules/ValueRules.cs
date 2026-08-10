@@ -99,7 +99,13 @@
         public const int DefaultAspectWidth = 16;
         public const int DefaultAspectHeight = 9;
         
-        public const int MaxGameString = 256;
+        // Also the fixed slot length of the player's per-frame text buffers, which is why it is a
+        // round power of two rather than a number picked per field: a text object's authored string
+        // and its rendered result each occupy exactly this much, so slot addressing stays two shifts
+        // and two slots can never overlap. Raising it costs (slot length x text capacity x 2) bytes
+        // twice over; lowering it silently truncates existing levels.
+        public const int MaxGameString = 1024;
+
         public const string DefaultLanguageCode = "en";
         public const int MaxUrl = 512;
         public const int MaxEditorName = 512;

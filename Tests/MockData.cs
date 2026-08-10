@@ -200,9 +200,14 @@ namespace BH.SDK.Tests
                 WordWrap = false,
                 HorizontalAlignment = TextObjectHorizontalAlignment.Left,
                 VerticalAlignment = TextObjectVerticalAlignment.Top,
+                AppearingMask = "X#@",
             };
             textObject.Colors.Add(new Color4Key());
             textObject.FontSizes.Add(new FloatKey());
+            // Non-default direction/mode on purpose: they live on the KEY, so a round trip that
+            // dropped them would still pass with the defaults.
+            textObject.Fillments.Add(new FillmentKey(0.5f, 0, TextFillDirection.ToCenter));
+            textObject.Appearings.Add(new AppearingKey(0.25f, 0, TextAppearingMode.Backward));
             level.Game.Objects.Add(new ObjectId(2), textObject);
 
             var effectObject = new EffectObject()
@@ -271,6 +276,17 @@ namespace BH.SDK.Tests
             {
                 new(ResourceUriType.DirectUrl, "https://upload.wikimedia.org/wikipedia/commons/7/7a/%22six-seven%22.ogg"),
             }));
+
+            // Both IString shapes and both id ranges, so the whole-Level round trip covers the
+            // FontCharacters converter without a test of its own: a game-defined font (positive id,
+            // which no other dictionary here can hold) and a user-defined one, one plain set and one
+            // per-language.
+            level.Resources.FontCharacters.Add(new FontResourceId(1),
+                new CachedFontText(new FontResourceId(1), new StringValue(" ABCabc")));
+            level.Resources.FontCharacters.Add(new FontResourceId(-1),
+                new CachedFontText(new FontResourceId(-1), new StringLocalized(
+                    new StringLanguage("en", " ABCabc"),
+                    new StringLanguage("ru", " АБВабв"))));
             var customColliderId = ColliderId.NewGuid();
             level.Resources.CompositeShapes.Add(customColliderId, new CompositeCollider(
                 customColliderId, "CustomCollider", new List<TriangleCollider> { new() }));

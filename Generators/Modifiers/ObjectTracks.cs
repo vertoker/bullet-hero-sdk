@@ -28,9 +28,15 @@ namespace BH.SDK.Generators.Modifiers
         /// <summary> TextObject.FontSizes. </summary>
         FontSizes = 1 << 9,
 
+        /// <summary> TextObject.Fillments. </summary>
+        Fillments = 1 << 10,
+
+        /// <summary> TextObject.Appearings. </summary>
+        Appearings = 1 << 11,
+
         Transform = Positions | Rotations | Scales | Sizes,
         Layout = AnchorsMin | AnchorsMax | Pivots,
-        All = Transform | Layout | Colors | UVs | FontSizes,
+        All = Transform | Layout | Colors | UVs | FontSizes | Fillments | Appearings,
     }
 
     // Every track on a RectObject is a List<T> of something implementing IFrame, but they are ten
@@ -71,6 +77,8 @@ namespace BH.SDK.Generators.Modifiers
                 case TextObject text:
                     if (Has(mask, ObjectTrackMask.Colors)) yield return Wrap(text.Colors);
                     if (Has(mask, ObjectTrackMask.FontSizes)) yield return Wrap(text.FontSizes);
+                    if (Has(mask, ObjectTrackMask.Fillments)) yield return Wrap(text.Fillments);
+                    if (Has(mask, ObjectTrackMask.Appearings)) yield return Wrap(text.Appearings);
                     break;
             }
         }

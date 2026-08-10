@@ -1,5 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;
 using Newtonsoft.Json;
 
@@ -24,42 +25,55 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.ResourceWebTimeout)]
         public float ResourceWebTimeout { get; set; }
         
-        // TODO add and integrate language with Unity Localization package (save as string like "en" or "ru")
+        // Empty means "follow the device", and that is why this carries no RuleStringPattern despite
+        // being a BCP-47 code: the pattern demands at least two letters, and its Fix would rewrite an
+        // empty value to "en" - silently taking away the only way a player has of saying "whatever
+        // this machine is set to". A save file carried to another machine should follow that machine.
+
+        /// <summary> Which language localized level text is read in. Empty follows the device. </summary>
+        [RuleNotNull, RuleStringMax(ValueRules.MaxLanguageCode)]
+        [JsonProperty(Names.Language)]
+        public string Language { get; set; }
 
         public GeneralSettings()
         {
             ResourceParallelLoadCount = 2;
             ResourceWebTimeout = 5f;
+            Language = string.Empty;
         }
-        public GeneralSettings(int resourceParallelLoadCount, float resourceWebTimeout)
+        public GeneralSettings(int resourceParallelLoadCount, float resourceWebTimeout, string language)
         {
             ResourceParallelLoadCount = resourceParallelLoadCount;
             ResourceWebTimeout = resourceWebTimeout;
+            Language = language;
         }
         public void Reset()
         {
             ResourceParallelLoadCount = 2;
             ResourceWebTimeout = 5f;
+            Language = string.Empty;
         }
 
         public object Clone() => Copy();
-        public GeneralSettings Copy() => new(ResourceParallelLoadCount, ResourceWebTimeout);
+        public GeneralSettings Copy() => new(ResourceParallelLoadCount, ResourceWebTimeout, Language);
 
         public void Pull(GeneralSettings source)
         {
             ResourceParallelLoadCount = source.ResourceParallelLoadCount;
             ResourceWebTimeout = source.ResourceWebTimeout;
+            Language = source.Language;
         }
 
         public override bool Equals(object obj) => obj is GeneralSettings value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(ResourceParallelLoadCount, ResourceWebTimeout);
+        public override int GetHashCode() => HashCode.Combine(ResourceParallelLoadCount, ResourceWebTimeout, Language);
 
         public bool Equals(GeneralSettings other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return ResourceParallelLoadCount == other.ResourceParallelLoadCount
-                   && ResourceWebTimeout.Equals(other.ResourceWebTimeout);
+                   && ResourceWebTimeout.Equals(other.ResourceWebTimeout)
+                   && Language == other.Language;
         }
     }
 }

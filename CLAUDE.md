@@ -74,7 +74,8 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   `ModificationUtils`/`TypeExtensions`.
 - **Services/** — `SerializationService`-adjacent but SDK-root-level: `CryptographyService`
   (AES-256-CBC), `ModificationService` (reflection path-based get/set, see "Modification system"
-  below), `TextFormatService` (`{variable}` string templating).
+  below), `TextFormatService` (`{variable}` string templating), `FontCharacterService` (builds
+  `LevelResources.FontCharacters`, see below).
 - **Generators/** — authoring automation: a generator produces level content from a few parameters.
   Non-generic `IGenerator` root (so `GeneratorRegistry`'s reflection scan and a reflection-built
   form are possible) split into `ILevelGenerator` (builds a whole `Level`+`LevelMeta`) and
@@ -146,6 +147,17 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   `LevelGraphAnalyzerTests`, `ValidationFacadeTests`, `ModificationCheckedWriteTests`.
 
 ## Object model (`Models/Objects/`)
+
+**`TextObject` carries two per-character effect tracks** beyond the usual transform ones:
+`Fillments` (how much of the text is written) and `Appearings` (how much of it hides behind
+`AppearingMask`), both plain `List<FloatKey>`, plus the non-keyframed `FillDirection`
+(`Forward`/`Backward`/`FromCenter`/`ToCenter`), `AppearingMode` (`Random`=0/`Forward`/`Backward`) and
+`AppearingMask` (an author-set string, default `"X"`, capped by `TextRules.MaxAppearingMask`). They
+are resolved over the string itself by the consumer's text job rather than by the keyframe→transform
+path. **Both fallbacks in `TextRules` mean "effect off"** (`Fillment_Fallback` = 1,
+`Appearing_Fallback` = 0) — an empty track has to read as unchanged, or every text authored before
+these existed would vanish. `Services/FontCharacterService` folds the mask into the font's character
+set, since a mask character needs a glyph exactly like the text it replaces.
 
 `RectObject` is the base of every placeable scene object: `ObjectId`, `ParentObjectId`, `Name`,
 `Visible`, `Span` (a half-open `FrameSpan`), `Layer`, plus the shared keyframe tracks
@@ -370,6 +382,24 @@ resources are baked into the game/its own registries and never appear in a level
 `Resource.MaxSourcesCount`=4 fallback URIs per resource). `TextureResourceId`/`FontResourceId`/
 `AudioResourceId`/`BytesResourceId`/`TextResourceId` are narrow per-category wrappers sharing this
 range, freely convertible to/from the untyped `TypedResourceId`.
+
+**`LevelResources.FontCharacters`** (`Dictionary<FontResourceId, IString>`) is the one entry here that
+is not a resource but a fact *about* the resources, and the one exception to the user-defined-only
+rule above: it is keyed by **any** `FontResourceId`, game-defined ids included, because a level's
+most-used font is usually the game's own and needs its glyph atlas warmed just as much as a shipped
+one. It holds each font's distinct-character set, and it is **advisory in exactly the way
+`LevelSettings.Capacity` is** — text renders identically without it, an empty or absent entry means
+"warm nothing for this font" rather than "this font has no text", and no consumer recomputes it at
+load. The value is a `CachedFontText` (`Models/Data/`) carrying its own `FontResourceId` plus the
+characters as an **`IString`**, not a bare `string`, so a localized level warms per language through
+the very same resolution its text goes through. Carrying the key is what lets it serialize like its
+six neighbours — a plain array with the key dropped and recovered on read
+(`DictionaryCachedFontTextsConverter : DictionaryAsListConverter`) — instead of the `{k, v}` pair form
+a bare `id → IString` map would have needed. Build it with `Services/FontCharacterService` (`Build`/
+`BuildAll` are pure and return values; `Apply` writes into the model) or run the `gen_font_cache`
+generator, which does the same through `GeneratorContext` so the run stays undoable — see
+`Generators/Utility/FontCacheGenerator.cs`. Adding the field needed no migration: the domain stays at
+`(1, 0)` and an older file deserializes to an empty dictionary, i.e. "no hint".
 
 `Guid`-based ids (`ColliderId`/`EffectId`/`LevelId`/`PrefabId`/`ThemeId`) deliberately have **no**
 positive/negative split — a `Guid` has no natural sign, so game-defined vs. user-defined is
