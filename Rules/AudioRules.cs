@@ -15,7 +15,50 @@ namespace BH.SDK.Rules
         public const float MinOffsetTime = -3600f;
         public const float MaxOffsetTime = 3600f;
         public const float OffsetTimeDefault = 0f;
-        
+
+        // Same numbers as FrameRules.MinSpeed/MaxSpeed, different thing entirely: this is one
+        // track's own rate, that one is the whole level's playback rate. The two multiply, so the
+        // real pitch a source ends up with reaches +-4 - which Unity allows, its own +-3 limit is
+        // an inspector slider, not an API bound.
+
+        // -2f - 2f, 0.01f, x
+        public const float MinSpeed = -2f;
+        public const float MaxSpeed = 2f;
+        public const float SpeedDefault = 1f;
+
+        // Bounds for the playback-sync settings on AudioGraphicsSettings. They are what the settings
+        // screen offers and what validation checks; nothing clamps at runtime, exactly like every
+        // other UserSettings value - a hand-edited file is the player's own doing.
+
+        // How far the playhead must jump before it counts as a discontinuity rather than drift.
+        // The floor is one audio buffer: below that it would fire on AudioSettings.dspTime's own
+        // quantization alone and re-seek constantly, which is audible as a stutter. The ceiling is
+        // where a scrub starts feeling unresponsive.
+
+        // 0.02f - 0.5f, 0.01f, s
+        public const float MinResyncJumpTime = 0.02f;
+        public const float MaxResyncJumpTime = 0.5f;
+        public const float ResyncJumpTimeDefault = 0.05f;
+
+        // Drift below which the playback rate is left at exactly 1. Not a precision knob: any rate
+        // other than 1 puts the engine's resampler in the signal path, so this is "how much desync
+        // is worth that cost". Too small and the resampler is simply always on.
+
+        // 0.005f - 0.1f, 0.005f, s
+        public const float MinSyncDeadZone = 0.005f;
+        public const float MaxSyncDeadZone = 0.1f;
+        public const float SyncDeadZoneDefault = 0.02f;
+
+        // How far the rate correction may bend playback. 0 turns it off entirely, leaving the hard
+        // resync as the only correction - a legitimate choice if the resampler is more objectionable
+        // than the occasional jump. The ceiling is ~0.85 of a semitone, past which it stops reading
+        // as a correction and starts reading as the music being wrong.
+
+        // 0f - 0.05f, 0.005f, x
+        public const float MinPitchCorrection = 0f;
+        public const float MaxPitchCorrection = 0.05f;
+        public const float PitchCorrectionDefault = 0.02f;
+
         // -80f - 0f, 0.1f, dB;
         public const float MixLevel_Enabled = 0f;
         public const float MixLevel_Disabled = -80f;

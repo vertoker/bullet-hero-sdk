@@ -290,6 +290,14 @@ layer, converted once at load via `LevelStateBuilder`).
   Each effect's "enabled" state is encoded as `MixLevel > -80dB` (`AudioRules.IsActiveMixLevel`) —
   **no explicit bool per effect**. `LevelTrackEffects.Active` (track-level, default `false`) *is* an
   explicit bool — don't confuse the two.
+  `LevelTrack.Speed` (`[-2, 2]`, default `1`) is the track's own resample rate — faster is also
+  higher-pitched, negative **reverses** the track (it starts at the clip's END and plays back to its
+  start, with `OffsetTime` skipping the tail rather than the head), `0` freezes it silent — and it
+  is deliberately **not** keyframed: an animated rate would make the clip position the integral of
+  that curve, which no consumer can evaluate from one frame's data. It shipped **without a migration**
+  on purpose (`AudioLevel` stays at `(1, 0)`): a pre-Speed file deserializes to `0f`, i.e. silent
+  tracks, and the levels that existed at the time were the author's own to re-save. Don't add a
+  `NullSpeed`-style sentinel after the fact — `0` is a legal authored value here.
 - **PostProcessing**: `GameLevel.PostProcessingEvents` — top-level `Active` (default `true`,
   opposite default from audio's `Active`) + 12 keyframe-track lists, one per URP effect (Bloom,
   ChromaticAberration, Vignette, LensDistortion, FilmGrain, MotionBlur, ColorCurves, LiftGammaGain,

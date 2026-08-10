@@ -46,14 +46,25 @@ namespace BH.SDK.Models.Audio
         // Offset for audio clip itself. Frames tells where boundaries of track in level,
         // OffsetTime tells from which time starts clip itself
 
-        /// <summary> Seconds skipped inside the clip at the span's start. Frames place the track on the level
-        /// timeline, this places the playhead inside the clip - the two are independent. </summary>
+        /// <summary> Seconds skipped inside the clip at the span's start, measured from whichever end
+        /// Speed makes the track start at. Frames place the track on the level timeline, this places
+        /// the playhead inside the clip - the two are independent. </summary>
         [RuleInRange(AudioRules.MinOffsetTime, AudioRules.MaxOffsetTime)]
         [JsonProperty(Names.OffsetTime)]
         public float OffsetTime { get; set; }
 
-        // TODO integrate pitch shift, Unity not limit it, -2f - 2f should be enough for shitty atmospheric remixes (slowed/nightcore)
-        // TODO also slow down original speed limits for whole level moving (-2f - 2f)
+        // Not a keyframed track, and deliberately so: an animated rate would make the clip position
+        // the integral of that curve, which nothing downstream (BuildAudioJob, the waveform drawer,
+        // AudioSource.pitch) can evaluate from a single frame's worth of data.
+
+        /// <summary> How many seconds of the clip are consumed per second of level time, i.e. a
+        /// resample - faster is also higher-pitched (nightcore), slower is also lower (slowed).
+        /// Negative reverses the track: it starts at the clip's END and plays back to its start,
+        /// with OffsetTime skipping the tail instead of the head. 0 freezes it (silent).
+        /// Multiplies with the level's own play speed. </summary>
+        [RuleInRange(AudioRules.MinSpeed, AudioRules.MaxSpeed)]
+        [JsonProperty(Names.Speed)]
+        public float Speed { get; set; }
 
         /// <summary> Mixing slot this track occupies, so simultaneous tracks stay separable
         /// (music / sfx / voice ...). Not a render layer - unrelated to RectObject.Layer. </summary>
@@ -79,17 +90,19 @@ namespace BH.SDK.Models.Audio
             AudioResourceId = AudioResourceId.Null;
             Span = new FrameSpan();
             OffsetTime = AudioRules.OffsetTimeDefault;
+            Speed = AudioRules.SpeedDefault;
             AudioLayer = AudioRules.MinAudioLayer;
             Name = string.Empty;
             Effects = new LevelTrackEffects();
         }
         public LevelTrack(AudioId audioId, AudioResourceId audioResourceId, FrameSpan span,
-            float offsetTime, int audioLayer, string name, LevelTrackEffects effects)
+            float offsetTime, float speed, int audioLayer, string name, LevelTrackEffects effects)
         {
             AudioId = audioId;
             AudioResourceId = audioResourceId;
             Span = span;
             OffsetTime = offsetTime;
+            Speed = speed;
             AudioLayer = audioLayer;
             Name = name;
             Effects = effects;
@@ -100,6 +113,7 @@ namespace BH.SDK.Models.Audio
             AudioResourceId = AudioResourceId.Null;
             Span = new FrameSpan();
             OffsetTime = AudioRules.OffsetTimeDefault;
+            Speed = AudioRules.SpeedDefault;
             AudioLayer = AudioRules.MinAudioLayer;
             Name = string.Empty;
             Effects.Reset();
@@ -107,11 +121,11 @@ namespace BH.SDK.Models.Audio
 
         public object Clone() => Copy();
         public LevelTrack Copy() => new(AudioId, AudioResourceId, Span,
-            OffsetTime, AudioLayer, Name, Effects.Copy());
+            OffsetTime, Speed, AudioLayer, Name, Effects.Copy());
 
         public override bool Equals(object obj) => obj is LevelTrack value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(AudioId,
-            Span, OffsetTime, AudioResourceId, AudioLayer, Name, Effects);
+            Span, OffsetTime, Speed, AudioResourceId, AudioLayer, Name, Effects);
 
         public bool Equals(LevelTrack other)
         {
@@ -120,6 +134,7 @@ namespace BH.SDK.Models.Audio
             var result = AudioId.Equals(other.AudioId)
                          && Span.Equals(other.Span)
                          && OffsetTime.Equals(other.OffsetTime)
+                         && Speed.Equals(other.Speed)
                          && AudioResourceId.Equals(other.AudioResourceId)
                          && AudioLayer.Equals(other.AudioLayer)
                          && Name.Equals(other.Name)

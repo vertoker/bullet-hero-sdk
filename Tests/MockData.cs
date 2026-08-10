@@ -296,7 +296,7 @@ namespace BH.SDK.Tests
             trackEffects.ParamEQ.CenterFreq = 3000f;
 
             var track = new LevelTrack(new AudioId(1), new AudioResourceId(-1), FrameSpan.FromBounds(0, 11),
-                0f, 0, "track", trackEffects);
+                0f, 1.5f, 0, "track", trackEffects);
             level.Audio.Tracks.Add(track.AudioId, track);
 
             return level;
@@ -395,7 +395,7 @@ namespace BH.SDK.Tests
 
             var trackEffects = new LevelTrackEffects();
             var track = new LevelTrack(new AudioId(1), new AudioResourceId(0), FrameSpan.FromBounds(0, 1001),
-                0f, 0, "track", trackEffects);
+                0f, 5f, 0, "track", trackEffects);
             level.Audio.Tracks.Add(track.AudioId, track);
 
             return level;
@@ -528,7 +528,9 @@ namespace BH.SDK.Tests
                     {
                         Render = false,
                         RenderEffects = false,
-                        MaxDiffTime = 0.15f,
+                        ResyncJumpTime = 0.15f,
+                        SyncDeadZone = 0.03f,
+                        PitchCorrection = 0.04f,
                         UseScrub = false,
                         ScrubTime = 0.2f,
                     },

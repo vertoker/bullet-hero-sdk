@@ -57,7 +57,11 @@
         public const string Delta = "delta";
         public const string Scrub = "scrub";
         public const string Diff = "diff";
-        
+        public const string Resync = "resync";
+        public const string Dead = "dead";
+        public const string Zone = "zone";
+        public const string Correction = "correction";
+
         public const string Is = "is";
         public const string Name = "name";
         public const string Title = "title";
@@ -463,7 +467,13 @@
         public const string TargetDeltaTime = Target + _ + Delta + _ + Time;
         public const string ScrubTime = Scrub + _ + Time;
         public const string MaxScrubTime = Max + _ + Scrub + _ + Time;
-        public const string MaxDiffTime = Max + _ + Diff + _ + Time;
+        // Replaced MaxDiffTime, and the key changed with it: what it measures is no longer "how far
+        // audio may drift" but "how far the playhead must JUMP to count as a discontinuity". An old
+        // settings.json simply falls back to the default for it, which is the intended outcome - the
+        // stored number was tuned against a metric that no longer exists.
+        public const string ResyncJumpTime = Resync + _ + Jump + _ + Time;
+        public const string SyncDeadZone = Dead + _ + Zone;
+        public const string PitchCorrection = Pitch + _ + Correction;
         
         public const string PostProcessing = Post + Processing;
         public const string RenderBloom = Render + _ + BloomShort;

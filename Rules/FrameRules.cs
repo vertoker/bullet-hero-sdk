@@ -28,8 +28,8 @@ namespace BH.SDK.Rules
         // doesn't affect genuine continuous playback time.
         public const float DeltaFramerate = 1f / MaxFramerate;
         
-        public const float MinSpeed = -3f;
-        public const float MaxSpeed = 3f;
+        public const float MinSpeed = -2f;
+        public const float MaxSpeed = 2f;
         public const float DefaultSpeed = 1f;
         public const float SpeedStep = 0.1f;
         
