@@ -24,7 +24,7 @@ namespace BH.SDK.Models.Primitives
         }
         public void Reset()
         {
-            value = NullValue;
+            value = Guid.Empty;
         }
 
         // Effect ids are a stable identifier for an EffectData entry (Level.Resources.Effects),
@@ -39,11 +39,13 @@ namespace BH.SDK.Models.Primitives
 
         public static readonly EffectId Null = new(NullValue);
 
+        // default, not NullValue: reading a static field would drag this type's initializer into
+        // any Burst job that asks - see ColliderId.IsEnabled for the failure that caused.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsEnabled() => value != NullValue;
+        public bool IsEnabled() => value != Guid.Empty;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEnabled(Guid value) => value != NullValue;
+        public static bool IsEnabled(Guid value) => value != Guid.Empty;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static EffectId NewId() => new(Guid.NewGuid());

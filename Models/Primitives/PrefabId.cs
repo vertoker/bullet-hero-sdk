@@ -24,7 +24,7 @@ namespace BH.SDK.Models.Primitives
         }
         public void Reset()
         {
-            value = NullValue;
+            value = Guid.Empty;
         }
 
         // Prefab ids are a stable identifier for a Prefab entry (Level.Resources.Prefabs) - what
@@ -36,12 +36,12 @@ namespace BH.SDK.Models.Primitives
         public static readonly Guid NullValue = Guid.Empty;
         
         public static readonly PrefabId Null = new(NullValue);
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsEnabled() => value != Guid.Empty;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsEnabled() => value != NullValue;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEnabled(Guid value) => value != NullValue;
+        public static bool IsEnabled(Guid value) => value != Guid.Empty;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PrefabId NewId() => new(Guid.NewGuid());

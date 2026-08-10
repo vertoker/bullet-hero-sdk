@@ -24,7 +24,7 @@ namespace BH.SDK.Models.Primitives
         }
         public void Reset()
         {
-            value = NullValue;
+            value = Guid.Empty;
         }
 
         // Level ids are a stable identifier for a Level (replaces LevelMeta.LevelGuid). Unlike the
@@ -36,11 +36,13 @@ namespace BH.SDK.Models.Primitives
 
         public static readonly LevelId Null = new(NullValue);
 
+        // default, not NullValue: reading a static field would drag this type's initializer into
+        // any Burst job that asks - see ColliderId.IsEnabled for the failure that caused.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsEnabled() => value != NullValue;
+        public bool IsEnabled() => value != Guid.Empty;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEnabled(Guid value) => value != NullValue;
+        public static bool IsEnabled(Guid value) => value != Guid.Empty;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static LevelId NewId() => new(Guid.NewGuid());
