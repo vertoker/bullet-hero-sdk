@@ -167,6 +167,14 @@ are valid (mirrors Unity project's `defaults.xxx` fallback convention). Subclass
 into `Level.Resources.Effects`, the actual payload lives in `EffectData`), `TextObject`,
 `PrefabObject` (see "Prefab system" below).
 
+`ShapeObject.ShaderType` (`Models/Enum/ShaderType.cs`, byte: `Auto = 0`/`Opaque`/`Transparent`) is
+authored intent about the render path, not a shader id — the format deliberately has no
+user-defined shaders. `Auto = 0` is what an older file deserializes to, so adding it needed no
+migration and the domain stayed at `(1, 0)`. What `Auto` actually resolves to is a *consumer*
+question and lives in the Unity project (`Core`'s `ShapeShaderResolver`); the format only stores the
+three-way choice. It is one of the hand-written-boilerplate fields, so it must appear in
+`CopyImpl`/`Update`/`EqualsShapeObject`/`GetHashCode` alike.
+
 **Polymorphism mechanism** (applies throughout the whole model tree, not just objects — see "Value
 system"): `ObjectType` (byte enum) is resolved by `Serialization/Converters/CustomTypes/
 ObjectConverter.cs`, registered globally in `SerializationService`, **not** via a `[JsonConverter]`
@@ -362,8 +370,9 @@ format only stores the middle tier. Adding the field needed no migration: the do
 `(1, 0)` and an older file simply deserializes to 0.
 
 `LevelCapacityHint` (`LevelSettings.Capacity`) is the one **advisory** value in the whole format:
-five peak-simultaneous-object counts (instances/textures/effects/texts/tracks) an editor writes on
-save from `LevelCapacityUtils.GetPeakUsage`, so a player can preallocate its per-frame buffers
+six peak-simultaneous-object counts (instances/shapes-opaque/shapes-transparent/effects/texts/
+tracks) an editor writes on save from `LevelCapacityUtils.GetPeakUsage`, so a player can preallocate
+its per-frame buffers
 instead of growing them mid-level. It is never authoritative — the file may be hand-edited, foreign,
 or stale, so a consumer treats it as a lower bound at most, measures/grows on its own anyway, and
 clamps it against what the device allows. All zeroes (the default, and what an older level
@@ -563,6 +572,10 @@ non-static, non-abstract, and has a public parameterless constructor — because
   `LayerPolicy`), and `[MinCameraLayer, MaxCameraLayer]` bounds the camera itself. Don't widen the
   authored range without moving those bands too. Layer is **parent-relative** (a child's effective
   layer is the sum up its parent chain), so these are limits on one object's own contribution.
+  `LayerZOffsetStep` (0.001) × `LayerZOffsetCount` (512) is a **different** concern living next to
+  them: the depth tie-break the consumer applies to coplanar *opaque* shapes so they can't z-fight
+  (`GamePlayer`'s `BuildInstancesParentingJob`). Their product must stay below 1.0, since that is
+  how far apart the layer coefficient spaces two layers — don't merge the two families of constant.
 - **Level-wide/track-wide numeric collection caps live in `Rules/LevelRules.cs`/`AudioRules.cs`**
   (max markers/checkpoints/keys/prefabs/audio-layers/...) — check there before hardcoding a magic
   cap elsewhere; `Level.Objects` itself is deliberately uncapped (see the commented-out

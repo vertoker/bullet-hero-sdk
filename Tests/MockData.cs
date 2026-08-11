@@ -4,6 +4,7 @@ using BH.SDK.Models;
 using BH.SDK.Models.Audio;
 using BH.SDK.Models.Data;
 using BH.SDK.Models.Effects;
+using BH.SDK.Models.Enum;
 using BH.SDK.Models.Enum.Meta;
 using BH.SDK.Models.Enum.Resources;
 using BH.SDK.Models.Enum.Settings;
@@ -180,6 +181,9 @@ namespace BH.SDK.Tests
             var shapeObject = new ShapeObject()
             {
                 ObjectId = new ObjectId(1),
+                // Deliberately NOT the default: ShaderType.Auto is 0, so a round trip that dropped
+                // the field entirely would still come back equal and prove nothing.
+                ShaderType = ShaderType.Opaque,
             };
             shapeObject.Positions.Add(new PosKey());
             shapeObject.Rotations.Add(new AngleKey());

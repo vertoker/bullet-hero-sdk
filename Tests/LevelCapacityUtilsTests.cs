@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BH.SDK.Models;
 using BH.SDK.Models.Audio;
+using BH.SDK.Models.Enum;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;
@@ -111,8 +112,6 @@ namespace BH.SDK.Tests
 
         #endregion
 
-        #region GetPeakUsage
-
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
@@ -199,6 +198,100 @@ namespace BH.SDK.Tests
 
             Assert.AreEqual(2, hint.Tracks);
             Assert.AreEqual(0, hint.Instances);
+        }
+
+        #region ShaderType split
+
+        // The two shape pools cannot borrow from each other at runtime - an entity's archetype is
+        // fixed when its prototype is created - so a hint that lumps them together under-sizes one
+        // and over-sizes the other. These pin that the split follows the authored ShaderType.
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void GetPeakUsage_ExplicitShaderTypes_LandInTheirOwnPools()
+        {
+            var level = new Level();
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Opaque }, 1, 0, 100);
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Opaque }, 2, 0, 100);
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Transparent }, 3, 0, 100);
+
+            var hint = LevelCapacityUtils.GetPeakUsage(level);
+
+            Assert.AreEqual(2, hint.ShapesOpaque);
+            Assert.AreEqual(1, hint.ShapesTransparent);
+            Assert.AreEqual(3, hint.Instances);
+        }
+
+        // Auto is not decidable without the texture's own opacity, which this assembly cannot see.
+        // With no resolver it therefore counts as transparent - the pool that always works.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void GetPeakUsage_AutoWithNoResolver_CountsAsTransparent()
+        {
+            var level = new Level();
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Auto }, 1, 0, 100);
+
+            var hint = LevelCapacityUtils.GetPeakUsage(level);
+
+            Assert.AreEqual(0, hint.ShapesOpaque);
+            Assert.AreEqual(1, hint.ShapesTransparent);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void GetPeakUsage_AutoWithResolver_FollowsTheResolver()
+        {
+            var level = new Level();
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Auto }, 1, 0, 100);
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Auto }, 2, 0, 100);
+
+            var hint = LevelCapacityUtils.GetPeakUsage(level,
+                shape => shape.ObjectId.value == 1);
+
+            Assert.AreEqual(1, hint.ShapesOpaque);
+            Assert.AreEqual(1, hint.ShapesTransparent);
+        }
+
+        // A resolver never overrides an authored choice - it only ever answers for Auto.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void GetPeakUsage_ResolverDoesNotOverrideExplicitTransparent()
+        {
+            var level = new Level();
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Transparent }, 1, 0, 100);
+
+            var hint = LevelCapacityUtils.GetPeakUsage(level, _ => true);
+
+            Assert.AreEqual(0, hint.ShapesOpaque);
+            Assert.AreEqual(1, hint.ShapesTransparent);
+        }
+
+        // Each pool peaks on its own timeline, same as the families above.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void GetPeakUsage_PoolsPeakIndependently()
+        {
+            var level = new Level();
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Opaque }, 1, 0, 10);
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Opaque }, 2, 0, 10);
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Transparent }, 3, 50, 60);
+            AddObject(level, new ShapeObject { ShaderType = ShaderType.Transparent }, 4, 50, 60);
+
+            var hint = LevelCapacityUtils.GetPeakUsage(level);
+
+            Assert.AreEqual(2, hint.ShapesOpaque);
+            Assert.AreEqual(2, hint.ShapesTransparent);
+            Assert.AreEqual(2, hint.Instances);
         }
 
         #endregion
