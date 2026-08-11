@@ -18,6 +18,20 @@
         public const float LayerCoefficient = -1f;
         // minimal allowed delta for no clipping editor object through each other
         public const float MinLayerDelta = 0.01f;
+
+        // Depth tie-break for objects sharing a layer. Early-Z only rejects what DIFFERS in depth,
+        // and LayerCoefficient puts whole layers exactly 1.0 apart, so two objects on one layer are
+        // coplanar and ZTest LEqual keeps both - every overlapping pair shades twice, and which one
+        // wins is undefined. A small deterministic offset per object separates them.
+        //
+        // Step times count must stay strictly below 1.0 or an object bleeds into the next layer's
+        // band and the draw order the author sees stops matching the one they wrote. 512 leaves half
+        // a layer spare; the full 1000 the step would allow leaves none.
+        //
+        // This is a DIFFERENT concern from MinLayerDelta above, which spaces the editor's own
+        // overlay pieces so they do not z-fight each other. Do not merge the two constants.
+        public const float LayerZOffsetStep = 0.001f;
+        public const int LayerZOffsetCount = 512;
         
         public const int MinLayer = -1000;
         public const int MaxLayer = 1000;

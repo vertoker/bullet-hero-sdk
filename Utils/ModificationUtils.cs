@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using BH.SDK.Models.Effects;
@@ -24,7 +24,7 @@ namespace BH.SDK.Utils
             
             // Objects
             
-            AddPropertiesRecursive<RectObject, TextureObject, EffectObject, TextObject, PrefabObject>();
+            AddPropertiesRecursive<RectObject, ShapeObject, EffectObject, TextObject, PrefabObject>();
             
             // Effects
             

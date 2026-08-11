@@ -8,7 +8,7 @@ namespace BH.SDK.Models.Primitives
 {
     /// <summary>
     /// Identity of a reusable collision shape (CompositeCollider). The only Guid id here with a
-    /// large set of well-known constants below - the built-in shape library every TextureObject
+    /// large set of well-known constants below - the built-in shape library every ShapeObject
     /// picks from, generated from small ints so they stay readable in a saved file.
     /// </summary>
     public struct ColliderId : IEquatable<ColliderId>, IPrimitiveGuid
@@ -32,7 +32,7 @@ namespace BH.SDK.Models.Primitives
         }
 
         // Collider ids are a stable identifier for a CompositeCollider/CompositeColliderShapeScriptable
-        // entry, same role ThemeId/EffectId play for Theme/Effect - a TextureObject references a
+        // entry, same role ThemeId/EffectId play for Theme/Effect - a ShapeObject references a
         // shared, reusable collider shape by id instead of embedding its own copy. Unlike the
         // previous int-based id, there is no game-defined/user-defined range split - a Guid has no
         // meaningful "positive/negative" ordering to split on (see ThemeId/EffectId/PrefabId/LevelId

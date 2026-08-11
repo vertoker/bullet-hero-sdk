@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Enum.Text;
@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Objects
 {
     /// <summary>
-    /// A rect that renders text. Purely visual - unlike TextureObject it carries no collider, so
+    /// A rect that renders text. Purely visual - unlike ShapeObject it carries no collider, so
     /// text can never kill the player, and its rect acts as the layout box rather than a hitbox.
     /// </summary>
     [RuleContainer]
@@ -41,7 +41,7 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.FontResourceId)]
         public FontResourceId FontResourceId { get; set; }
 
-        /// <summary> Tint track. Flat Color4Key only, not the four-corner family a TextureObject
+        /// <summary> Tint track. Flat Color4Key only, not the four-corner family a ShapeObject
         /// uses - glyphs have no quad to grade across. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxObjectKeys)]
         [RuleCollectionUnique(nameof(Color4Key.Frame))]

@@ -48,7 +48,7 @@ namespace BH.SDK.Tests.Rules
         // Fix mints a brand new Guid, i.e. a reference to a resource that does not exist. Fine for a
         // field that must point somewhere and currently points nowhere; catastrophic for the two
         // properties where Null is a real authored state - which is why they must never carry this
-        // rule (TextureObject.ColliderId would gain a phantom collider, PrefabObject.PrefabId a
+        // rule (ShapeObject.ColliderId would gain a phantom collider, PrefabObject.PrefabId a
         // dangling template). This test is the reason that stays a deliberate omission.
         [Test]
         [Author(Metadata.Author.Vertoker)]

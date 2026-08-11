@@ -19,10 +19,10 @@ namespace BH.SDK.Generators.Modifiers
         AnchorsMax = 1 << 5,
         Pivots = 1 << 6,
 
-        /// <summary> TextureObject.Colors / TextObject.Colors - the type-specific tracks. </summary>
+        /// <summary> ShapeObject.Colors / TextObject.Colors - the type-specific tracks. </summary>
         Colors = 1 << 7,
 
-        /// <summary> TextureObject.UVs. </summary>
+        /// <summary> ShapeObject.UVs. </summary>
         UVs = 1 << 8,
 
         /// <summary> TextObject.FontSizes. </summary>
@@ -70,7 +70,7 @@ namespace BH.SDK.Generators.Modifiers
 
             switch (obj)
             {
-                case TextureObject texture:
+                case ShapeObject texture:
                     if (Has(mask, ObjectTrackMask.Colors)) yield return Wrap(texture.Colors);
                     if (Has(mask, ObjectTrackMask.UVs)) yield return Wrap(texture.UVs);
                     break;

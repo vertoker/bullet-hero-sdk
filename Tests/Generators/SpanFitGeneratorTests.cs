@@ -26,10 +26,10 @@ namespace BH.SDK.Tests.Generators
             return level;
         }
 
-        private static TextureObject AddObject(Level level, int startFrame, int endFrame,
+        private static ShapeObject AddObject(Level level, int startFrame, int endFrame,
             ObjectId parent = default, FrameAnchor anchors = FrameAnchor.None, string name = "obj")
         {
-            var obj = new TextureObject
+            var obj = new ShapeObject
             {
                 ObjectId = level.Settings.GetNextObjectId(),
                 ParentObjectId = parent,

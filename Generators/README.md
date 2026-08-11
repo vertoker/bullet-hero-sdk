@@ -45,7 +45,7 @@ public class RadialGenerator : BaseContentGenerator<RadialGenerator.Parameters>
     {
         for (var i = 0; i < parameters.Count; i++)
         {
-            var obj = context.Create<TextureObject>();
+            var obj = context.Create<ShapeObject>();
             obj.ParentObjectId = context.Parent;
             obj.Span = context.Span;
             obj.Layer = context.Layer;

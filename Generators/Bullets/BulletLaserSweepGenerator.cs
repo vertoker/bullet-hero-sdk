@@ -91,7 +91,7 @@ namespace BH.SDK.Generators.Bullets
 
         /// <summary> Places the beam so that it extends OUT of the origin: the rect is centred on
         /// its own midpoint, which sits half a length along the beam direction. </summary>
-        private static void PlaceBeam(TextureObject obj, Parameters parameters, float angle,
+        private static void PlaceBeam(ShapeObject obj, Parameters parameters, float angle,
             int frame, EaseType ease = FrameRules.DefaultEase)
         {
             Direction(angle, out var dirX, out var dirY);
@@ -102,7 +102,7 @@ namespace BH.SDK.Generators.Bullets
 
         /// <summary> Replaces the template colour with a faded copy - the warning beam has to read
         /// as "not yet dangerous" without the author configuring a second colour for it. </summary>
-        private static void RecolorFaded(TextureObject obj, Parameters parameters, int frame)
+        private static void RecolorFaded(ShapeObject obj, Parameters parameters, int frame)
         {
             obj.Colors.Clear();
             AddColor(obj, parameters.Color, parameters.WarnAlpha, frame);

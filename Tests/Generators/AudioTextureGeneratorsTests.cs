@@ -340,8 +340,8 @@ namespace BH.SDK.Tests.Generators
         public void Texture_MergesRunsOfOneColourIntoSingleObjects()
         {
             var level = CreateLevel();
-            var generator = new TextureObjectsGenerator();
-            var parameters = new TextureObjectsGenerator.Parameters
+            var generator = new ShapeObjectsGenerator();
+            var parameters = new ShapeObjectsGenerator.Parameters
             {
                 Image = SolidRow(4, 4, new Pixel(255, 255, 255, 255)),
                 TargetWidth = 4, TargetHeight = 4, PixelSize = 1f, MergeRuns = true,
@@ -365,7 +365,7 @@ namespace BH.SDK.Tests.Generators
         public void Texture_WithoutMergingPlacesOneObjectPerPixel()
         {
             var level = CreateLevel();
-            new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
+            new ShapeObjectsGenerator().Run(Context(level), new ShapeObjectsGenerator.Parameters
             {
                 Image = SolidRow(4, 4, new Pixel(255, 255, 255, 255)),
                 TargetWidth = 4, TargetHeight = 4, PixelSize = 1f, MergeRuns = false,
@@ -385,7 +385,7 @@ namespace BH.SDK.Tests.Generators
             texture.Pixels[1] = new Pixel(0, 0, 0, 0);
             texture.Pixels[2] = new Pixel(0, 0, 0, 0);
 
-            new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
+            new ShapeObjectsGenerator().Run(Context(level), new ShapeObjectsGenerator.Parameters
             {
                 Image = texture, TargetWidth = 4, TargetHeight = 1, PixelSize = 1f, MergeRuns = true,
             });
@@ -404,7 +404,7 @@ namespace BH.SDK.Tests.Generators
         public void Texture_DownsamplesToTheRequestedSize()
         {
             var level = CreateLevel();
-            new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
+            new ShapeObjectsGenerator().Run(Context(level), new ShapeObjectsGenerator.Parameters
             {
                 Image = SolidRow(128, 128, new Pixel(255, 0, 0, 255)),
                 TargetWidth = 8, TargetHeight = 8, PixelSize = 1f, MergeRuns = true,
@@ -426,14 +426,14 @@ namespace BH.SDK.Tests.Generators
             matrix[7] = new Color4Value(1f, 0f, 0f, 1f);
             level.Resources.Themes[themeId] = new ThemeData(themeId, "test", matrix);
 
-            new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
+            new ShapeObjectsGenerator().Run(Context(level), new ShapeObjectsGenerator.Parameters
             {
                 Image = SolidRow(2, 1, new Pixel(255, 0, 0, 255)),
                 TargetWidth = 2, TargetHeight = 1, PixelSize = 1f,
                 UseThemeRef = true, Theme = themeId,
             });
 
-            var obj = (Models.Objects.TextureObject)level.Game.Objects.Values.Single();
+            var obj = (Models.Objects.ShapeObject)level.Game.Objects.Values.Single();
             var color = ((Color4Key)obj.Colors[0]).Value;
             Assert.IsInstanceOf<Color4ThemeRef>(color);
             Assert.AreEqual(7, ((Color4ThemeRef)color).ThemeColorIndex, "nearest palette entry");
@@ -448,14 +448,14 @@ namespace BH.SDK.Tests.Generators
         public void Texture_FallsBackToLiteralColoursWhenTheThemeIsMissing()
         {
             var level = CreateLevel();
-            new TextureObjectsGenerator().Run(Context(level), new TextureObjectsGenerator.Parameters
+            new ShapeObjectsGenerator().Run(Context(level), new ShapeObjectsGenerator.Parameters
             {
                 Image = SolidRow(2, 1, new Pixel(255, 0, 0, 255)),
                 TargetWidth = 2, TargetHeight = 1, PixelSize = 1f,
                 UseThemeRef = true, Theme = ThemeId.NewGuid(),
             });
 
-            var obj = (Models.Objects.TextureObject)level.Game.Objects.Values.Single();
+            var obj = (Models.Objects.ShapeObject)level.Game.Objects.Values.Single();
             Assert.IsInstanceOf<Color4Value>(((Color4Key)obj.Colors[0]).Value);
         }
 
@@ -466,7 +466,7 @@ namespace BH.SDK.Tests.Generators
         public void Texture_WithoutAnImageProducesNothing()
         {
             var level = CreateLevel();
-            var generator = new TextureObjectsGenerator();
+            var generator = new ShapeObjectsGenerator();
             var parameters = generator.CreateDefaultParameters();
 
             var context = Context(level);

@@ -115,7 +115,7 @@ namespace BH.SDK.Tests.Generators
             generator.Run(context, parameters);
 
             var actualKeys = level.Game.Objects.Values.Sum(obj =>
-                obj.Positions.Count + obj.Sizes.Count + ((TextureObject)obj).Colors.Count);
+                obj.Positions.Count + obj.Sizes.Count + ((ShapeObject)obj).Colors.Count);
             // Only the bullets with room to travel exist: a stagger of 10 over [100, 120] fits two
             // (100 and 110), while 120 onwards used to be clamped onto the last frame as one-frame
             // ghosts flashing after the pattern was over.
@@ -195,7 +195,7 @@ namespace BH.SDK.Tests.Generators
                 Collider = collider, WarnFrames = 30, FireFrames = 60,
             });
 
-            var objects = level.Game.Objects.Values.Cast<TextureObject>().ToList();
+            var objects = level.Game.Objects.Values.Cast<ShapeObject>().ToList();
             Assert.AreEqual(2, objects.Count);
 
             var warn = objects.Single(obj => obj.Name.Contains("warn"));

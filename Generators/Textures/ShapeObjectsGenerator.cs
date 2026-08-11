@@ -26,8 +26,14 @@ namespace BH.SDK.Generators.Textures
     /// Turns an image into level objects: downsampled, transparent pixels skipped, and horizontal
     /// runs of one colour merged into single rectangles.
     /// </summary>
-    public class TextureObjectsGenerator : BaseSpawnGenerator<TextureObjectsGenerator.Parameters>
+    public class ShapeObjectsGenerator : BaseSpawnGenerator<ShapeObjectsGenerator.Parameters>
     {
+        // The key deliberately still says "texture" while the class says "shape". It is a PERSISTED
+        // id, not a display name: GeneratorRegistry resolves stored generator references through it,
+        // Generators/README.md lists it, and AudioTextureGeneratorsTests keys a region on it. The
+        // TextureObject -> ShapeObject rename left it alone on purpose, since renaming it would
+        // silently break every saved reference for no gain. Do not "fix" it to match the class.
+
         public override string NameKey => "gen_texture_objects";
 
         public override GeneratorRequirements Requirements => GeneratorRequirements.ExternalAnalysis;

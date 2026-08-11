@@ -21,15 +21,31 @@ namespace BH.SDK.Models.SettingGroups
     [RuleContainer]
     public class LevelLimitHints : IModel<LevelLimitHints>
     {
-        /// <summary> Peak count of objects of every type at once - the widest of the five. </summary>
+        /// <summary> Peak count of objects of every type at once - the widest of them all. </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
         [JsonProperty(Names.Instances)]
         public int Instances { get; set; }
 
-        /// <summary> Peak simultaneous texture objects - a subset of Instances. </summary>
+        // Shapes are counted in two buckets because a consumer draws them through two separate
+        // pools - an opaque one that writes depth and a transparent one that blends - and neither
+        // can borrow capacity from the other. Their sum is therefore normally larger than a single
+        // "shapes" number would have been, and that is correct rather than double counting.
+        //
+        // ShaderType.Auto belongs to whichever bucket the CONSUMER resolves it into, and resolving
+        // needs texture opacity, which lives outside this library. GetPeakUsage takes an optional
+        // resolver for exactly that; with none, Auto counts as transparent - the same fallback the
+        // consumer uses, and the safe direction to be wrong in, since an object wrongly sized into
+        // the transparent pool still renders, just without depth rejection.
+
+        /// <summary> Peak simultaneous shape objects on the opaque path - a subset of Instances. </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
-        [JsonProperty(Names.Textures)]
-        public int Textures { get; set; }
+        [JsonProperty(Names.ShapesOpaque)]
+        public int ShapesOpaque { get; set; }
+
+        /// <summary> Peak simultaneous shape objects on the transparent path - a subset of Instances. </summary>
+        [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
+        [JsonProperty(Names.ShapesTransparent)]
+        public int ShapesTransparent { get; set; }
 
         /// <summary> Peak simultaneous effect objects (emitters, not particles). </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
@@ -49,49 +65,58 @@ namespace BH.SDK.Models.SettingGroups
 
         /// <summary> Was anything ever measured into this hint? </summary>
         [JsonIgnore]
-        public bool HasValue => Instances > 0 || Textures > 0 || Effects > 0 || Texts > 0 || Tracks > 0;
+        public bool HasValue => Instances > 0 || ShapesOpaque > 0 || ShapesTransparent > 0
+                                || Effects > 0 || Texts > 0 || Tracks > 0;
 
         public LevelLimitHints()
         {
             Reset();
         }
-        public LevelLimitHints(int instances, int textures, int effects, int texts, int tracks)
+        public LevelLimitHints(int instances, int shapesOpaque, int shapesTransparent,
+            int effects, int texts, int tracks)
         {
             Instances = instances;
-            Textures = textures;
+            ShapesOpaque = shapesOpaque;
+            ShapesTransparent = shapesTransparent;
             Effects = effects;
             Texts = texts;
             Tracks = tracks;
         }
 
         public object Clone() => Copy();
-        public LevelLimitHints Copy() => new(Instances, Textures, Effects, Texts, Tracks);
+        public LevelLimitHints Copy() =>
+            new(Instances, ShapesOpaque, ShapesTransparent, Effects, Texts, Tracks);
 
         public void Reset()
         {
             Instances = 0;
-            Textures = 0;
+            ShapesOpaque = 0;
+            ShapesTransparent = 0;
             Effects = 0;
             Texts = 0;
             Tracks = 0;
         }
 
         public override bool Equals(object obj) => obj is LevelLimitHints value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Instances, Textures, Effects, Texts, Tracks);
+        public override int GetHashCode() => HashCode.Combine(Instances, ShapesOpaque,
+            ShapesTransparent, Effects, Texts, Tracks);
 
         public bool Equals(LevelLimitHints other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = Instances.Equals(other.Instances)
-                         && Textures.Equals(other.Textures)
+                         && ShapesOpaque.Equals(other.ShapesOpaque)
+                         && ShapesTransparent.Equals(other.ShapesTransparent)
                          && Effects.Equals(other.Effects)
                          && Texts.Equals(other.Texts)
                          && Tracks.Equals(other.Tracks);
             return result;
         }
 
-        public override string ToString() => $"instances:{Instances}, textures:{Textures}, " +
-                                             $"effects:{Effects}, texts:{Texts}, tracks:{Tracks}";
+        public override string ToString() =>
+            $"instances:{Instances}, shapes_opaque:{ShapesOpaque}, " +
+            $"shapes_transparent:{ShapesTransparent}, effects:{Effects}, " +
+            $"texts:{Texts}, tracks:{Tracks}";
     }
 }

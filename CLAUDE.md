@@ -163,7 +163,7 @@ set, since a mask character needs a glyph exactly like the text it replaces.
 `Visible`, `Span` (a half-open `FrameSpan`), `Layer`, plus the shared keyframe tracks
 (`Positions`/`Rotations`/`Scales`/`Sizes`/`AnchorsMin`/`AnchorsMax`/`Pivots`). Empty keyframe lists
 are valid (mirrors Unity project's `defaults.xxx` fallback convention). Subclasses, each overriding
-`GetModelType() : ObjectType`: `TextureObject`, `EffectObject` (thin — just an `EffectId` pointing
+`GetModelType() : ObjectType`: `ShapeObject`, `EffectObject` (thin — just an `EffectId` pointing
 into `Level.Resources.Effects`, the actual payload lives in `EffectData`), `TextObject`,
 `PrefabObject` (see "Prefab system" below).
 
@@ -409,7 +409,7 @@ all of them.
 
 **Two `IPrimitiveGuid` properties deliberately allow Null and must NOT carry
 `[RuleIPrimitiveGuidNotNull]`** — for them Null is a real authored state, not an unset reference:
-`TextureObject.ColliderId` (Null = decoration, drawn but never collided with — the runtime collision
+`ShapeObject.ColliderId` (Null = decoration, drawn but never collided with — the runtime collision
 jobs skip on `!IsEnabled()` and the editor's collision toggle writes Null) and
 `PrefabObject.PrefabId` (Null = empty placement, materializes nothing — `OpLevelCreatePrefabObject`
 creates every placement this way before the author picks a template). Both defaults come straight

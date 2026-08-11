@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Primitives.Resources;
@@ -43,9 +43,9 @@ namespace BH.SDK.Models.Effects
         [JsonProperty(Names.Lifetime)]
         public IVector2 LifetimeBounds { get; set; }
 
-        // Same logic as TextureObject.TextureId
+        // Same logic as ShapeObject.TextureId
 
-        /// <summary> Image each particle draws - the same resource pool TextureObject draws from. </summary>
+        /// <summary> Image each particle draws - the same resource pool ShapeObject draws from. </summary>
         [RuleIPrimitiveIntNotNull, RuleReferenceExists(ResourceReferenceKind.Texture)]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }

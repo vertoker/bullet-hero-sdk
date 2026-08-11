@@ -36,10 +36,10 @@ namespace BH.SDK.Generators.Spawn
     {
         /// <summary> Creates one templated object, already parented, framed and given its size and
         /// colour on its first frame. Placement (position/rotation) is the caller's job. </summary>
-        protected static TextureObject Spawn(GeneratorContext context, SpawnParameters parameters,
+        protected static ShapeObject Spawn(GeneratorContext context, SpawnParameters parameters,
             string name, in FrameSpan span)
         {
-            var obj = context.Create<TextureObject>();
+            var obj = context.Create<ShapeObject>();
             obj.ParentObjectId = context.Parent;
             obj.Name = name;
             obj.Layer = ClampLayer(context.LocalLayer);
@@ -52,14 +52,14 @@ namespace BH.SDK.Generators.Spawn
             return obj;
         }
 
-        protected static void AddPosition(TextureObject obj, float x, float y, int frame,
+        protected static void AddPosition(ShapeObject obj, float x, float y, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
             obj.Positions.Add(new PosKey(new Vector2Value(ClampPos(x), ClampPos(y)), LocalFrame(obj, frame), ease));
         }
 
         /// <summary> Takes DEGREES and stores the radians the format actually holds. </summary>
-        protected static void AddRotation(TextureObject obj, float degrees, int frame,
+        protected static void AddRotation(ShapeObject obj, float degrees, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
             obj.Rotations.Add(new AngleKey(new FloatValue(ToRadians(degrees)), LocalFrame(obj, frame), ease));
@@ -67,13 +67,13 @@ namespace BH.SDK.Generators.Spawn
 
         protected static float ToRadians(float degrees) => (float)(degrees * (Math.PI / 180.0));
 
-        protected static void AddSize(TextureObject obj, IVector2 size, int frame,
+        protected static void AddSize(ShapeObject obj, IVector2 size, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
             obj.Sizes.Add(new ScaKey(size?.Copy() ?? new Vector2Value(1f, 1f), LocalFrame(obj, frame), ease));
         }
 
-        protected static void AddSize(TextureObject obj, float width, float height, int frame,
+        protected static void AddSize(ShapeObject obj, float width, float height, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
             obj.Sizes.Add(new ScaKey(new Vector2Value(ClampSize(width), ClampSize(height)),
@@ -83,20 +83,20 @@ namespace BH.SDK.Generators.Spawn
         /// <summary> Replaces the template size Spawn already wrote, for generators whose objects are
         /// individually sized (a line segment's length, a shrinking bullet). Replaces rather than
         /// appends because Frame must stay unique within a track - see RuleCollectionUnique. </summary>
-        protected static void SetSize(TextureObject obj, float width, float height)
+        protected static void SetSize(ShapeObject obj, float width, float height)
         {
             obj.Sizes.Clear();
             AddSize(obj, width, height, obj.Span.StartFrame);
         }
 
-        protected static void AddColor(TextureObject obj, IColor4 color, int frame,
+        protected static void AddColor(ShapeObject obj, IColor4 color, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
             obj.Colors.Add(new Color4Key(color?.Copy() ?? new Color4Value(1f, 1f, 1f, 1f),
                 LocalFrame(obj, frame), ease));
         }
 
-        protected static void AddColor(TextureObject obj, IColor4 color, float alpha, int frame,
+        protected static void AddColor(ShapeObject obj, IColor4 color, float alpha, int frame,
             EaseType ease = FrameRules.DefaultEase)
         {
             var faded = color?.Copy() ?? new Color4Value(1f, 1f, 1f, 1f);

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BH.SDK.Generators;
 using BH.SDK.Generators.Modifiers;
@@ -25,9 +25,9 @@ namespace BH.SDK.Tests.Generators
             return level;
         }
 
-        private static TextureObject AddObject(Level level, int layer, float x, params int[] frames)
+        private static ShapeObject AddObject(Level level, int layer, float x, params int[] frames)
         {
-            var obj = new TextureObject
+            var obj = new ShapeObject
             {
                 ObjectId = level.Settings.GetNextObjectId(),
                 Name = $"obj_{layer}",
@@ -373,7 +373,7 @@ namespace BH.SDK.Tests.Generators
             new CapacityHintGenerator().Run(Context(level), new CapacityHintGenerator.Parameters());
 
             Assert.AreEqual(2, level.Settings.LimitHints.Instances);
-            Assert.AreEqual(2, level.Settings.LimitHints.Textures);
+            Assert.AreEqual(2, level.Settings.LimitHints.ShapesTransparent);
         }
 
         [Test]

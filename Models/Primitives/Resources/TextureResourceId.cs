@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using BH.SDK.Models.Interfaces.Primitives;
 // ReSharper disable InconsistentNaming
@@ -7,7 +7,7 @@ namespace BH.SDK.Models.Primitives.Resources
 {
     /// <summary>
     /// Points at an image - a TextureResource of Level.Resources.Textures or a game-shipped one.
-    /// Referenced by TextureObject and by EffectObjectCore (particles are textured the same way).
+    /// Referenced by ShapeObject and by EffectObjectCore (particles are textured the same way).
     /// </summary>
     [Serializable]
     public struct TextureResourceId : IEquatable<TextureResourceId>, IPrimitiveInt

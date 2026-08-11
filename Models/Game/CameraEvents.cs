@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Keyframes;
@@ -23,7 +23,7 @@ namespace BH.SDK.Models.Game
     {
         // Camera - is a unique form of default RectObject. It cut some data, here's all
         // Positions - unchanged
-        // Layers - camera is not an TextureObject, you can't see it, it's otherwise, remove
+        // Layers - camera is not an ShapeObject, you can't see it, it's otherwise, remove
         // Rotations - unchanged
         // Scales - always (1f, 1f) because of aspect, remove
         // Size - camera aspect is locked by user screen, also Level.Settings provide tool for

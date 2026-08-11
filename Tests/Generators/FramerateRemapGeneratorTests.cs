@@ -58,10 +58,10 @@ namespace BH.SDK.Tests.Generators
             return generator.Run(context, parameters);
         }
 
-        private static TextureObject AddObject(Level level, int startFrame, int endFrame,
+        private static ShapeObject AddObject(Level level, int startFrame, int endFrame,
             params int[] positionFrames)
         {
-            var obj = new TextureObject
+            var obj = new ShapeObject
             {
                 ObjectId = level.Settings.GetNextObjectId(),
                 Name = "obj",
@@ -144,7 +144,7 @@ namespace BH.SDK.Tests.Generators
             Assert.AreEqual(FrameDuration, level.Settings.FrameDuration);
             Assert.AreEqual(0, result.Log.Count, "a no-op run must journal nothing");
             Assert.IsTrue(before.Equals(level.Game));
-            Assert.AreEqual(3, ((TextureObject)level.Game.Objects[obj.ObjectId]).Positions.Count);
+            Assert.AreEqual(3, ((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions.Count);
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, parameters);
 
             Assert.AreEqual(FrameDuration / 2, level.Settings.FrameDuration);
-            Assert.AreEqual(50, ((TextureObject)level.Game.Objects[obj.ObjectId]).Positions[0].Frame);
+            Assert.AreEqual(50, ((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions[0].Frame);
         }
 
         #endregion
@@ -196,7 +196,7 @@ namespace BH.SDK.Tests.Generators
 
             Run(level, Params(30));
 
-            var remapped = (TextureObject)level.Game.Objects[obj.ObjectId];
+            var remapped = (ShapeObject)level.Game.Objects[obj.ObjectId];
             Assert.AreEqual(30, remapped.Span.StartFrame);
             Assert.AreEqual(150, remapped.Span.EndFrame);
             CollectionAssert.AreEqual(new[] { 0, 10, 50 }, Frames(remapped.Positions));
@@ -213,7 +213,7 @@ namespace BH.SDK.Tests.Generators
 
             Run(level, Params(30, objects: false));
 
-            var untouched = (TextureObject)level.Game.Objects[obj.ObjectId];
+            var untouched = (ShapeObject)level.Game.Objects[obj.ObjectId];
             Assert.AreEqual(30, level.Settings.Framerate, "the framerate itself still changes");
             Assert.AreEqual(60, untouched.Span.StartFrame);
             Assert.AreEqual(300, untouched.Span.EndFrame);
@@ -264,7 +264,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(30));
 
             CollectionAssert.AreEqual(new[] { 0, 2, 4, 6 },
-                Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions));
+                Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions));
         }
 
         /// <summary> Frames 3 and 4 both sample onto 2. With one frame of slack the loser is nudged
@@ -281,7 +281,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(30));
 
             CollectionAssert.AreEqual(new[] { 2, 3 },
-                Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions));
+                Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions));
         }
 
         /// <summary> Zero slack is "never move a key off its own frame": the collision is resolved by
@@ -298,7 +298,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(30, maxKeyShift: 0));
 
             CollectionAssert.AreEqual(new[] { 2 },
-                Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions));
+                Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions));
         }
 
         /// <summary> Frames 0, 1 and 2 all sample onto 0 at a sixth of the rate. The first keeps it,
@@ -316,7 +316,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(10));
 
             CollectionAssert.AreEqual(new[] { 0, 1 },
-                Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions));
+                Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions));
         }
 
         /// <summary> Frames 3, 4 and 5 all sample onto 1, and this time frame 0 is free. The third key
@@ -333,7 +333,7 @@ namespace BH.SDK.Tests.Generators
 
             Run(level, Params(10));
 
-            var frames = Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions);
+            var frames = Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions);
             CollectionAssert.AreEquivalent(new[] { 0, 1, 2 }, frames);
             Assert.AreEqual(0, frames[2], "the last key had to go below its own sampled frame");
         }
@@ -354,8 +354,8 @@ namespace BH.SDK.Tests.Generators
             var looseObject = AddObject(loose, 0, 200, 0, 1, 2, 3);
             Run(loose, Params(10, maxKeyShift: 3));
 
-            var tightFrames = Frames(((TextureObject)tight.Game.Objects[tightObject.ObjectId]).Positions);
-            var looseFrames = Frames(((TextureObject)loose.Game.Objects[looseObject.ObjectId]).Positions);
+            var tightFrames = Frames(((ShapeObject)tight.Game.Objects[tightObject.ObjectId]).Positions);
+            var looseFrames = Frames(((ShapeObject)loose.Game.Objects[looseObject.ObjectId]).Positions);
 
             Assert.Less(tightFrames.Count, looseFrames.Count);
             Assert.AreEqual(4, looseFrames.Count, "with three frames of slack nothing has to go");
@@ -376,7 +376,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, Params(120, maxKeyShift: 0));
 
             CollectionAssert.AreEqual(new[] { 0, 2, 4, 6, 8 },
-                Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions));
+                Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions));
         }
 
         /// <summary> The invariant the whole packer exists for: a track's frames must stay unique
@@ -391,7 +391,7 @@ namespace BH.SDK.Tests.Generators
             foreach (var shift in new[] { 0, 1, 2, 5, 50 })
             {
                 var level = CreateLevel();
-                var obj = new TextureObject
+                var obj = new ShapeObject
                 {
                     ObjectId = level.Settings.GetNextObjectId(),
                     Name = "dense",
@@ -403,7 +403,7 @@ namespace BH.SDK.Tests.Generators
 
                 Run(level, Params(target, shift));
 
-                var frames = Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions);
+                var frames = Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions);
                 CollectionAssert.AllItemsAreUnique(frames, $"{Framerate}->{target}, shift {shift}");
 
                 var last = level.Settings.FrameDuration - 1;
@@ -434,7 +434,7 @@ namespace BH.SDK.Tests.Generators
             foreach (var shift in new[] { 0, 1, 3 })
             {
                 var level = CreateLevel();
-                var obj = new TextureObject
+                var obj = new ShapeObject
                 {
                     ObjectId = level.Settings.GetNextObjectId(),
                     Name = "dense",
@@ -451,7 +451,7 @@ namespace BH.SDK.Tests.Generators
 
                 Run(level, Params(target, shift));
 
-                var frames = Frames(((TextureObject)level.Game.Objects[obj.ObjectId]).Positions);
+                var frames = Frames(((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions);
                 Assert.IsNotEmpty(frames, $"shift {shift}: everything was dropped");
                 CollectionAssert.AllItemsAreUnique(frames, $"shift {shift}");
 
@@ -665,13 +665,13 @@ namespace BH.SDK.Tests.Generators
             var before = level.Game.Copy();
             var result = Run(level, Params(10, maxKeyShift: 0, events: true));
 
-            Assert.AreEqual(1, ((TextureObject)level.Game.Objects[obj.ObjectId]).Positions.Count);
+            Assert.AreEqual(1, ((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions.Count);
             Assert.AreEqual(1, level.Game.Events.Markers.Count);
 
             result.Log.Revert();
 
             Assert.IsTrue(before.Equals(level.Game));
-            Assert.AreEqual(3, ((TextureObject)level.Game.Objects[obj.ObjectId]).Positions.Count);
+            Assert.AreEqual(3, ((ShapeObject)level.Game.Objects[obj.ObjectId]).Positions.Count);
             Assert.AreEqual(3, level.Game.Events.Markers.Count);
         }
 

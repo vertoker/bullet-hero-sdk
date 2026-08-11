@@ -13,7 +13,7 @@ namespace BH.SDK.Serialization.Converters.CustomTypes
             return customType switch
             {
                 ObjectType.RectObject => typeof(RectObject),
-                ObjectType.TextureObject => typeof(TextureObject),
+                ObjectType.ShapeObject => typeof(ShapeObject),
                 ObjectType.TextObject => typeof(TextObject),
                 ObjectType.EffectObject => typeof(EffectObject),
                 ObjectType.PrefabObject => typeof(PrefabObject),

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Primitives;
@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Data
 {
     /// <summary>
-    /// A reusable collision shape built out of triangles, referenced by TextureObject.ColliderId.
+    /// A reusable collision shape built out of triangles, referenced by ShapeObject.ColliderId.
     /// Shared rather than embedded, so hundreds of identical bullets cost one shape definition.
     /// </summary>
     [RuleContainer]

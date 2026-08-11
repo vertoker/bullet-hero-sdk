@@ -53,7 +53,7 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             for (var i = 0; i < 3; i++)
             {
-                var obj = new TextureObject
+                var obj = new ShapeObject
                 {
                     ObjectId = level.Settings.GetNextObjectId(),
                     Name = $"seed_{i}",
@@ -72,7 +72,7 @@ namespace BH.SDK.Tests.Generators
         {
             var keys = obj.Positions.Count + obj.Rotations.Count + obj.Scales.Count + obj.Sizes.Count
                        + obj.AnchorsMin.Count + obj.AnchorsMax.Count + obj.Pivots.Count;
-            if (obj is TextureObject texture) keys += texture.Colors.Count + texture.UVs.Count;
+            if (obj is ShapeObject texture) keys += texture.Colors.Count + texture.UVs.Count;
             return keys;
         }
 
@@ -262,7 +262,7 @@ namespace BH.SDK.Tests.Generators
                     AssertUnique(generator.NameKey, obj.Name, "rotations", obj.Rotations.Select(k => k.Frame));
                     AssertUnique(generator.NameKey, obj.Name, "sizes", obj.Sizes.Select(k => k.Frame));
                     AssertUnique(generator.NameKey, obj.Name, "scales", obj.Scales.Select(k => k.Frame));
-                    if (obj is TextureObject texture)
+                    if (obj is ShapeObject texture)
                         AssertUnique(generator.NameKey, obj.Name, "colors", texture.Colors.Select(k => k.Frame));
                 }
             }
@@ -287,7 +287,7 @@ namespace BH.SDK.Tests.Generators
                         $"{generator.NameKey}: {obj.Name} rotations");
                     Assert.LessOrEqual(obj.Sizes.Count, LevelRules.MaxObjectKeys,
                         $"{generator.NameKey}: {obj.Name} sizes");
-                    if (obj is TextureObject texture)
+                    if (obj is ShapeObject texture)
                         Assert.LessOrEqual(texture.Colors.Count, LevelRules.MaxObjectKeys,
                             $"{generator.NameKey}: {obj.Name} colors");
                 }

@@ -74,7 +74,7 @@ namespace BH.SDK.Tests.Rules
 
         // Fix invents id 1 - a valid-looking reference that may well point at nothing. Acceptable
         // for "unset" fields, and exactly why the two properties where Null is a real authored state
-        // (TextureObject.ColliderId, PrefabObject.PrefabId) must never carry a not-null rule.
+        // (ShapeObject.ColliderId, PrefabObject.PrefabId) must never carry a not-null rule.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]

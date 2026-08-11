@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BH.SDK.Models;
 using BH.SDK.Models.Audio;
 using BH.SDK.Models.Objects;
@@ -122,7 +122,7 @@ namespace BH.SDK.Tests
             var hint = LevelCapacityUtils.GetPeakUsage(new Level());
 
             Assert.AreEqual(0, hint.Instances);
-            Assert.AreEqual(0, hint.Textures);
+            Assert.AreEqual(0, hint.ShapesTransparent);
             Assert.AreEqual(0, hint.Effects);
             Assert.AreEqual(0, hint.Texts);
             Assert.AreEqual(0, hint.Tracks);
@@ -147,8 +147,8 @@ namespace BH.SDK.Tests
         {
             var level = new Level();
             AddObject(level, new RectObject(), 1, 0, 100);
-            AddObject(level, new TextureObject(), 2, 0, 100);
-            AddObject(level, new TextureObject(), 3, 0, 100);
+            AddObject(level, new ShapeObject(), 2, 0, 100);
+            AddObject(level, new ShapeObject(), 3, 0, 100);
             AddObject(level, new EffectObject(), 4, 0, 100);
             AddObject(level, new TextObject(), 5, 0, 100);
             AddObject(level, new PrefabObject(), 6, 0, 100);
@@ -156,7 +156,7 @@ namespace BH.SDK.Tests
             var hint = LevelCapacityUtils.GetPeakUsage(level);
 
             Assert.AreEqual(6, hint.Instances);
-            Assert.AreEqual(2, hint.Textures);
+            Assert.AreEqual(2, hint.ShapesTransparent);
             Assert.AreEqual(1, hint.Effects);
             Assert.AreEqual(1, hint.Texts);
             Assert.IsTrue(hint.HasValue);
@@ -171,15 +171,15 @@ namespace BH.SDK.Tests
             var level = new Level();
             // textures live early, texts live late - each family peaks at 2, but only 2 instances
             // are ever alive at the same time despite there being 4 objects in total
-            AddObject(level, new TextureObject(), 1, 0, 10);
-            AddObject(level, new TextureObject(), 2, 0, 10);
+            AddObject(level, new ShapeObject(), 1, 0, 10);
+            AddObject(level, new ShapeObject(), 2, 0, 10);
             AddObject(level, new TextObject(), 3, 50, 60);
             AddObject(level, new TextObject(), 4, 50, 60);
 
             var hint = LevelCapacityUtils.GetPeakUsage(level);
 
             Assert.AreEqual(2, hint.Instances);
-            Assert.AreEqual(2, hint.Textures);
+            Assert.AreEqual(2, hint.ShapesTransparent);
             Assert.AreEqual(2, hint.Texts);
             Assert.AreEqual(0, hint.Effects);
         }

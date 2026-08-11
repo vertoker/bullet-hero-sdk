@@ -177,20 +177,20 @@ namespace BH.SDK.Tests
             level.Game.PlayerEvents.Controls.Add(new BoolKey());
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());
 
-            var textureObject = new TextureObject()
+            var shapeObject = new ShapeObject()
             {
                 ObjectId = new ObjectId(1),
             };
-            textureObject.Positions.Add(new PosKey());
-            textureObject.Rotations.Add(new AngleKey());
-            textureObject.Scales.Add(new ScaKey());
-            textureObject.Sizes.Add(new ScaKey());
-            textureObject.AnchorsMin.Add(new AlignmentKey());
-            textureObject.AnchorsMax.Add(new AlignmentKey());
-            textureObject.Pivots.Add(new AlignmentKey());
-            textureObject.Colors.Add(new Color4X4Key());
-            textureObject.UVs.Add(new UVKey());
-            level.Game.Objects.Add(new ObjectId(1), textureObject);
+            shapeObject.Positions.Add(new PosKey());
+            shapeObject.Rotations.Add(new AngleKey());
+            shapeObject.Scales.Add(new ScaKey());
+            shapeObject.Sizes.Add(new ScaKey());
+            shapeObject.AnchorsMin.Add(new AlignmentKey());
+            shapeObject.AnchorsMax.Add(new AlignmentKey());
+            shapeObject.Pivots.Add(new AlignmentKey());
+            shapeObject.Colors.Add(new Color4X4Key());
+            shapeObject.UVs.Add(new UVKey());
+            level.Game.Objects.Add(new ObjectId(1), shapeObject);
 
             var textObject = new TextObject()
             {
@@ -226,7 +226,7 @@ namespace BH.SDK.Tests
                 PrefabId = PrefabId.NewGuid(),
                 ObjectIdCounter = 2,
             };
-            innerPrefab.Objects.Add(new ObjectId(1), new TextureObject()
+            innerPrefab.Objects.Add(new ObjectId(1), new ShapeObject()
             {
                 ObjectId = new ObjectId(1),
             });
@@ -237,7 +237,7 @@ namespace BH.SDK.Tests
                 PrefabId = PrefabId.NewGuid(),
                 ObjectIdCounter = 5,
             };
-            prefab.Objects.Add(new ObjectId(1), new TextureObject()
+            prefab.Objects.Add(new ObjectId(1), new ShapeObject()
             {
                 ObjectId = new ObjectId(1),
             });
@@ -349,19 +349,19 @@ namespace BH.SDK.Tests
             level.Game.PlayerEvents.Visibles.Add(new BoolKey());
             level.Game.PlayerEvents.Collisions.Add(new BoolKey());
 
-            var textureObject = new TextureObject()
+            var shapeObject = new ShapeObject()
             {
                 ObjectId = new ObjectId(1),
             };
-            textureObject.Positions.Add(new PosKey());
-            textureObject.Rotations.Add(new AngleKey());
-            textureObject.Scales.Add(new ScaKey());
-            textureObject.Sizes.Add(new ScaKey());
-            textureObject.AnchorsMin.Add(new AlignmentKey());
-            textureObject.AnchorsMax.Add(new AlignmentKey());
-            textureObject.Pivots.Add(new AlignmentKey());
-            textureObject.Colors.Add(new Color4X4Key());
-            level.Game.Objects.Add(new ObjectId(1), textureObject);
+            shapeObject.Positions.Add(new PosKey());
+            shapeObject.Rotations.Add(new AngleKey());
+            shapeObject.Scales.Add(new ScaKey());
+            shapeObject.Sizes.Add(new ScaKey());
+            shapeObject.AnchorsMin.Add(new AlignmentKey());
+            shapeObject.AnchorsMax.Add(new AlignmentKey());
+            shapeObject.Pivots.Add(new AlignmentKey());
+            shapeObject.Colors.Add(new Color4X4Key());
+            level.Game.Objects.Add(new ObjectId(1), shapeObject);
 
             var textObject = new TextObject()
             {
@@ -381,7 +381,7 @@ namespace BH.SDK.Tests
             // is filed under - one repair creating a different violation, in a fixture whose whole
             // point is that a single pass of RuleFixer clears everything.
             var prefab = new Prefab { PrefabId = PrefabId.NewGuid() };
-            prefab.Objects.Add(new ObjectId(4), new TextureObject() { ObjectId = new ObjectId(4), });
+            prefab.Objects.Add(new ObjectId(4), new ShapeObject() { ObjectId = new ObjectId(4), });
             prefab.Objects.Add(new ObjectId(5), new TextObject() { ObjectId = new ObjectId(5), });
             prefab.Objects.Add(new ObjectId(6), new EffectObject() { ObjectId = new ObjectId(6), });
             level.Resources.Prefabs.Add(prefab.PrefabId, prefab);
@@ -482,7 +482,7 @@ namespace BH.SDK.Tests
             {
                 PrefabId = PrefabId.NewGuid(),
             };
-            prefab.Objects.Add(new ObjectId(1), new TextureObject() { ObjectId = new ObjectId(1), });
+            prefab.Objects.Add(new ObjectId(1), new ShapeObject() { ObjectId = new ObjectId(1), });
             prefab.Objects.Add(new ObjectId(2), new TextObject() { ObjectId = new ObjectId(2), });
             prefab.Objects.Add(new ObjectId(3), new EffectObject() { ObjectId = new ObjectId(3), });
 
@@ -646,8 +646,8 @@ namespace BH.SDK.Tests
                 GameEvents = new GameEvents(),
                 Objects = new Dictionary<ObjectId, RectObject>(),
             };
-            var textureObject = new TextureObject { ObjectId = new ObjectId(1) };
-            gameLevel.Objects.Add(textureObject.ObjectId, textureObject);
+            var shapeObject = new ShapeObject { ObjectId = new ObjectId(1) };
+            gameLevel.Objects.Add(shapeObject.ObjectId, shapeObject);
             return gameLevel;
         }
 

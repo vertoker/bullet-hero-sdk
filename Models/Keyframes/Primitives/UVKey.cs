@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BH.SDK.Models.Enum;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Values;
@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.Keyframes
 {
     /// <summary>
-    /// Animates how a texture is mapped onto a TextureObject - scrolling and repeating the image
+    /// Animates how a texture is mapped onto a ShapeObject - scrolling and repeating the image
     /// without moving the object itself. Both fields are concrete Vector2Value, not IVector2: a
     /// randomized UV would tear the image differently every frame.
     /// </summary>

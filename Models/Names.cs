@@ -250,6 +250,9 @@
         public const string Eff = "eff";
         public const string Shape = "shape";
         public const string Shapes = "shapes";
+        public const string ShapesOpaque = "shapes_opaque";
+        public const string ShapesTransparent = "shapes_transparent";
+        public const string Shader = "shader";
         public const string Triangle = "triangle";
         public const string Triangles = "triangles";
         public const string TrianglesShort = "tris";

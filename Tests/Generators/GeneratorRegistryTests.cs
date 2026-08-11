@@ -138,7 +138,7 @@ namespace BH.SDK.Tests.Generators
 
         // A parameters class hiding an inherited field of the same name breaks the whole
         // name-keyed design: two FieldInfos answer to one name, so a form binds one of them at
-        // random and every hint keyed on that name hits both. TextureObjectsGenerator did exactly
+        // random and every hint keyed on that name hits both. ShapeObjectsGenerator did exactly
         // this with SpawnParameters.Texture before its own image field was renamed to Image.
         [Test]
         [Author(Metadata.Author.Vertoker)]

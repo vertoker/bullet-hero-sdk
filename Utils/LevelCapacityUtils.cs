@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections.Generic;
 using BH.SDK.Models;
 using BH.SDK.Models.Enum;
@@ -20,18 +21,29 @@ namespace BH.SDK.Utils
     /// </summary>
     public static class LevelCapacityUtils
     {
+        // isOpaque exists because ShaderType.Auto is not decidable here. Resolving it needs the
+        // alpha of the object's TEXTURE, and this library has no idea what a texture is - only the
+        // consumer that loaded the atlas does. So a consumer that cares passes its own resolver;
+        // everyone else gets Auto counted as transparent, which is the same fallback the consumer
+        // applies and the harmless direction to be wrong in (an object sized into the wrong pool
+        // still draws, it just misses out on depth rejection).
+
         /// <summary>
         /// Peak simultaneous usage across the whole level. O(n log n) - a sweep over each family's
         /// half-open FrameSpan, so two objects meeting end to start are never counted as
         /// simultaneous. Placed prefabs need no special handling: their contents are materialized
         /// into the same Objects dictionary as everything else.
         /// </summary>
-        public static LevelLimitHints GetPeakUsage(Level level)
+        /// <param name="level"> Level to measure. </param>
+        /// <param name="isOpaque"> Resolves <see cref="ShaderType.Auto"/> for one shape. Null means
+        /// every Auto object counts as transparent. </param>
+        public static LevelLimitHints GetPeakUsage(Level level, Func<ShapeObject, bool> isOpaque = null)
         {
             if (level?.Game?.Objects == null) return new LevelLimitHints();
 
             var instances = new IntervalSweep();
-            var textures = new IntervalSweep();
+            var shapesOpaque = new IntervalSweep();
+            var shapesTransparent = new IntervalSweep();
             var effects = new IntervalSweep();
             var texts = new IntervalSweep();
             var tracks = new IntervalSweep();
@@ -44,7 +56,14 @@ namespace BH.SDK.Utils
                 instances.Add(levelObject);
                 switch (levelObject.GetModelType())
                 {
-                    case ObjectType.TextureObject: textures.Add(levelObject); break;
+                    case ObjectType.ShapeObject:
+                    {
+                        if (levelObject is ShapeObject shapeObject && ResolveOpaque(shapeObject, isOpaque))
+                            shapesOpaque.Add(levelObject);
+                        else
+                            shapesTransparent.Add(levelObject);
+                        break;
+                    }
                     case ObjectType.EffectObject: effects.Add(levelObject); break;
                     case ObjectType.TextObject: texts.Add(levelObject); break;
                 }
@@ -59,9 +78,18 @@ namespace BH.SDK.Utils
                 }
             }
 
-            return new LevelLimitHints(instances.GetPeak(), textures.GetPeak(),
+            return new LevelLimitHints(instances.GetPeak(),
+                shapesOpaque.GetPeak(), shapesTransparent.GetPeak(),
                 effects.GetPeak(), texts.GetPeak(), tracks.GetPeak());
         }
+
+        private static bool ResolveOpaque(ShapeObject shapeObject, Func<ShapeObject, bool> isOpaque)
+            => shapeObject.ShaderType switch
+            {
+                ShaderType.Opaque => true,
+                ShaderType.Transparent => false,
+                _ => isOpaque != null && isOpaque(shapeObject),
+            };
 
         /// <summary>
         /// Peak simultaneous usage of a single family, given raw spans. Exposed for callers
