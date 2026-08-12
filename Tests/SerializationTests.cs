@@ -106,12 +106,12 @@ namespace BH.SDK.Tests
             Assert.AreEqual(themeAttribute.Version, themeEnvelope.Version);
             Assert.IsTrue(theme.Equals(themeEnvelope.GetPayload<ThemeData>()));
 
-            var collider = MockData.CreateTestCompositeCollider();
-            var colliderAttribute = collider.GetType().GetCustomAttribute<DataVersionAttribute>();
-            var colliderBytes = dataSerializer.SerializeEnvelope(colliderAttribute.Domain, new EnvelopeData(colliderAttribute.Version, collider));
-            var colliderEnvelope = dataSerializer.DeserializeEnvelope(colliderBytes, typeof(CompositeCollider));
-            Assert.AreEqual(colliderAttribute.Version, colliderEnvelope.Version);
-            Assert.IsTrue(collider.Equals(colliderEnvelope.GetPayload<CompositeCollider>()));
+            var shape = MockData.CreateTestCompositeShape();
+            var shapeAttribute = shape.GetType().GetCustomAttribute<DataVersionAttribute>();
+            var shapeBytes = dataSerializer.SerializeEnvelope(shapeAttribute.Domain, new EnvelopeData(shapeAttribute.Version, shape));
+            var shapeEnvelope = dataSerializer.DeserializeEnvelope(shapeBytes, typeof(CompositeShape));
+            Assert.AreEqual(shapeAttribute.Version, shapeEnvelope.Version);
+            Assert.IsTrue(shape.Equals(shapeEnvelope.GetPayload<CompositeShape>()));
         }
 
         // Exercises the full recursive migration chain against a v0.0 fixture (Versions/V0_0) -

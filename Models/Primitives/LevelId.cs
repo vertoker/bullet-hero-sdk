@@ -28,7 +28,7 @@ namespace BH.SDK.Models.Primitives
         }
 
         // Level ids are a stable identifier for a Level (replaces LevelMeta.LevelGuid). Unlike the
-        // int-based ids (ColliderId, ThemeId, ...) there is no game-defined/user-defined range
+        // int-based ids (AudioId, TypedResourceId, ...) there is no game-defined/user-defined range
         // split - levels are always standalone authored data, and a Guid has no meaningful
         // "positive/negative" ordering to split on anyway. Guid.Empty is the only reserved/Null value.
 
@@ -37,7 +37,7 @@ namespace BH.SDK.Models.Primitives
         public static readonly LevelId Null = new(NullValue);
 
         // default, not NullValue: reading a static field would drag this type's initializer into
-        // any Burst job that asks - see ColliderId.IsEnabled for the failure that caused.
+        // any Burst job that asks - see ShapeId.IsEnabled for the failure that caused.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEnabled() => value != Guid.Empty;
 

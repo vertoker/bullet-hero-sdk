@@ -40,7 +40,7 @@ namespace BH.SDK.Models.Primitives
         public static readonly EffectId Null = new(NullValue);
 
         // default, not NullValue: reading a static field would drag this type's initializer into
-        // any Burst job that asks - see ColliderId.IsEnabled for the failure that caused.
+        // any Burst job that asks - see ShapeId.IsEnabled for the failure that caused.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEnabled() => value != Guid.Empty;
 

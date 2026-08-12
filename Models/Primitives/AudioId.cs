@@ -27,7 +27,7 @@ namespace BH.SDK.Models.Primitives
         }
 
         // Same idea as ObjectId, but scoped to a single level's audio tracks and much simpler:
-        // unlike ColliderId/TypedResourceId, there is no negative (game-defined) range here -
+        // unlike ShapeId/TypedResourceId, there is no negative (game-defined) range here -
         // negative values are banned for consistency, see LevelTrack.AudioId
         // 0 => Null / not-set
         // (1 - int.MaxValue) => valid, level-local audio track id

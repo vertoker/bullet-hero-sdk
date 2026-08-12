@@ -87,11 +87,25 @@
         public const int MaxThemeIndex = 63;
         public const int ThemeCount = 64;
         
-        // A collider needs at least one triangle to be a shape at all - an empty one is a collider
-        // that silently never collides, which is worse than no collider (that is what a Null
-        // ColliderId already means, explicitly).
-        public const int MinColliderTriangles = 1;
-        public const int MaxColliderTriangles = 64;
+        // A shape needs at least one triangle to be a shape at all - an empty one is a shape that
+        // silently draws and collides with nothing, which is worse than no shape (that is what a
+        // Null ShapeId already means, explicitly).
+        public const int MinShapeTriangles = 1;
+        public const int MaxShapeTriangles = 64;
+
+        // Vertices are capped separately rather than derived from the triangle cap, because indexed
+        // geometry shares corners: 64 triangles need 192 vertices unwelded and roughly a third of
+        // that welded. The cap bounds the worst case, so a hand-written file cannot demand a vertex
+        // buffer the triangle cap alone would suggest is impossible.
+        public const int MinShapeVertices = 3;
+        public const int MaxShapeVertices = MaxShapeTriangles * 3;
+
+        // A shape occupies exactly the object's own rect, the same box a quad used to. Rendering
+        // reads UV out of the position (positionOS.xy + 0.5), so a point outside this range samples
+        // past its own atlas cell; collision would simply extend past what is drawn. Both failures
+        // are silent, which is why the bound is enforced rather than documented.
+        public const float MinShapePoint = -0.5f;
+        public const float MaxShapePoint = 0.5f;
 
         // A curve needs two keys to define a segment and a gradient two stops to define a blend.
         // Below that there is nothing to interpolate between, and every consumer would have to

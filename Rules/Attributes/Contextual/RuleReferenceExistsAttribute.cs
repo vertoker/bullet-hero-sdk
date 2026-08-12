@@ -15,7 +15,7 @@ namespace BH.SDK.Rules.Attributes
     //   because only there does the id's own sign say where it must resolve: negative = defined by
     //   this level, positive = defined by the game and baked into its registries, which the SDK
     //   cannot see and must therefore accept.
-    // - The Guid-backed ids (ColliderId, ThemeId, EffectId, PrefabId) carry no such split - a Guid
+    // - The Guid-backed ids (ShapeId, ThemeId, EffectId, PrefabId) carry no such split - a Guid
     //   has no sign - so "does it exist" can only be answered against the game's own registry PLUS
     //   the level's, and the SDK has half the answer. Checking them here would report every
     //   game-defined collider preset as dangling. They belong to the graph pass, where a consumer

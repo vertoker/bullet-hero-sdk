@@ -189,7 +189,7 @@ namespace BH.SDK.Tests.Generators
         public void Laser_WarnBeamIsHarmless_FireBeamKeepsTheCollider()
         {
             var level = CreateLevel();
-            var collider = ColliderId.NewGuid();
+            var collider = ShapeId.NewGuid();
             new BulletLaserSweepGenerator().Run(Context(level), new BulletLaserSweepGenerator.Parameters
             {
                 Collider = collider, WarnFrames = 30, FireFrames = 60,
@@ -200,7 +200,7 @@ namespace BH.SDK.Tests.Generators
 
             var warn = objects.Single(obj => obj.Name.Contains("warn"));
             var fire = objects.Single(obj => obj.Name.Contains("fire"));
-            Assert.AreEqual(ColliderId.Null, warn.ColliderId);
+            Assert.AreEqual(ShapeId.Null, warn.ColliderId);
             Assert.AreEqual(collider, fire.ColliderId);
             Assert.AreEqual(warn.Span.EndFrame, fire.Span.StartFrame, "the warning must end exactly as firing starts");
         }

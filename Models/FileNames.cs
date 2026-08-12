@@ -20,13 +20,13 @@
         public const string LogoFileNamePng = "logo.png";
         public const string LogoFileNameJpg = "logo.jpg";
 
-        // Device-wide (not per-level) shared library of reusable Themes/Effects/Colliders/Prefabs -
-        // see PathUtils.GetThemesDirectoryInfo/GetEffectsDirectoryInfo/GetCollidersDirectoryInfo/
+        // Device-wide (not per-level) shared library of reusable Themes/Effects/Shapes/Prefabs -
+        // see PathUtils.GetThemesDirectoryInfo/GetEffectsDirectoryInfo/GetShapesDirectoryInfo/
         // GetPrefabsDirectoryInfo.
         public const string ResourcesDirectory = "resources";
         public const string ThemesDirectory = "themes";
         public const string EffectsDirectory = "effects";
-        public const string CollidersDirectory = "colliders";
+        public const string ShapesDirectory = "shapes";
         public const string PrefabsDirectory = "prefabs";
         
         public const string ReportsDirectory = "reports";

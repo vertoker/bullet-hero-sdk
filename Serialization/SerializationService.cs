@@ -80,7 +80,7 @@ namespace BH.SDK.Serialization
                 new DictionaryTextureResourcesConverter(),
                 new DictionaryFontResourcesConverter(),
                 new DictionaryAudioResourcesConverter(),
-                new DictionaryCompositeColliderResourcesConverter(),
+                new DictionaryCompositeShapeResourcesConverter(),
                 new DictionaryThemesConverter(),
                 new DictionaryEffectsConverter(),
                 new DictionaryPrefabsConverter(),

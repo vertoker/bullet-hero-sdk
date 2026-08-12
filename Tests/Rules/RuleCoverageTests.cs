@@ -69,6 +69,7 @@ namespace BH.SDK.Tests.Rules
             { typeof(RuleReferenceExistsAttribute), nameof(RuleReferenceExistsTests) },
 
             { typeof(RulePropertyOrderAttribute), nameof(RulePropertyOrderTests) },
+            { typeof(RuleShapeGeometryAttribute), nameof(RuleShapeGeometryTests) },
         };
 
         private static IEnumerable<Type> ConcreteRules => typeof(BaseRuleAttribute).Assembly.GetTypes()

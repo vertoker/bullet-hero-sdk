@@ -44,6 +44,7 @@ namespace BH.SDK.Generators.Spawn
             obj.Name = name;
             obj.Layer = ClampLayer(context.LocalLayer);
             obj.Span = ClampSpan(context, span);
+            obj.ShapeId = parameters.Shape;
             obj.TextureResourceId = parameters.Texture;
             obj.ColliderId = parameters.Collider;
 

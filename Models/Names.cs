@@ -205,8 +205,6 @@
         public const string Classic = "classic";
         public const string Control = "control";
         public const string Controls = "controls";
-        public const string Visible = "visible";
-        public const string VisibleShort = "vis";
         public const string Visibles = "visibles";
         public const string Layer = "layer";
         public const string Layers = "layers";
@@ -218,6 +216,9 @@
         
         public const string Collider = "collider";
         public const string ColliderShort = "c";
+        public const string ShapeShort = "sh";
+        public const string Vertices = "vts";
+        public const string Indices = "idxs";
         public const string Texture = "texture";
         public const string Textures = "textures";
         public const string Subling = "sbl";
@@ -255,7 +256,6 @@
         public const string Shader = "shader";
         public const string Triangle = "triangle";
         public const string Triangles = "triangles";
-        public const string TrianglesShort = "tris";
         
         public const string Prefab = "prefab";
         public const string Prefabs = "prefabs";
@@ -516,8 +516,11 @@
         public const string PrevObjectId = Prev + _ + Id;
         public const string NextObjectId = Next + _ + Id;
         public const string ObjectIds = Ids;
+        // Two shape references on one object, both ShapeId-typed: what is drawn and what is hit.
+        // They must stay distinct keys even though the values are interchangeable.
+        public const string ShapeId = ShapeShort + Id;
         public const string ColliderId = ColliderShort + Id;
-        public const string ColliderName = Collider + _ + Name;
+        public const string ShapeName = Shape + _ + Name;
         public const string ParentObjectId = ParentShort + ObjectId;
         
         public const string LocalFrame = Local + _ + Frame;

@@ -43,7 +43,7 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   (polymorphic Value implementations), `Keyframes/` (keyframe wrapper types), `Effects/`+`Audio/`+
   `AudioEffects/`+`PostProcessing/` (per-domain payload data), `Game/` (`GameLevel` + level-global
   event tracks), `Events/` (one-shot markers/checkpoints, not animated tracks), `Data/` (`ThemeData`/
-  `EffectData`/`CompositeCollider` — resource-level aggregate payloads), `Resources/` (level resource
+  `EffectData`/`CompositeShape` — resource-level aggregate payloads), `Resources/` (level resource
   dictionaries + `TypedResourceId` family), `SettingGroups/` (⚠️ two unrelated aggregates share this
   folder — `LevelSettings`, per-level, vs. `UserSettings`' sub-groups, per-device — see below),
   `Meta/` (`Author`, `ResourceMeta` — consumed by `LevelMeta`, itself NOT in this folder; note
@@ -71,7 +71,12 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   (`RectObject` id/parent/bounds setters), `LevelCapacityUtils` (sweep-line "peak simultaneous
   objects per type" measurement backing `LevelCapacityHint` — see below), `ModelUtils`
   (deep-copy/equality/hash helpers for `List`/`Dictionary`/`Array` of `ICopyable<T>`),
-  `ModificationUtils`/`TypeExtensions`.
+  `ModificationUtils`/`TypeExtensions`, `ShapeGeometryUtils` (+`ShapeGeometryReport`) — the single
+  implementation of "what a valid shape is" and "how to make an invalid one valid", shared by
+  `RuleShapeGeometry.Fix` and the consumer's in-game shape editor on Save. Its `Sanitize` order is
+  load-bearing (clamp → weld → drop malformed → drop degenerate → trim → drop orphans → fix
+  winding): every step can reintroduce a problem an earlier one fixed, and this is the order in
+  which none does.
 - **Services/** — `SerializationService`-adjacent but SDK-root-level: `CryptographyService`
   (AES-256-CBC), `ModificationService` (reflection path-based get/set, see "Modification system"
   below), `TextFormatService` (`{variable}` string templating), `FontCharacterService` (builds
@@ -141,7 +146,7 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   comment before writing new tests that need a `Level`/`Prefab`/etc. Root-level files cover
   serialization (`SerializationTests`, `SerializationTypeExtensionsTests`), modification
   (`ModificationTests`), validation (`ValidatorTests`), capacity (`LevelCapacityUtilsTests`),
-  cryptography, text formatting and `ColliderIdTests`. **`Tests/Rules/` is the bulk** — 42 files,
+  cryptography, text formatting, `ShapeIdTests` and `ShapeGeometryUtilsTests`. **`Tests/Rules/` is the bulk** — 42 files,
   roughly one per `[RuleXxx]` attribute on top of `BaseRuleTests` (the shared analyze/fix harness),
   `RuleCoverageTests` (fails if a rule has no test file), `RuleContextTests`, `RulesConsistencyTests`,
   `LevelGraphAnalyzerTests`, `ValidationFacadeTests`, `ModificationCheckedWriteTests`.
@@ -160,12 +165,24 @@ these existed would vanish. `Services/FontCharacterService` folds the mask into 
 set, since a mask character needs a glyph exactly like the text it replaces.
 
 `RectObject` is the base of every placeable scene object: `ObjectId`, `ParentObjectId`, `Name`,
-`Visible`, `Span` (a half-open `FrameSpan`), `Layer`, plus the shared keyframe tracks
+`Active`, `Span` (a half-open `FrameSpan`), `Layer`, plus the shared keyframe tracks
 (`Positions`/`Rotations`/`Scales`/`Sizes`/`AnchorsMin`/`AnchorsMax`/`Pivots`). Empty keyframe lists
 are valid (mirrors Unity project's `defaults.xxx` fallback convention). Subclasses, each overriding
 `GetModelType() : ObjectType`: `ShapeObject`, `EffectObject` (thin — just an `EffectId` pointing
 into `Level.Resources.Effects`, the actual payload lives in `EffectData`), `TextObject`,
 `PrefabObject` (see "Prefab system" below).
+
+**`ShapeObject` carries TWO `ShapeId` fields and neither derives from the other**: `ShapeId` is what
+is drawn, `ColliderId` is what is hit, and a level routinely wants them to disagree — a telegraph
+beam that is drawn but harmless, a hitbox simpler than the art it guards, an invisible wall. One id
+type serves both because a shape and a hitbox are the same data: triangles inside `[-0.5, 0.5]`.
+Both resolve against the same two collections (the game's own shape presets, or
+`Level.Resources.CompositeShapes`), so a user-authored shape is usable for either or both.
+
+**`RectObject.Active` replaced `Visible`, and the change is semantic, not cosmetic.** `Visible`
+gated rendering only, so an invisible object still hit the player — a trap, since nothing in the
+name said so. `Active` gates *both* paths and applies down the hierarchy. "Not drawn but still
+solid" moved to where it belongs: a Null `ShapeId` with a real `ColliderId`.
 
 `ShapeObject.ShaderType` (`Models/Enum/ShaderType.cs`, byte: `Auto = 0`/`Opaque`/`Transparent`) is
 authored intent about the render path, not a shader id — the format deliberately has no
@@ -382,7 +399,7 @@ so a hostile file can't request a gigabyte-scale preallocation.
 ## `Models/Resources/`
 
 `LevelResources` (`Level.Resources`): seven dictionaries — `Textures`/`Fonts`/`Audios` (by their
-typed resource id), `CompositeShapes` (by `ColliderId`), `Themes`/`Effects`/`Prefabs` (by their own
+typed resource id), `CompositeShapes` (by `ShapeId`), `Themes`/`Effects`/`Prefabs` (by their own
 Guid-based id). **Every dictionary here can only ever contain user-defined (negative-id) resources**
 — each concrete `Resource` subtype's id property is rule-capped to the negative range; game-defined
 resources are baked into the game/its own registries and never appear in a level's own `Resources`.
@@ -410,22 +427,24 @@ generator, which does the same through `GeneratorContext` so the run stays undoa
 `Generators/Utility/FontCacheGenerator.cs`. Adding the field needed no migration: the domain stays at
 `(1, 0)` and an older file deserializes to an empty dictionary, i.e. "no hint".
 
-`Guid`-based ids (`ColliderId`/`EffectId`/`LevelId`/`PrefabId`/`ThemeId`) deliberately have **no**
+`Guid`-based ids (`ShapeId`/`EffectId`/`LevelId`/`PrefabId`/`ThemeId`) deliberately have **no**
 positive/negative split — a `Guid` has no natural sign, so game-defined vs. user-defined is
 determined by *which collection* an id is found in (game registry vs. level `Resources`), not by the
 id's own value, unlike the int-based `TypedResourceId` family. `Guid.Empty` is the reserved Null for
 all of them.
 
-**Two `IPrimitiveGuid` properties deliberately allow Null and must NOT carry
+**Three `IPrimitiveGuid` properties deliberately allow Null and must NOT carry
 `[RuleIPrimitiveGuidNotNull]`** — for them Null is a real authored state, not an unset reference:
-`ShapeObject.ColliderId` (Null = decoration, drawn but never collided with — the runtime collision
-jobs skip on `!IsEnabled()` and the editor's collision toggle writes Null) and
-`PrefabObject.PrefabId` (Null = empty placement, materializes nothing — `OpLevelCreatePrefabObject`
-creates every placement this way before the author picks a template). Both defaults come straight
-from their constructors, so adding the rule makes a freshly-constructed object fail validation; worse,
-its `Fix` assigns a random `Guid`, silently inventing a nonexistent collider (giving decoration real
-damage) or a dangling prefab reference. This bit the SDK once already — the rule was on
-`ColliderId` and broke `ValidatorTests`/`SerializationTests` against `MockData`. Don't re-add either.
+`ShapeObject.ShapeId` (Null = drawn as nothing, which combined with a real `ColliderId` is how an
+invisible hitbox is authored), `ShapeObject.ColliderId` (Null = decoration, drawn but never collided
+with — the runtime collision jobs skip on `!IsEnabled()` and the editor's collision toggle writes
+Null) and `PrefabObject.PrefabId` (Null = empty placement, materializes nothing —
+`OpLevelCreatePrefabObject` creates every placement this way before the author picks a template).
+`ColliderId`/`PrefabId` default to Null straight from their constructors, so adding the rule makes a
+freshly-constructed object fail validation; worse, its `Fix` assigns a random `Guid`, silently
+inventing a nonexistent shape (giving decoration real damage) or a dangling prefab reference. This
+bit the SDK once already — the rule was on `ColliderId` and broke
+`ValidatorTests`/`SerializationTests` against `MockData`. Don't re-add any of the three.
 
 ## `IModel<T>` pattern
 
@@ -458,7 +477,7 @@ without it, deserializing into a non-null nested object/list left by a parameter
 round-trip equality. `ContractResolver` only forces `MemberSerialization` (`OptIn` by default) onto
 every contract.
 
-**Id/primitive wrapper structs** (`ObjectId`, `ThemeId`, `AudioId`, `PrefabId`, `ColliderId`,
+**Id/primitive wrapper structs** (`ObjectId`, `ThemeId`, `AudioId`, `PrefabId`, `ShapeId`,
 `EffectId`, any `IPrimitiveGuid`/`IPrimitiveInt`/`IPrimitiveFloat`) serialize as a **bare scalar**, not
 `{"Value": ...}`, via `PrimitiveGuidConverter`/`PrimitiveIntConverter`/`PrimitiveFloatConverter` — all
 reconstruct via `Activator.CreateInstance(type, value)`, so every such wrapper needs a public
@@ -474,7 +493,7 @@ type" rule in detail; this section only adds what it doesn't cover.
 - `[DataVersion(domain, major, minor)]` marks an aggregate-root boundary that gets its own envelope
   and migrates as one unit. **Every live domain today is `(1, 0)`** — nothing has bumped yet. 15
   types currently carry it: `Level`, `LevelMeta`, `UserSettings`, `Prefab`, `EffectData`, `ThemeData`,
-  `CompositeCollider` (SDK-repo "core" tier); `LevelSettings`, `GameLevel`, `AudioLevel`,
+  `CompositeShape` (SDK-repo "core" tier); `LevelSettings`, `GameLevel`, `AudioLevel`,
   `LevelResources` (nested under `Level`); `GameEvents`, `CameraEvents`, `PostProcessingEvents`,
   `PlayerEvents` (nested under `GameLevel`). `DataDomains.cs` is the `nameof()`-based constant list.
 - `VersionedEnvelopeConverter` (`Serialization/Converters/`, not `Versions/`) writes/reads the
@@ -509,6 +528,14 @@ type" rule in detail; this section only adds what it doesn't cover.
 `TextRules`) — `EffectRules` is the one exception, constructing default `CurveValue`/`GradientValue`
 model instances. `RuleGroup` (`None/Error/Warning/Advice`) is a severity enum that exists but is
 **never actually set away from its `Error` default** by any current rule attribute.
+
+**`CompositeShape`'s geometry carries no per-property collection rule beyond `[RuleNotNull]`, and
+that is deliberate.** Every generic collection fix is index-destructive on indexed geometry:
+`RuleCollectionNoNullItems` would *remove* a null vertex and shift every index after it onto the
+wrong point, `RuleCollectionMaxCount` would truncate the vertex list out from under the triangles
+still referencing its tail. Both look local and corrupt the shape silently. The class-level
+`RuleShapeGeometry` owns all of it instead — only a rule seeing both lists can fix one without
+breaking the other. Don't "helpfully" add a collection rule to `Vertices`/`Indices`.
 
 `RuleEnumValid` covers single-choice enums only; `[Flags]` enums (today: `ContentDescriptor` on
 `LevelMeta`) go through `RuleEnumFlagsValid`, which asks "does this carry an undeclared bit" and

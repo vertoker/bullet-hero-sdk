@@ -5,11 +5,11 @@ using NUnit.Framework;
 
 namespace BH.SDK.Tests
 {
-    // ColliderId is a Guid-backed id struct, deliberately structured like ThemeId/EffectId (see
+    // ShapeId is a Guid-backed id struct, deliberately structured like ThemeId/EffectId (see
     // those types' own doc comments) - this test suite exercises the shared shape (Null/IsEnabled/
     // NewGuid/string constructor/equality) so a future change to one is easy to cross-check against
     // the others.
-    public class ColliderIdTests
+    public class ShapeIdTests
     {
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -17,8 +17,8 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.VeryEasy)]
         public void Null_IsNotEnabled()
         {
-            Assert.IsFalse(ColliderId.Null.IsEnabled());
-            Assert.AreEqual(Guid.Empty, ColliderId.Null.value);
+            Assert.IsFalse(ShapeId.Null.IsEnabled());
+            Assert.AreEqual(Guid.Empty, ShapeId.Null.value);
         }
 
         [Test]
@@ -27,8 +27,8 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.VeryEasy)]
         public void NewGuid_IsEnabled_AndDistinct()
         {
-            var a = ColliderId.NewGuid();
-            var b = ColliderId.NewGuid();
+            var a = ShapeId.NewGuid();
+            var b = ShapeId.NewGuid();
 
             Assert.IsTrue(a.IsEnabled());
             Assert.IsTrue(b.IsEnabled());
@@ -42,8 +42,8 @@ namespace BH.SDK.Tests
         public void StringConstructor_RoundTripsGuidConstructor()
         {
             var guid = Guid.NewGuid();
-            var fromGuid = new ColliderId(guid);
-            var fromString = new ColliderId(guid.ToString());
+            var fromGuid = new ShapeId(guid);
+            var fromString = new ShapeId(guid.ToString());
 
             Assert.AreEqual(fromGuid, fromString);
         }
@@ -55,9 +55,9 @@ namespace BH.SDK.Tests
         public void Equality_OperatorsAndEquatable_AgreeWithValue()
         {
             var guid = Guid.NewGuid();
-            var a = new ColliderId(guid);
-            var b = new ColliderId(guid);
-            var c = ColliderId.NewGuid();
+            var a = new ShapeId(guid);
+            var b = new ShapeId(guid);
+            var c = ShapeId.NewGuid();
 
             Assert.IsTrue(a == b);
             Assert.IsTrue(a.Equals(b));
@@ -73,10 +73,10 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.VeryEasy)]
         public void IPrimitiveGuid_ExposesSameValue()
         {
-            var colliderId = ColliderId.NewGuid();
-            IPrimitiveGuid primitive = colliderId;
+            var shapeId = ShapeId.NewGuid();
+            IPrimitiveGuid primitive = shapeId;
 
-            Assert.AreEqual(colliderId.value, primitive.Value);
+            Assert.AreEqual(shapeId.value, primitive.Value);
         }
     }
 }

@@ -114,13 +114,13 @@ namespace BH.SDK.Models.Objects
             HorizontalAlignment = TextRules.HorizontalAlignment_Default;
             VerticalAlignment = TextRules.VerticalAlignment_Default;
         }
-        public TextObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer,
+        public TextObject(ObjectId objectId, ObjectId parentObjectId, string name, bool active, FrameSpan span, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
             IString text, FontResourceId fontResourceId, List<Color4Key> colors, List<FloatKey> fontSizes,
             List<FillmentKey> fillments, List<AppearingKey> appearings, string appearingMask, bool wordWrap,
             TextObjectHorizontalAlignment horizontalAlignment, TextObjectVerticalAlignment verticalAlignment)
-            : base(objectId, parentObjectId, name, visible, span, layer,
+            : base(objectId, parentObjectId, name, active, span, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             Text = text;
@@ -154,7 +154,7 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         TextObject ICopyable<TextObject>.Copy() => CopyImpl();
         
-        private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
+        private TextObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Active, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(), Text.Copy(), FontResourceId,
             Colors.CopyList(), FontSizes.CopyList(), Fillments.CopyList(), Appearings.CopyList(),

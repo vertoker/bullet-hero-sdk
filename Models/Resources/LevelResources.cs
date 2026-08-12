@@ -48,11 +48,12 @@ namespace BH.SDK.Models.Resources
         [JsonProperty(Names.Audios)]
         public Dictionary<AudioResourceId, AudioResource> Audios { get; set; }
 
-        /// <summary> Custom collision shapes, beyond the built-in library. </summary>
+        /// <summary> Custom shapes, beyond the built-in library. Usable both as what an object draws
+        /// and as what it collides with. </summary>
         [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxCompositeShapes)]
-        [RuleDictionaryKeyMatches(nameof(CompositeCollider.ColliderId))]
+        [RuleDictionaryKeyMatches(nameof(CompositeShape.ShapeId))]
         [JsonProperty(Names.Shapes)]
-        public Dictionary<ColliderId, CompositeCollider> CompositeShapes { get; set; }
+        public Dictionary<ShapeId, CompositeShape> CompositeShapes { get; set; }
 
         /// <summary> Color palettes the level switches between over time. </summary>
         [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxThemes)]
@@ -85,7 +86,7 @@ namespace BH.SDK.Models.Resources
             Fonts = new Dictionary<FontResourceId, FontResource>();
             Audios = new Dictionary<AudioResourceId, AudioResource>();
 
-            CompositeShapes = new Dictionary<ColliderId, CompositeCollider>();
+            CompositeShapes = new Dictionary<ShapeId, CompositeShape>();
             Themes = new Dictionary<ThemeId, ThemeData>();
             Effects = new Dictionary<EffectId, EffectData>();
             
@@ -96,7 +97,7 @@ namespace BH.SDK.Models.Resources
         public LevelResources(Dictionary<TextureResourceId, TextureResource> textures,
             Dictionary<FontResourceId, FontResource> fonts,
             Dictionary<AudioResourceId, AudioResource> audios,
-            Dictionary<ColliderId, CompositeCollider> compositeShapes,
+            Dictionary<ShapeId, CompositeShape> compositeShapes,
             Dictionary<ThemeId, ThemeData> themes,
             Dictionary<EffectId, EffectData> effects,
             Dictionary<PrefabId, Prefab> prefabs,

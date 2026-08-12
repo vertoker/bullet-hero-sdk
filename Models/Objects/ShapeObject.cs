@@ -17,19 +17,30 @@ namespace BH.SDK.Models.Objects
 {
     /// <summary>
     /// The visible workhorse of a level: a rect that draws a shape and can hurt the player.
-    /// Silhouette, image and hitbox are three separate concerns here - the shape is what is
-    /// drawn, TextureResourceId is what is painted onto it, ColliderId is what is hit, and
-    /// none of the three have to agree.
+    /// Silhouette, image and hitbox are three separate concerns here - ShapeId is what is drawn,
+    /// TextureResourceId is what is painted onto it, ColliderId is what is hit, and none of the
+    /// three have to agree.
     /// </summary>
     [RuleContainer]
     public class ShapeObject : RectObject, IModel<ShapeObject>, IUpdatable<ShapeObject>
     {
         public override ObjectType GetModelType() => ObjectType.ShapeObject;
 
+        // Two ShapeId fields, not one, and neither derives from the other. They answer different
+        // questions - what the player SEES and what the player HITS - and a level routinely wants
+        // them to disagree: a telegraph beam that is drawn but harmless, a hitbox simpler than the
+        // art it guards, an invisible wall. Deriving one from the other would take that away and
+        // buy nothing, since both are the same kind of data.
+
+        /// <summary> Shape to draw, from the shared library. Null draws nothing at all - which,
+        /// combined with a real ColliderId, is how an invisible hitbox is authored. </summary>
+        [JsonProperty(Names.ShapeId)]
+        public ShapeId ShapeId { get; set; }
+
         /// <summary> Collision shape from the shared library. Null means the object is decoration -
         /// drawn, never collided with. </summary>
         [JsonProperty(Names.ColliderId)]
-        public ColliderId ColliderId { get; set; }
+        public ShapeId ColliderId { get; set; }
 
         /// <summary> Which render path to ask for. Auto lets the consumer decide from this object's
         /// own alpha, and is what every object gets until an author says otherwise. </summary>
@@ -59,20 +70,22 @@ namespace BH.SDK.Models.Objects
         public ShapeObject()
         {
             ShaderType = ShaderType.Auto;
-            ColliderId = ColliderId.Null;
+            ShapeId = ShapeId.Square;
+            ColliderId = ShapeId.Null;
             TextureResourceId = TextureResourceId.Square;
             Colors = new List<IColor4X4Key>();
             UVs = new List<UVKey>();
         }
-        public ShapeObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer,
+        public ShapeObject(ObjectId objectId, ObjectId parentObjectId, string name, bool active, FrameSpan span, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots,
-            ShaderType shaderType, ColliderId colliderId, TextureResourceId textureResourceId,
+            ShaderType shaderType, ShapeId shapeId, ShapeId colliderId, TextureResourceId textureResourceId,
             List<IColor4X4Key> colors, List<UVKey> uvs)
-            : base(objectId, parentObjectId, name, visible, span, layer,
+            : base(objectId, parentObjectId, name, active, span, layer,
                 positions, rotations, scales, sizes, anchorsMin, anchorsMax, pivots)
         {
             ShaderType = shaderType;
+            ShapeId = shapeId;
             ColliderId = colliderId;
             TextureResourceId = textureResourceId;
             Colors = colors;
@@ -82,7 +95,8 @@ namespace BH.SDK.Models.Objects
         {
             base.Reset();
             ShaderType = ShaderType.Auto;
-            ColliderId = ColliderId.Null;
+            ShapeId = ShapeId.Square;
+            ColliderId = ShapeId.Null;
             TextureResourceId = TextureResourceId.Square;
             Colors.Clear();
             UVs.Clear();
@@ -92,16 +106,17 @@ namespace BH.SDK.Models.Objects
         public override RectObject Copy() => CopyImpl();
         ShapeObject ICopyable<ShapeObject>.Copy() => CopyImpl();
 
-        private ShapeObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
+        private ShapeObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Active, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList(),
-            ShaderType, ColliderId, TextureResourceId, Colors.CopyList(), UVs.CopyList());
+            ShaderType, ShapeId, ColliderId, TextureResourceId, Colors.CopyList(), UVs.CopyList());
 
         public void Update(ShapeObject src)
         {
             base.Update(src);
 
             ShaderType = src.ShaderType;
+            ShapeId = src.ShapeId;
             ColliderId = src.ColliderId;
             TextureResourceId = src.TextureResourceId;
             Colors = src.Colors.CopyList();
@@ -110,7 +125,7 @@ namespace BH.SDK.Models.Objects
 
         public override bool Equals(object obj) => obj is ShapeObject value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(base.GetHashCode(),
-            ShaderType, ColliderId, TextureResourceId, Colors.GetListHashCode(), UVs.GetListHashCode());
+            ShaderType, ShapeId, ColliderId, TextureResourceId, Colors.GetListHashCode(), UVs.GetListHashCode());
 
         public bool Equals(ShapeObject other)
         {
@@ -145,6 +160,7 @@ namespace BH.SDK.Models.Objects
         private bool EqualsShapeObject(ShapeObject other)
         {
             var result = ShaderType == other.ShaderType
+                         && ShapeId.Equals(other.ShapeId)
                          && ColliderId.Equals(other.ColliderId)
                          && TextureResourceId.Equals(other.TextureResourceId)
                          && Colors.ListEquals(other.Colors)

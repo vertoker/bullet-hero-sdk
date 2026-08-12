@@ -58,7 +58,7 @@ namespace BH.SDK.Generators.Bullets
                 // The telegraph ends exactly where the beam begins and they never share a frame -
                 // which is what a half-open span buys: warn covers [warnStart, fireStart).
                 var warn = Spawn(context, parameters, "laser_warn", new FrameSpan(warnStart, warnFrames));
-                warn.ColliderId = ColliderId.Null; // telegraph only - never collides, whatever the template says
+                warn.ColliderId = ShapeId.Null; // telegraph only - never collides, whatever the template says
                 SetSize(warn, parameters.Length, parameters.WarnWidth);
                 PlaceBeam(warn, parameters, parameters.StartAngle, warn.Span.StartFrame);
                 RecolorFaded(warn, parameters, warn.Span.StartFrame);

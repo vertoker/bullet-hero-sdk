@@ -50,7 +50,7 @@ namespace BH.SDK.Tests
                 ObjectId = new ObjectId(10),
                 ParentObjectId = new ObjectId(5),
                 Name = "TestEffect",
-                Visible = false,
+                Active = false,
                 Span = new FrameSpan(5, 296),
                 Layer = 3,
                 EffectId = EffectId.NewGuid(),
@@ -291,9 +291,8 @@ namespace BH.SDK.Tests
                 new CachedFontText(new FontResourceId(-1), new StringLocalized(
                     new StringLanguage("en", " ABCabc"),
                     new StringLanguage("ru", " АБВабв"))));
-            var customColliderId = ColliderId.NewGuid();
-            level.Resources.CompositeShapes.Add(customColliderId, new CompositeCollider(
-                customColliderId, "CustomCollider", new List<TriangleCollider> { new() }));
+            var customShapeId = ShapeId.NewGuid();
+            level.Resources.CompositeShapes.Add(customShapeId, CreateTestCompositeShape(customShapeId, "CustomShape"));
 
             var trackEffects = new LevelTrackEffects
             {
@@ -512,13 +511,23 @@ namespace BH.SDK.Tests
             return theme;
         }
 
-        public static CompositeCollider CreateTestCompositeCollider()
+        /// <summary> A unit square as two triangles sharing a diagonal - four vertices, not six,
+        /// which is what the indexed storage exists for. Wound so SignedDoubleArea is positive, so a
+        /// round trip through RuleShapeGeometry changes nothing. </summary>
+        public static CompositeShape CreateTestCompositeShape() =>
+            CreateTestCompositeShape(ShapeId.NewGuid(), "TestShape");
+
+        public static CompositeShape CreateTestCompositeShape(ShapeId shapeId, string shapeName)
         {
-            return new CompositeCollider(ColliderId.NewGuid(), "TestCollider", new List<TriangleCollider>
+            var vertices = new List<Vector2Value>
             {
-                new(-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f),
-                new(-0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f),
-            });
+                new(-0.5f, -0.5f),
+                new(0.5f, -0.5f),
+                new(0.5f, 0.5f),
+                new(-0.5f, 0.5f),
+            };
+            var indices = new List<int> { 0, 1, 2, 0, 2, 3 };
+            return new CompositeShape(shapeId, shapeName, vertices, indices);
         }
 
         public static UserSettings CreateValidTestSettings()

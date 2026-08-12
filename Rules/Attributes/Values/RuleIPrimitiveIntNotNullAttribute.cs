@@ -4,7 +4,7 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Rules.Attributes
 {
-    // Generic "is set" check for any primitive-int struct (ColliderId, ThemeId, TypedResourceId, ...):
+    // Generic "is set" check for any primitive-int struct (AudioId, TypedResourceId, ...):
     // value must not be the reserved NullValue (always 0 by convention). Unlike
     // RuleIPrimitiveIntMin/Max, this does not restrict the value to a game-defined or user-defined
     // subrange - use this when a property may reference either range, just not "unset".

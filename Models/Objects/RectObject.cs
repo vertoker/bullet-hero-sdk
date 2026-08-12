@@ -43,10 +43,16 @@ namespace BH.SDK.Models.Objects
         [JsonProperty(Names.Name)]
         public string Name { get; set; }
 
-        /// <summary> Whether the object renders. Hiding it keeps it alive as a parent and, for
-        /// texture objects, keeps its collider working - this is not a "disable" switch. </summary>
-        [JsonProperty(Names.VisibleShort)]
-        public bool Visible { get; set; }
+        // This IS the disable switch, unlike the Visible flag it replaced. That one gated rendering
+        // only, so an invisible object still hit the player - a trap, since nothing in its name said
+        // so. "Not drawn but still solid" is now expressed where it belongs: a Null ShapeId with a
+        // real ColliderId. Inactive means the object contributes nothing to either path, while
+        // staying alive as a parent for whatever hangs off it.
+
+        /// <summary> Whether the object participates at all - drawn and collided against. Applies
+        /// down the hierarchy: an inactive parent takes its whole subtree with it. </summary>
+        [JsonProperty(Names.Active)]
+        public bool Active { get; set; }
 
         /// <summary> Half-open lifetime [Start, End) on the owning scope's timeline. Outside it the
         /// object is not simulated at all, which is what keeps a long level cheap. </summary>
@@ -112,7 +118,7 @@ namespace BH.SDK.Models.Objects
             ObjectId = ObjectId.Null;
             ParentObjectId = ObjectId.Null;
             Name = string.Empty;
-            Visible = true;
+            Active = true;
             Span = new FrameSpan();
             Layer = ValueRules.DefaultLayer;
             
@@ -124,14 +130,14 @@ namespace BH.SDK.Models.Objects
             AnchorsMax = new List<AlignmentKey>();
             Pivots = new List<AlignmentKey>();
         }
-        public RectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool visible, FrameSpan span, int layer,
+        public RectObject(ObjectId objectId, ObjectId parentObjectId, string name, bool active, FrameSpan span, int layer,
             List<PosKey> positions, List<AngleKey> rotations, List<ScaKey> scales, List<ScaKey> sizes,
             List<AlignmentKey> anchorsMin, List<AlignmentKey> anchorsMax, List<AlignmentKey> pivots)
         {
             ObjectId = objectId;
             ParentObjectId = parentObjectId;
             Name = name;
-            Visible = visible;
+            Active = active;
             Span = span;
             Layer = layer;
             
@@ -148,7 +154,7 @@ namespace BH.SDK.Models.Objects
             ObjectId = ObjectId.Null;
             ParentObjectId = ObjectId.Null;
             Name = string.Empty;
-            Visible = true;
+            Active = true;
             Span = new FrameSpan();
             Layer = ValueRules.DefaultLayer;
             
@@ -164,7 +170,7 @@ namespace BH.SDK.Models.Objects
         public virtual object Clone() => CopyImpl();
         public virtual RectObject Copy() => CopyImpl();
         
-        private RectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Visible, Span, Layer,
+        private RectObject CopyImpl() => new(ObjectId, ParentObjectId, Name, Active, Span, Layer,
             Positions.CopyList(), Rotations.CopyList(), Scales.CopyList(), Sizes.CopyList(),
             AnchorsMin.CopyList(), AnchorsMax.CopyList(), Pivots.CopyList());
         
@@ -173,7 +179,7 @@ namespace BH.SDK.Models.Objects
             ObjectId = src.ObjectId;
             ParentObjectId = src.ParentObjectId;
             Name = src.Name;
-            Visible = src.Visible;
+            Active = src.Active;
             Span = src.Span;
             Layer = src.Layer;
             
@@ -194,7 +200,7 @@ namespace BH.SDK.Models.Objects
             hashCode.Add(ObjectId);
             hashCode.Add(ParentObjectId);
             hashCode.Add(Name);
-            hashCode.Add(Visible);
+            hashCode.Add(Active);
             hashCode.Add(Span);
             hashCode.Add(Layer);
             
@@ -223,7 +229,7 @@ namespace BH.SDK.Models.Objects
             var result = ObjectId.Equals(other.ObjectId)
                          && ParentObjectId.Equals(other.ParentObjectId)
                          && Name.Equals(other.Name)
-                         && Visible == other.Visible
+                         && Active == other.Active
                          && Span.Equals(other.Span)
                          // rect content
                          && Positions.ListEquals(other.Positions)

@@ -5,29 +5,36 @@ using BH.SDK.Models.Values;
 
 namespace BH.SDK.Generators.Spawn
 {
-    // Every spawning generator needs the same four "what does one of these look like" fields, so
-    // they live on a shared base class rather than being copy-pasted (and inevitably renamed) into
-    // each parameters class. Reflection over a derived parameters class returns inherited public
-    // fields too, so a form picks these up with no extra work.
+    // Every spawning generator needs the same "what does one of these look like" fields, so they
+    // live on a shared base class rather than being copy-pasted (and inevitably renamed) into each
+    // parameters class. Reflection over a derived parameters class returns inherited public fields
+    // too, so a form picks these up with no extra work.
     //
     // The one thing inheritance does NOT solve is listing: Hints must name every field, inherited
     // ones included, so the two arrays below exist to be spliced into each generator's own Section
-    // calls instead of spelling the four names out again per generator. They are split by section
-    // rather than being one list, because these four don't belong together in a form: WHAT is drawn
-    // and what it collides with are the generator's resources (Main, spliced in before the
-    // generator's own numbers), while its size and tint only tune the look (Additional).
+    // calls instead of spelling the names out again per generator. They are split by section rather
+    // than being one list, because these don't belong together in a form: WHAT is drawn, what is
+    // painted on it and what it collides with are the generator's resources (Main, spliced in before
+    // the generator's own numbers), while its size and tint only tune the look (Additional).
 
     /// <summary>
-    /// The object template shared by every generator that spawns objects: what is drawn, how big,
-    /// what colour, and what (if anything) it collides with.
+    /// The object template shared by every generator that spawns objects: what shape is drawn, what
+    /// is painted on it, how big, what colour, and what (if anything) it collides with.
     /// </summary>
     public class SpawnParameters
     {
-        /// <summary> Image every spawned object draws. </summary>
+        // Defaulting Shape to Square rather than to Collider's value: a generator whose objects do
+        // not collide must still draw something, and a Null shape draws nothing at all - a run that
+        // silently produces invisible objects reads as the generator being broken.
+
+        /// <summary> Shape every spawned object draws. </summary>
+        public ShapeId Shape = ShapeId.Square;
+
+        /// <summary> Image painted onto that shape. </summary>
         public TextureResourceId Texture = TextureResourceId.Square;
 
         /// <summary> Collision shape, or Null for pure decoration. </summary>
-        public ColliderId Collider = ColliderId.Null;
+        public ShapeId Collider = ShapeId.Null;
 
         /// <summary> Size of one object. Polymorphic on purpose - RandomRect here is what makes a
         /// field of bullets look hand-placed instead of stamped. </summary>
@@ -40,7 +47,7 @@ namespace BH.SDK.Generators.Spawn
         /// <summary> The inherited resources - splice into each generator's own Main section. </summary>
         public static readonly string[] MainFields =
         {
-            nameof(Texture), nameof(Collider),
+            nameof(Shape), nameof(Texture), nameof(Collider),
         };
 
         /// <summary> The inherited look-of-it fields - splice into each generator's own Additional

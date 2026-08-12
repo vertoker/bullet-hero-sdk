@@ -4,7 +4,7 @@ using BH.SDK.Models.Interfaces.Primitives;
 
 namespace BH.SDK.Rules.Attributes
 {
-    // Generic min-value check for any primitive-int struct (AudioId, ColliderId, TypedResourceId, ...)
+    // Generic min-value check for any primitive-int struct (AudioId, TypedResourceId, ...)
     [AttributeUsage(PropertyTarget)]
     public class RuleIPrimitiveIntMinAttribute : BasePropertyRuleAttribute
     {
