@@ -30,8 +30,9 @@ namespace BH.SDK.Generators.Spawn
         /// <summary> Shape every spawned object draws. </summary>
         public ShapeId Shape = ShapeId.Square;
 
-        /// <summary> Image painted onto that shape. </summary>
-        public TextureResourceId Texture = TextureResourceId.Square;
+        /// <summary> Image painted onto that shape, Null for none - the same default a hand-created
+        /// ShapeObject gets, since the shape itself is the silhouette now. </summary>
+        public TextureResourceId Texture = TextureResourceId.Null;
 
         /// <summary> Collision shape, or Null for pure decoration. </summary>
         public ShapeId Collider = ShapeId.Null;

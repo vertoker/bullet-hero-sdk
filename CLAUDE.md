@@ -446,6 +446,16 @@ inventing a nonexistent shape (giving decoration real damage) or a dangling pref
 bit the SDK once already — the rule was on `ColliderId` and broke
 `ValidatorTests`/`SerializationTests` against `MockData`. Don't re-add any of the three.
 
+**One int-backed id joins them: `ShapeObject.TextureResourceId`.** It carries
+`[RuleReferenceExists(Texture, allowNull: true)]` and **no** `[RuleIPrimitiveIntNotNull]`, and its
+constructor default is `Null`, not `Square`. Geometry moved out of the texture and into `ShapeId`,
+so the ordinary object is a bare tinted silhouette and an image painted on top of it is the
+exception — the old default also cost every freshly created object the opaque render path, since a
+texture that exists cannot be *proven* alpha-1 while one that does not exist trivially can (`Core`'s
+`ShapeShaderResolver`). The other three int-backed references (`LevelTrack.AudioResourceId`,
+`TextObject.FontResourceId`, `EffectObjectCore.TextureResourceId`) keep the rule: nothing plays,
+renders or spawns without them.
+
 ## `IModel<T>` pattern
 
 `IModel<T> : ICopyable<T>, IEquatable<T>, IResetable` — every live domain model implements: `Copy()`

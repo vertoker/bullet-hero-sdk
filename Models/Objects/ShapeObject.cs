@@ -47,9 +47,10 @@ namespace BH.SDK.Models.Objects
         [RuleEnumValid(ShaderType.Auto)]
         [JsonProperty(Names.Shader)]
         public ShaderType ShaderType { get; set; }
-
-        /// <summary> Image to draw, defaulting to the plain square that most bullets use. </summary>
-        [RuleIPrimitiveIntNotNull, RuleReferenceExists(ResourceReferenceKind.Texture)]
+        
+        /// <summary> Image painted onto the shape. Null draws no image at all - the shape is filled
+        /// with its own colour, which is what most objects want. </summary>
+        [RuleReferenceExists(ResourceReferenceKind.Texture, true)]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
 
@@ -72,7 +73,7 @@ namespace BH.SDK.Models.Objects
             ShaderType = ShaderType.Auto;
             ShapeId = ShapeId.Square;
             ColliderId = ShapeId.Null;
-            TextureResourceId = TextureResourceId.Square;
+            TextureResourceId = TextureResourceId.Null;
             Colors = new List<IColor4X4Key>();
             UVs = new List<UVKey>();
         }
@@ -97,7 +98,7 @@ namespace BH.SDK.Models.Objects
             ShaderType = ShaderType.Auto;
             ShapeId = ShapeId.Square;
             ColliderId = ShapeId.Null;
-            TextureResourceId = TextureResourceId.Square;
+            TextureResourceId = TextureResourceId.Null;
             Colors.Clear();
             UVs.Clear();
         }
