@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Utils;
@@ -72,13 +73,19 @@ namespace BH.SDK.Rules
             public const float GravityConstraint_X_Default = 0f;
             public const float GravityConstraint_Y_Default = -9.81f;
             
-            public static readonly TextureResourceId TextureResourceId_Default = TextureResourceId.Circle; // circle (atlas + uv)
-            
-            // circle uv, it's more simple to use it
-            public const float TextureResourceUV_X_Default = 0.0625f; // tilling x
-            public const float TextureResourceUV_Y_Default = 0.0625f; // tilling y
-            public const float TextureResourceUV_Z_Default = 0.0625f; // offset x
-            public const float TextureResourceUV_W_Default = 0.9375f; // offset y
+            /// <summary> No image - the particle draws its shape's own colour. </summary>
+            public static readonly TextureResourceId TextureResourceId_Default = TextureResourceId.Null;
+
+            /// <summary> The quad. </summary>
+            public static readonly ShapeId ParticleShapeId_Default = ShapeId.Square;
+
+            // The whole texture, i.e. no atlas cell to select. Matches what TextureRegistry
+            // .TryGetTextureUV hands back for an id it cannot resolve, so a missing texture and an
+            // unset one produce the same rect rather than a zero one that samples a single texel.
+            public const float TextureResourceUV_X_Default = 1f; // tilling x
+            public const float TextureResourceUV_Y_Default = 1f; // tilling y
+            public const float TextureResourceUV_Z_Default = 0f; // offset x
+            public const float TextureResourceUV_W_Default = 0f; // offset y
         }
         public static class Forces
         {

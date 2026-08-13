@@ -1,6 +1,7 @@
 using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
@@ -42,11 +43,14 @@ namespace BH.SDK.Models.Effects
         [RuleIVector2InRange(EffectRules.Core.LifetimeBounds_Min, EffectRules.Core.LifetimeBounds_Max)]
         [JsonProperty(Names.Lifetime)]
         public IVector2 LifetimeBounds { get; set; }
-
-        // Same logic as ShapeObject.TextureId
+        
+        /// <summary> Geometry each particle is drawn with, out of the same shape pool ShapeObject
+        /// draws from. Null draws the quad. </summary>
+        [JsonProperty(Names.ShapeId)]
+        public ShapeId ParticleShapeId { get; set; }
 
         /// <summary> Image each particle draws - the same resource pool ShapeObject draws from. </summary>
-        [RuleIPrimitiveIntNotNull, RuleReferenceExists(ResourceReferenceKind.Texture)]
+        [RuleReferenceExists(ResourceReferenceKind.Texture, allowNull: true)]
         [JsonProperty(Names.TextureResourceId)]
         public TextureResourceId TextureResourceId { get; set; }
 
@@ -65,18 +69,21 @@ namespace BH.SDK.Models.Effects
                 EffectRules.Core.LifetimeBounds_X_Default,
                 EffectRules.Core.LifetimeBounds_Y_Default);
             TextureResourceId = EffectRules.Core.TextureResourceId_Default;
+            ParticleShapeId = EffectRules.Core.ParticleShapeId_Default;
             ParticlePivot = new Alignment(new Vector2Value(
                 EffectRules.Core.Pivot_X_Default,
                 EffectRules.Core.Pivot_Y_Default));
         }
         public EffectObjectCore(bool render, bool loop, uint particleCount,
-            IVector2 lifetimeBounds, TextureResourceId textureResourceId, Alignment particlePivot)
+            IVector2 lifetimeBounds, TextureResourceId textureResourceId, ShapeId particleShapeId,
+            Alignment particlePivot)
         {
             Render = render;
             Loop = loop;
             ParticleCount = particleCount;
             LifetimeBounds = lifetimeBounds;
             TextureResourceId = textureResourceId;
+            ParticleShapeId = particleShapeId;
             ParticlePivot = particlePivot;
         }
         public void Reset()
@@ -88,6 +95,7 @@ namespace BH.SDK.Models.Effects
                 EffectRules.Core.LifetimeBounds_X_Default,
                 EffectRules.Core.LifetimeBounds_Y_Default);
             TextureResourceId = EffectRules.Core.TextureResourceId_Default;
+            ParticleShapeId = EffectRules.Core.ParticleShapeId_Default;
             ParticlePivot = new Alignment(new Vector2Value(
                 EffectRules.Core.Pivot_X_Default,
                 EffectRules.Core.Pivot_Y_Default));
@@ -100,16 +108,17 @@ namespace BH.SDK.Models.Effects
             ParticleCount = src.ParticleCount;
             LifetimeBounds = src.LifetimeBounds;
             TextureResourceId = src.TextureResourceId;
+            ParticleShapeId = src.ParticleShapeId;
             ParticlePivot = src.ParticlePivot;
         }
 
         public object Clone() => Copy();
         public EffectObjectCore Copy() => new(Render, Loop, ParticleCount,
-            LifetimeBounds.Copy(), TextureResourceId, ParticlePivot.Copy());
+            LifetimeBounds.Copy(), TextureResourceId, ParticleShapeId, ParticlePivot.Copy());
 
         public override bool Equals(object obj) => obj is EffectObjectCore value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Render, Loop, ParticleCount,
-            LifetimeBounds, TextureResourceId, ParticlePivot);
+            LifetimeBounds, TextureResourceId, ParticleShapeId, ParticlePivot);
 
         public bool Equals(EffectObjectCore other)
         {
@@ -120,6 +129,7 @@ namespace BH.SDK.Models.Effects
                          && ParticleCount.Equals(other.ParticleCount)
                          && LifetimeBounds.Equals(other.LifetimeBounds)
                          && TextureResourceId.Equals(other.TextureResourceId)
+                         && ParticleShapeId.Equals(other.ParticleShapeId)
                          && ParticlePivot.Equals(other.ParticlePivot);
             return result;
         }
