@@ -111,9 +111,9 @@
         // Below that there is nothing to interpolate between, and every consumer would have to
         // invent a fallback of its own.
         public const int MinCurveKeys = 2;
-        public const int MaxCurveKeys = 4;
+        public const int MaxCurveKeys = 16;
         public const int MinGradientKeys = 2;
-        public const int MaxGradientKeys = 4;
+        public const int MaxGradientKeys = 8;
 
         public const float MinCurveTime = 0f;
         public const float MaxCurveTime = 1f;
