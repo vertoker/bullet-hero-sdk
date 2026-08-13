@@ -76,7 +76,7 @@ namespace BH.SDK.Tests
                     Loop = false,
                     ParticleCount = 1200,
                     LifetimeBounds = new Vector2Value(1f, 5f),
-                    TextureResourceId = TextureResourceId.Circle,
+                    TextureResourceId = new TextureResourceId(-2),
                     ParticleShapeId = ShapeId.Triangle,
                     ParticlePivot = new Alignment(new Vector2Value(0.25f, 0.75f)),
                 },
