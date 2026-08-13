@@ -20,6 +20,8 @@
         public const string Min = "min";
         public const string Max = "max";
         public const string Step = "step";
+        public const string Budget = "budget";
+        public const string Replay = "replay";
         public const string Start = "start";
         public const string End = "end";
         public const string Prev = "prev";
@@ -473,6 +475,8 @@
         public const string TargetDeltaTime = Target + _ + Delta + _ + Time;
         public const string ScrubTime = Scrub + _ + Time;
         public const string MaxScrubTime = Max + _ + Scrub + _ + Time;
+        public const string ReplayStepBudget = Replay + _ + Step + _ + Budget;
+        public const string FrameStepBudget = Frame + _ + Step + _ + Budget;
         // Replaced MaxDiffTime, and the key changed with it: what it measures is no longer "how far
         // audio may drift" but "how far the playhead must JUMP to count as a discontinuity". An old
         // settings.json simply falls back to the default for it, which is the intended outcome - the

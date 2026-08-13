@@ -26,6 +26,27 @@ namespace BH.SDK.Rules
         public const float SpeedRange_Min = 0f;
         public const float SpeedRange_Max = 1000f;
 
+        // The two below are the odd ones out in this file: they bound a DEVICE setting
+        // (EffectsGraphicsSettings), not authored level data, and they live here because that is the
+        // one place a consumer already looks for what an effect number may be. Both count simulation
+        // steps, i.e. GPU dispatches, and they bound different things - the first is per effect and
+        // decides how one replay LOOKS, the second is per frame across the whole pool and decides
+        // what the worst frame COSTS.
+        //
+        // A replay rebuilds a graph from an empty state, so each of its steps is one particle spawn
+        // cohort: too few and a continuous stream comes back as that many visible packets. The floor
+        // is therefore low enough to be a real emergency setting on a weak device and not so low
+        // that an effect stops resembling itself; the ceiling is where a single effect would eat a
+        // whole default frame budget on its own.
+
+        public const int ReplayStepBudget_Min = 4;
+        public const int ReplayStepBudget_Max = 128;
+        public const int ReplayStepBudget_Default = 32;
+
+        public const int FrameStepBudget_Min = 32;
+        public const int FrameStepBudget_Max = 2048;
+        public const int FrameStepBudget_Default = 256;
+
         public static class Core
         {
             public const bool Render_Default = true;
