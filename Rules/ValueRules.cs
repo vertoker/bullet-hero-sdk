@@ -1,4 +1,6 @@
-﻿namespace BH.SDK.Rules
+﻿using BH.SDK.Utils;
+
+namespace BH.SDK.Rules
 {
     public static class ValueRules
     {
@@ -68,6 +70,26 @@
         public const float DefaultScaX = 1f;
         public const float DefaultScaY = 1f;
         
+        // Rotation is stored in RADIANS, so the generic +-1e6 it used to inherit is about 160 000
+        // turns - a number no author writes and every angle-wrapping consumer has to survive. A
+        // spinner is the case that needs room: an object turning continuously is authored as one
+        // keyframe pair whose end angle keeps growing, so the cap is expressed in turns rather than
+        // picked as a round radian figure. 1000 turns is ~8 minutes at 2 rev/s, past any real level.
+        public const int MaxRotationTurns = 1000;
+        public const float MinRotation = -BHSDKMath.PI2 * MaxRotationTurns;
+        public const float MaxRotation = BHSDKMath.PI2 * MaxRotationTurns;
+
+        // Camera shake amplitude and rate. Amplitude is in the same world units MinPos/MaxPos
+        // bounds, and a shake worth more than a tenth of the playfield is already a screen-clearing
+        // effect; the rate shares the bound because a negative one only inverts the phase.
+        public const float MinShake = -1000f;
+        public const float MaxShake = 1000f;
+
+        // Texture tiling and offset. Both used to inherit the generic +-1e6 through Vector2Value:
+        // legal data that asks the sampler to repeat a texture a million times across one object.
+        public const float MinUv = -1000f;
+        public const float MaxUv = 1000f;
+
         // 100^2 = 10000, apply to coord rules
         public const float MinAlignment = -100f;
         public const float MaxAlignment = 100f;

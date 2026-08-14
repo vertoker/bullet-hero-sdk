@@ -14,7 +14,6 @@
         }
         public static class ChromaticAberration
         {
-            // TODO remove limits from Inspector
             public const float IntensityMin = 0f;
             public const float IntensityMax = 1f;
         }
@@ -23,11 +22,9 @@
             public const float CenterMin = 0f;
             public const float CenterMax = 1f;
             
-            // TODO remove limits from Inspector
             public const float IntensityMin = 0f;
             public const float IntensityMax = 1f;
-            
-            // TODO remove limits from Inspector
+
             public const float SmoothnessMin = 0.01f;
             public const float SmoothnessMax = 1f;
         }
@@ -47,7 +44,6 @@
         }
         public static class FilmGrain
         {
-            // TODO remove limits from Inspector
             public const float IntensityMin = 0f;
             public const float IntensityMax = 1f;
         }

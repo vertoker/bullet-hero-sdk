@@ -18,11 +18,13 @@ namespace BH.SDK.Models.Keyframes
     {
         /// <summary> Repeat count per axis; values above 1 tile the texture. </summary>
         [RuleNotNull]
+        [RuleIVector2InRange(ValueRules.MinUv, ValueRules.MaxUv)]
         [JsonProperty(Names.Tilling)]
         public Vector2Value Tilling { get; set; }
 
         /// <summary> Shift of the texture within the rect - animate it for a scrolling surface. </summary>
         [RuleNotNull]
+        [RuleIVector2InRange(ValueRules.MinUv, ValueRules.MaxUv)]
         [JsonProperty(Names.Offset)]
         public Vector2Value Offset { get; set; }
 

@@ -17,22 +17,22 @@ namespace BH.SDK.Models.Keyframes
     public class ShakeKey : Keyframe, IModel<ShakeKey>
     {
         /// <summary> Overall strength; zero disables the shake without removing the key. </summary>
-        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.MinShake, ValueRules.MaxShake)]
         [JsonProperty(Names.Intensity)]
         public float Intensity { get; set; }
 
         /// <summary> How fast the offset changes - the difference between a rumble and a jitter. </summary>
-        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.MinShake, ValueRules.MaxShake)]
         [JsonProperty(Names.Speed)]
         public float Speed { get; set; }
 
         /// <summary> Horizontal weight, multiplied by Intensity - lets a shake be purely sideways. </summary>
-        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.MinShake, ValueRules.MaxShake)]
         [JsonProperty(Names.CoordX)]
         public float IntensityX { get; set; }
 
         /// <summary> Vertical weight, multiplied by Intensity. </summary>
-        [RuleInRange(ValueRules.MinFloatValue, ValueRules.MaxFloatValue)]
+        [RuleInRange(ValueRules.MinShake, ValueRules.MaxShake)]
         [JsonProperty(Names.CoordY)]
         public float IntensityY { get; set; }
 

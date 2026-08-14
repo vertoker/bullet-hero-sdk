@@ -66,8 +66,18 @@ namespace BH.SDK.Rules
 
         public static bool IsActiveMixLevel(float mixLevel) => mixLevel > MixLevel_Disabled;
 
+        // The two keyframed per-track values. Their bounds lived only in the comment beside each
+        // default until now, so a Volume of 40 or a StereoPan of -12 was legal authored data the
+        // mixer then silently saturated. They are NOT reachable by a [RuleInRange]: both are stored
+        // in the shared FloatKey, which every other float track uses too, so an attribute there
+        // would bound all of them at once. The editor clamps against these instead.
         public const float VolumeDefault = 1f; // 0f - 1f, 0.01f
+        public const float MinVolume = 0f;
+        public const float MaxVolume = 1f;
+
         public const float StereoPanDefault = 0f; // -1f - 1f, 0.01f
+        public const float MinStereoPan = -1f;
+        public const float MaxStereoPan = 1f;
         public const bool ActiveDefault = false;
         
         public static class Lowpass
