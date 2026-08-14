@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Enums.Values;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;

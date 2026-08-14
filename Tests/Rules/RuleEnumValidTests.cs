@@ -1,4 +1,4 @@
-using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enums;
 using BH.SDK.Rules.Attributes;
 using NUnit.Framework;
 

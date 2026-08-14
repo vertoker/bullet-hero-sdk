@@ -1,5 +1,5 @@
 using System;
-using BH.SDK.Models.Enum.Meta;
+using BH.SDK.Models.Enums.Meta;
 using BH.SDK.Rules.Attributes;
 using NUnit.Framework;
 

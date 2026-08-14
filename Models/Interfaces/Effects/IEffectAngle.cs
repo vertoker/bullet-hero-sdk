@@ -1,5 +1,5 @@
 ﻿using System;
-using BH.SDK.Models.Enum.Effects;
+using BH.SDK.Models.Enums.Effects;
 
 namespace BH.SDK.Models.Interfaces.Effects
 {

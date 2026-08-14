@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enums;
 
 namespace BH.SDK.Rules
 {

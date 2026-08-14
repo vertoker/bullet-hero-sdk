@@ -1,6 +1,6 @@
 ﻿using System;
 using BH.SDK.Models.Effects;
-using BH.SDK.Models.Enum.Effects;
+using BH.SDK.Models.Enums.Effects;
 using BH.SDK.Models.Interfaces.Effects;
 using BH.SDK.Serialization.Converters.Base;
 

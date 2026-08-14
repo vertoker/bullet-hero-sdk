@@ -1,5 +1,5 @@
 using BH.SDK.Generators.Spawn;
-using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enums;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;

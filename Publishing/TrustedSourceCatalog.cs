@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using BH.SDK.Models.Enum.Meta;
+using BH.SDK.Models.Enums.Meta;
 
 namespace BH.SDK.Publishing
 {

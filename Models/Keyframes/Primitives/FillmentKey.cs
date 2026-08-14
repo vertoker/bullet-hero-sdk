@@ -1,6 +1,6 @@
 using System;
-using BH.SDK.Models.Enum;
-using BH.SDK.Models.Enum.Text;
+using BH.SDK.Models.Enums;
+using BH.SDK.Models.Enums.Text;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;

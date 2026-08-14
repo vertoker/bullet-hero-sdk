@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Enums.Values;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Values;
 using BH.SDK.Utils;

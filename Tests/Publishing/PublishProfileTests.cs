@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using BH.SDK.Models.Enum.Meta;
-using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enums.Meta;
+using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Publishing;
 using BH.SDK.Serialization;
 using BH.SDK.Serialization.Serializers;

@@ -1,4 +1,4 @@
-﻿using BH.SDK.Models.Enum.Settings;
+﻿using BH.SDK.Models.Enums.Settings;
 using BH.SDK.Models.SettingGroups.Graphics;
 using BH.SDK.Rules;
 using Newtonsoft.Json;

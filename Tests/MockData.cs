@@ -4,12 +4,14 @@ using BH.SDK.Models;
 using BH.SDK.Models.Audio;
 using BH.SDK.Models.Data;
 using BH.SDK.Models.Effects;
-using BH.SDK.Models.Enum;
-using BH.SDK.Models.Enum.Meta;
-using BH.SDK.Models.Enum.Resources;
-using BH.SDK.Models.Enum.Settings;
-using BH.SDK.Models.Enum.Text;
-using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Enums;
+using BH.SDK.Models.Enums.Controls;
+using BH.SDK.Models.Enums.Controls.Modes;
+using BH.SDK.Models.Enums.Meta;
+using BH.SDK.Models.Enums.Resources;
+using BH.SDK.Models.Enums.Settings;
+using BH.SDK.Models.Enums.Text;
+using BH.SDK.Models.Enums.Values;
 using BH.SDK.Models.Events;
 using BH.SDK.Models.Game;
 using BH.SDK.Models.Keyframes;
@@ -542,7 +544,65 @@ namespace BH.SDK.Tests
                 },
                 Controls =
                 {
-                    ClassicControlsType = ClassicControlsType.Mouse,
+                    Common =
+                    {
+                        Selection = DeviceSelection.Manual,
+                        ManualDevice = ControlDevice.Gamepad,
+                        CursorVisible = false,
+                        CursorScale = 1.5f,
+                        CursorRecenter = false,
+                        CursorReturn = true,
+                    },
+                    // A different permutation of the same four devices, so a round trip has something
+                    // to get wrong: an array read back in catalog order would still be rule-valid.
+                    Priority = new[]
+                    {
+                        ControlDevice.Gamepad,
+                        ControlDevice.KeyboardMouse,
+                        ControlDevice.DeviceGyro,
+                        ControlDevice.Touchscreen,
+                    },
+                    KeyboardMouse =
+                    {
+                        Mode = KeyboardMouseControlMode.Relative,
+                        Sensitivity = 2.5f,
+                        InvertY = true,
+                        RequireHold = false,
+                        HoldButton = MouseButton.Right,
+                        DoubleClickTime = 0.25f,
+                        DashKeys = KeyBindingMask.Space | KeyBindingMask.KeyE,
+                        HideCursorAbsolute = false,
+                        HideCursorRelative = true,
+                    },
+                    Touchscreen =
+                    {
+                        Mode = TouchscreenControlMode.Absolute,
+                        FingerOffsetX = 0.1f,
+                        FingerOffsetY = -0.2f,
+                        DashOnDoubleTap = true,
+                        Handedness = Handedness.Left,
+                        JoystickAnchor = ScreenAnchor.BottomRight,
+                        JoystickDynamicOrigin = true,
+                        DashButtonAnchor = ScreenAnchor.CenterLeft,
+                        DashButtonIcon = 2,
+                    },
+                    Gamepad =
+                    {
+                        Mode = GamepadControlMode.Absolute,
+                        MotionStick = MotionStick.Right,
+                        ResponseCurve = 1.5f,
+                        DashButtons = GamepadButtonMask.East | GamepadButtonMask.LeftTrigger,
+                    },
+                    DeviceGyro =
+                    {
+                        Mode = DeviceGyroControlMode.Relative,
+                        Active = false,
+                        CalibrateOnStart = false,
+                        TiltCenterX = 0.05f,
+                        TiltCenterY = -0.05f,
+                        DashSource = GyroDashSource.ScreenButton,
+                        DashButtonSize = 0.25f,
+                    },
                 },
                 Audio =
                 {
@@ -610,7 +670,14 @@ namespace BH.SDK.Tests
                 },
                 Controls =
                 {
-                    ClassicControlsType = ClassicControlsType.Mouse
+                    // One device listed twice, another missing: RuleControlPriority's own violation.
+                    Priority = new[]
+                    {
+                        ControlDevice.KeyboardMouse,
+                        ControlDevice.KeyboardMouse,
+                        ControlDevice.Touchscreen,
+                        ControlDevice.Gamepad,
+                    }
                 },
                 Audio =
                 {

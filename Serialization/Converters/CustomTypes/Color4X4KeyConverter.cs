@@ -1,5 +1,5 @@
 using System;
-using BH.SDK.Models.Enum.Keyframes;
+using BH.SDK.Models.Enums.Keyframes;
 using BH.SDK.Models.Interfaces.Keyframes;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Serialization.Converters.Base;

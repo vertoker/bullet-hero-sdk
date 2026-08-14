@@ -1,5 +1,5 @@
 ﻿using System;
-using BH.SDK.Models.Enum.Settings;
+using BH.SDK.Models.Enums.Settings;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Rules;
 using BH.SDK.Rules.Attributes;

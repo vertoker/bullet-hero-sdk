@@ -1,6 +1,7 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.SettingGroups;
+using BH.SDK.Models.SettingGroups.Controls;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Versions;
 using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace BH.SDK.Models
         [JsonProperty(Names.General)]
         public GeneralSettings General { get; set; }
 
-        /// <summary> Input scheme and (eventually) key bindings. </summary>
+        /// <summary> Which devices drive the avatar, in what mode, with what tuning. </summary>
         [RuleNotNull]
         [JsonProperty(Names.Controls)]
         public ControlsSettings Controls { get; set; }

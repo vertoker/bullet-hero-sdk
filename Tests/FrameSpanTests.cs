@@ -1,4 +1,4 @@
-using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enums;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
 using BH.SDK.Serialization.Converters.CustomTypes;

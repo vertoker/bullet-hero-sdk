@@ -5,7 +5,7 @@ using BH.SDK.Generators.External;
 using BH.SDK.Generators.Textures;
 using BH.SDK.Models;
 using BH.SDK.Models.Data;
-using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Resources;

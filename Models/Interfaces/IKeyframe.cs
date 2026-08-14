@@ -1,4 +1,4 @@
-﻿using BH.SDK.Models.Enum;
+﻿using BH.SDK.Models.Enums;
 
 namespace BH.SDK.Models.Interfaces
 {

@@ -1,4 +1,4 @@
-using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Resources;
 

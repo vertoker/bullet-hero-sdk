@@ -448,6 +448,61 @@
         public const string Bytes = "bytes";
         public const string Total = "total";
 
+        public const string Common = "common";
+        public const string Shared = "shared";
+        public const string Priority = "priority";
+        public const string Selection = "selection";
+        public const string Manual = "manual";
+        public const string Device = "device";
+        public const string Keyboard = "keyboard";
+        public const string Mouse = "mouse";
+        public const string Touchscreen = "touchscreen";
+        public const string Gamepad = "gamepad";
+        public const string Touchpad = "touchpad";
+        public const string Gyro = "gyro";
+        public const string Sensitivity = "sens";
+        public const string Smoothing = "smoothing";
+        public const string Invert = "invert";
+        public const string Switch = "switch";
+        public const string Cooldown = "cooldown";
+        public const string Cursor = "cursor";
+        public const string Visible = "visible";
+        public const string Recenter = "recenter";
+        public const string Return = "return";
+        public const string Hide = "hide";
+        public const string Absolute = "abs";
+        public const string Relative = "rel";
+        public const string Hold = "hold";
+        public const string Button = "button";
+        public const string Buttons = "buttons";
+        public const string Dash = "dash";
+        public const string Double = "double";
+        public const string Click = "click";
+        public const string Tap = "tap";
+        public const string Travel = "travel";
+        public const string Finger = "finger";
+        public const string Second = "second";
+        public const string Handedness = "handedness";
+        public const string Joystick = "joystick";
+        public const string Dynamic = "dynamic";
+        public const string Origin = "origin";
+        public const string Icon = "icon";
+        public const string Motion = "motion";
+        public const string Stick = "stick";
+        public const string Response = "response";
+        public const string Pad = "pad";
+        public const string Area = "area";
+        public const string Axis = "axis";
+        public const string Mapping = "mapping";
+        public const string Always = "always";
+        public const string On = "on";
+        public const string Activation = "activation";
+        public const string Calibrate = "calibrate";
+        public const string Tilt = "tilt";
+        public const string Brand = "brand";
+        public const string Glyph = "glyph";
+        public const string Style = "style";
+
         private const string _ = "_";
         
         // ---------------------------------------------------------------------------------------------
@@ -466,7 +521,6 @@
         public const string EditorSettings = Editor + _ + Settings;
         
         public const string GameEditor = Game + _ + Editor;
-        public const string ClassicControlsType = Classic + _ + Controls + _ + Type;
         public const string FramerateTarget = Framerate + _ + Target;
         public const string FixedFramerate = Fixed + _ + Framerate;
         public const string RenderEffects = Render + _ + Effects;
@@ -484,7 +538,62 @@
         public const string ResyncJumpTime = Resync + _ + Jump + _ + Time;
         public const string SyncDeadZone = Dead + _ + Zone;
         public const string PitchCorrection = Pitch + _ + Correction;
-        
+
+        // Controls. Replaced ClassicControlsType, whose key is simply gone: it had no gameplay
+        // consumer at all, so an old settings.json losing it loses nothing that ever did anything. The
+        // UserSettings domain deliberately did NOT bump for that - a removed OptIn property is skipped
+        // on read, whereas a bump with no migration registered would throw on every existing file.
+
+        public const string KeyboardMouse = Keyboard + _ + Mouse;
+        public const string DeviceGyro = Device + _ + Gyro;
+
+        public const string ManualDevice = Manual + _ + Device;
+        public const string CursorVisible = Cursor + _ + Visible;
+        public const string CursorScale = Cursor + _ + Scale;
+        public const string CursorRecenter = Cursor + _ + Recenter;
+        public const string CursorReturn = Cursor + _ + Return;
+
+        // Same string as SyncDeadZone, which is an audio key - the two can never appear on one model,
+        // which is exactly the condition this file reuses keys under.
+        public const string DeadZone = Dead + _ + Zone;
+        public const string InvertX = Invert + _ + CoordX;
+        public const string InvertY = Invert + _ + CoordY;
+
+        public const string RequireHold = Require + _ + Hold;
+        public const string HoldButton = Hold + _ + Button;
+        public const string DashOnDoubleClick = Dash + _ + Double + _ + Click;
+        public const string DoubleClickTime = Double + _ + Click + _ + Time;
+        public const string DashKeys = Dash + _ + Keys;
+        public const string HideCursorAbsolute = Hide + _ + Cursor + _ + Absolute;
+        public const string HideCursorRelative = Hide + _ + Cursor + _ + Relative;
+
+        public const string FingerOffsetX = Finger + _ + Offset + _ + CoordX;
+        public const string FingerOffsetY = Finger + _ + Offset + _ + CoordY;
+        public const string DashOnSecondFinger = Dash + _ + Second + _ + Finger;
+        public const string DashOnDoubleTap = Dash + _ + Double + _ + Tap;
+        public const string DoubleTapTime = Double + _ + Tap + _ + Time;
+        public const string TapMaxTravel = Tap + _ + Max + _ + Travel;
+        public const string JoystickAnchor = Joystick + _ + Anchor;
+        public const string JoystickSize = Joystick + _ + Size;
+        public const string JoystickTravel = Joystick + _ + Travel;
+        public const string JoystickDynamicOrigin = Joystick + _ + Dynamic + _ + Origin;
+        public const string DashButtonAnchor = Dash + _ + Button + _ + Anchor;
+        public const string DashButtonSize = Dash + _ + Button + _ + Size;
+        public const string DashButtonIcon = Dash + _ + Button + _ + Icon;
+
+        public const string MotionStick = Motion + _ + Stick;
+        public const string ResponseCurve = Response + _ + Curve;
+        public const string DashButtons = Dash + _ + Buttons;
+
+        public const string AxisMapping = Axis + _ + Mapping;
+        public const string MaxTiltAngle = Max + _ + Tilt + _ + Angle;
+
+        public const string CalibrateOnStart = Calibrate + _ + Start;
+        public const string TiltCenterX = Tilt + _ + Center + _ + CoordX;
+        public const string TiltCenterY = Tilt + _ + Center + _ + CoordY;
+        public const string DashSource = Dash + _ + Source;
+
+
         public const string PostProcessing = Post + Processing;
         public const string RenderBloom = Render + _ + BloomShort;
         public const string RenderChroma = Render + _ + ChromaticShort;

@@ -1,4 +1,4 @@
-using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Enums.Values;
 
 namespace BH.SDK.Models.Interfaces.Values
 {

@@ -70,6 +70,9 @@ namespace BH.SDK.Tests.Rules
 
             { typeof(RulePropertyOrderAttribute), nameof(RulePropertyOrderTests) },
             { typeof(RuleShapeGeometryAttribute), nameof(RuleShapeGeometryTests) },
+
+            { typeof(RuleControlPriorityAttribute), nameof(RuleControlPriorityTests) },
+            { typeof(RuleAnyDeviceActiveAttribute), nameof(RuleAnyDeviceActiveTests) },
         };
 
         private static IEnumerable<Type> ConcreteRules => typeof(BaseRuleAttribute).Assembly.GetTypes()

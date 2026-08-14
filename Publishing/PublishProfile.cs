@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using BH.SDK.Models;
-using BH.SDK.Models.Enum.Meta;
-using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enums.Meta;
+using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Rules.Attributes;
 using BH.SDK.Utils;

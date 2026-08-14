@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Models.Primitives.Resources;
 
 namespace BH.SDK.Publishing

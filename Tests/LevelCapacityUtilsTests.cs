@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using BH.SDK.Models;
 using BH.SDK.Models.Audio;
-using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enums;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;

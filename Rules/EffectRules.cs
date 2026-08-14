@@ -1,7 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using System.Collections.Generic;
-using BH.SDK.Models.Enum.Values;
+using BH.SDK.Models.Enums.Values;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;

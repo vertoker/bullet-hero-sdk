@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BH.SDK.Generators.External;
 using BH.SDK.Models;
 using BH.SDK.Models.Audio;
-using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;

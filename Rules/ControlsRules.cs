@@ -1,0 +1,99 @@
+namespace BH.SDK.Rules
+{
+    // Limits for the control settings tree, in the "Min/Max/Default" shape the rest of this folder
+    // uses for generic value limits. Nothing here clamps at runtime - same as every other UserSettings
+    // group, these bound what the UI offers and what validation reports, and a hand-edited file with a
+    // wilder number simply plays wilder.
+    //
+    // Two families of number live here and must not be mixed up. Angles and travel distances are
+    // TILT/SCREEN quantities in their own units (degrees, pixels), while sizes, offsets and pad areas
+    // are NORMALIZED - a fraction of screen height, or of the camera rect - because a thumb control has
+    // to land in the same place on a 4:3 tablet and a 21:9 phone.
+
+    /// <summary>
+    /// Numeric bounds and defaults for <see cref="BH.SDK.Models.SettingGroups.Controls"/>.
+    /// </summary>
+    public static class ControlsRules
+    {
+        /// <summary> Multiplier applied to a cursor delta in Relative mode. </summary>
+        public const float MinSensitivity = 0.05f;
+        public const float MaxSensitivity = 10f;
+        public const float DefaultSensitivity = 1f;
+        public const float DefaultGamepadSensitivity = 2f;
+
+        /// <summary> Fraction of a stick/tilt range treated as no input at all. </summary>
+        public const float MinDeadZone = 0f;
+        public const float MaxDeadZone = 0.9f;
+        public const float DefaultDeadZone = 0.15f;
+
+        /// <summary> The on-screen joystick's own dead zone, wider than a stick's: a thumb resting on
+        /// glass never reads as exactly centred. </summary>
+        public const float DefaultTouchDeadZone = 0.18f;
+
+        /// <summary> How much of the previous frame's input is carried over. 0 disables smoothing. </summary>
+        public const float MinSmoothing = 0f;
+        public const float MaxSmoothing = 1f;
+        public const float DefaultSmoothing = 0f;
+
+        /// <summary> Size of the in-world cursor object, relative to its own default. </summary>
+        public const float MinCursorScale = 0.1f;
+        public const float MaxCursorScale = 4f;
+        public const float DefaultCursorScale = 1f;
+
+        /// <summary> Seconds within which a second click counts as a double click. </summary>
+        public const float MinDoubleClickTime = 0.05f;
+        public const float MaxDoubleClickTime = 1f;
+        public const float DefaultDoubleClickTime = 0.3f;
+
+        /// <summary> Seconds within which a second tap counts as a double tap. </summary>
+        public const float MinDoubleTapTime = 0.05f;
+        public const float MaxDoubleTapTime = 1f;
+        public const float DefaultDoubleTapTime = 0.3f;
+
+        /// <summary> How far a finger may travel and still count as a tap rather than a drag, as a
+        /// fraction of screen height. </summary>
+        public const float MinTapTravel = 0f;
+        public const float MaxTapTravel = 0.5f;
+        public const float DefaultTapTravel = 0.05f;
+
+        // The setting this bounds is itself called MaxTiltAngle - it is the tilt a player has to reach
+        // for full deflection, and these are the range that number may be set to. Reading MaxTiltAngle
+        // as "the largest tilt the game accepts" is the easy mistake: this is a limit on a limit.
+
+        /// <summary> Degrees of tilt the player's own MaxTiltAngle may be set to. </summary>
+        public const float MinTiltAngle = 5f;
+        public const float MaxTiltAngle = 90f;
+        public const float DefaultTiltAngle = 35f;
+
+        /// <summary> Neutral tilt, per axis, in the same normalized deflection space input resolves
+        /// to. Calibration writes it; 0 means "device held level". </summary>
+        public const float MinTiltCenter = -1f;
+        public const float MaxTiltCenter = 1f;
+        public const float DefaultTiltCenter = 0f;
+
+        /// <summary> Offset between the finger and the cursor in touch Absolute mode, as a fraction of
+        /// camera height, so the avatar is not hidden under the thumb. </summary>
+        public const float MinFingerOffset = -1f;
+        public const float MaxFingerOffset = 1f;
+        public const float DefaultFingerOffsetX = 0f;
+        public const float DefaultFingerOffsetY = 0.15f;
+
+        /// <summary> Exponent applied to stick deflection: 1 is linear, higher favours small
+        /// movements. </summary>
+        public const float MinResponseCurve = 0.5f;
+        public const float MaxResponseCurve = 3f;
+        public const float DefaultResponseCurve = 1f;
+
+        /// <summary> Size of one on-screen control, as a fraction of screen height. </summary>
+        public const float MinControlSize = 0.05f;
+        public const float MaxControlSize = 0.5f;
+        public const float DefaultControlSize = 0.18f;
+
+        /// <summary> How far the on-screen stick's knob travels from its origin, in pixels, before it
+        /// reads as fully deflected. </summary>
+        public const float MinJoystickTravel = 20f;
+        public const float MaxJoystickTravel = 400f;
+        public const float DefaultJoystickTravel = 100f;
+
+    }
+}

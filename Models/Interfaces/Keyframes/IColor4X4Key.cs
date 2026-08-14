@@ -1,4 +1,4 @@
-﻿using BH.SDK.Models.Enum.Keyframes;
+﻿using BH.SDK.Models.Enums.Keyframes;
 
 namespace BH.SDK.Models.Interfaces.Keyframes
 {

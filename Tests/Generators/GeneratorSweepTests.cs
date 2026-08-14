@@ -4,7 +4,7 @@ using BH.SDK.Generators;
 using BH.SDK.Generators.External;
 using BH.SDK.Generators.Modifiers;
 using BH.SDK.Models;
-using BH.SDK.Models.Enum.Resources;
+using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;

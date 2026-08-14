@@ -1,7 +1,7 @@
 using BH.SDK.Generators;
 using BH.SDK.Generators.Modifiers;
 using BH.SDK.Models;
-using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enums;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using NUnit.Framework;

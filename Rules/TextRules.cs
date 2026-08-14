@@ -1,4 +1,4 @@
-﻿using BH.SDK.Models.Enum.Text;
+﻿using BH.SDK.Models.Enums.Text;
 
 // ReSharper disable InconsistentNaming
 

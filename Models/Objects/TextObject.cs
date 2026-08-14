@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using BH.SDK.Models.Enum;
-using BH.SDK.Models.Enum.Text;
+using BH.SDK.Models.Enums;
+using BH.SDK.Models.Enums.Text;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;

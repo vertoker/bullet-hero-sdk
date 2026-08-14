@@ -1,5 +1,5 @@
 using System;
-using BH.SDK.Models.Enum;
+using BH.SDK.Models.Enums;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Primitives;
