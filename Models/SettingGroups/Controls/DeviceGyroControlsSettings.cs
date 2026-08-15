@@ -93,6 +93,11 @@ namespace BH.SDK.Models.SettingGroups.Controls
         }
         private void ResetOwn()
         {
+            // Both overwrite what BaseDeviceControlsSettings.Reset just wrote: a tilt is neither a stick
+            // nor a mouse, and the two numbers it inherits are tuned for a switch a hand is not holding.
+            DeadZone = ControlsRules.DefaultGyroDeadZone;
+            Smoothing = ControlsRules.DefaultGyroSmoothing;
+
             Mode = DeviceGyroControlMode.Direction;
             AxisMapping = GyroAxisMapping.RollPitch;
             CalibrateOnStart = true;

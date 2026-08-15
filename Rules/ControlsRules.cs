@@ -30,10 +30,19 @@ namespace BH.SDK.Rules
         /// glass never reads as exactly centred. </summary>
         public const float DefaultTouchDeadZone = 0.18f;
 
+        /// <summary> A tilt's own dead zone, narrower than a stick's: a hand holding a device already
+        /// rests wherever calibration put the neutral point, so a stick-sized band there reads as the
+        /// device ignoring small tilts entirely. </summary>
+        public const float DefaultGyroDeadZone = 0.05f;
+
         /// <summary> How much of the previous frame's input is carried over. 0 disables smoothing. </summary>
         public const float MinSmoothing = 0f;
         public const float MaxSmoothing = 1f;
         public const float DefaultSmoothing = 0f;
+
+        /// <summary> A tilt is the one input read off a hand rather than off a switch, so it is the one
+        /// that ships smoothed: the sensor faithfully reports a tremor no player meant to make. </summary>
+        public const float DefaultGyroSmoothing = 0.06f;
 
         /// <summary> Size of the in-world cursor object, relative to its own default. </summary>
         public const float MinCursorScale = 0.1f;
@@ -63,7 +72,11 @@ namespace BH.SDK.Rules
         /// <summary> Degrees of tilt the player's own MaxTiltAngle may be set to. </summary>
         public const float MinTiltAngle = 5f;
         public const float MaxTiltAngle = 90f;
-        public const float DefaultTiltAngle = 35f;
+
+        // A wrist covers roughly 20 degrees comfortably, and the default has to be what a WRIST can
+        // reach rather than what an arm can: at the old 35 the player ran out of comfortable travel
+        // long before the avatar ran out of screen, which reads as the tilt barely responding.
+        public const float DefaultTiltAngle = 20f;
 
         /// <summary> Neutral tilt, per axis, in the same normalized deflection space input resolves
         /// to. Calibration writes it; 0 means "device held level". </summary>

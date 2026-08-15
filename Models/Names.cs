@@ -502,6 +502,9 @@
         public const string Brand = "brand";
         public const string Glyph = "glyph";
         public const string Style = "style";
+        public const string Default = "default";
+        public const string Gizmos = "gizmos";
+        public const string Reset = "reset";
 
         private const string _ = "_";
         
@@ -519,6 +522,8 @@
         public const string CameraMinSize = Camera + _ + Min + _ + Size;
         public const string CameraMaxSize = Camera + _ + Max + _ + Size;
         public const string EditorSettings = Editor + _ + Settings;
+        public const string PlayerActiveDefault = Player + _ + Active + _ + Default;
+        public const string GizmosResetOnPlayer = Gizmos + _ + Reset + _ + On + _ + Player;
         
         public const string GameEditor = Game + _ + Editor;
         public const string FramerateTarget = Framerate + _ + Target;

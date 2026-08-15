@@ -6,8 +6,8 @@ using Newtonsoft.Json;
 namespace BH.SDK.Models.SettingGroups
 {
     /// <summary>
-    /// Preferences for the in-game level editor, per device: autosave policy and camera limits.
-    /// Belongs to the person editing, never to the level being edited.
+    /// Preferences for the in-game level editor, per device: autosave policy, camera limits and how
+    /// the preview player starts. Belongs to the person editing, never to the level being edited.
     /// </summary>
     [RuleContainer]
     [RulePropertyOrder(nameof(GameEditorSettings.CameraMinSize), nameof(GameEditorSettings.CameraMaxSize))]
@@ -42,34 +42,55 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.CameraMaxSize)]
         public float CameraMaxSize { get; set; }
 
+        // Preview player
+
+        // The preview player's toggle is also what decides who owns the viewport's touches, so its
+        // starting state is a real preference rather than a constant: a desktop author wants the player
+        // there from the first frame (a mouse loses nothing to it), a phone author does not, since the
+        // whole viewport goes to the avatar the moment it exists. The platform only picks the value a
+        // FRESH settings file is born with - after that it is the author's own.
+
+        /// <summary> Whether the editor's preview player starts switched on. </summary>
+        [JsonProperty(Names.PlayerActiveDefault)]
+        public bool PlayerActiveDefault { get; set; }
+
+        /// <summary> Whether switching the preview player on drops the gizmo mode back to None. </summary>
+        [JsonProperty(Names.GizmosResetOnPlayer)]
+        public bool GizmosResetOnPlayer { get; set; }
+
         public GameEditorSettings()
         {
-            Autosave = true;
-            AutosaveRate = 60f;
-            MaxAutosaveFiles = 25;
-            CameraMinSize = 0.1f;
-            CameraMaxSize = 100f;
+            ResetOwn();
         }
         public GameEditorSettings(bool autosave, float autosaveRate, int maxAutosaveFiles,
-            float cameraMinSize, float cameraMaxSize)
+            float cameraMinSize, float cameraMaxSize, bool playerActiveDefault, bool gizmosResetOnPlayer)
         {
             Autosave = autosave;
             AutosaveRate = autosaveRate;
             MaxAutosaveFiles = maxAutosaveFiles;
             CameraMinSize = cameraMinSize;
             CameraMaxSize = cameraMaxSize;
+            PlayerActiveDefault = playerActiveDefault;
+            GizmosResetOnPlayer = gizmosResetOnPlayer;
         }
         public void Reset()
+        {
+            ResetOwn();
+        }
+        private void ResetOwn()
         {
             Autosave = true;
             AutosaveRate = 60f;
             MaxAutosaveFiles = 25;
             CameraMinSize = 0.1f;
             CameraMaxSize = 100f;
+            PlayerActiveDefault = true;
+            GizmosResetOnPlayer = true;
         }
 
         public object Clone() => Copy();
-        public GameEditorSettings Copy() => new(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize, CameraMaxSize);
+        public GameEditorSettings Copy() => new(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize,
+            CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer);
 
         public void Pull(GameEditorSettings source)
         {
@@ -78,10 +99,13 @@ namespace BH.SDK.Models.SettingGroups
             MaxAutosaveFiles = source.MaxAutosaveFiles;
             CameraMinSize = source.CameraMinSize;
             CameraMaxSize = source.CameraMaxSize;
+            PlayerActiveDefault = source.PlayerActiveDefault;
+            GizmosResetOnPlayer = source.GizmosResetOnPlayer;
         }
 
         public override bool Equals(object obj) => obj is GameEditorSettings value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize, CameraMaxSize);
+        public override int GetHashCode() => HashCode.Combine(Autosave, AutosaveRate, MaxAutosaveFiles,
+            CameraMinSize, CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer);
 
         public bool Equals(GameEditorSettings other)
         {
@@ -91,7 +115,9 @@ namespace BH.SDK.Models.SettingGroups
                    && AutosaveRate.Equals(other.AutosaveRate)
                    && MaxAutosaveFiles == other.MaxAutosaveFiles
                    && CameraMinSize.Equals(other.CameraMinSize)
-                   && CameraMaxSize.Equals(other.CameraMaxSize);
+                   && CameraMaxSize.Equals(other.CameraMaxSize)
+                   && PlayerActiveDefault == other.PlayerActiveDefault
+                   && GizmosResetOnPlayer == other.GizmosResetOnPlayer;
         }
     }
 }
