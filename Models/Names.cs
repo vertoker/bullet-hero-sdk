@@ -299,6 +299,7 @@
         public const string Vs = "vs";
         public const string Scatter = "scatter";
         public const string Multiplier = "multiplier";
+        public const string Multi = "multi";
         public const string Lift = "lift";
         public const string Gamma = "gamma";
         public const string Gain = "gain";
@@ -524,6 +525,7 @@
         public const string EditorSettings = Editor + _ + Settings;
         public const string PlayerActiveDefault = Player + _ + Active + _ + Default;
         public const string GizmosResetOnPlayer = Gizmos + _ + Reset + _ + On + _ + Player;
+        public const string MultiSelectRequiresHold = Multi + _ + Selection + _ + Requires + _ + Hold;
         
         public const string GameEditor = Game + _ + Editor;
         public const string FramerateTarget = Framerate + _ + Target;
@@ -622,6 +624,19 @@
         public const string PlayerEvents = Player + _ + Events;
         
         public const string LimitHints = Limit + _ + Hints;
+
+        // Clipboard - one key per section of ClipboardData. Objects/PrefabObjects hold whole
+        // objects to be created; the *Keys ones hold the same model types carrying nothing but the
+        // copied keyframes, so the two never share a key even where they share a value type.
+
+        public const string PrefabObjects = Prefab + _ + Objects;
+        public const string KeyObjects = Key + _ + Objects;
+        public const string KeyTracks = Key + _ + Tracks;
+        public const string AudioTracks = Audio + _ + Tracks;
+        public const string GameKeys = Game + _ + Keys;
+        public const string CameraKeys = Camera + _ + Keys;
+        public const string PostProcessingKeys = Post + Processing + _ + Keys;
+        public const string PlayerKeys = Player + _ + Keys;
 
         // Instances
         

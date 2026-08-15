@@ -13,6 +13,7 @@ namespace BH.SDK.Versions
         public const string EffectData = nameof(Models.Data.EffectData);
         public const string ThemeData = nameof(Models.Data.ThemeData);
         public const string CompositeShape = nameof(Models.Data.CompositeShape);
+        public const string ClipboardData = nameof(Models.Clipboard.ClipboardData);
         
         // Level
         public const string LevelSettings = nameof(Models.SettingGroups.LevelSettings);

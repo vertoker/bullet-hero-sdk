@@ -58,12 +58,27 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.GizmosResetOnPlayer)]
         public bool GizmosResetOnPlayer { get; set; }
 
+        // Selection
+
+        // Whether multi-selection is a MODIFIER or a MODE is a real preference, not a constant: on a
+        // desktop the modifier is the familiar answer and an ordinary click should still replace the
+        // selection, while on touch there is no key to hold, so the mode has to apply on its own.
+        // Turning this off makes every click additive for as long as the mode is on.
+        //
+        // A mode entered by LONG PRESS ignores this either way, and has to: a finger has no modifier
+        // to hold, so gating it there would make the touch entry point reach a mode that never applies.
+
+        /// <summary> Whether multi-selection applies only while the modifier is held down. </summary>
+        [JsonProperty(Names.MultiSelectRequiresHold)]
+        public bool MultiSelectRequiresHold { get; set; }
+
         public GameEditorSettings()
         {
             ResetOwn();
         }
         public GameEditorSettings(bool autosave, float autosaveRate, int maxAutosaveFiles,
-            float cameraMinSize, float cameraMaxSize, bool playerActiveDefault, bool gizmosResetOnPlayer)
+            float cameraMinSize, float cameraMaxSize, bool playerActiveDefault, bool gizmosResetOnPlayer,
+            bool multiSelectRequiresHold)
         {
             Autosave = autosave;
             AutosaveRate = autosaveRate;
@@ -72,6 +87,7 @@ namespace BH.SDK.Models.SettingGroups
             CameraMaxSize = cameraMaxSize;
             PlayerActiveDefault = playerActiveDefault;
             GizmosResetOnPlayer = gizmosResetOnPlayer;
+            MultiSelectRequiresHold = multiSelectRequiresHold;
         }
         public void Reset()
         {
@@ -86,11 +102,12 @@ namespace BH.SDK.Models.SettingGroups
             CameraMaxSize = 100f;
             PlayerActiveDefault = true;
             GizmosResetOnPlayer = true;
+            MultiSelectRequiresHold = true;
         }
 
         public object Clone() => Copy();
         public GameEditorSettings Copy() => new(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize,
-            CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer);
+            CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer, MultiSelectRequiresHold);
 
         public void Pull(GameEditorSettings source)
         {
@@ -101,11 +118,12 @@ namespace BH.SDK.Models.SettingGroups
             CameraMaxSize = source.CameraMaxSize;
             PlayerActiveDefault = source.PlayerActiveDefault;
             GizmosResetOnPlayer = source.GizmosResetOnPlayer;
+            MultiSelectRequiresHold = source.MultiSelectRequiresHold;
         }
 
         public override bool Equals(object obj) => obj is GameEditorSettings value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Autosave, AutosaveRate, MaxAutosaveFiles,
-            CameraMinSize, CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer);
+            CameraMinSize, CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer, MultiSelectRequiresHold);
 
         public bool Equals(GameEditorSettings other)
         {
@@ -117,7 +135,8 @@ namespace BH.SDK.Models.SettingGroups
                    && CameraMinSize.Equals(other.CameraMinSize)
                    && CameraMaxSize.Equals(other.CameraMaxSize)
                    && PlayerActiveDefault == other.PlayerActiveDefault
-                   && GizmosResetOnPlayer == other.GizmosResetOnPlayer;
+                   && GizmosResetOnPlayer == other.GizmosResetOnPlayer
+                   && MultiSelectRequiresHold == other.MultiSelectRequiresHold;
         }
     }
 }
