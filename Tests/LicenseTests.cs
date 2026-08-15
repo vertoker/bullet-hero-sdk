@@ -8,7 +8,6 @@ using BH.SDK.Models.Values;
 using BH.SDK.Serialization;
 using BH.SDK.Serialization.Serializers;
 using BH.SDK.Validations;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 using ResourceMeta = BH.SDK.Models.Meta.ResourceMeta;
@@ -106,7 +105,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Normal)]
         public void TestSourceSurvivesRoundTrip()
         {
-            var serializationService = new SerializationService(new SerializationSettings(Formatting.Indented));
+            var serializationService = new SerializationService(new SerializationSettings());
 
             var meta = new LevelMeta
             {

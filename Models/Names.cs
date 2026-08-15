@@ -506,6 +506,8 @@
         public const string Default = "default";
         public const string Gizmos = "gizmos";
         public const string Reset = "reset";
+        public const string Serialize = "serialize";
+        public const string Copy = "copy";
 
         private const string _ = "_";
         
@@ -525,6 +527,9 @@
         public const string EditorSettings = Editor + _ + Settings;
         public const string PlayerActiveDefault = Player + _ + Active + _ + Default;
         public const string GizmosResetOnPlayer = Gizmos + _ + Reset + _ + On + _ + Player;
+        public const string LevelSerializeMode = Level + _ + Serialize + _ + Mode;
+        public const string ResourcesSerializeMode = Resources + _ + Serialize + _ + Mode;
+        public const string CopySerializeMode = Copy + _ + Serialize + _ + Mode;
         public const string MultiSelectRequiresHold = Multi + _ + Selection + _ + Requires + _ + Hold;
         
         public const string GameEditor = Game + _ + Editor;

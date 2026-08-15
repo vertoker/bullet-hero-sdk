@@ -1,4 +1,5 @@
 using BH.SDK.Serialization.Serializers;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests
@@ -7,6 +8,7 @@ namespace BH.SDK.Tests
     {
         [TestCase(SerializationType.Json, ".json")]
         [TestCase(SerializationType.Bson, ".bson")]
+        [TestCase(SerializationType.JsonPretty, ".json")]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
@@ -39,6 +41,29 @@ namespace BH.SDK.Tests
         {
             var result = SerializationTypeExtensions.TryFromFileExtension(extension, out _);
             Assert.IsFalse(result);
+        }
+
+        [TestCase(SerializationType.Json, Formatting.None)]
+        [TestCase(SerializationType.Bson, Formatting.None)]
+        [TestCase(SerializationType.JsonPretty, Formatting.Indented)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void ToFormatting_ReturnsExpectedFormatting(SerializationType type, Formatting expected)
+        {
+            Assert.AreEqual(expected, type.ToFormatting());
+        }
+
+        // Pretty and compact share ".json" on purpose, so nothing can recover the choice from a file.
+        // Resolving it to Json is what keeps a load deterministic - see SerializationType's header.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void TryFromFileExtension_NeverResolvesToJsonPretty()
+        {
+            SerializationTypeExtensions.TryFromFileExtension(".json", out var type);
+            Assert.AreEqual(SerializationType.Json, type);
         }
     }
 }

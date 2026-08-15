@@ -503,8 +503,19 @@ this API). `GetDataSerializer(SerializationType.Json/Bson)` returns an `IDataSer
 (`SerializeEnvelope`/`DeserializeEnvelope` operating on raw `byte[]` + `EnvelopeData` — version tag +
 untyped payload) — `JsonDataSerializer`/`BsonDataSerializer` share all envelope logic in
 `BaseNewtonsoftDataSerializer`, differing only in `JsonTextWriter/Reader` vs. `BsonDataWriter/Reader`.
-`SerializationType` is `byte`-backed (`Json=0, Bson=1`); `SerializationTypeExtensions.ToFileExtension`/
-`TryFromFileExtension` map `.json`/`.bson`.
+`SerializationType` is `byte`-backed (`Json=0, Bson=1, JsonPretty=2`);
+`SerializationTypeExtensions.ToFileExtension`/`TryFromFileExtension` map `.json`/`.bson`.
+
+**`JsonPretty` is a write-only distinction and `Formatting` lives on the MODE, not on the settings.**
+It writes the same document as `Json` with indentation, shares its `.json` extension, and is read by
+the same reader — so `TryFromFileExtension` resolves `.json` to `Json` alone, deliberately: nothing
+can recover the choice from a file, and it belongs to whoever is saving. `SerializationSettings` has
+no `formatting` field any more (it applied to the one shared `JsonSerializer`, so one screen's "write
+this readable" re-indented every file written afterwards); `SerializationTypeExtensions.ToFormatting`
+is the single conversion, applied per `JsonTextWriter` by `JsonDataSerializer` and by
+`SerializeData<T>(value, type)`. Adding a third member is also why nothing may test `== Bson` any
+more — a two-branch ternary reads `JsonPretty` as `Json` silently, which is what the Unity project's
+`Core/Utils/SerializationModeUtils` exists to prevent at the five UI call sites that did.
 
 Two `JsonSerializerSettings` are built: one with the full converter list, one bare ("`settingsDefault`",
 the escape hatch every `IRequiresDefaultSerializer` converter needs — see "Value system" above).

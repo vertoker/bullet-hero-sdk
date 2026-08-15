@@ -2,24 +2,24 @@
 
 namespace BH.SDK.Serialization
 {
+    // Formatting deliberately does NOT live here. It is a property of the SerializationType a caller
+    // picks per save (SerializationTypeExtensions.ToFormatting), not of the one shared JsonSerializer
+    // every save in the process goes through - held here, one screen's "write this readable" would
+    // have re-indented every level file written afterwards.
     [System.Serializable]
     public class SerializationSettings
     {
-        public Formatting formatting;
         public TypeNameHandling typeNameHandling;
         public MemberSerialization memberSerialization;
 
         public SerializationSettings()
         {
-            formatting = Formatting.None;
             typeNameHandling = TypeNameHandling.None;
             memberSerialization = MemberSerialization.OptIn;
         }
-        public SerializationSettings(Formatting formatting = Formatting.None,
-            TypeNameHandling typeNameHandling = TypeNameHandling.None,
+        public SerializationSettings(TypeNameHandling typeNameHandling = TypeNameHandling.None,
             MemberSerialization memberSerialization = MemberSerialization.OptIn)
         {
-            this.formatting = formatting;
             this.typeNameHandling = typeNameHandling;
             this.memberSerialization = memberSerialization;
         }

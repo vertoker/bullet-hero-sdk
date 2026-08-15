@@ -1,13 +1,15 @@
 ﻿using System;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Rules.Attributes;
+using BH.SDK.Serialization.Serializers;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Models.SettingGroups
 {
     /// <summary>
-    /// Preferences for the in-game level editor, per device: autosave policy, camera limits and how
-    /// the preview player starts. Belongs to the person editing, never to the level being edited.
+    /// Preferences for the in-game level editor, per device: autosave policy, camera limits, how the
+    /// preview player starts and which wire format the editor writes with. Belongs to the person
+    /// editing, never to the level being edited.
     /// </summary>
     [RuleContainer]
     [RulePropertyOrder(nameof(GameEditorSettings.CameraMinSize), nameof(GameEditorSettings.CameraMaxSize))]
@@ -72,13 +74,38 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.MultiSelectRequiresHold)]
         public bool MultiSelectRequiresHold { get; set; }
 
+        // Serialization
+
+        // Which wire format the editor WRITES with, split by what is being written rather than kept as
+        // one switch: a level is the thing an author hands to somebody else, a library resource is
+        // reused across levels, and a clipboard payload leaves the process entirely - three different
+        // trade-offs between size and being readable by hand. None of the three describes how anything
+        // is READ, which is always resolved from the file itself (PathUtils.FindDataFile), so changing
+        // one of these can never make existing content unreadable.
+
+        /// <summary> Format new levels are created with - level.* and metadata.* alike. </summary>
+        [RuleEnumValid]
+        [JsonProperty(Names.LevelSerializeMode)]
+        public SerializationType LevelSerializeMode { get; set; }
+
+        /// <summary> Format every resource exported to the device library is written with. </summary>
+        [RuleEnumValid]
+        [JsonProperty(Names.ResourcesSerializeMode)]
+        public SerializationType ResourcesSerializeMode { get; set; }
+
+        /// <summary> Format a copied selection is serialized with for the clipboard. </summary>
+        [RuleEnumValid]
+        [JsonProperty(Names.CopySerializeMode)]
+        public SerializationType CopySerializeMode { get; set; }
+
         public GameEditorSettings()
         {
             ResetOwn();
         }
         public GameEditorSettings(bool autosave, float autosaveRate, int maxAutosaveFiles,
             float cameraMinSize, float cameraMaxSize, bool playerActiveDefault, bool gizmosResetOnPlayer,
-            bool multiSelectRequiresHold)
+            bool multiSelectRequiresHold, SerializationType levelSerializeMode,
+            SerializationType resourcesSerializeMode, SerializationType copySerializeMode)
         {
             Autosave = autosave;
             AutosaveRate = autosaveRate;
@@ -88,6 +115,9 @@ namespace BH.SDK.Models.SettingGroups
             PlayerActiveDefault = playerActiveDefault;
             GizmosResetOnPlayer = gizmosResetOnPlayer;
             MultiSelectRequiresHold = multiSelectRequiresHold;
+            LevelSerializeMode = levelSerializeMode;
+            ResourcesSerializeMode = resourcesSerializeMode;
+            CopySerializeMode = copySerializeMode;
         }
         public void Reset()
         {
@@ -103,11 +133,15 @@ namespace BH.SDK.Models.SettingGroups
             PlayerActiveDefault = true;
             GizmosResetOnPlayer = true;
             MultiSelectRequiresHold = true;
+            LevelSerializeMode = SerializationType.Json;
+            ResourcesSerializeMode = SerializationType.Json;
+            CopySerializeMode = SerializationType.Json;
         }
 
         public object Clone() => Copy();
         public GameEditorSettings Copy() => new(Autosave, AutosaveRate, MaxAutosaveFiles, CameraMinSize,
-            CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer, MultiSelectRequiresHold);
+            CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer, MultiSelectRequiresHold,
+            LevelSerializeMode, ResourcesSerializeMode, CopySerializeMode);
 
         public void Pull(GameEditorSettings source)
         {
@@ -119,11 +153,19 @@ namespace BH.SDK.Models.SettingGroups
             PlayerActiveDefault = source.PlayerActiveDefault;
             GizmosResetOnPlayer = source.GizmosResetOnPlayer;
             MultiSelectRequiresHold = source.MultiSelectRequiresHold;
+            LevelSerializeMode = source.LevelSerializeMode;
+            ResourcesSerializeMode = source.ResourcesSerializeMode;
+            CopySerializeMode = source.CopySerializeMode;
         }
 
         public override bool Equals(object obj) => obj is GameEditorSettings value && Equals(value);
+
+        // HashCode.Combine takes at most 8 values, and this class holds 11 - the tail folds into the
+        // eighth slot rather than being dropped.
         public override int GetHashCode() => HashCode.Combine(Autosave, AutosaveRate, MaxAutosaveFiles,
-            CameraMinSize, CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer, MultiSelectRequiresHold);
+            CameraMinSize, CameraMaxSize, PlayerActiveDefault, GizmosResetOnPlayer,
+            HashCode.Combine(MultiSelectRequiresHold, LevelSerializeMode, ResourcesSerializeMode,
+                CopySerializeMode));
 
         public bool Equals(GameEditorSettings other)
         {
@@ -136,7 +178,10 @@ namespace BH.SDK.Models.SettingGroups
                    && CameraMaxSize.Equals(other.CameraMaxSize)
                    && PlayerActiveDefault == other.PlayerActiveDefault
                    && GizmosResetOnPlayer == other.GizmosResetOnPlayer
-                   && MultiSelectRequiresHold == other.MultiSelectRequiresHold;
+                   && MultiSelectRequiresHold == other.MultiSelectRequiresHold
+                   && LevelSerializeMode == other.LevelSerializeMode
+                   && ResourcesSerializeMode == other.ResourcesSerializeMode
+                   && CopySerializeMode == other.CopySerializeMode;
         }
     }
 }

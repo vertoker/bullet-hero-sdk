@@ -7,7 +7,6 @@ using BH.SDK.Models.SettingGroups.Controls;
 using BH.SDK.Serialization;
 using BH.SDK.Serialization.Serializers;
 using BH.SDK.Services.Controls;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests
@@ -26,7 +25,7 @@ namespace BH.SDK.Tests
     public class ControlsSettingsTests
     {
         private static SerializationService NewService()
-            => new(new SerializationSettings(Formatting.Indented));
+            => new(new SerializationSettings());
 
         #region Catalog
 
@@ -260,7 +259,10 @@ namespace BH.SDK.Tests
             var service = NewService();
             var settings = new UserSettings();
 
-            var json = service.SerializeData(settings);
+            // Serialized pretty on purpose: the injection below splices on a key's indented form, so a
+            // compact document would silently match nothing and the test would pass without ever
+            // deserializing an unknown key.
+            var json = service.SerializeData(settings, SerializationType.JsonPretty);
             var withLegacy = json.Replace("\"controls\": {", "\"controls\": {\n      \"classic_controls_type\": 1,");
             Assert.AreNotEqual(json, withLegacy, "Test fixture did not inject the legacy key");
 

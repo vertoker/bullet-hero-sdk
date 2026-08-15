@@ -5,7 +5,6 @@ using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Serialization;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests
@@ -40,7 +39,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Hard)]
         public void TestClipboardSerialization()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var clipboard = CreateTestClipboard();
@@ -60,7 +59,7 @@ namespace BH.SDK.Tests
         {
             // The ordinary state of most sections most of the time - an empty section has to survive
             // as an empty one rather than as null, or the consumer's own buffers come back broken.
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var clipboard = new ClipboardData();

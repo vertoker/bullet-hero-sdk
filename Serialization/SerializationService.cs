@@ -26,7 +26,8 @@ namespace BH.SDK.Serialization
 
             dataSerializer = type switch
             {
-                SerializationType.Json => new JsonDataSerializer(Serializer),
+                SerializationType.Json => new JsonDataSerializer(Serializer, SerializationType.Json),
+                SerializationType.JsonPretty => new JsonDataSerializer(Serializer, SerializationType.JsonPretty),
                 SerializationType.Bson => new BsonDataSerializer(Serializer),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
             };
@@ -44,7 +45,6 @@ namespace BH.SDK.Serialization
 
             var settingsDefault = new JsonSerializerSettings
             {
-                Formatting = serializationSettings.formatting,
                 TypeNameHandling = serializationSettings.typeNameHandling,
                 ContractResolver = contractResolver,
                 // Without this, Newtonsoft populates (appends into) a non-null nested object/list
@@ -58,7 +58,6 @@ namespace BH.SDK.Serialization
 
             var settings = new JsonSerializerSettings
             {
-                Formatting = serializationSettings.formatting,
                 TypeNameHandling = serializationSettings.typeNameHandling,
                 ContractResolver = contractResolver,
                 ObjectCreationHandling = ObjectCreationHandling.Replace,
@@ -151,19 +150,24 @@ namespace BH.SDK.Serialization
             }
         }
         
-        public string SerializeData<TValue>(TValue value)
+        // The mode reaches the writer, not the shared Serializer: Formatting used to live on
+        // SerializationSettings and therefore applied to every save this service ever made, which is
+        // the opposite of what a per-save choice needs. Bson is not a valid argument here - this is
+        // the plain-text entry point; use GetDataSerializer for the binary one.
+        public string SerializeData<TValue>(TValue value, SerializationType type = SerializationType.Json)
         {
             if (value == null) return string.Empty;
-            
+
             if (!VersionedTypeRegistry.CanConvert(value.GetType()))
             {
                 throw new ArgumentException(CantConvertMessage<TValue>(nameof(SerializeData)), typeof(TValue).Name);
             }
 
-            using var textWriter = new StringWriter();
-            Serializer.Serialize(textWriter, value);
+            using var stringWriter = new StringWriter();
+            using (var textWriter = new JsonTextWriter(stringWriter) { Formatting = type.ToFormatting() })
+                Serializer.Serialize(textWriter, value);
 
-            var json = textWriter.ToString();
+            var json = stringWriter.ToString();
             return json;
         }
         public TValue DeserializeData<TValue>(string json)
@@ -181,7 +185,5 @@ namespace BH.SDK.Serialization
 
         private static string CantConvertMessage<TValue>(string methodName)
             => $"Type '{typeof(TValue)}' has no [DataVersion] attribute and cannot be used with {methodName}";
-
-        // TODO add BSON serialization (from Newtonsoft of course)
     }
 }

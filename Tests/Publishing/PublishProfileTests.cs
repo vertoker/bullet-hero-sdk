@@ -4,7 +4,6 @@ using BH.SDK.Models.Enums.Resources;
 using BH.SDK.Publishing;
 using BH.SDK.Serialization;
 using BH.SDK.Serialization.Serializers;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests.Publishing
@@ -152,7 +151,7 @@ namespace BH.SDK.Tests.Publishing
         [Category(Metadata.Category.Normal)]
         public void TestProfileRoundTrip()
         {
-            var serializationService = new SerializationService(new SerializationSettings(Formatting.Indented));
+            var serializationService = new SerializationService(new SerializationSettings());
             var profile = PublishProfile.CreateStrict();
 
             var json = serializationService.SerializeData(profile);

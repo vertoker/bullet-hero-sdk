@@ -9,20 +9,44 @@ using BH.SDK.Serialization;
 using BH.SDK.Serialization.Serializers;
 using BH.SDK.Validations;
 using BH.SDK.Versions;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests
 {
     public class SerializationTests
     {
+        // JsonPretty must differ from Json in whitespace ONLY - it is the same document, and a level
+        // saved either way has to read back identical. The mode reaches the writer per call now, so
+        // this also pins that one SerializeData can't leak its formatting into the next.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Extreme)]
+        public void TestLevelSerializationJsonPretty()
+        {
+            var serializationService = new SerializationService(new SerializationSettings());
+            var level = MockData.CreateTestLevel();
+
+            var pretty = serializationService.SerializeData(level, SerializationType.JsonPretty);
+            var compact = serializationService.SerializeData(level, SerializationType.Json);
+
+            Assert.IsTrue(pretty.Contains("\n"), "Pretty output carries no line breaks");
+            Assert.IsFalse(compact.Contains("\n"), "Compact output carries line breaks");
+            Assert.Greater(pretty.Length, compact.Length);
+
+            var fromPretty = serializationService.DeserializeData<Level>(pretty);
+            var fromCompact = serializationService.DeserializeData<Level>(compact);
+            Assert.IsTrue(level.Equals(fromPretty));
+            Assert.IsTrue(level.Equals(fromCompact));
+        }
+
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Hard)]
         public void TestEffectSerialization()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var effect = MockData.CreateTestEffectData();
@@ -40,7 +64,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Extreme)]
         public void TestLevelSerialization()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var level = MockData.CreateTestLevel();
@@ -62,7 +86,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Hard)]
         public void TestLevelSeedRoundTrip(int seed)
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var level = MockData.CreateTestLevel();
@@ -88,7 +112,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Hard)]
         public void TestDataSerializerRoundTrip(SerializationType type)
         {
-            var serializationService = new SerializationService(new SerializationSettings(Formatting.Indented));
+            var serializationService = new SerializationService(new SerializationSettings());
             var dataSerializer = serializationService.GetDataSerializer(type);
             Assert.AreEqual(type, dataSerializer.Type);
 
@@ -127,7 +151,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Extreme)]
         public void TestLevelV0_0Migration()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var json = MockData.CreateTestLevelV0_0Json(serializationService);
@@ -160,7 +184,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Hard)]
         public void TestLevelMetaSerialization()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var levelMeta = MockData.CreateTestLevelMeta();
@@ -177,7 +201,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Hard)]
         public void TestPrefabSerialization()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var prefab = MockData.CreateTestPrefab();
@@ -195,7 +219,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Hard)]
         public void TestThemeSerialization()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var theme = MockData.CreateTestTheme();
@@ -213,7 +237,7 @@ namespace BH.SDK.Tests
         [Category(Metadata.Category.Hard)]
         public void TestPlayerSettingsSerialization()
         {
-            var settings = new SerializationSettings(Formatting.Indented);
+            var settings = new SerializationSettings();
             var serializationService = new SerializationService(settings);
 
             var testSettings = MockData.CreateValidTestSettings();
