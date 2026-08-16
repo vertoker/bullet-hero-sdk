@@ -157,6 +157,8 @@ namespace BH.SDK.Tests
                 Description = "First marker",
                 Color4 = new Color4Value(1f, 1f, 0f, 1f),
             });
+            level.Game.Events.Beats.Add(new BeatSegment(new FrameSpan(0, 240), 128f, 3.5f, 4,
+                "Intro", new Color4Value(0f, 1f, 1f, 1f)));
             level.Game.Events.Themes.Add(new ThemeKeyframe(themeId, 0));
             level.Game.CameraEvents.Positions.Add(new PosKey());
             level.Game.CameraEvents.Rotations.Add(new AngleKey());

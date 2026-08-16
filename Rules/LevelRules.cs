@@ -7,6 +7,7 @@ namespace BH.SDK.Rules
     {
         public const int MaxMarkerEvents = 1024;
         public const int MaxCheckpointEvents = 128;
+        public const int MaxBeatEvents = 256;
         public const int MaxBackgroundEvents = 128;
         public const int MaxThemeEvents = 128;
         public const int MaxScreenLimitEvents = 128;
@@ -37,6 +38,27 @@ namespace BH.SDK.Rules
         // object would render correctly and its selection border would not. Cycles are a graph
         // invariant and checked separately.
         public const int MaxObjectDepth = 15;
+
+        // Bounds of one BeatSegment. The tempo range covers everything a real song sits in with room
+        // to spare on both sides; the offset is bounded by the timeline itself rather than by one
+        // beat's length, since what a legal phase is depends on Bpm and a property attribute only
+        // ever sees one property. BeatMath normalizes it into a single beat on the way out anyway.
+        public const float MinBpm = 1f;
+        public const float MaxBpm = 1000f;
+        public const float DefaultBpm = 120f;
+
+        public const float MinBeatOffset = -FrameRules.MaxFrameDuration;
+        public const float MaxBeatOffset = FrameRules.MaxFrameDuration;
+
+        public const int MinBeatsPerBar = 1;
+        public const int MaxBeatsPerBar = 32;
+        public const int DefaultBeatsPerBar = 4;
+
+        // How many grid points one BeatMath collection may produce. Not a format limit - the grid is
+        // computed, never stored - but a fast tempo over a long segment is millions of beats, and
+        // both consumers (a viewport redraw, a generator's beat list) would rather be cut off than
+        // stall. A viewport never comes near it; the whole-level form is what it actually guards.
+        public const int MaxBeatGridPoints = 65_536;
 
         public const int MaxAudioTracks = 512;
         public const int MaxResourcesMeta = 512;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BH.SDK.Models;
+using BH.SDK.Models.Events;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
@@ -29,6 +30,7 @@ namespace BH.SDK.Validations.Graph
             AnalyzeScope(level.Game, "Level", result);
             AnalyzeIdCounter(level.Game.Objects, level.Settings?.ObjectIdCounter ?? 0, "Level", result);
             AnalyzePlacements(level, level.Game, "Level", result);
+            AnalyzeBeatSegments(level.Game.Events?.Beats, result);
 
             foreach (var pair in level.Resources.Prefabs)
             {
@@ -44,6 +46,39 @@ namespace BH.SDK.Validations.Graph
             AnalyzePrefabNesting(level, result);
             return result;
         }
+
+        #region Beat segments
+
+        // "Where does the grid run, and how fast" must have exactly one answer per frame, and a
+        // property attribute cannot see a second segment to compare against - which is what puts this
+        // here rather than on BeatSegment.Span. Reported per PAIR, not per segment: a segment is only
+        // ever wrong relative to another one, and naming both is what makes the finding actionable.
+        //
+        // Order is not assumed. The list is authored, and nothing in the format sorts it, so a
+        // segment can legally sit before its predecessor in the list while its span sits after it.
+
+        private static void AnalyzeBeatSegments(List<BeatSegment> beats, List<GraphIssue> result)
+        {
+            if (beats == null) return;
+
+            for (var i = 0; i < beats.Count; i++)
+            {
+                var left = beats[i];
+                if (left == null) continue;
+
+                for (var j = i + 1; j < beats.Count; j++)
+                {
+                    var right = beats[j];
+                    if (right == null || !left.Span.Overlaps(right.Span)) continue;
+
+                    result.Add(new GraphIssue(GraphRule.BeatSegmentsOverlap, RuleGroup.Error,
+                        $"Level.Game.Events.Beats[{i}]",
+                        $"beat segment {left.Span} overlaps Beats[{j}] {right.Span}"));
+                }
+            }
+        }
+
+        #endregion
 
         #region Scope: ids and parents
 

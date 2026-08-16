@@ -31,6 +31,13 @@ namespace BH.SDK.Models.Game
         [JsonProperty(Names.Markers)]
         public List<Marker> Markers { get; set; }
 
+        /// <summary> Where the beat grid exists and at what tempo - one entry per stretch of constant
+        /// tempo, never overlapping (LevelGraphAnalyzer's GraphRule.BeatSegmentsOverlap). Editor-only
+        /// like Markers: generators and timeline snapping read it, playback never does. </summary>
+        [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxBeatEvents)]
+        [JsonProperty(Names.Beats)]
+        public List<BeatSegment> Beats { get; set; }
+
         /// <summary> Frames a death rewinds playback to. Unlike Markers these are real gameplay
         /// state - one-shot points, not an animated track. </summary>
         [RuleNotNull, RuleCollectionMaxCount(LevelRules.MaxCheckpointEvents)]
@@ -63,15 +70,17 @@ namespace BH.SDK.Models.Game
         public GameEvents()
         {
             Markers = new List<Marker>();
+            Beats = new List<BeatSegment>();
             Checkpoints = new List<Checkpoint>();
             ScreenLimits = new List<ScreenLimitKey>();
             Backgrounds = new List<Color3Key>();
             Themes = new List<ThemeKeyframe>();
         }
-        public GameEvents(List<Marker> markers, List<Checkpoint> checkpoints, 
+        public GameEvents(List<Marker> markers, List<BeatSegment> beats, List<Checkpoint> checkpoints,
             List<ScreenLimitKey> screenLimits, List<Color3Key> backgrounds, List<ThemeKeyframe> themes)
         {
             Markers = markers;
+            Beats = beats;
             Checkpoints = checkpoints;
             ScreenLimits = screenLimits;
             Backgrounds = backgrounds;
@@ -80,6 +89,7 @@ namespace BH.SDK.Models.Game
         public void Reset()
         {
             Markers.Clear();
+            Beats.Clear();
             Checkpoints.Clear();
             ScreenLimits.Clear();
             Backgrounds.Clear();
@@ -87,12 +97,12 @@ namespace BH.SDK.Models.Game
         }
 
         public object Clone() => Copy();
-        public GameEvents Copy() => new(Markers.CopyList(), Checkpoints.CopyList(),
+        public GameEvents Copy() => new(Markers.CopyList(), Beats.CopyList(), Checkpoints.CopyList(),
             ScreenLimits.CopyList(), Backgrounds.CopyList(), Themes.CopyList());
 
         public override bool Equals(object obj) => obj is GameEvents value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Markers.GetListHashCode(),
-            Checkpoints.GetListHashCode(), ScreenLimits.GetListHashCode(),
+            Beats.GetListHashCode(), Checkpoints.GetListHashCode(), ScreenLimits.GetListHashCode(),
             Backgrounds.GetListHashCode(), Themes.GetListHashCode());
 
         public bool Equals(GameEvents other)
@@ -100,6 +110,7 @@ namespace BH.SDK.Models.Game
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             var result = Markers.ListEquals(other.Markers)
+                         && Beats.ListEquals(other.Beats)
                          && Checkpoints.ListEquals(other.Checkpoints)
                          && ScreenLimits.ListEquals(other.ScreenLimits)
                          && Backgrounds.ListEquals(other.Backgrounds)

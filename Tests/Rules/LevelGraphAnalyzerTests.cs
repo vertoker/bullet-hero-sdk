@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using BH.SDK.Models;
+using BH.SDK.Models.Events;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Values;
+using BH.SDK.Rules;
 using BH.SDK.Validations;
 using BH.SDK.Validations.Graph;
 using NUnit.Framework;
@@ -65,6 +68,48 @@ namespace BH.SDK.Tests.Rules
             child.Span = FrameSpan.FromBounds(20, 30);
 
             CollectionAssert.IsEmpty(Analyzer.Analyze(LevelWith(parent, child)));
+        }
+
+        private static Level LevelWithBeats(params BeatSegment[] segments)
+        {
+            var level = new Level();
+            foreach (var segment in segments) level.Game.Events.Beats.Add(segment);
+            return level;
+        }
+
+        private static BeatSegment Beat(int start, int end) =>
+            new(FrameSpan.FromBounds(start, end), LevelRules.DefaultBpm, 0f,
+                LevelRules.DefaultBeatsPerBar, "beat", new Color4Value());
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void TestBeatSegmentsOverlap()
+        {
+            AssertReports(LevelWithBeats(Beat(0, 100), Beat(50, 150)), GraphRule.BeatSegmentsOverlap);
+        }
+
+        // Half-open spans, so segments that meet exactly share no frame - the shape FrameSpan exists
+        // for, and the ordinary way two tempo sections sit next to each other.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void TestAdjacentBeatSegmentsAreClean()
+        {
+            AssertClean(LevelWithBeats(Beat(0, 100), Beat(100, 200)));
+        }
+
+        // The list is authored and nothing sorts it, so an overlap must be found regardless of which
+        // of the two comes first in it.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void TestBeatSegmentsOverlapFoundOutOfOrder()
+        {
+            AssertReports(LevelWithBeats(Beat(50, 150), Beat(0, 100)), GraphRule.BeatSegmentsOverlap);
         }
 
         private static void AssertReports(Level level, GraphRule expected)

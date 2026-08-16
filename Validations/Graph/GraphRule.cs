@@ -39,5 +39,9 @@ namespace BH.SDK.Validations.Graph
         /// <summary> A Guid reference resolves in neither the level's resources nor - as far as the
         /// SDK can tell - anywhere else. </summary>
         UnresolvedReference = 10,
+
+        /// <summary> Two beat segments cover the same frame, so what the grid is there has two
+        /// answers. </summary>
+        BeatSegmentsOverlap = 11,
     }
 }

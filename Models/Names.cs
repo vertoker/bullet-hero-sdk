@@ -177,6 +177,10 @@
         public const string Themes = "themes";
         public const string Marker = "marker";
         public const string Markers = "markers";
+        public const string Beat = "beat";
+        public const string Beats = "beats";
+        public const string Bpm = "bpm";
+        public const string BeatsPerBar = "bpb";
         public const string Checkpoint = "checkpoint";
         public const string Checkpoints = "checkpoints";
         public const string Background = "background";
