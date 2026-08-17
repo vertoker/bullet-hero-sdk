@@ -18,7 +18,8 @@ companion website) without dragging Unity along.
 ## Mental model
 
 A level on disk is **three independent files**, each its own serialization root:
-- `level.json`/`.bson` — a `Level` (`Models/Level.cs`): `Settings`/`Game`/`Audio`/`Resources`.
+- `level.json`/`.bson` — a `Level` (`Models/Level.cs`): `Settings`/`Game`/`Audio`/`Resources`, plus
+  `Hints` — the one aggregate holding nothing authored (see `Models/Hints/` below).
 - `metadata.json`/`.bson` — a `LevelMeta` (`Models/LevelMeta.cs`): name/description/authors/license/
   per-resource UGC metadata. **Not a field of `Level`** — a wholly separate aggregate, easy to
   assume otherwise since both describe "the same level."
@@ -46,6 +47,7 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
   `EffectData`/`CompositeShape` — resource-level aggregate payloads), `Resources/` (level resource
   dictionaries + `TypedResourceId` family), `SettingGroups/` (⚠️ two unrelated aggregates share this
   folder — `LevelSettings`, per-level, vs. `UserSettings`' sub-groups, per-device — see below),
+  `Hints/` (`LevelHints` + `LimitHints` — everything advisory, see its own section below),
   `Meta/` (`Author`, `ResourceMeta` — consumed by `LevelMeta`, itself NOT in this folder; note
   `ResourceMeta` carries licensing/attribution only — **age rating and content descriptors live on
   `LevelMeta` alone**, since a rating describes the finished experience, not an asset in isolation),
@@ -69,7 +71,7 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
 - **Utils/** — `BHSDKMath` (Unity-independent math, since the core assembly can't reference
   `UnityEngine.Mathf`), `DimensionalIndexer2` (flat-array↔2D-grid indexing), `LevelUtils`
   (`RectObject` id/parent/bounds setters), `LevelCapacityUtils` (sweep-line "peak simultaneous
-  objects per type" measurement backing `LevelCapacityHint` — see below), `ModelUtils`
+  objects per type" measurement backing `LevelHints.Limits` — see below), `ModelUtils`
   (deep-copy/equality/hash helpers for `List`/`Dictionary`/`Array` of `ICopyable<T>`),
   `ModificationUtils`/`TypeExtensions`, `ShapeGeometryUtils` (+`ShapeGeometryReport`) — the single
   implementation of "what a valid shape is" and "how to make an invalid one valid", shared by
@@ -80,7 +82,7 @@ alive so `GamePlayer`'s jobs can re-roll randomness every frame instead of freez
 - **Services/** — `SerializationService`-adjacent but SDK-root-level: `CryptographyService`
   (AES-256-CBC), `ModificationService` (reflection path-based get/set, see "Modification system"
   below), `TextFormatService` (`{variable}` string templating), `FontCharacterService` (builds
-  `LevelResources.FontCharacters`, see below).
+  `LevelHints.FontCharacters`, see below).
 - **Generators/** — authoring automation: a generator produces level content from a few parameters.
   Non-generic `IGenerator` root (so `GeneratorRegistry`'s reflection scan and a reflection-built
   form are possible) split into `ILevelGenerator` (builds a whole `Level`+`LevelMeta`) and
@@ -407,9 +409,8 @@ attribute sees one property at a time — and like every graph finding it carrie
 ## `Models/SettingGroups/` — one folder, two unrelated aggregates
 
 `LevelSettings` (`Level.Settings`, per-level: `Framerate`, `FrameDuration`, `ObjectIdCounter`,
-`AudioIdCounter` — the `IObjectIdCounter` implementation — plus `Capacity`, a `LevelCapacityHint`,
-and `Seed`) has nothing to do with the rest of this
-folder (`GeneralSettings`/`ControlsSettings`/`AudioSettings`/`GraphicsSettings`/
+`AudioIdCounter` — the `IObjectIdCounter` implementation — and `Seed`) has nothing to do with the
+rest of this folder (`GeneralSettings`/`ControlsSettings`/`AudioSettings`/`GraphicsSettings`/
 `GameEditorSettings`), which are all sub-groups of `UserSettings` (per-device, `settings.json`).
 The `UserSettings` sub-groups additionally implement `IMoveable<T>` (`Pull(source)` — an in-place
 merge, distinct from `IModel<T>`'s `Copy`/`Reset`).
@@ -429,15 +430,56 @@ ladder lives in the Unity project (`Core`'s `SettingsGroup`, see its CLAUDE.md "
 format only stores the middle tier. Adding the field needed no migration: the domain stays at
 `(1, 0)` and an older file simply deserializes to 0.
 
-`LevelCapacityHint` (`LevelSettings.Capacity`) is the one **advisory** value in the whole format:
-six peak-simultaneous-object counts (instances/shapes-opaque/shapes-transparent/effects/texts/
-tracks) an editor writes on save from `LevelCapacityUtils.GetPeakUsage`, so a player can preallocate
-its per-frame buffers
-instead of growing them mid-level. It is never authoritative — the file may be hand-edited, foreign,
-or stale, so a consumer treats it as a lower bound at most, measures/grows on its own anyway, and
-clamps it against what the device allows. All zeroes (the default, and what an older level
-deserializes to) means "no hint", not "no objects". `LevelRules.Min/MaxCapacityHint` bound it purely
-so a hostile file can't request a gigabyte-scale preallocation.
+## `Models/Hints/` — the level's advisory aggregate
+
+`LevelHints` (`Level.Hints`, `[DataVersion(LevelHints, 1, 0)]`) is the fifth aggregate on `Level`
+and the only one carrying **nothing an author wrote**. Everything in it is DERIVED from the other
+four, written by whoever saves the level, and safe to drop: a consumer that ignores the whole object
+plays the identical level, only paying at load (or mid-playback) for work the hint front-loads.
+**That is the membership test** — a field belongs here when it is recomputable from the rest of the
+level *and* nothing looks different when it is missing, wrong or stale. Anything an author decides
+belongs in the aggregate it describes, however small and however editor-only: a `Marker`, a
+`BeatSegment`, an object's `Name` and a `FrameSpan`'s anchors are all *authored* editor-only data,
+unrecoverable once dropped, and none of them is a hint.
+
+It exists as its own aggregate rather than as fields on what it measures (`Limits` used to sit on
+`LevelSettings`, `FontCharacters` on `LevelResources`) because those neighbourhoods are
+authoritative: a reader there cannot tell "the author decided this" from "a tool measured this last
+save". Behind one property the distinction is structural, and "recompute every hint" / "drop every
+hint" become one call each instead of a list someone has to keep current.
+
+Two members today:
+
+- **`Limits`** (`LimitHints`) — six peak-simultaneous-object counts (instances/shapes-opaque/
+  shapes-transparent/effects/texts/tracks) an editor writes on save from
+  `LevelCapacityUtils.GetPeakUsage`, so a player can preallocate its per-frame buffers instead of
+  growing them mid-level. Never authoritative — the file may be hand-edited, foreign or stale, so a
+  consumer treats it as a lower bound at most, measures/grows on its own anyway, and clamps it
+  against what the device allows. All zeroes (the default, and what an older level deserializes to)
+  means "no hint", not "no objects". `LevelRules.Min/MaxCapacityHint` bound it purely so a hostile
+  file can't request a gigabyte-scale preallocation.
+- **`FontCharacters`** (`Dictionary<FontResourceId, CachedFontText>`) — each font's distinct-character
+  set, a glyph-atlas warm-up hint. Keyed by **any** `FontResourceId`, game-defined ids included
+  (unlike every dictionary in `LevelResources`, which is user-defined-only), because a level's
+  most-used font is usually the game's own and needs warming just as much as a shipped one. Text
+  renders identically without it; an empty or absent entry means "warm nothing for this font", not
+  "this font has no text", and no consumer recomputes it at load. The value is a `CachedFontText`
+  (`Models/Data/`) carrying its own `FontResourceId` plus the characters as an **`IString`**, not a
+  bare `string`, so a localized level warms per language through the very same resolution its text
+  goes through. Carrying the key is what lets it serialize like every other keyed collection — a
+  plain array with the key dropped and recovered on read (`DictionaryCachedFontTextsConverter :
+  DictionaryAsListConverter`) — instead of the `{k, v}` pair form a bare `id -> IString` map needs.
+  Build it with `Services/FontCharacterService` (`Build`/`BuildAll` are pure and return values;
+  `Apply` writes into the model) or run the `gen_font_cache` generator, which does the same through
+  `GeneratorContext` so the run stays undoable (`Generators/Utility/FontCacheGenerator.cs`).
+
+Both reach a generator through `GeneratorContext.Hints`, which is **null in Prefab Mode** exactly
+like `Game`/`Audio`: a hint describes the file a player loads, and a template is not one.
+
+**No migration, and the domains stay at `(1, 0)`.** A level written before this existed deserializes
+to an all-empty `Hints`, which is precisely "no hint"; one whose hints were written under the old
+layout simply loses them at the next save. That is what advisory means, and it is why the move needed
+nothing else.
 
 ## `Models/Resources/`
 
@@ -452,23 +494,9 @@ resources are baked into the game/its own registries and never appear in a level
 `AudioResourceId`/`BytesResourceId`/`TextResourceId` are narrow per-category wrappers sharing this
 range, freely convertible to/from the untyped `TypedResourceId`.
 
-**`LevelResources.FontCharacters`** (`Dictionary<FontResourceId, IString>`) is the one entry here that
-is not a resource but a fact *about* the resources, and the one exception to the user-defined-only
-rule above: it is keyed by **any** `FontResourceId`, game-defined ids included, because a level's
-most-used font is usually the game's own and needs its glyph atlas warmed just as much as a shipped
-one. It holds each font's distinct-character set, and it is **advisory in exactly the way
-`LevelSettings.Capacity` is** — text renders identically without it, an empty or absent entry means
-"warm nothing for this font" rather than "this font has no text", and no consumer recomputes it at
-load. The value is a `CachedFontText` (`Models/Data/`) carrying its own `FontResourceId` plus the
-characters as an **`IString`**, not a bare `string`, so a localized level warms per language through
-the very same resolution its text goes through. Carrying the key is what lets it serialize like its
-six neighbours — a plain array with the key dropped and recovered on read
-(`DictionaryCachedFontTextsConverter : DictionaryAsListConverter`) — instead of the `{k, v}` pair form
-a bare `id → IString` map would have needed. Build it with `Services/FontCharacterService` (`Build`/
-`BuildAll` are pure and return values; `Apply` writes into the model) or run the `gen_font_cache`
-generator, which does the same through `GeneratorContext` so the run stays undoable — see
-`Generators/Utility/FontCacheGenerator.cs`. Adding the field needed no migration: the domain stays at
-`(1, 0)` and an older file deserializes to an empty dictionary, i.e. "no hint".
+**`FontCharacters` used to live here and no longer does** — it was never a resource, only a fact
+*about* the resources, so it moved to `Level.Hints` with the rest of the advisory data. Don't look
+for it under `Level.Resources`.
 
 `Guid`-based ids (`ShapeId`/`EffectId`/`LevelId`/`PrefabId`/`ThemeId`) deliberately have **no**
 positive/negative split — a `Guid` has no natural sign, so game-defined vs. user-defined is
@@ -558,11 +586,11 @@ under JSON but an already-boxed `Guid` under BSON (BSON's native UUID subtype).
 type" rule in detail; this section only adds what it doesn't cover.
 
 - `[DataVersion(domain, major, minor)]` marks an aggregate-root boundary that gets its own envelope
-  and migrates as one unit. **Every live domain today is `(1, 0)`** — nothing has bumped yet. 15
+  and migrates as one unit. **Every live domain today is `(1, 0)`** — nothing has bumped yet. 18
   types currently carry it: `Level`, `LevelMeta`, `UserSettings`, `Prefab`, `EffectData`, `ThemeData`,
-  `CompositeShape` (SDK-repo "core" tier); `LevelSettings`, `GameLevel`, `AudioLevel`,
-  `LevelResources` (nested under `Level`); `GameEvents`, `CameraEvents`, `PostProcessingEvents`,
-  `PlayerEvents` (nested under `GameLevel`). `DataDomains.cs` is the `nameof()`-based constant list.
+  `CompositeShape`, `ClipboardData` (SDK-repo "core" tier); `PublishProfile` (`Publishing/`);
+  `LevelSettings`, `GameLevel`, `AudioLevel`, `LevelResources`, `LevelHints` (nested under `Level`);
+  `GameEvents`, `CameraEvents`, `PostProcessingEvents`, `PlayerEvents` (nested under `GameLevel`). `DataDomains.cs` is the `nameof()`-based constant list.
 - `VersionedEnvelopeConverter` (`Serialization/Converters/`, not `Versions/`) writes/reads the
   `{"version": "major.minor", "value": ...}` wrapper, gated purely by `[DataVersion]` presence — a
   `_activeDomains` reentrancy guard lets member serialization fall through to plain fields while

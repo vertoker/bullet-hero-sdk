@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BH.SDK.Models;
 using BH.SDK.Models.Audio;
 using BH.SDK.Models.Game;
+using BH.SDK.Models.Hints;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
@@ -50,6 +51,10 @@ namespace BH.SDK.Generators
 
         /// <summary> Scheduled audio. NULL in Prefab Mode, same reason as Game. </summary>
         public AudioLevel Audio { get; }
+
+        /// <summary> The level's advisory measurements. NULL in Prefab Mode, same reason as Game -
+        /// a hint describes the file a player loads, and a template is not one. </summary>
+        public LevelHints Hints { get; }
 
         /// <summary> Half-open window the run should write into. Nothing a generator creates may
         /// fall outside it - see BaseSpawnGenerator.ClampSpan. </summary>
@@ -121,7 +126,7 @@ namespace BH.SDK.Generators
             ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
             string groupName = null, bool splitLayers = false)
             : this(level.Game, level.Settings, level.Settings, level.Resources, level.Game, level.Audio,
-                span, parent, layer, seed, selection, groupName, splitLayers)
+                level.Hints, span, parent, layer, seed, selection, groupName, splitLayers)
         {
         }
 
@@ -131,13 +136,13 @@ namespace BH.SDK.Generators
             LevelResources resources, FrameSpan span,
             ObjectId parent = default, int layer = 0, uint seed = 0, IReadOnlyList<ObjectId> selection = null,
             string groupName = null, bool splitLayers = false)
-            : this(scope, counter, settings, resources, null, null,
+            : this(scope, counter, settings, resources, null, null, null,
                 span, parent, layer, seed, selection, groupName, splitLayers)
         {
         }
 
         private GeneratorContext(IObjectScope scope, IObjectIdCounter counter, LevelSettings settings,
-            LevelResources resources, GameLevel game, AudioLevel audio, FrameSpan span,
+            LevelResources resources, GameLevel game, AudioLevel audio, LevelHints hints, FrameSpan span,
             ObjectId parent, int layer, uint seed, IReadOnlyList<ObjectId> selection, string groupName,
             bool splitLayers)
         {
@@ -147,6 +152,7 @@ namespace BH.SDK.Generators
             Resources = resources ?? throw new ArgumentNullException(nameof(resources));
             Game = game;
             Audio = audio;
+            Hints = hints;
 
             Span = span;
             _parent = parent;

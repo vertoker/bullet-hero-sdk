@@ -19,7 +19,7 @@ namespace BH.SDK.Rules
         public const int MaxAudioKeys = 32;
 
         // Was deliberately uncapped for a long time, on the grounds that peak simultaneous objects
-        // (LevelLimitHints) is what actually costs anything at runtime. It is capped now because a
+        // (LevelHints.Limits) is what actually costs anything at runtime. It is capped now because a
         // total count is what a LOADER pays for - every object is deserialized, id-mapped and
         // parent-linked before playback ever decides it is off-screen - so an unbounded count is an
         // unbounded load, not an unbounded frame. 2^18 sits far above any authored level and far
@@ -65,7 +65,7 @@ namespace BH.SDK.Rules
 
         public const int MaxPrefabs = 64;
 
-        // Bounds of LevelLimitHints - purely a format-level sanity clamp, so a corrupted or
+        // Bounds of LevelHints.Limits - purely a format-level sanity clamp, so a corrupted or
         // hostile file can't ask a player's device to preallocate gigabytes before the runtime even
         // looks at the number. The real ceiling is per-device and applied at runtime; the hint
         // itself is advisory and never trusted on its own.

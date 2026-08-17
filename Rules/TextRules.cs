@@ -16,7 +16,7 @@ namespace BH.SDK.Rules
         public const float MinFontSize = 0f;
         public const float MaxFontSize = 1000f;
         
-        // Cap on ONE font's distinct-character set in LevelResources.FontCharacters. That set is a
+        // Cap on ONE font's distinct-character set in LevelHints.FontCharacters. That set is a
         // glyph-atlas warm-up hint and nothing else - a consumer that ignores it still renders every
         // character - so this bounds what a builder writes rather than what a reader must accept, and
         // no [RuleXxx] enforces it. 512 covers Latin, Cyrillic and Greek together with room to

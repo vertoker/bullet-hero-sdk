@@ -290,9 +290,9 @@ namespace BH.SDK.Tests
             // FontCharacters converter without a test of its own: a game-defined font (positive id,
             // which no other dictionary here can hold) and a user-defined one, one plain set and one
             // per-language.
-            level.Resources.FontCharacters.Add(new FontResourceId(1),
+            level.Hints.FontCharacters.Add(new FontResourceId(1),
                 new CachedFontText(new FontResourceId(1), new StringValue(" ABCabc")));
-            level.Resources.FontCharacters.Add(new FontResourceId(-1),
+            level.Hints.FontCharacters.Add(new FontResourceId(-1),
                 new CachedFontText(new FontResourceId(-1), new StringLocalized(
                     new StringLanguage("en", " ABCabc"),
                     new StringLanguage("ru", " АБВабв"))));

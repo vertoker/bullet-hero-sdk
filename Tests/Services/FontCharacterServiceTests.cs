@@ -339,12 +339,12 @@ namespace BH.SDK.Tests.Services
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
+            level.Hints.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
 
-            FontCharacterService.Apply(level.Resources, level.Game);
+            FontCharacterService.Apply(level.Hints, level.Game);
 
-            Assert.IsTrue(level.Resources.FontCharacters.ContainsKey(FontA));
-            Assert.IsFalse(level.Resources.FontCharacters.ContainsKey(FontB));
+            Assert.IsTrue(level.Hints.FontCharacters.ContainsKey(FontA));
+            Assert.IsFalse(level.Hints.FontCharacters.ContainsKey(FontB));
         }
 
         [Test]
@@ -355,11 +355,11 @@ namespace BH.SDK.Tests.Services
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
+            level.Hints.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
 
-            FontCharacterService.Apply(level.Resources, level.Game, removeUnused: false);
+            FontCharacterService.Apply(level.Hints, level.Game, removeUnused: false);
 
-            Assert.AreEqual("stale", PlainOf(level.Resources.FontCharacters[FontB]));
+            Assert.AreEqual("stale", PlainOf(level.Hints.FontCharacters[FontB]));
         }
 
         [Test]

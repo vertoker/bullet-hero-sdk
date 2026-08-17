@@ -41,12 +41,6 @@ namespace BH.SDK.Models.SettingGroups
         [JsonProperty(Names.AudioIdCounter)]
         public int AudioIdCounter { get; set; }
 
-        /// <summary> Advisory per-frame capacity measurement, refreshed on every editor save - see
-        /// LevelCapacityHint. Optional: a level written before this field existed simply has none. </summary>
-        [RuleNotNull]
-        [JsonProperty(Names.LimitHints)]
-        public LevelLimitHints LimitHints { get; set; }
-
         // LevelRules.NullSeed (0) is the DEFAULT and means "no seed authored", not "seed number
         // zero": a level ships without one and the player generates a fresh seed on every load,
         // which is the normal behaviour. An author sets this only to pin a run down - and a host may
@@ -68,34 +62,28 @@ namespace BH.SDK.Models.SettingGroups
             FrameDuration = Framerate * 10;
             ObjectIdCounter = ObjectId.MinLevelValue;
             AudioIdCounter = AudioId.MinValue;
-            LimitHints = new LevelLimitHints();
             Seed = LevelRules.NullSeed;
         }
         public LevelSettings(int framerate, int frameDuration, int objectIdCounter, int audioIdCounter)
-            : this(framerate, frameDuration, objectIdCounter, audioIdCounter, new LevelLimitHints()) { }
-        
-        public LevelSettings(int framerate, int frameDuration, int objectIdCounter, int audioIdCounter,
-            LevelLimitHints limitHints)
         {
             Framerate = framerate;
             FrameDuration = frameDuration;
             ObjectIdCounter = objectIdCounter;
             AudioIdCounter = audioIdCounter;
-            LimitHints = limitHints;
             Seed = LevelRules.NullSeed;
         }
 
         public object Clone() => Copy();
 
-        // Seed rides an initializer rather than a sixth constructor parameter: every existing caller
-        // of these constructors authors a level without one, and 0 is exactly what they should get.
-        public LevelSettings Copy() => new(Framerate, FrameDuration, ObjectIdCounter, AudioIdCounter, LimitHints?.Copy())
+        // Seed rides an initializer rather than a fifth constructor parameter: every existing caller
+        // of this constructor authors a level without one, and 0 is exactly what they should get.
+        public LevelSettings Copy() => new(Framerate, FrameDuration, ObjectIdCounter, AudioIdCounter)
         {
             Seed = Seed,
         };
 
         public override bool Equals(object obj) => obj is LevelSettings value && Equals(value);
-        public override int GetHashCode() => HashCode.Combine(Framerate, FrameDuration, ObjectIdCounter, AudioIdCounter, LimitHints, Seed);
+        public override int GetHashCode() => HashCode.Combine(Framerate, FrameDuration, ObjectIdCounter, AudioIdCounter, Seed);
 
         public void Reset()
         {
@@ -103,7 +91,6 @@ namespace BH.SDK.Models.SettingGroups
             FrameDuration = Framerate * 10;
             ObjectIdCounter = ObjectId.MinLevelValue;
             AudioIdCounter = AudioId.MinValue;
-            LimitHints = new LevelLimitHints();
             Seed = LevelRules.NullSeed;
         }
 
@@ -115,7 +102,6 @@ namespace BH.SDK.Models.SettingGroups
                           && FrameDuration.Equals(other.FrameDuration)
                           && ObjectIdCounter.Equals(other.ObjectIdCounter)
                           && AudioIdCounter.Equals(other.AudioIdCounter)
-                          && Equals(LimitHints, other.LimitHints)
                           && Seed.Equals(other.Seed);
             return result;
         }

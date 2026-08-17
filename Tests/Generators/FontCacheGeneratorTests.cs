@@ -57,7 +57,7 @@ namespace BH.SDK.Tests.Generators
         }
 
         private static string ValueOf(Level level, FontResourceId fontResourceId)
-            => ((StringValue)level.Resources.FontCharacters[fontResourceId].Characters).Value;
+            => ((StringValue)level.Hints.FontCharacters[fontResourceId].Characters).Value;
 
         // ==================== Building ====================
 
@@ -90,7 +90,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, Context(level));
 
             Assert.AreEqual(first, ValueOf(level, FontA));
-            Assert.AreEqual(1, level.Resources.FontCharacters.Count);
+            Assert.AreEqual(1, level.Hints.FontCharacters.Count);
         }
 
         [Test]
@@ -101,11 +101,11 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
+            level.Hints.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
 
             Run(level, Context(level));
 
-            Assert.IsFalse(level.Resources.FontCharacters.ContainsKey(FontB));
+            Assert.IsFalse(level.Hints.FontCharacters.ContainsKey(FontB));
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
+            level.Hints.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
 
             Run(level, Context(level), removeUnused: false);
 
@@ -152,7 +152,7 @@ namespace BH.SDK.Tests.Generators
             Run(level, context);
             context.Log.Revert();
 
-            Assert.IsEmpty(level.Resources.FontCharacters);
+            Assert.IsEmpty(level.Hints.FontCharacters);
         }
 
         // The one an in-place overwrite gets wrong: ResourceAdded.Revert removes the key it added, so
@@ -165,7 +165,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontA] = new CachedFontText(FontA, new StringValue("previous"));
+            level.Hints.FontCharacters[FontA] = new CachedFontText(FontA, new StringValue("previous"));
 
             var context = Context(level);
             Run(level, context);
@@ -182,7 +182,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
+            level.Hints.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
 
             var context = Context(level);
             Run(level, context);

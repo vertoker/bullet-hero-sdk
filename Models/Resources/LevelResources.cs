@@ -74,12 +74,6 @@ namespace BH.SDK.Models.Resources
         [JsonProperty(Names.Prefabs)]
         public Dictionary<PrefabId, Prefab> Prefabs { get; set; }
 
-        /// <summary> Per-font distinct-character sets, an advisory glyph-atlas warm-up hint. </summary>
-        [RuleNotNull, RuleCollectionMaxCount(ResourceRules.MaxFontCharacterEntries)]
-        [RuleDictionaryKeyMatches(nameof(CachedFontText.FontResourceId))]
-        [JsonProperty(Names.FontCharacters)]
-        public Dictionary<FontResourceId, CachedFontText> FontCharacters { get; set; }
-
         public LevelResources()
         {
             Textures = new Dictionary<TextureResourceId, TextureResource>();
@@ -91,8 +85,6 @@ namespace BH.SDK.Models.Resources
             Effects = new Dictionary<EffectId, EffectData>();
             
             Prefabs = new Dictionary<PrefabId, Prefab>();
-
-            FontCharacters = new Dictionary<FontResourceId, CachedFontText>();
         }
         public LevelResources(Dictionary<TextureResourceId, TextureResource> textures,
             Dictionary<FontResourceId, FontResource> fonts,
@@ -100,8 +92,7 @@ namespace BH.SDK.Models.Resources
             Dictionary<ShapeId, CompositeShape> compositeShapes,
             Dictionary<ThemeId, ThemeData> themes,
             Dictionary<EffectId, EffectData> effects,
-            Dictionary<PrefabId, Prefab> prefabs,
-            Dictionary<FontResourceId, CachedFontText> fontCharacters)
+            Dictionary<PrefabId, Prefab> prefabs)
         {
             Textures = textures;
             Fonts = fonts;
@@ -110,7 +101,6 @@ namespace BH.SDK.Models.Resources
             Themes = themes;
             Effects = effects;
             Prefabs = prefabs;
-            FontCharacters = fontCharacters;
         }
         public void Reset()
         {
@@ -121,19 +111,16 @@ namespace BH.SDK.Models.Resources
             Themes.Clear();
             Effects.Clear();
             Prefabs.Clear();
-            FontCharacters.Clear();
         }
 
         public object Clone() => Copy();
         public LevelResources Copy() => new(Textures.CopyDictionary(), Fonts.CopyDictionary(), Audios.CopyDictionary(),
-            CompositeShapes.CopyDictionary(), Themes.CopyDictionary(), Effects.CopyDictionary(), Prefabs.CopyDictionary(),
-            FontCharacters.CopyDictionary());
+            CompositeShapes.CopyDictionary(), Themes.CopyDictionary(), Effects.CopyDictionary(), Prefabs.CopyDictionary());
 
         public override bool Equals(object obj) => obj is LevelResources value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Textures.GetDictionaryHashCode(),
             Fonts.GetDictionaryHashCode(), Audios.GetDictionaryHashCode(), CompositeShapes.GetDictionaryHashCode(),
-            Themes.GetDictionaryHashCode(), Effects.GetDictionaryHashCode(), Prefabs.GetDictionaryHashCode(),
-            FontCharacters.GetDictionaryHashCode());
+            Themes.GetDictionaryHashCode(), Effects.GetDictionaryHashCode(), Prefabs.GetDictionaryHashCode());
 
         public bool Equals(LevelResources other)
         {
@@ -145,8 +132,7 @@ namespace BH.SDK.Models.Resources
                           && CompositeShapes.DictionaryEquals(other.CompositeShapes)
                           && Themes.DictionaryEquals(other.Themes)
                           && Effects.DictionaryEquals(other.Effects)
-                          && Prefabs.DictionaryEquals(other.Prefabs)
-                          && FontCharacters.DictionaryEquals(other.FontCharacters);
+                          && Prefabs.DictionaryEquals(other.Prefabs);
             return result;
         }
     }

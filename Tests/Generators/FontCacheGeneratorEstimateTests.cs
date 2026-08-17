@@ -69,7 +69,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
+            level.Hints.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
 
             Assert.AreEqual(2, Estimate(level).Resources);
         }
@@ -82,7 +82,7 @@ namespace BH.SDK.Tests.Generators
         {
             var level = CreateLevel();
             AddText(level, FontA, "abc");
-            level.Resources.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
+            level.Hints.FontCharacters[FontB] = new CachedFontText(FontB, new StringValue("stale"));
 
             Assert.AreEqual(1, Estimate(level, removeUnused: false).Resources);
         }

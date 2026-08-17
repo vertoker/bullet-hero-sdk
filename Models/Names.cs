@@ -631,8 +631,6 @@
         public const string CameraEvents = Camera + _ + Events;
         public const string PostProcessingEvents = Post + Processing + _ + Events;
         public const string PlayerEvents = Player + _ + Events;
-        
-        public const string LimitHints = Limit + _ + Hints;
 
         // Clipboard - one key per section of ClipboardData. Objects/PrefabObjects hold whole
         // objects to be created; the *Keys ones hold the same model types carrying nothing but the

@@ -5,14 +5,14 @@ using BH.SDK.Models.Enums;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
-using BH.SDK.Models.SettingGroups;
+using BH.SDK.Models.Hints;
 
 namespace BH.SDK.Utils
 {
     /// <summary>
     /// Measures how many objects a level needs alive at the same time, at its heaviest frame. A
     /// player/editor uses this to size its per-frame buffers before playback starts, and the editor
-    /// stores the result into the level itself as an advisory hint (see LevelCapacityHint).
+    /// stores the result into the level itself as an advisory hint (see LevelHints.Limits).
     /// <br/><br/>
     /// Every family is measured independently: an object occupies an instance slot always, and a
     /// texture/effect/text slot only if it is of that type. That is deliberate - one level can hold
@@ -37,9 +37,9 @@ namespace BH.SDK.Utils
         /// <param name="level"> Level to measure. </param>
         /// <param name="isOpaque"> Resolves <see cref="ShaderType.Auto"/> for one shape. Null means
         /// every Auto object counts as transparent. </param>
-        public static LevelLimitHints GetPeakUsage(Level level, Func<ShapeObject, bool> isOpaque = null)
+        public static LimitHints GetPeakUsage(Level level, Func<ShapeObject, bool> isOpaque = null)
         {
-            if (level?.Game?.Objects == null) return new LevelLimitHints();
+            if (level?.Game?.Objects == null) return new LimitHints();
 
             var instances = new IntervalSweep();
             var shapesOpaque = new IntervalSweep();
@@ -78,7 +78,7 @@ namespace BH.SDK.Utils
                 }
             }
 
-            return new LevelLimitHints(instances.GetPeak(),
+            return new LimitHints(instances.GetPeak(),
                 shapesOpaque.GetPeak(), shapesTransparent.GetPeak(),
                 effects.GetPeak(), texts.GetPeak(), tracks.GetPeak());
         }

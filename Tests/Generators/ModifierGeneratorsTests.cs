@@ -368,12 +368,12 @@ namespace BH.SDK.Tests.Generators
             var level = CreateLevel();
             AddObject(level, 0, 0f, 0);
             AddObject(level, 1, 0f, 0);
-            Assert.AreEqual(0, level.Settings.LimitHints.Instances, "nothing measured yet");
+            Assert.AreEqual(0, level.Hints.Limits.Instances, "nothing measured yet");
 
             new CapacityHintGenerator().Run(Context(level), new CapacityHintGenerator.Parameters());
 
-            Assert.AreEqual(2, level.Settings.LimitHints.Instances);
-            Assert.AreEqual(2, level.Settings.LimitHints.ShapesTransparent);
+            Assert.AreEqual(2, level.Hints.Limits.Instances);
+            Assert.AreEqual(2, level.Hints.Limits.ShapesTransparent);
         }
 
         [Test]

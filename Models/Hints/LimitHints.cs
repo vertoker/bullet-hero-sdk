@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BH.SDK.Models.SettingGroups
+namespace BH.SDK.Models.Hints
 {
     /// <summary>
     /// How many objects of each kind the level needs alive at the same time, at its heaviest frame.
@@ -19,7 +19,7 @@ namespace BH.SDK.Models.SettingGroups
     /// (the default) means "no hint", not "no objects".
     /// </summary>
     [RuleContainer]
-    public class LevelLimitHints : IModel<LevelLimitHints>
+    public class LimitHints : IModel<LimitHints>
     {
         /// <summary> Peak count of objects of every type at once - the widest of them all. </summary>
         [RuleInRange(LevelRules.MinCapacityHint, LevelRules.MaxCapacityHint)]
@@ -68,11 +68,11 @@ namespace BH.SDK.Models.SettingGroups
         public bool HasValue => Instances > 0 || ShapesOpaque > 0 || ShapesTransparent > 0
                                 || Effects > 0 || Texts > 0 || Tracks > 0;
 
-        public LevelLimitHints()
+        public LimitHints()
         {
             Reset();
         }
-        public LevelLimitHints(int instances, int shapesOpaque, int shapesTransparent,
+        public LimitHints(int instances, int shapesOpaque, int shapesTransparent,
             int effects, int texts, int tracks)
         {
             Instances = instances;
@@ -84,7 +84,7 @@ namespace BH.SDK.Models.SettingGroups
         }
 
         public object Clone() => Copy();
-        public LevelLimitHints Copy() =>
+        public LimitHints Copy() =>
             new(Instances, ShapesOpaque, ShapesTransparent, Effects, Texts, Tracks);
 
         public void Reset()
@@ -97,11 +97,11 @@ namespace BH.SDK.Models.SettingGroups
             Tracks = 0;
         }
 
-        public override bool Equals(object obj) => obj is LevelLimitHints value && Equals(value);
+        public override bool Equals(object obj) => obj is LimitHints value && Equals(value);
         public override int GetHashCode() => HashCode.Combine(Instances, ShapesOpaque,
             ShapesTransparent, Effects, Texts, Tracks);
 
-        public bool Equals(LevelLimitHints other)
+        public bool Equals(LimitHints other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

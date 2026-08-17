@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using System.Text;
 using BH.SDK.Models.Data;
+using BH.SDK.Models.Hints;
 using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives.Resources;
-using BH.SDK.Models.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Services
 {
-    // Builds LevelResources.FontCharacters - the per-font distinct-character sets a player warms a
+    // Builds LevelHints.FontCharacters - the per-font distinct-character sets a player warms a
     // glyph atlas from. This lives in the SDK rather than in a host's editor so a third-party tool
     // writes byte-identical sets: the hint is only worth trusting blindly (which every reader does)
     // if everyone who writes one agrees on what it should contain.
@@ -33,7 +33,7 @@ namespace BH.SDK.Services
     public static class FontCharacterService
     {
         /// <summary> Character sets for every font the scope's text objects actually reference, in
-        /// the shape LevelResources.FontCharacters expects. Fonts with no text are absent rather
+        /// the shape LevelHints.FontCharacters expects. Fonts with no text are absent rather
         /// than empty - an absent entry and an empty one mean the same thing to a reader, and
         /// leaving them out keeps the file smaller. </summary>
         public static Dictionary<FontResourceId, CachedFontText> BuildAll(IObjectScope scope)
@@ -68,20 +68,20 @@ namespace BH.SDK.Services
             return characters == null ? null : new CachedFontText(fontResourceId, characters);
         }
 
-        /// <summary> Overwrites <paramref name="resources"/>' sets with freshly built ones. With
+        /// <summary> Overwrites <paramref name="hints"/>' sets with freshly built ones. With
         /// <paramref name="removeUnused"/> the result is exactly what the scope contains now, which
         /// is what "rebuild from scratch" means; without it, entries for fonts no longer referenced
         /// survive untouched. Writes the dictionary directly, so it must not be used from a
         /// generator - see the note at the top of this file. </summary>
-        public static void Apply(LevelResources resources, IObjectScope scope, bool removeUnused = true)
+        public static void Apply(LevelHints hints, IObjectScope scope, bool removeUnused = true)
         {
-            if (resources?.FontCharacters == null) return;
+            if (hints?.FontCharacters == null) return;
 
             var built = BuildAll(scope);
-            if (removeUnused) resources.FontCharacters.Clear();
+            if (removeUnused) hints.FontCharacters.Clear();
 
             foreach (var (fontResourceId, cached) in built)
-                resources.FontCharacters[fontResourceId] = cached;
+                hints.FontCharacters[fontResourceId] = cached;
         }
 
         /// <summary> Every font id the scope's text objects reference, so a caller can tell which

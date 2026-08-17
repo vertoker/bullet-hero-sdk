@@ -168,7 +168,7 @@ keeps its wall-clock timing, with objects / audio / level-global events each beh
 frames must stay unique — so `MaxKeyShift` (default 1) says how far a key may be nudged off its
 sampled frame to find a free slot before it is dropped instead.
 
-**Utility**: `gen_capacity_hint` — recompute `LevelSettings.LimitHints` (peak simultaneous objects
+**Utility**: `gen_capacity_hint` — recompute `LevelHints.Limits` (peak simultaneous objects
 per type) on demand, so the number is visible while deciding whether a section is too heavy.
 
 The roster is complete; new generators are additive from here.

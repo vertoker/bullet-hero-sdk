@@ -20,7 +20,8 @@ namespace BH.SDK.Versions
         public const string GameLevel = nameof(Models.Game.GameLevel);
         public const string AudioLevel = nameof(Models.Audio.AudioLevel);
         public const string LevelResources = nameof(Models.Resources.LevelResources);
-        
+        public const string LevelHints = nameof(Models.Hints.LevelHints);
+
         // Services
         public const string PublishProfile = nameof(Publishing.PublishProfile);
 

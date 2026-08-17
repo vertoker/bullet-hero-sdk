@@ -2,9 +2,9 @@ using BH.SDK.Utils;
 
 namespace BH.SDK.Generators.Utility
 {
-    // LevelSettings.LimitHints is the format's one advisory value: peak simultaneous objects per
-    // type, written so a player can preallocate its per-frame buffers instead of growing them
-    // mid-level. The editor already refreshes it on every save (EditorService.Save), so this is not
+    // LevelHints.Limits is peak simultaneous objects per type, written so a player can preallocate
+    // its per-frame buffers instead of growing them mid-level. The editor already refreshes it on
+    // every save (EditorService.Save), so this is not
     // about correctness - it is about being able to SEE the number, on demand, while deciding
     // whether a section is too heavy. That is why it is a generator rather than a hidden step: the
     // estimate line reports what the level currently peaks at, before anything is written.
@@ -23,7 +23,7 @@ namespace BH.SDK.Generators.Utility
 
         public override GeneratorHints Hints => GeneratorHints.Empty;
 
-        // LimitHints is a bare field on LevelSettings, so there is nothing here for GeneratorCost to
+        // Limits is a bare field on LevelHints, so there is nothing here for GeneratorCost to
         // count and the estimate is permanently Zero. Without this the host's "a run that would add
         // nothing is refused" rule leaves the button disabled forever - the one generator whose whole
         // job is invisible to the cost model.
@@ -31,15 +31,17 @@ namespace BH.SDK.Generators.Utility
 
         protected override void Generate(GeneratorContext context, Parameters parameters)
         {
+            if (context?.Hints == null) return;
+
             var level = LevelOf(context);
             if (level == null) return;
 
-            // Written straight onto Settings rather than through the context: LimitHints is not an
+            // Written straight onto Hints rather than through the context: Limits is not an
             // object, a resource or a level-global track, so there is no journal entry shape for it.
             // The consequence is deliberate and bounded - undoing this run leaves the refreshed
             // hint in place, which is harmless because the value is advisory and is recomputed on
             // every save anyway.
-            level.Settings.LimitHints = LevelCapacityUtils.GetPeakUsage(level);
+            context.Hints.Limits = LevelCapacityUtils.GetPeakUsage(level);
         }
 
         protected override GeneratorCost EstimateTyped(GeneratorContext context, Parameters parameters)
@@ -51,7 +53,8 @@ namespace BH.SDK.Generators.Utility
         private static Models.Level LevelOf(GeneratorContext context)
         {
             if (context?.Game == null || context.Audio == null) return null;
-            return new Models.Level(context.Settings, context.Game, context.Audio, context.Resources);
+            return new Models.Level(context.Settings, context.Game, context.Audio, context.Resources,
+                context.Hints);
         }
 
         /// <summary> No parameters - the level itself is the whole input. </summary>

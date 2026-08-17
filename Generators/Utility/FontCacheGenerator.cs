@@ -5,14 +5,15 @@ using BH.SDK.Services;
 
 namespace BH.SDK.Generators.Utility
 {
-    // The sibling of CapacityHintGenerator, and for the same reason: LevelResources.FontCharacters is
+    // The sibling of CapacityHintGenerator, and for the same reason: LevelHints.FontCharacters is
     // advisory, a host editor already refreshes it on every save, and this exists so an author can
     // rebuild the whole thing on demand without saving - after importing a foreign level, after
     // editing the file by hand, or whenever the saved set is suspected of having drifted.
     //
-    // Unlike CapacityHintGenerator it is fully undoable. That one writes Settings.LimitHints
+    // Unlike CapacityHintGenerator it is fully undoable. That one writes Hints.Limits
     // directly because the journal has no entry shape for a bare field; FontCharacters is a
-    // dictionary of level resources, which AddResource/RemoveResource already cover. Every write
+    // keyed dictionary, which AddResource/RemoveResource already cover whatever it is keyed by.
+    // Every write
     // below therefore goes through the context, and an existing entry is REMOVED before the new one
     // is added rather than overwritten - ResourceAdded.Revert removes the key it added, so
     // overwriting in place would make undo delete an entry that existed before the run.
@@ -33,24 +34,24 @@ namespace BH.SDK.Generators.Utility
 
         protected override void Generate(GeneratorContext context, Parameters parameters)
         {
-            var resources = context.Resources;
-            if (resources?.FontCharacters == null) return;
+            var cache = context.Hints?.FontCharacters;
+            if (cache == null) return;
 
             var built = FontCharacterService.BuildAll(context.Scope);
 
             foreach (var (fontResourceId, cached) in built)
-                Write(context, resources.FontCharacters, fontResourceId, cached);
+                Write(context, cache, fontResourceId, cached);
 
             if (!parameters.RemoveUnused) return;
 
             // Snapshotted before removing: RemoveResource mutates the very dictionary being walked.
             var stale = new List<FontResourceId>();
-            foreach (var (fontResourceId, _) in resources.FontCharacters)
+            foreach (var (fontResourceId, _) in cache)
                 if (!built.ContainsKey(fontResourceId))
                     stale.Add(fontResourceId);
 
             foreach (var fontResourceId in stale)
-                context.RemoveResource(resources.FontCharacters, fontResourceId);
+                context.RemoveResource(cache, fontResourceId);
         }
 
         // Reported as Resources, and not left at Zero the way CapacityHintGenerator leaves it: a host
@@ -61,14 +62,14 @@ namespace BH.SDK.Generators.Utility
         // text and no stale entries.
         protected override GeneratorCost EstimateTyped(GeneratorContext context, Parameters parameters)
         {
-            var resources = context?.Resources?.FontCharacters;
-            if (resources == null) return GeneratorCost.Zero;
+            var cache = context?.Hints?.FontCharacters;
+            if (cache == null) return GeneratorCost.Zero;
 
             var built = FontCharacterService.BuildAll(context.Scope);
             var touched = built.Count;
 
             if (parameters.RemoveUnused)
-                foreach (var (fontResourceId, _) in resources)
+                foreach (var (fontResourceId, _) in cache)
                     if (!built.ContainsKey(fontResourceId))
                         touched++;
 

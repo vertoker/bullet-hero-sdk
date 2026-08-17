@@ -39,7 +39,7 @@ namespace BH.SDK.Rules
         public const int MaxThemes = 128;
         public const int MaxEffects = 256;
 
-        // LevelResources.FontCharacters is keyed by ANY FontResourceId, game-defined ones included,
+        // LevelHints.FontCharacters is keyed by ANY FontResourceId, game-defined ones included,
         // so it is not bounded by MaxFonts (which counts only what a level ships). Sized to leave
         // room for the game's own font presets on top of the level's own.
         public const int MaxFontCharacterEntries = MaxFonts * 4;

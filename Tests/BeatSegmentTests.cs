@@ -90,7 +90,7 @@ namespace BH.SDK.Tests
 
         // A level written before this field existed has no "beats" key at all, and must come back as
         // an empty list rather than null - the same no-migration shape LevelSettings.Seed and
-        // LevelResources.FontCharacters were added in.
+        // LevelHints.FontCharacters were added in.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
