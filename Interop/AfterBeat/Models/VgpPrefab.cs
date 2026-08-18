@@ -31,8 +31,19 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.PrefabOffset)]
         public float Offset { get; set; }
 
+        /// <summary> Which of <see cref="Objects"/> the template hangs off. Editor bookkeeping over
+        /// there - nothing about how the template plays depends on it. </summary>
+        [JsonProperty(ABNames.PrefabMainObjectId)]
+        public string MainObjectId { get; set; } = string.Empty;
+
         [JsonProperty(ABNames.PrefabObjectsList)]
         public List<VgdObject> Objects { get; set; } = new();
+
+        /// <summary> A template's own prefab placements: this format nests, and a template holding
+        /// one is an ordinary thing rather than an edge case. Absent from every level written
+        /// before the feature existed, hence the empty default. </summary>
+        [JsonProperty(ABNames.PrefabPlacementsList)]
+        public List<VgdPrefabPlacement> Placements { get; set; } = new();
     }
 
     /// <summary> A placed instance of a prefab - .vgd prefab_objects[]. Carries one static
@@ -60,6 +71,27 @@ namespace BH.SDK.Interop.AfterBeat.Models
         /// template's own objects are timed relative to THIS. </summary>
         [JsonProperty(ABNames.PlacementTime)]
         public float StartTime { get; set; }
+
+        /// <summary> The object this placement hangs off, if any - a placement is parentable
+        /// exactly like an ordinary object. Empty means it sits at the scope's own root. </summary>
+        [JsonProperty(ABNames.PlacementParentId)]
+        public string ParentId { get; set; } = string.Empty;
+
+        // Repeat is READ AND WRITTEN by the source game and consumed by nothing in it: both
+        // properties clamp on assignment (count into 0-1000, offset into 0-60 seconds) and neither
+        // is referenced anywhere else in its assembly - AddPrefabToLevel, the one place a placement
+        // becomes objects, does not look at them. So a level can legally carry a repeat that its
+        // own game does not draw, and this converter does not draw it either: guessing at the
+        // spacing rule would either invent content or delete it, and both are worse than saying so.
+        // Reported as deferred rather than dropped, since the keys survive a round trip.
+
+        /// <summary> How many times the placement repeats. 0 is the ordinary single one. </summary>
+        [JsonProperty(ABNames.PlacementRepeatCount)]
+        public int RepeatCount { get; set; }
+
+        /// <summary> Seconds between one repetition and the next. </summary>
+        [JsonProperty(ABNames.PlacementRepeatOffset)]
+        public float RepeatOffset { get; set; }
 
         [JsonProperty(ABNames.PlacementEditor)]
         public VgdObjectEditor Editor { get; set; } = new();

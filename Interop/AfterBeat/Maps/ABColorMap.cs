@@ -41,6 +41,14 @@ namespace BH.SDK.Interop.AfterBeat
         /// as 0.999 down the literal path for no visible reason. </summary>
         public const float OpaqueEpsilon = 1f / 512f;
 
+        /// <summary> What an effect whose colour index is the "none" sentinel tints with, when
+        /// tinting it white is the source game's own answer - bloom and the screen gradient. </summary>
+        public static Color4Value EffectColorWhite => Color4Value.white;
+
+        /// <summary> The same, for the one effect whose answer is black instead - the vignette,
+        /// which darkens rather than tints. </summary>
+        public static Color4Value EffectColorBlack => Color4Value.black;
+
         /// <summary> First <see cref="ThemeData"/> slot of one of Afterbeat's palettes. </summary>
         public static int GetBaseIndex(ABPalette palette) => palette switch
         {

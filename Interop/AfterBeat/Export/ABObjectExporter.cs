@@ -69,6 +69,11 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     return null;
             }
 
+            // Bookkeeping this converter created rather than content the author did, and the source
+            // game rebuilds it itself - see ABExportContext.CameraScaleRootId. Its children are
+            // written parented to the camera, which is where they were before the import.
+            if (source.ObjectId == context.CameraScaleRootId) return null;
+
             if (!source.Active)
             {
                 report.Dropped("inactive_objects",
@@ -82,6 +87,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 Id = ABExportContext.ToSourceId(source.ObjectId),
                 Name = source.Name ?? string.Empty,
                 ParentId = context.ToParentId(source.ParentObjectId),
+                ParentType = FullParentType,
             };
 
             ApplyDrawOrder(context.GetEffectiveLayer(source), target);
@@ -98,6 +104,16 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
             return target;
         }
+
+        // p_t has to be WRITTEN, and writing nothing is not the same as writing the common value.
+        // Afterbeat's own default for the key is "101" - position and rotation inherited, SCALE NOT
+        // - while this format inherits all three together and has no way to say otherwise. So an
+        // export that omits it hands every parented object over with its scale inheritance switched
+        // off, and a hierarchy authored here comes apart the moment any parent in it is not at
+        // scale 1.
+
+        /// <summary> Position, scale and rotation all inherited - what a parent means here. </summary>
+        public const string FullParentType = "111";
 
         // The inverse of the importer's OnlyDepth mapping - the one of the four layer modes that is
         // a bijection - so a level that came from Afterbeat under it goes back unchanged, and one
@@ -127,7 +143,41 @@ namespace BH.SDK.Interop.AfterBeat.Export
             target.RenderLayer = (int)band;
             target.Depth = Math.Clamp(frontmost - effectiveLayer,
                 VgdObject.MinDepth, VgdObject.MaxDepth);
+
+            ApplyEditorRow(target);
         }
+
+        // Afterbeat's editor layer and bin are the ROW an object gets on its timeline, and an
+        // exported level used to write neither - so every object in it landed on row zero of layer
+        // zero, i.e. a few thousand clips stacked into one line that cannot be worked with. They
+        // are bookkeeping in the sense that nothing about playback reads them, and the exact
+        // opposite of bookkeeping in the sense that they decide whether the file can be edited at
+        // all once it is over there.
+        //
+        // The row is derived from DEPTH rather than from anything of our own, for two reasons: it
+        // is the number that survived the conversion (this format's Layer did not - it was just
+        // spent on the depth), and it makes the import's OnlyEditor mode the inverse of this
+        // export, exactly as OnlyDepth already is. Depth runs 0-60 and the source editor allows six
+        // layers of fifteen bins, which is 90 rows for 61 depths - so every depth gets a row of its
+        // own with room to spare, rather than several sharing one.
+        private static void ApplyEditorRow(VgdObject target)
+        {
+            var row = Math.Clamp(target.Depth, VgdObject.MinDepth, VgdObject.MaxDepth);
+
+            target.Editor.Layer = Math.Clamp(row / EditorBinsPerLayer, MinEditorLayer, MaxEditorLayer);
+            target.Editor.Bin = Math.Clamp(row % EditorBinsPerLayer, MinEditorBin, MaxEditorBin);
+        }
+
+        /// <summary> Rows the source editor shows per layer - its own BeatmapObject.EditorData.Bin
+        /// clamps to 0-14. </summary>
+        public const int EditorBinsPerLayer = 15;
+
+        public const int MinEditorBin = 0;
+        public const int MaxEditorBin = 14;
+
+        /// <summary> The source editor's own layer clamp, 0-5. </summary>
+        public const int MinEditorLayer = 0;
+        public const int MaxEditorLayer = 5;
 
         private static void ApplyShape(RectObject source, VgdObject target,
             ABExportContext context, string path)

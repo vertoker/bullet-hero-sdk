@@ -231,7 +231,11 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
-        public void ImportFloat_LinearRandom_IsARange()
+        // "er" is the OTHER END of the range, not an offset from the value - the source game rolls
+        // Random.Range(GetVal(0), GetRandVal(0)). So a value of 5 with an er of 3 rolls over
+        // [3, 5], NOT over [5, 8]; reading it as an offset widened every random range in a level by
+        // whatever value it was anchored at.
+        public void ImportFloat_LinearRandom_RangesBetweenValueAndRandom()
         {
             var key = new VgdKeyframe
             {
@@ -243,8 +247,31 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.IsInstanceOf<FloatMinMax>(value);
 
             var range = (FloatMinMax)value;
-            Assert.AreEqual(5f, range.Min, 1e-4f);
-            Assert.AreEqual(8f, range.Max, 1e-4f);
+            Assert.AreEqual(3f, range.Min, 1e-4f);
+            Assert.AreEqual(5f, range.Max, 1e-4f);
+        }
+
+        // The one the format's own table has no entry for, and the source game implements: the
+        // same range as Linear, rounded to whole numbers.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void ImportFloat_LinearRounded_IsAWholeNumberStep()
+        {
+            var key = new VgdKeyframe
+            {
+                RandomType = (int)ABRandomType.LinearRounded,
+                RandomValues = new System.Collections.Generic.List<float> { 9f, 0f, 0f },
+            };
+
+            var value = ABValueMap.ImportFloat(2f, key);
+            Assert.IsInstanceOf<FloatMinMaxStep>(value);
+
+            var step = (FloatMinMaxStep)value;
+            Assert.AreEqual(2f, step.Min, 1e-4f);
+            Assert.AreEqual(9f, step.Max, 1e-4f);
+            Assert.AreEqual(ABValueMap.WholeNumberInterval, step.Step, 1e-4f);
         }
 
         // A Toggle picks one of exactly two values, and a step equal to the range's own width is
@@ -267,25 +294,31 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             var step = (FloatMinMaxStep)value;
             Assert.AreEqual(1f, step.Min, 1e-4f);
-            Assert.AreEqual(5f, step.Max, 1e-4f);
+            Assert.AreEqual(4f, step.Max, 1e-4f);
             Assert.AreEqual(step.Max - step.Min, step.Step, 1e-4f);
         }
 
+        // Type 4 MULTIPLIES the value by a factor drawn from er[0]..er[1] - it does not accumulate
+        // onto the previous keyframe's roll, which is what it was believed to do and why it used to
+        // be dropped. Multiplying a fixed value by a range is a range, so it crosses exactly.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
-        public void ImportFloat_Relative_IsDroppedNotSilentlyWrong()
+        public void ImportFloat_Scale_IsTheValueTimesTheFactorRange()
         {
-            var report = new InteropReport();
             var key = new VgdKeyframe
             {
-                RandomType = (int)ABRandomType.Relative,
-                RandomValues = new System.Collections.Generic.List<float> { 4f, 0f, 0f },
+                RandomType = (int)ABRandomType.Scale,
+                RandomValues = new System.Collections.Generic.List<float> { 0.5f, 2f, 0f },
             };
 
-            Assert.IsInstanceOf<FloatValue>(ABValueMap.ImportFloat(1f, key, report));
-            Assert.AreEqual(InteropSeverity.Dropped, report.Worst);
+            var value = ABValueMap.ImportFloat(4f, key);
+            Assert.IsInstanceOf<FloatMinMax>(value);
+
+            var range = (FloatMinMax)value;
+            Assert.AreEqual(2f, range.Min, 1e-4f);
+            Assert.AreEqual(8f, range.Max, 1e-4f);
         }
     }
 }

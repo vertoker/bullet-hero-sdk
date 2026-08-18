@@ -45,8 +45,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ObjectStartTime)]
         public float StartTime { get; set; }
 
+        /// <summary> Default 0, which is the source game's own: its field carries no
+        /// [DefaultValue], so an omitted ak_t reads back as OldStyleNoAutokill - resolved exactly
+        /// like Last Keyframe wherever a level plays. </summary>
         [JsonProperty(ABNames.ObjectAutokillType)]
-        public int AutokillType { get; set; } = (int)ABAutokillType.LastKeyframe;
+        public int AutokillType { get; set; } = (int)ABAutokillType.OldStyleNoAutokill;
 
         /// <summary> Meaning depends entirely on <see cref="AutokillType"/>. </summary>
         [JsonProperty(ABNames.ObjectAutokillOffset)]

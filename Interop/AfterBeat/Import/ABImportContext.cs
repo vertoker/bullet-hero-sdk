@@ -50,6 +50,79 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// ended up with. </summary>
         public Dictionary<string, int> EffectiveLayers { get; } = new();
 
+        // A template's lead time is not metadata about the template - it is part of where its
+        // placements land, and only the placement can apply it (ObjectManager.AddPrefabToLevel:
+        // every copied object starts at placement.t - prefab.Offset + its own st). The templates are
+        // imported before the placements are, and by then the source document's own Offset is gone,
+        // so it is kept here for the one step that needs it.
+
+        /// <summary> Each imported template's lead time in SECONDS, as the source document wrote
+        /// it. A template nothing recorded has none. </summary>
+        public Dictionary<PrefabId, float> PrefabLeadTimes { get; } = new();
+
+        // WHICH FIELD AN OBJECT'S SCALE IS WRITTEN INTO IS NOT A STYLE CHOICE - it is how this
+        // format expresses Afterbeat's per-child scale-inheritance switch, and getting it wrong is
+        // what breaks a parented hierarchy the moment anything in it is scaled.
+        //
+        // RectTransform2D.Apply propagates Scale to children and deliberately does NOT propagate
+        // Size, while the renderer consumes only their product. So the two fields look identical on
+        // screen and are exact opposites to a child: Sizes behaves as p_t[1] == '0', Scales as
+        // p_t[1] == '1'. The bit therefore crosses EXACTLY, per object, with nothing baked and
+        // nothing that an animated parent can invalidate - as long as the choice is made from the
+        // CHILDREN's masks rather than from the object's own.
+        //
+        // Filled by the same first pass that mints ids, for the same reason: a child may be written
+        // before its parent, and a decision made as the list is walked would read half of them.
+
+        /// <summary> What one source object's scale track means to its children. </summary>
+        public enum ScaleTarget
+        {
+            /// <summary> Nothing inherits it - it is this object's own extent. </summary>
+            Size = 0,
+
+            /// <summary> Children inherit it - it is a multiplier they sit inside. </summary>
+            Scale = 1,
+        }
+
+        /// <summary> Afterbeat's own object id to the field its scale track is written into.
+        /// Anything absent is <see cref="ScaleTarget.Size"/>, which is what an object with no
+        /// children means. </summary>
+        public Dictionary<string, ScaleTarget> ScaleTargets { get; } = new();
+
+        /// <summary> Where one source object's scale track belongs. </summary>
+        public ScaleTarget GetScaleTarget(string sourceId)
+            => !string.IsNullOrEmpty(sourceId) && ScaleTargets.TryGetValue(sourceId, out var target)
+                ? target
+                : ScaleTarget.Size;
+
+        /// <summary> The scale a child has to be COMPENSATED by because its parent's track went
+        /// into the field the child's own mask disagrees with - see ABObjectImporter's
+        /// ResolveScaleTargets. Absent for every child whose mask agrees, which is nearly all of
+        /// them. </summary>
+        public Dictionary<string, (float X, float Y)> ScaleCompensations { get; } = new();
+
+        /// <summary> The factor a child's own scale is multiplied by so that a quarter turn under a
+        /// non-uniformly scaled parent composes the way it does over there - see ABObjectImporter's
+        /// ResolveAxisSwaps. Applies to the SCALE only, never to the position. </summary>
+        public Dictionary<string, (float X, float Y)> AxisSwaps { get; } = new();
+
+        // Afterbeat does not hang a camera-parented object off the camera directly: it hangs it off
+        // a node whose scale is the camera's own zoom over 20 (EventManager.Update, 20 being the
+        // format's neutral zoom), so such an object keeps a constant SCREEN size while the camera
+        // zooms. This format's camera has no scale to inherit, so a converted level drew all of that
+        // content at whatever size it was authored at - on an ordinary level sitting at zoom 30,
+        // every camera-parented object at two thirds of its real size.
+        //
+        // The node is therefore rebuilt as an ordinary object (ABLevelImporter.ImportCameraScaleRoot)
+        // and every "camera" parent reference resolves to it instead. Rebuilding the node rather
+        // than multiplying each object's own tracks is what makes the DESCENDANTS right too: a
+        // Scales track is inherited here exactly as localScale is there, so one track covers a whole
+        // subtree and one object's worth of keyframes covers the level.
+
+        /// <summary> Stands in for the source game's camera-scale node, or Null when this level has
+        /// nothing parented to the camera. </summary>
+        public ObjectId CameraScaleRootId { get; set; } = ObjectId.Null;
+
         /// <summary> The band of draw order this scope's own objects occupy, which is what the
         /// background is placed below and the prefab placements above. Both stay 0 until something
         /// is resolved, so a scope holding no objects puts its background on layer -1. </summary>
@@ -95,7 +168,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 // times. The source format lets a template object name one anyway; keeping it makes
                 // a template this format's own rules reject (RuleParentObjectIdValid), on real
                 // content, so it becomes a root of the template instead.
-                if (!IsPrefabScope) return ObjectId.Camera;
+                if (!IsPrefabScope)
+                    return CameraScaleRootId.IsValid() ? CameraScaleRootId : ObjectId.Camera;
 
                 Report.Approximated("parent_camera_in_prefab",
                     "Objects inside an Afterbeat prefab can be parented to the camera; a template here has no camera, so those objects became roots of the template.",

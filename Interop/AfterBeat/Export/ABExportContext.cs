@@ -42,7 +42,8 @@ namespace BH.SDK.Interop.AfterBeat.Export
         /// unresolvable becomes a root, which is what Afterbeat does with a dangling one anyway. </summary>
         public string ToParentId(ObjectId parentId)
         {
-            if (parentId == ObjectId.Camera) return Models.VgdObject.CameraParentId;
+            if (parentId == ObjectId.Camera || parentId == CameraScaleRootId)
+                return Models.VgdObject.CameraParentId;
             if (parentId == ObjectId.Null) return string.Empty;
             if (Scope?.Objects != null && Scope.Objects.ContainsKey(parentId)) return ToSourceId(parentId);
 
@@ -50,6 +51,41 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 "Some objects are parented to something Afterbeat has no way to name (the local player, or a prefab root); they export as roots.",
                 null);
             return string.Empty;
+        }
+
+        // The mirror of ABImportContext.CameraScaleRootId. An import rebuilds the source game's
+        // camera-scale node as an ordinary object because this format's camera carries no scale;
+        // writing that node back out would be wrong twice over - the node is not content the author
+        // made, and the source game applies the very same factor itself, so its content would be
+        // scaled by the zoom squared. So the node is dropped and its children are written as
+        // parented to the camera directly, which is exactly where they came from.
+        //
+        // Identified by all three of: parented to the camera, a plain RectObject (nothing drawn),
+        // and carrying the name the import gave it. An author who builds an empty object under the
+        // camera and names it that gets it flattened too - the cost is its own scale track, and the
+        // alternative is a format field for "this object is bookkeeping", which is a bigger thing
+        // than this deserves.
+
+        /// <summary> The rebuilt camera-scale node of this scope, or Null when there is none. </summary>
+        public ObjectId CameraScaleRootId => _cameraScaleRootId ??= FindCameraScaleRoot();
+
+        private ObjectId? _cameraScaleRootId;
+
+        private ObjectId FindCameraScaleRoot()
+        {
+            if (Scope?.Objects == null) return ObjectId.Null;
+
+            foreach (var pair in Scope.Objects)
+            {
+                var target = pair.Value;
+                if (target == null || target.GetType() != typeof(RectObject)) continue;
+                if (target.ParentObjectId != ObjectId.Camera) continue;
+                if (target.Name != Import.ABLevelImporter.CameraScaleRootName) continue;
+
+                return pair.Key;
+            }
+
+            return ObjectId.Null;
         }
 
         /// <summary> An object's effective layer - its own plus every ancestor's, which is what this

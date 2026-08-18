@@ -5,21 +5,30 @@ using BH.SDK.Models.Values;
 
 namespace BH.SDK.Interop.AfterBeat
 {
-    // Afterbeat randomizes a keyframe by carrying a type plus three spare numbers (Random X,
+    // Afterbeat randomizes a keyframe by carrying a type plus three spare numbers ("er": Random X,
     // Random Y, Interval) beside the value; this format randomizes it by storing a different KIND
-    // of value. So the conversion is not a field copy, it is a choice of variant:
+    // of value. So the conversion is not a field copy, it is a choice of variant.
     //
-    //   None     -> the literal value.
-    //   Linear   -> a range from the value to value+random. Exact.
-    //   Toggle   -> the same range with the step set to its own width, which makes the only two
-    //               values it can produce the two ends - exactly what a toggle is. Also exact, and
-    //               the reason RandomMinMaxStep is worth reaching for here.
-    //   Relative -> adds to the PREVIOUS keyframe's roll, which is a stateful generator. This
-    //               format resolves randomness by address and has no previous roll to add to, so
-    //               this one cannot cross and is reported.
+    // THE ONE THING TO KNOW: "er" is the OTHER END OF THE RANGE, never an offset from the value.
+    // The source game reads every one of these as Random.Range(GetVal(i), GetRandVal(i))
+    // (ObjectHelpers.RandomVector2Parser / RandomFloatParser), so a keyframe at 5 with an er of 20
+    // rolls between 5 and 20 - not between 5 and 25. Reading it as an offset widens every random
+    // range in a converted level by the value it was anchored at, which is invisible on a keyframe
+    // authored at zero and wrong everywhere else.
     //
-    // An Interval of its own turns any of the above into the step variant, which is the same
-    // meaning in both formats: land on multiples rather than anywhere in the range.
+    //   None          -> the literal value.
+    //   Linear        -> the range [value, er]. Exact.
+    //   LinearRounded -> the same range, snapped to whole numbers - a step of 1. Exact.
+    //   Toggle        -> either end and nothing between, which is a range whose step IS its own
+    //                    width. Exact for a float. For a VECTOR it is one flip deciding both
+    //                    components together, and this format rolls each axis on its own address,
+    //                    so the pairing is the part that cannot cross and is reported.
+    //   Scale         -> the value MULTIPLIED by a factor from er[0]..er[1]. Exact, because
+    //                    multiplying a fixed value by a range is a range - it only has to be
+    //                    ordered, since a negative value swaps the ends.
+    //
+    // An Interval (er[2]) of its own turns any of the above into the step variant, which is the
+    // same meaning in both formats: land on multiples rather than anywhere in the range.
     //
     // Rotation is the other thing this file owns, and it is the single most dangerous conversion in
     // the whole importer. Afterbeat writes rotation in DEGREES and each keyframe is RELATIVE to the
@@ -48,7 +57,7 @@ namespace BH.SDK.Interop.AfterBeat
         {
             if (source == null) return new FloatValue(value);
 
-            var random = source.GetRandom(0);
+            var other = source.GetRandom(0);
             var interval = source.GetRandom(2);
 
             switch ((ABRandomType)source.RandomType)
@@ -57,18 +66,22 @@ namespace BH.SDK.Interop.AfterBeat
                     return new FloatValue(value);
 
                 case ABRandomType.Linear:
-                    return MakeRange(value, value + random, interval);
+                    return MakeRange(value, other, interval);
+
+                case ABRandomType.LinearRounded:
+                    // Mathf.Round over the same range - which is a step of exactly one, and the
+                    // source's own interval is not consulted on this branch at all.
+                    return MakeRange(value, other, WholeNumberInterval);
 
                 case ABRandomType.Toggle:
                     // A step equal to the whole width leaves exactly the two ends reachable.
-                    return new FloatMinMaxStep(Min(value, value + random), Max(value, value + random),
-                        Math.Max(Math.Abs(random), MinInterval));
+                    return MakeToggle(value, other);
 
-                case ABRandomType.Relative:
-                    report?.Dropped("random_relative",
-                        "Afterbeat's Relative randomization adds to the previous keyframe's own roll. This format addresses randomness instead of accumulating it, so those keyframes use their authored value with no randomness.",
-                        path);
-                    return new FloatValue(value);
+                case ABRandomType.Scale:
+                    // The interval snaps the FACTOR over there, so it scales with the value the
+                    // same way both ends of the range do.
+                    return MakeRange(value * source.GetRandom(0), value * source.GetRandom(1),
+                        Math.Abs(value * interval));
 
                 default:
                     report?.Dropped("random_unknown",
@@ -76,6 +89,17 @@ namespace BH.SDK.Interop.AfterBeat
                         path);
                     return new FloatValue(value);
             }
+        }
+
+        /// <summary> The step that turns a range into "whole numbers only", which is what the
+        /// source game's own Mathf.Round over a range amounts to. </summary>
+        public const float WholeNumberInterval = 1f;
+
+        private static IFloat MakeToggle(float a, float b)
+        {
+            var width = Math.Abs(b - a);
+            if (width < MinInterval) return new FloatValue(a);
+            return new FloatMinMaxStep(Min(a, b), Max(a, b), width);
         }
 
         private static IFloat MakeRange(float a, float b, float interval)
@@ -98,8 +122,8 @@ namespace BH.SDK.Interop.AfterBeat
         {
             if (source == null) return new Vector2Value(x, y);
 
-            var randomX = source.GetRandom(0);
-            var randomY = source.GetRandom(1);
+            var otherX = source.GetRandom(0);
+            var otherY = source.GetRandom(1);
             var interval = source.GetRandom(2);
 
             switch ((ABRandomType)source.RandomType)
@@ -108,20 +132,45 @@ namespace BH.SDK.Interop.AfterBeat
                     return new Vector2Value(x, y);
 
                 case ABRandomType.Linear:
-                    return MakeRect(x, y, x + randomX, y + randomY, interval);
+                    return MakeRect(x, y, otherX, otherY, interval);
+
+                case ABRandomType.LinearRounded:
+                    return MakeRect(x, y, otherX, otherY, WholeNumberInterval);
 
                 case ABRandomType.Toggle:
                 {
-                    var step = Math.Max(Math.Max(Math.Abs(randomX), Math.Abs(randomY)), MinInterval);
-                    return new Vector2RectStep(Min(x, x + randomX), Min(y, y + randomY),
-                        Max(x, x + randomX), Max(y, y + randomY), step);
+                    // Over there ONE flip picks both components, so the point lands on one corner
+                    // of the rectangle or the opposite one and never on the other two. Here each
+                    // axis is rolled at its own address, so the two mixed corners become reachable
+                    // - the rectangle is right, the pairing is not, and that is what is reported.
+                    if (Math.Abs(otherX - x) > MinInterval && Math.Abs(otherY - y) > MinInterval)
+                        report?.Approximated("random_toggle_axes_independent",
+                            "Afterbeat's Toggle randomization flips both axes of a point together; this format rolls each axis on its own, so those keyframes can also land on the two mixed corners.",
+                            path);
+
+                    var stepX = Math.Abs(otherX - x);
+                    var stepY = Math.Abs(otherY - y);
+                    var step = Math.Max(Math.Max(stepX, stepY), MinInterval);
+                    return new Vector2RectStep(Min(x, otherX), Min(y, otherY),
+                        Max(x, otherX), Max(y, otherY), step);
                 }
 
-                case ABRandomType.Relative:
-                    report?.Dropped("random_relative",
-                        "Afterbeat's Relative randomization adds to the previous keyframe's own roll. This format addresses randomness instead of accumulating it, so those keyframes use their authored value with no randomness.",
-                        path);
-                    return new Vector2Value(x, y);
+                case ABRandomType.Scale:
+                {
+                    // One factor scales BOTH components over there, which a per-axis rectangle
+                    // cannot say - the two mixed corners are reachable here and are not there.
+                    var min = source.GetRandom(0);
+                    var max = source.GetRandom(1);
+
+                    if (Math.Abs(max - min) > MinInterval
+                        && Math.Abs(x) > MinInterval && Math.Abs(y) > MinInterval)
+                        report?.Approximated("random_scale_axes_independent",
+                            "Afterbeat's Scale randomization multiplies both axes of a point by the same factor; this format rolls each axis on its own, so the two are no longer locked to each other.",
+                            path);
+
+                    return MakeRect(x * min, y * min, x * max, y * max,
+                        Math.Max(Math.Abs(x * interval), Math.Abs(y * interval)));
+                }
 
                 default:
                     report?.Dropped("random_unknown",

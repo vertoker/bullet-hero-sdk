@@ -110,6 +110,13 @@
     /// changes with it, which is why the two are never read apart. </summary>
     public enum ABAutokillType
     {
+        /// <summary> A legacy .lsb import that never carried a rule at all. The source game
+        /// resolves it exactly like <see cref="LastKeyframe"/> everywhere a level PLAYS
+        /// (BeatmapObject.GetObjectLifeLength) - the 5000-second branch beside it is the editor's
+        /// own timeline row, not a lifetime. It is the value an ak_t the file omits reads as, so it
+        /// is a documented member rather than an unknown one. </summary>
+        OldStyleNoAutokill = 0,
+
         /// <summary> Dies on its last keyframe. </summary>
         LastKeyframe = 1,
 
@@ -133,15 +140,39 @@
         InvertedRadial = 4,
     }
 
-    /// <summary> How a keyframe randomizes its value - .vgd objects[].e[].k[].r. Value 2 is absent
-    /// from the format's own table. </summary>
+    // All five are real, and the format's own description lists four - it has no 2. The source
+    // game's ObjectHelpers.RandomVector2Parser/RandomFloatParser switch on all five, and the names
+    // below are what those branches DO rather than what the description calls them: every one of
+    // them reads the keyframe's own value as one END of a range and "er" as the other, never as an
+    // offset from it.
+
+    /// <summary> How a keyframe randomizes its value - .vgd objects[].e[].k[].r. </summary>
     public enum ABRandomType
     {
         None = 0,
+
+        /// <summary> Uniform between the value and its "er" counterpart, snapped to er[2] when that
+        /// is set. </summary>
         Linear = 1,
+
+        /// <summary> The same range, rounded to a whole number. Absent from the format's own table
+        /// and implemented by the game all the same. </summary>
+        LinearRounded = 2,
+
+        /// <summary> One coin flip picks either the value or its "er" counterpart - and for a
+        /// vector, the SAME flip decides both components. </summary>
         Toggle = 3,
-        Relative = 4,
+
+        /// <summary> The value MULTIPLIED by a factor drawn uniformly from er[0]..er[1] - a scale,
+        /// not an offset, and not an accumulation onto the previous keyframe's roll. </summary>
+        Scale = 4,
     }
+
+    // Six families, and the numbering is not the order anybody would write them in - it is
+    // BeatmapObject.ShapeType's own, reflected out of the source game. Family 3 is called "Misc"
+    // there rather than "Arrow", which is what the format's description calls it; the two arrows do
+    // live in it, but the name is the game's, since a seventh member added to that family later
+    // would make "Arrow" a lie and "Misc" still true.
 
     /// <summary> Main shape family - .vgd objects[].s, paired with .so. </summary>
     public enum ABShape
@@ -149,9 +180,37 @@
         Square = 0,
         Circle = 1,
         Triangle = 2,
-        Arrow = 3,
+        Misc = 3,
         Text = 4,
         Hexagon = 5,
+    }
+
+    // Every family's option list ends with a CUSTOM POLYGON, and the index it sits at is the only
+    // statement of how many presets that family has - BeatmapObject.IsCustom is a switch of exactly
+    // these five numbers. Anything below the number is a preset, the number itself is the custom
+    // polygon (parameters in csp), anything above it is not a legal shape at all.
+
+    /// <summary> Which <c>so</c> value is the custom polygon of each <see cref="ABShape"/> family,
+    /// i.e. also how many presets that family has. </summary>
+    public static class ABShapeOptions
+    {
+        public const int SquareCustom = 3;
+        public const int CircleCustom = 9;
+        public const int TriangleCustom = 6;
+        public const int MiscCustom = 2;
+        public const int HexagonCustom = 6;
+
+        /// <summary> The custom-polygon option of one family, or -1 for a family that has none
+        /// (Text, and anything this converter does not know). </summary>
+        public static int GetCustomOption(int shape) => (ABShape)shape switch
+        {
+            ABShape.Square => SquareCustom,
+            ABShape.Circle => CircleCustom,
+            ABShape.Triangle => TriangleCustom,
+            ABShape.Misc => MiscCustom,
+            ABShape.Hexagon => HexagonCustom,
+            _ => -1,
+        };
     }
 
     /// <summary> Which of the fourteen fixed .vgd events[] arrays an index is. The order IS the

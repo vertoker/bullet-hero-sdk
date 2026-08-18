@@ -224,6 +224,13 @@
         // playing in the first second.
         public const string PlacementTime = "t";
 
+        // Three keys the format's description does not have and the source game does
+        // (DataManager.GameData.PrefabObject), all absent from levels written before they existed -
+        // which is why every one of them defaults to "this placement behaves as it always did".
+        public const string PlacementParentId = "parid";
+        public const string PlacementRepeatCount = "r";
+        public const string PlacementRepeatOffset = "ro";
+
         #endregion
 
         #region .vgp
@@ -235,6 +242,13 @@
         public const string PrefabType = "type";
         public const string PrefabOffset = "o";
         public const string PrefabObjectsList = "objs";
+
+        /// <summary> Which of a template's own objects it is anchored by. </summary>
+        public const string PrefabMainObjectId = "mid";
+
+        /// <summary> A template's own prefab PLACEMENTS - the format's nesting, and the reason a
+        /// template is a scope rather than a flat object list. </summary>
+        public const string PrefabPlacementsList = "pobjs";
 
         #endregion
 

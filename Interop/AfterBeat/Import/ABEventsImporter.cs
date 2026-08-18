@@ -63,35 +63,39 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             ImportThemes(source, level, context, path);
             ImportBackground(level, context);
+            ImportScreenLimit(level, context);
 
             // Every number below crosses on its own scale - see ABPostProcessingMap. None of
-            // them survives being read as-is: the source ranges are Project Arrhythmia's inspector
-            // ranges and this format's are the URP volume's own.
+            // them survives being read as-is: the source ranges are the ones the source game's own
+            // EventManager remaps by, and this format's are the URP volume's own.
             foreach (var key in source.GetEvents(ABEventTrack.Chromatic))
                 post.Chromatics.Add(new ChromaticAberrationKey(
                     ABPostProcessingMap.ImportChromatic(key.GetFloat(0)),
-                    EffectsActive, Frame(key, framerate), Ease(key, report, path)));
+                    IsActive(key, 0), Frame(key, framerate), Ease(key, report, path)));
 
             foreach (var key in source.GetEvents(ABEventTrack.Bloom))
                 post.Blooms.Add(new BloomKey(
                     ABPostProcessingMap.ImportBloomIntensity(key.GetFloat(0)),
-                    ABPostProcessingMap.ImportBloomScatter(key.GetFloat(1)),
-                    EffectColor(key, 2, context, path),
-                    EffectsActive, Frame(key, framerate), Ease(key, report, path)));
+                    ABPostProcessingMap.ImportBloomScatter(
+                        key.GetFloat(1, ABPostProcessingMap.DefaultBloomDiffusion)),
+                    EffectColor(key, 2, ABColorMap.EffectColorWhite, context, path),
+                    IsActive(key, 0), Frame(key, framerate), Ease(key, report, path)));
 
             // ev is [Intensity, Smoothness, ForceRound, unused, CenterX, CenterY, Colour] - note
-            // the gap at index 3, which the format documents as always zero.
+            // the gap at index 3, which the source game reads on no branch at all.
             foreach (var key in source.GetEvents(ABEventTrack.Vignette))
                 post.Vignettes.Add(new VignetteKey(
-                    EffectColor(key, 6, context, path),
+                    EffectColor(key, 6, ABColorMap.EffectColorBlack, context, path),
                     new Vector2Value(
                         ABPostProcessingMap.ImportVignetteCenter(key.GetFloat(4)),
                         ABPostProcessingMap.ImportVignetteCenter(key.GetFloat(5))),
                     ABPostProcessingMap.ImportVignetteIntensity(key.GetFloat(0)),
                     ABPostProcessingMap.ImportVignetteSmoothness(key.GetFloat(1)),
                     key.GetFloat(2) > 0.5f,
-                    EffectsActive, Frame(key, framerate), Ease(key, report, path)));
+                    IsActive(key, 0), Frame(key, framerate), Ease(key, report, path)));
 
+            // The one effect whose switch is != 0 rather than > 0 over there - a lens distortion
+            // pinches as readily as it bulges, so a negative intensity is a live effect.
             foreach (var key in source.GetEvents(ABEventTrack.LensDistortion))
                 post.Lenses.Add(new LensDistortionKey(
                     ABPostProcessingMap.ImportLensIntensity(key.GetFloat(0)),
@@ -100,18 +104,21 @@ namespace BH.SDK.Interop.AfterBeat.Import
                         ABPostProcessingMap.ImportLensCenter(key.GetFloat(1)),
                         ABPostProcessingMap.ImportLensCenter(key.GetFloat(2))),
                     DefaultLensScale,
-                    EffectsActive, Frame(key, framerate), Ease(key, report, path)));
+                    key.GetFloat(0) != 0f, Frame(key, framerate), Ease(key, report, path)));
 
-            // ev is [Intensity, unused, Size, Mix]. Grain SIZE and MIX have no field on this
-            // format's own film grain, which carries a type and an intensity instead.
+            // ev is [Intensity, unused, Type, Response]. Slot 2 is not a size - the source game
+            // casts it to URP's own FilmGrainLookup, which is the same preset table this format's
+            // FilmGrainType is. Slot 3 is the luminance response, which this format's film grain
+            // has no field for; slot 1 reaches a field the effect never reads.
             var grainKeys = source.GetEvents(ABEventTrack.Grain);
             foreach (var key in grainKeys)
-                post.Grains.Add(new FilmGrainKey(FilmGrainType.Thin1,
+                post.Grains.Add(new FilmGrainKey(
+                    ABPostProcessingMap.ImportGrainType(key.GetFloat(2)),
                     ABPostProcessingMap.ImportGrainIntensity(key.GetFloat(0)),
-                    EffectsActive, Frame(key, framerate), Ease(key, report, path)));
+                    IsActive(key, 0), Frame(key, framerate), Ease(key, report, path)));
             if (grainKeys.Count > 0)
-                report.Approximated("grain_shape",
-                    "Afterbeat's film grain carries a size and a mix; this format's carries a preset and an intensity, so only the intensity was imported.",
+                report.Approximated("grain_response",
+                    "Afterbeat's film grain carries a luminance response; this format's carries a preset and an intensity, so the response was not imported.",
                     path);
 
             ImportGlitch(source, post, context, path);
@@ -124,13 +131,22 @@ namespace BH.SDK.Interop.AfterBeat.Import
         // cannot be empty over there - so a converted level arrives with every post-processing
         // effect keyframed whether its author ever touched one or not. Here an empty track is
         // legal and means "this effect does not exist in this level", so importing those keys as
-        // ACTIVE hands the player a dozen full-screen passes to run for a level that asked for
-        // none. They are imported switched off instead: the authored numbers are all still there,
-        // one tick per effect turns any of them back on, and nothing is guessed about which ones
-        // the author meant.
+        // unconditionally ACTIVE would hand the player a dozen full-screen passes to run for a
+        // level that asked for none.
+        //
+        // The source game answers this itself and needs no policy invented here: every
+        // LSEffectsManager.Update* sets `active = intensity > 0` on the volume component before
+        // writing anything into it, so an effect keyframed at zero is an effect that is OFF, and
+        // one keyframed above zero is one the author reached for. Reproducing that rule per
+        // keyframe gives a converted level exactly the passes the source level ran, which is both
+        // cheaper than switching everything on and truer than switching everything off (the
+        // previous behaviour, which lost every effect an author DID author until they found the
+        // tickbox).
 
-        /// <summary> Whether an imported post-processing keyframe arrives switched on. </summary>
-        public const bool EffectsActive = false;
+        /// <summary> Whether one imported post-processing keyframe arrives switched on: the source
+        /// game's own rule, read off the component that decides it. </summary>
+        private static bool IsActive(VgdEventKeyframe key, int intensityIndex)
+            => key.GetFloat(intensityIndex) > 0f;
 
         /// <summary> How fast an imported camera shake oscillates. Afterbeat carries no rate of its
         /// own, so this is this engine's own. </summary>
@@ -194,10 +210,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 var intensity = ABPostProcessingMap.ImportGlitchIntensity(key.GetFloat(0));
                 var frame = Frame(key, framerate);
                 var ease = Ease(key, context.Report, path);
+                var active = IsActive(key, 0);
 
-                post.DigitalGlitches.Add(new DigitalGlitchKey(intensity, EffectsActive, frame, ease));
+                post.DigitalGlitches.Add(new DigitalGlitchKey(intensity, active, frame, ease));
                 post.AnalogGlitches.Add(new AnalogGlitchKey(intensity, intensity, intensity, intensity,
-                    EffectsActive, frame, ease));
+                    active, frame, ease));
             }
 
             context.Report.Approximated("glitch_split",
@@ -268,6 +285,45 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 "Afterbeat's background subsystem has no equivalent here; the theme's own background colour was placed on the camera so the level keeps the colour behind it.",
                 null);
         }
+
+        // AN AFTERBEAT LEVEL IS AUTHORED AT 16:9, and the level document says so nowhere - the game
+        // does, and only by what it never offers. Its window resolution list is ten entries and
+        // nine of them are exactly 16:9 (480x270 up to 3840x2160); the tenth, 1360x768, is the
+        // laptop panel that is 16:9 to within a thousandth. There is no 16:10, no 4:3 and no
+        // ultrawide anywhere in it. So every author of every level saw the same frame, and every
+        // decision they made about what is on screen was made inside it.
+        //
+        // The reason that has to be carried across rather than left to the player's window is that
+        // nothing in the source game enforces it at PLAY time: the camera's zoom fixes the visible
+        // HEIGHT (EventManager.Update writes it into orthographicSize) and the width follows the
+        // aspect, while the player is clamped in VIEWPORT space (VGPlayer.ClampPlayerPosition), not
+        // to any authored box. A converted level shown at 21:9 therefore gets a third more play
+        // area, reveals the content its author parked off the sides, and is easier than it was
+        // written to be - all of it silently, because every value in the file is still correct.
+        //
+        // Only the import writes this. The export does not: this is a fact about where the level
+        // came from, not a field the target format has, and a level authored HERE at some other
+        // aspect is not made 16:9 by being sent there.
+        //
+        // Written only when the level has no limit of its own - the check is there for the same
+        // reason ImportBackground's is, since a converted level never does.
+        private static void ImportScreenLimit(Level level, ABImportContext context)
+        {
+            if (level.Game.Events.ScreenLimits.Count > 0) return;
+
+            level.Game.Events.ScreenLimits.Add(new ScreenLimitKey(
+                new ScreenLimitFixed(new ScreenAspect(SourceAspectWidth, SourceAspectHeight)),
+                FrameRules.MinFrame));
+
+            context.Report.Info("screen_limit_source_aspect",
+                $"Afterbeat only ever runs at {SourceAspectWidth}:{SourceAspectHeight}, so the level was authored for that frame and is pinned to it. Without the pin a wider screen would show what its author left outside it.",
+                null);
+        }
+
+        /// <summary> The one frame Afterbeat runs at, and therefore the one every level was
+        /// authored inside. </summary>
+        public const int SourceAspectWidth = 16;
+        public const int SourceAspectHeight = 9;
 
         // Afterbeat rotates the whole picture's hue with one number; this format has no hue effect,
         // but its colour curves carry a Hue vs Hue control that does exactly that, so the track
@@ -405,9 +461,29 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static EaseType Ease(VgdEventKeyframe key, InteropReport report, string path)
             => ABEaseMap.Import(key.Ease, report, path);
 
-        private static IColor4 EffectColor(VgdEventKeyframe key, int index,
+        // An effect's colour is an index into the theme's nine effect colours - except when it is
+        // 9, which is one past the last of them and means "no theme colour at all". The source game
+        // spells that out per effect (LSEffectsManager.UpdateBloomColor / UpdateVignetteColor /
+        // UpdateGradientColorA|B: `_col.x == 9f ? LSColors.white : LiveTheme.GetEffectColor(...)`),
+        // and the fallback is NOT the same colour for all of them - a bloom tints white, a vignette
+        // darkens black. It is also the value an absent component reads as, since each of those
+        // reads is GetVal(i, 9f).
+        //
+        // Clamping it into the palette instead - which is what a plain index import does - hands
+        // every untouched effect in a converted level the theme's ninth effect colour, and every
+        // real Afterbeat level writes 9 on effects its author never opened.
+
+        /// <summary> The one index that is not a palette entry. </summary>
+        public const int EffectColorNone = 9;
+
+        private static IColor4 EffectColor(VgdEventKeyframe key, int index, Color4Value none,
             ABImportContext context, string path)
-            => ABColorMap.Import((int)key.GetFloat(index), 1f, ABPalette.Effects,
+        {
+            var paletteIndex = (int)key.GetFloat(index, EffectColorNone);
+            if (paletteIndex == EffectColorNone) return none;
+
+            return ABColorMap.Import(paletteIndex, 1f, ABPalette.Effects,
                 context.ReferenceTheme, context.Report, path);
+        }
     }
 }

@@ -14,9 +14,26 @@ namespace BH.SDK.Interop.AfterBeat.Export
     /// <summary> <see cref="LevelMeta"/> back into a .vgm. </summary>
     public static class ABMetaExporter
     {
-        /// <summary> What Afterbeat writes into beatmap.game_version when this converter produced
-        /// the file. Honest about where the level came from rather than impersonating a build. </summary>
-        public const string GameVersionTag = "bullet-hero-interop";
+        // game_version IS NOT A LABEL, it is the input to Afterbeat's own upgrade chain, and it is
+        // parsed before a single object of the level is read: DataManager.GetVersion strips
+        // [a-zA-Z[\]] with a regex, splits the rest on '.', and int.Parse'es the component asked
+        // for. A hyphen is not in that character class, so the honest tag this used to write
+        // ("bullet-hero-interop") survives the strip as "--" and throws a FormatException on the
+        // first int.Parse - inside UpdateBeatmap, which GameManager wraps as "LoadData failed while
+        // converting modern beatmap data". Every level this converter has ever exported failed to
+        // load in the target game for that one string, with an error naming the beatmap rather than
+        // the metadata.
+        //
+        // So it has to be three numbers, and which three is not free either: UpdateBeatmap gates a
+        // dozen textual find-and-replace migrations on being at or below some version, one of which
+        // INVERTS every prefab offset in the document below 24.1.4. The only value that runs none
+        // of them is the game's own current one, which is also what a level saved by that game
+        // carries - there is nothing to be honest about here that the version field can express.
+
+        /// <summary> The Afterbeat build an exported level declares itself as. Must stay three
+        /// dot-separated integers, and should track the newest version this converter has been
+        /// checked against - see this block's header for why both halves matter. </summary>
+        public const string GameVersionTag = "26.6.2";
 
         public static VgmMeta Export(LevelMeta source, Level level, InteropReport report = null)
         {
@@ -61,7 +78,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
             if (source.LevelLogo != null && !string.IsNullOrEmpty(source.LevelLogo.Uri))
                 report.Info("meta_logo",
-                    "Afterbeat reads a level's cover art from a level.jpg beside the level file rather than from its metadata; copy the logo there by hand.",
+                    "Afterbeat reads a level's cover art from a cover.jpg beside the level file rather than from its metadata; a folder export writes one when the level's logo is a .jpg, and otherwise the cover has to be copied there by hand.",
                     "metadata");
         }
     }

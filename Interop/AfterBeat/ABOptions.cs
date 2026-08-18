@@ -63,6 +63,20 @@ namespace BH.SDK.Interop.AfterBeat
         /// foreground. </summary>
         public int PlacementLayerOffset = 1;
 
+        // THE SONG IS THE LEVEL over there. Afterbeat stores no length of its own: its timeline is
+        // its audio clip, an object timed past the end of the song simply never plays, and its
+        // editor cannot scroll past it either. So a converted level whose length was MEASURED off
+        // its content is a level of the wrong length by definition - it ends wherever the last
+        // object happened to, which is neither where the song ends nor where the author was working.
+        //
+        // The SDK opens no files, so it cannot measure a clip; the host that opened the folder can,
+        // and fills this in. Zero means it could not, and the length falls back to being measured.
+
+        /// <summary> Length of the level's song in SECONDS, as the host measured it. Zero when it
+        /// is unknown, which is the only case where the level's length is derived from its content
+        /// instead. </summary>
+        public float AudioLengthSeconds;
+
         public ABOptions() { }
 
         public ABOptions(int framerate)
@@ -77,6 +91,7 @@ namespace BH.SDK.Interop.AfterBeat
             var copy = (ABOptions)MemberwiseClone();
             copy.Framerate = System.Math.Clamp(Framerate, FrameRules.MinFramerate, FrameRules.MaxFramerate);
             copy.MaxParallaxLoopKeys = System.Math.Clamp(MaxParallaxLoopKeys, 2, LevelRules.MaxObjectKeys);
+            copy.AudioLengthSeconds = AudioLengthSeconds > 0f ? AudioLengthSeconds : 0f;
             copy.EditorGroupStride = System.Math.Clamp(EditorGroupStride, 1, ValueRules.MaxLayer);
             copy.ParallaxLayerOffset = System.Math.Clamp(ParallaxLayerOffset, 0, ValueRules.MaxLayer);
             copy.PlacementLayerOffset = System.Math.Clamp(PlacementLayerOffset, 0, ValueRules.MaxLayer);

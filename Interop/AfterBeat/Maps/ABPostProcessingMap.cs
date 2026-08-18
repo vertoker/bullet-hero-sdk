@@ -1,110 +1,121 @@
 ﻿using System;
+using BH.SDK.Models.Enums;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Interop.AfterBeat
 {
-    // Every post-processing number crosses on a DIFFERENT scale, and none of the scales is written
-    // anywhere in the documents themselves. Afterbeat inherited Project Arrhythmia's own ranges,
-    // which were picked to be comfortable in an inspector (bloom 0-50, vignette 0-100, lens
-    // -80..80); this project's are the URP volume's own (0-10, 0-1, -1..1). The two agree on what
-    // each effect MEANS and on nothing else.
+    // Every scale below was READ OUT OF THE SOURCE GAME, not inferred from an inspector range, and
+    // the two disagree more often than they agree. Afterbeat's own EventManager.Init*Events is the
+    // only authority: it takes each keyframe component, optionally remaps it, and hands the result
+    // to LSEffectsManager, which writes it straight into a URP VolumeComponent - the same
+    // VolumeComponents this format's own post-processing describes. So wherever Afterbeat does NOT
+    // remap, the number it writes IS a URP value and crosses untouched; wherever it does, that
+    // remap is the whole conversion and nothing else may be invented on top of it.
     //
-    // Passing the numbers through untouched is therefore not a "close enough" - it is a level that
-    // renders wrong in a way no report can catch, because every value out of range simply clamps at
-    // the far end: a lens distortion authored at 30 arrives as a permanent maximum fisheye, and a
-    // bloom scatter of 7 is not even a legal value for the model to hold.
-    //
-    // The formulas are the author's own (AB-POST-PROCESSING-SPECIFICATION.md, next to this folder),
-    // with two decisions taken here:
-    //
-    //   bloom scatter is DIRECT (diffusion / 30), not the specification's reciprocal. The
-    //   reciprocal answers 6 at the low end of the source range and 1 at the high end, so after
-    //   clamping into [0, 1] every legal input becomes the same maximum scatter and the parameter
-    //   stops existing.
-    //
-    //   vignette smoothness keeps the specification's own /2, which does saturate above a source
-    //   value of 2 - deliberately, since that is where Project Arrhythmia's own smoothness stops
-    //   being visually distinguishable.
+    // This replaced a transcription (AB-POST-PROCESSING-SPECIFICATION.md, still next to this folder
+    // as the record of what was believed) whose ranges came from Project Arrhythmia's inspector
+    // rather than from the game: bloom intensity 0-50, vignette intensity 0-100, vignette
+    // smoothness halved, bloom diffusion divided rather than remapped. None of the four is what the
+    // game does, and each was a level that renders at the wrong strength with nothing to notice.
     //
     // Both directions live side by side on purpose: an export that does not undo exactly what the
     // import did turns a round trip into a slow drift, and these are the numbers most likely to be
     // round-tripped by somebody moving one level between the two editors.
+    //
+    // The one number with no formula is the film grain TYPE, which is an enum in both formats and
+    // an index in the file - see GrainTypeOffset.
 
     /// <summary> The scale each post-processing value crosses on, both directions. </summary>
     public static class ABPostProcessingMap
     {
         #region Bloom
 
-        /// <summary> Afterbeat bloom intensity is 0-50 against this format's 0-10. </summary>
-        public const float BloomIntensityScale = 5f;
+        // LSEffectsManager.UpdateBloom writes _intensity into bloom.intensity with no remap at all,
+        // so an Afterbeat bloom intensity is already a URP one. The old /5 made every converted
+        // level's bloom five times too weak.
 
-        /// <summary> Afterbeat bloom diffusion runs 5-30; scatter runs 0-1. </summary>
+        public static float ImportBloomIntensity(float intensity)
+            => Clamp(intensity,
+                PostProcessingRules.Bloom.IntensityMin, PostProcessingRules.Bloom.IntensityMax);
+
+        public static float ExportBloomIntensity(float intensity) => intensity;
+
+        /// <summary> Afterbeat bloom diffusion runs 5-30 and is remapped onto URP's 0-1 scatter -
+        /// EventManager.InitBloomEvents does LSMath.Remap(ev[1], 5, 30, 0, 1). </summary>
         public const float BloomDiffusionMin = 5f;
         public const float BloomDiffusionMax = 30f;
 
-        public static float ImportBloomIntensity(float intensity)
-            => Clamp(intensity / BloomIntensityScale,
-                PostProcessingRules.Bloom.IntensityMin, PostProcessingRules.Bloom.IntensityMax);
-
-        public static float ExportBloomIntensity(float intensity) => intensity * BloomIntensityScale;
+        /// <summary> What Afterbeat reads when a bloom keyframe writes no diffusion - the literal
+        /// default of its own GetVal(1, 7f), i.e. a very tight bloom rather than a wide one. </summary>
+        public const float DefaultBloomDiffusion = 7f;
 
         public static float ImportBloomScatter(float diffusion)
-            => Clamp(Math.Max(diffusion, BloomDiffusionMin) / BloomDiffusionMax,
+            => Clamp(Remap(diffusion, BloomDiffusionMin, BloomDiffusionMax, 0f, 1f),
                 PostProcessingRules.Bloom.ScatterMin, PostProcessingRules.Bloom.ScatterMax);
 
         public static float ExportBloomScatter(float scatter)
-            => Clamp(scatter * BloomDiffusionMax, BloomDiffusionMin, BloomDiffusionMax);
+            => Clamp(Remap(scatter, 0f, 1f, BloomDiffusionMin, BloomDiffusionMax),
+                BloomDiffusionMin, BloomDiffusionMax);
 
         #endregion
 
         #region Chromatic aberration
 
-        /// <summary> Afterbeat chromatic intensity is 0-8 against this format's 0-1. </summary>
-        public const float ChromaticIntensityScale = 8f;
+        // EventManager.InitChromaEvents does LSMath.Remap(ev[0], 0, 8, 0, 3) before writing
+        // chroma.intensity, and URP's own chromatic intensity is 0-1 - so the source range
+        // SATURATES at 8/3, and the top two thirds of Afterbeat's own slider all look the same over
+        // there. Reproducing the saturation is the point: dividing by 8 instead would render a
+        // level authored at 3 as a third of the aberration its author saw.
+
+        /// <summary> Afterbeat chromatic intensity runs 0-8, remapped onto 0-3 before it reaches a
+        /// volume whose own range is 0-1. </summary>
+        public const float ChromaticSourceMax = 8f;
+        public const float ChromaticTargetMax = 3f;
 
         public static float ImportChromatic(float intensity)
-            => Clamp(intensity / ChromaticIntensityScale,
+            => Clamp(Remap(intensity, 0f, ChromaticSourceMax, 0f, ChromaticTargetMax),
                 PostProcessingRules.ChromaticAberration.IntensityMin,
                 PostProcessingRules.ChromaticAberration.IntensityMax);
 
-        public static float ExportChromatic(float intensity) => intensity * ChromaticIntensityScale;
+        public static float ExportChromatic(float intensity)
+            => Clamp(Remap(intensity, 0f, ChromaticTargetMax, 0f, ChromaticSourceMax),
+                0f, ChromaticSourceMax);
 
         #endregion
 
         #region Vignette
 
-        /// <summary> Afterbeat vignette intensity is 0-100 against this format's 0-1. </summary>
-        public const float VignetteIntensityScale = 100f;
+        // Intensity, smoothness and centre all reach vignette.* unremapped
+        // (LSEffectsManager.UpdateVignette), so all three are URP values already. The old /100 and
+        // /2 made a converted vignette invisible.
 
-        /// <summary> Afterbeat vignette smoothness is -25..25; halving it lands the usable part of
-        /// that range on this format's 0.01-1 and saturates the rest. </summary>
-        public const float VignetteSmoothnessScale = 2f;
-
-        /// <summary> Smallest smoothness the source range is read as, below this format's own
-        /// minimum so a source zero does not read as a hard edge. </summary>
-        public const float VignetteSmoothnessFloor = 0.02f;
+        /// <summary> What Afterbeat substitutes for a smoothness of exactly zero - URP's own
+        /// minimum, since a zero smoothness is a hard edge nothing authored. </summary>
+        public const float VignetteSmoothnessFloor = 0.01f;
 
         public static float ImportVignetteIntensity(float intensity)
-            => Clamp(intensity / VignetteIntensityScale,
+            => Clamp(intensity,
                 PostProcessingRules.Vignette.IntensityMin, PostProcessingRules.Vignette.IntensityMax);
 
-        public static float ExportVignetteIntensity(float intensity) => intensity * VignetteIntensityScale;
+        public static float ExportVignetteIntensity(float intensity) => intensity;
 
         public static float ImportVignetteSmoothness(float smoothness)
-            => Clamp(Math.Max(smoothness, VignetteSmoothnessFloor) / VignetteSmoothnessScale,
+            => Clamp(smoothness == 0f ? VignetteSmoothnessFloor : smoothness,
                 PostProcessingRules.Vignette.SmoothnessMin, PostProcessingRules.Vignette.SmoothnessMax);
 
-        public static float ExportVignetteSmoothness(float smoothness)
-            => smoothness * VignetteSmoothnessScale;
+        public static float ExportVignetteSmoothness(float smoothness) => smoothness;
 
         public static float ImportVignetteCenter(float center)
             => Clamp(center, PostProcessingRules.Vignette.CenterMin, PostProcessingRules.Vignette.CenterMax);
+
+        public static float ExportVignetteCenter(float center) => center;
 
         #endregion
 
         #region Lens distortion
 
-        /// <summary> Afterbeat lens intensity is -80..80 against this format's -1..1. </summary>
+        /// <summary> Afterbeat lens intensity is -80..80 against this format's -1..1 -
+        /// EventManager.InitLensEvents does LSMath.Remap(ev[0], -80, 80, -1, 1). </summary>
         public const float LensIntensityScale = 80f;
 
         /// <summary> Afterbeat measures the lens centre from the middle of the screen (-0.5..0.5);
@@ -128,11 +139,35 @@ namespace BH.SDK.Interop.AfterBeat
 
         #region Film grain and glitch
 
+        // A grain keyframe is [Intensity, unused, Type, Response]. Slot 2 is NOT a size - Afterbeat
+        // casts it to UnityEngine.Rendering.Universal.FilmGrainLookup and clamps it to 0-9, i.e. it
+        // is the same preset table this format's FilmGrainType is, only starting one earlier
+        // because ours reserves 0 for None. Slot 1 is read into a field the effect never uses.
+
+        /// <summary> Afterbeat's grain index 0 is this format's <see cref="FilmGrainType.Thin1"/>,
+        /// since this format reserves 0 for "no grain". </summary>
+        public const int GrainTypeOffset = 1;
+
+        /// <summary> Lowest index Afterbeat's own clamp allows. </summary>
+        public const int MinSourceGrainType = 0;
+
+        /// <summary> Highest index Afterbeat's own clamp allows - FilmGrainLookup.Large02. </summary>
+        public const int MaxSourceGrainType = 9;
+
         public static float ImportGrainIntensity(float intensity)
             => Clamp(intensity,
                 PostProcessingRules.FilmGrain.IntensityMin, PostProcessingRules.FilmGrain.IntensityMax);
 
         public static float ExportGrainIntensity(float intensity) => intensity;
+
+        public static FilmGrainType ImportGrainType(float sourceIndex)
+        {
+            var index = (int)Math.Clamp(sourceIndex, MinSourceGrainType, MaxSourceGrainType);
+            return (FilmGrainType)(index + GrainTypeOffset);
+        }
+
+        public static float ExportGrainType(FilmGrainType type)
+            => Math.Clamp((int)type - GrainTypeOffset, MinSourceGrainType, MaxSourceGrainType);
 
         public static float ImportGlitchIntensity(float intensity)
             => Clamp(intensity,
@@ -170,6 +205,16 @@ namespace BH.SDK.Interop.AfterBeat
 
         private static float Clamp(float value, float min, float max)
             => value < min ? min : value > max ? max : value;
+
+        // The source game's own LSMath.Remap, spelled out because this library has no engine to
+        // borrow it from. Unclamped on purpose - every caller clamps into ITS OWN range afterwards,
+        // and clamping here as well would hide which of the two ranges an out-of-range value hit.
+        private static float Remap(float value, float fromMin, float fromMax, float toMin, float toMax)
+        {
+            var span = fromMax - fromMin;
+            if (Math.Abs(span) < float.Epsilon) return toMin;
+            return toMin + (value - fromMin) / span * (toMax - toMin);
+        }
 
         // Mathf lives in the engine and this library has none, so the one function borrowed from it
         // is spelled out. Unlike the % operator it answers a positive value for a negative input,

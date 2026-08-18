@@ -58,12 +58,25 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     "Afterbeat prefabs carry a preview image; this format has no field for one and it is not imported.",
                     path);
 
-            if (source.Offset != 0f)
-                report?.Dropped("prefab_lead_time",
-                    "Afterbeat prefabs carry a lead time that shifts a whole placement in time; this format has no equivalent, so placements start where they sit.",
+            // A template's own placements. Not imported: materializing a placement is the consuming
+            // host's job (see this file's header), and a nested one needs it to recurse into a
+            // template it has already materialized. Reported rather than dropped silently, because
+            // a template carrying one draws visibly less than it should.
+            if (source.Placements is { Count: > 0 })
+                report?.Deferred("prefab_nested_placements",
+                    "Some Afterbeat prefabs place other prefabs inside themselves; nested placements are not imported yet, so those templates arrive missing that content.",
                     path);
 
             return prefab;
+        }
+
+        /// <summary> Records a template's lead time so the placements can apply it. Separate from
+        /// <see cref="ImportTemplate"/> because a template imported on its own - a bare .vgp - has
+        /// no placement to apply it to and no context to record it in. </summary>
+        public static void RegisterLeadTime(VgpPrefab source, Prefab prefab, ABImportContext context)
+        {
+            if (source == null || prefab == null || context == null) return;
+            if (source.Offset != 0f) context.PrefabLeadTimes[prefab.PrefabId] = source.Offset;
         }
 
         /// <summary> One .vgd prefab_objects entry into a placement in the hosting scope.
@@ -87,7 +100,15 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 Active = true,
                 Span = ResolveSpan(source, context, prefabId, levelFrameDuration, templates),
                 Layer = ResolveLayer(context, placementIndex, path),
+                ParentObjectId = context.ResolveParent(source.ParentId, path),
             };
+
+            // See VgdPrefabPlacement.RepeatCount: the source game stores it and draws nothing from
+            // it, so neither does this - but a level author who set it meant something by it.
+            if (source.RepeatCount > 0)
+                context.Report.Deferred("placement_repeat",
+                    "Some prefab placements are marked to repeat; the source game does not draw the repetitions either, so they were imported as the single placement they render as.",
+                    path);
 
             var x = source.GetValue(VgdPrefabPlacement.TrackIndex.Position, 0);
             var y = source.GetValue(VgdPrefabPlacement.TrackIndex.Position, 1);
@@ -113,6 +134,13 @@ namespace BH.SDK.Interop.AfterBeat.Import
         // start frame. Reading it as zero puts an entire prefab library in the first second of the
         // level, which is what happened for as long as the placement had no time field at all.
         //
+        // The template's LEAD TIME is part of that start rather than something lost with the
+        // template: the source game spawns every copied object at `placement.t - prefab.Offset +
+        // its own st` (ObjectManager.AddPrefabToLevel), so a lead time of half a second means the
+        // whole placement plays half a second EARLIER, and nothing else about it changes. Which is
+        // exactly a shift of this span - so it crosses, and only a placement pushed before frame
+        // zero by one loses anything (the clamp in FromFrames, matching the source game's own).
+        //
         // The length is the TEMPLATE's, not the level's. Spanning the level instead would work
         // (a child must lie inside its parent, and a level-long parent cuts nothing short), but it
         // makes every placement's clip cover the whole timeline, which is unreadable in the editor
@@ -121,7 +149,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static FrameSpan ResolveSpan(VgdPrefabPlacement source, ABImportContext context,
             PrefabId prefabId, int levelFrameDuration, IReadOnlyDictionary<PrefabId, Prefab> templates)
         {
-            var startFrame = ABTimeMap.ToFrame(source.StartTime, context.Options.Framerate);
+            context.PrefabLeadTimes.TryGetValue(prefabId, out var leadTime);
+            var startFrame = ABTimeMap.ToFrame(source.StartTime - leadTime, context.Options.Framerate);
 
             var duration = levelFrameDuration;
             if (templates != null && templates.TryGetValue(prefabId, out var template) && template != null)

@@ -18,6 +18,17 @@ namespace BH.SDK.Interop.AfterBeat
     // side and by enum on the other. An unknown name is Linear - a keyframe with an unreadable
     // curve still has to land on its value at its own frame, and Linear is the only answer that is
     // never surprising.
+    //
+    // THE TABLE BELOW IS EXHAUSTIVE, and that is a measurement rather than a hope. The source game
+    // reads a curve name through a dictionary INDEXER (LSAnimationConverter.ReadJson:
+    // AnimationListDictionaryStr[text]), so a name it does not have is a KeyNotFoundException and a
+    // level that will not load at all - which makes "which names exist" the highest-stakes question
+    // on the export side, and one no .vgd can answer, since a level only proves the names it uses.
+    // That dictionary is filled from an Inspector list, so it is not in the game's code either; it
+    // is in its scene data (Afterbeat_Data/level2, around offset 48060), and reading the strings
+    // there gives exactly these 23: Linear, Instant, and In/Out/InOut of Sine, Quad, Expo, Circ,
+    // Back, Elastic and Bounce. No Cubic, Quart or Quint - the approximations below are the whole
+    // gap and not a guess at one.
 
     /// <summary> Easing names as Afterbeat writes them, mapped onto <see cref="EaseType"/>. </summary>
     public static class ABEaseMap

@@ -66,6 +66,14 @@ namespace BH.SDK.Interop.AfterBeat.Export
             // turned back into seconds, and reading them at any other rate retimes the whole level.
             options.Framerate = level.Settings.Framerate;
 
+            // Afterbeat rounds every time it stores onto a 10 ms grid (ABTimeMap.SourceTimeStep), so
+            // a level running finer than 100 fps has frames it cannot tell apart - and a track over
+            // there holds one keyframe per time, so the neighbours merge rather than crowd.
+            if (options.Framerate > ABTimeMap.MaxLosslessFramerate)
+                report.Approximated("framerate_finer_than_source_grid",
+                    $"Afterbeat stores times in hundredths of a second; this level runs at {options.Framerate} fps, so keyframes less than {ABTimeMap.SourceTimeStep} seconds apart land on the same time there and only the last of them survives.",
+                    "level");
+
             var target = new VgdLevel();
             var context = new ABExportContext(options, report, level.Game);
 
@@ -403,6 +411,21 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
         #endregion
 
+        /// <summary> Whether every key of a screen-limit track pins the level to exactly the aspect
+        /// Afterbeat itself runs at, which is the one limit that costs nothing to leave out. </summary>
+        private static bool IsSourceAspectOnly(IEnumerable<ScreenLimitKey> keys)
+        {
+            foreach (var key in keys)
+            {
+                if (key?.ScreenLimit is not ScreenLimitFixed fixedLimit) return false;
+                if (fixedLimit.Aspect == null) return false;
+                if (fixedLimit.Aspect.Width != Import.ABEventsImporter.SourceAspectWidth
+                    || fixedLimit.Aspect.Height != Import.ABEventsImporter.SourceAspectHeight)
+                    return false;
+            }
+            return true;
+        }
+
         private static void ReportUnsupported(Level level, InteropReport report)
         {
             if (level.Audio?.Tracks is { Count: > 0 })
@@ -436,10 +459,23 @@ namespace BH.SDK.Interop.AfterBeat.Export
             var events = level.Game.Events;
             var player = level.Game.PlayerEvents;
 
+            // A screen limit has no field over there and is never written - but "not written" and
+            // "lost" are not the same thing here, and saying the second when the first is true puts
+            // a finding on every level that came FROM Afterbeat (the import pins one at the source
+            // game's own 16:9, see ABEventsImporter.ImportScreenLimit). A limit that is exactly
+            // that aspect describes the frame the target format already runs at, so dropping it
+            // changes nothing about how the level plays; any other limit genuinely goes.
             if (events.ScreenLimits is { Count: > 0 })
-                report.Dropped("screen_limits",
-                    "Afterbeat has no playable-area limits; this level's screen limit track is not exported.",
-                    "events");
+            {
+                if (IsSourceAspectOnly(events.ScreenLimits))
+                    report.Info("screen_limit_matches_source",
+                        "This level is limited to the aspect Afterbeat runs at anyway, so its screen limit is not written and nothing about the framing changes.",
+                        "events");
+                else
+                    report.Dropped("screen_limits",
+                        "Afterbeat has no playable-area limits and always runs at 16:9; this level's screen limit track is not exported, and a level built for another aspect will be framed differently there.",
+                        "events");
+            }
 
             if (events.Backgrounds is { Count: > 0 })
                 report.Dropped("backgrounds",

@@ -46,12 +46,18 @@ namespace BH.SDK.Generators.Interop
                 nameof(Parameters.EditorGroupStride), nameof(Parameters.PlacementLayerOffset),
                 nameof(Parameters.ParallaxLayerOffset), nameof(Parameters.MaxParallaxLoopKeys),
                 nameof(Parameters.LevelJson), nameof(Parameters.MetaJson),
-                nameof(Parameters.AudioFileName), nameof(Parameters.SourceFolder))
+                nameof(Parameters.AudioFileName), nameof(Parameters.SourceFolder),
+                nameof(Parameters.AudioLengthSeconds))
             .Range(nameof(Parameters.Framerate), FrameRules.MinFramerate, FrameRules.MaxFramerate)
             .Range(nameof(Parameters.ParallaxLayerOffset), 0, ValueRules.MaxLayer)
             .Range(nameof(Parameters.MaxParallaxLoopKeys), 2, LevelRules.MaxObjectKeys)
             .Range(nameof(Parameters.EditorGroupStride), 1, ValueRules.MaxLayer)
             .Range(nameof(Parameters.PlacementLayerOffset), 0, ValueRules.MaxLayer)
+            // Zero is "the host could not measure the song"; the top is the longest level this
+            // format can hold at all, which is what a range on a host-filled field is for - not a
+            // slider an author drags, but a bound a hostile value cannot get past.
+            .Range(nameof(Parameters.AudioLengthSeconds), 0f,
+                FrameRules.MaxFrameDuration / (float)FrameRules.MinFramerate)
             .Unit(nameof(Parameters.Framerate), "fps")
             .Unit(nameof(Parameters.MaxParallaxLoopKeys), "keys")
             .Unit(nameof(Parameters.EditorGroupStride), "layers")
@@ -66,10 +72,12 @@ namespace BH.SDK.Generators.Interop
                 p => ((Parameters)p).ImportParallax)
             // The host fills these in from the folder it opened; showing them as editable rows would
             // invite an author to paste a level document into a text field.
+            .Unit(nameof(Parameters.AudioLengthSeconds), "s")
             .Hidden(nameof(Parameters.LevelJson))
             .Hidden(nameof(Parameters.MetaJson))
             .Hidden(nameof(Parameters.AudioFileName))
             .Hidden(nameof(Parameters.SourceFolder))
+            .Hidden(nameof(Parameters.AudioLengthSeconds))
             .Build();
 
         /// <summary> The report from the last run, for a host to show once the level exists. It is
@@ -171,6 +179,7 @@ namespace BH.SDK.Generators.Interop
             LayerImport = parameters.LayerImport,
             EditorGroupStride = parameters.EditorGroupStride,
             PlacementLayerOffset = parameters.PlacementLayerOffset,
+            AudioLengthSeconds = parameters.AudioLengthSeconds,
         };
 
         /// <summary> Public mutable fields, like every parameters class here - a form binds to them
@@ -205,6 +214,7 @@ namespace BH.SDK.Generators.Interop
             public string MetaJson = string.Empty;
             public string AudioFileName = string.Empty;
             public string SourceFolder = string.Empty;
+            public float AudioLengthSeconds;
 
             string IABLevelInput.LevelJson
             {
@@ -225,6 +235,11 @@ namespace BH.SDK.Generators.Interop
             {
                 get => SourceFolder;
                 set => SourceFolder = value;
+            }
+            float IABLevelInput.AudioLengthSeconds
+            {
+                get => AudioLengthSeconds;
+                set => AudioLengthSeconds = value;
             }
         }
     }

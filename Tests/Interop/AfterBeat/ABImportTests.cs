@@ -368,7 +368,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         {
             var level = new VgdLevel();
             var arrow = ABMockData.CreateObject("arrow");
-            arrow.Shape = (int)ABShape.Arrow;
+            arrow.Shape = (int)ABShape.Misc;
             arrow.ShapeOption = 0;
             level.Objects.Add(arrow);
 
@@ -382,6 +382,180 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.GreaterOrEqual(shape.TriangleCount, ValueRules.MinShapeTriangles);
         }
 
+        // Triangle has SIX presets, and the last two were missing until the game's own shape list
+        // was read out of its scene data - so every "Triangle Bottom" in a level silently became a
+        // Square. They are the same triangle as options 0 and 1, pivoted at the base rather than at
+        // the centroid, which is a pivot here and not a second mesh.
+        [TestCase(4, 0)]
+        [TestCase(5, 1)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TriangleBottom_IsTheSameTrianglePivotedAtItsBase(int option, int centred)
+        {
+            var level = new VgdLevel();
+            var bottom = ABMockData.CreateObject("bottom");
+            bottom.Shape = (int)ABShape.Triangle;
+            bottom.ShapeOption = option;
+            level.Objects.Add(bottom);
+
+            var reference = ABMockData.CreateObject("centred");
+            reference.Shape = (int)ABShape.Triangle;
+            reference.ShapeOption = centred;
+            level.Objects.Add(reference);
+
+            var result = ABLevelImporter.Import(level, null, Options());
+            var shapes = result.Level.Game.Objects.Values.OfType<ShapeObject>().ToList();
+
+            Assert.AreEqual(2, shapes.Count);
+            Assert.AreEqual(shapes[1].ShapeId, shapes[0].ShapeId, "the geometry is the same one");
+            Assert.IsEmpty(result.Level.Resources.CompositeShapes, "nothing had to be synthesized");
+            Assert.IsEmpty(shapes[1].Pivots, "the centred option keeps the default pivot");
+
+            var pivot = (Vector2Value)shapes[0].Pivots.Single().Value;
+            Assert.AreEqual(ABObjectImporter.DefaultPivot, pivot.X, 1e-4f);
+            Assert.AreEqual(ABObjectImporter.DefaultPivot - ABShapeMap.TriangleCentroidOffset,
+                pivot.Y, 1e-4f, "the reference point sits at the triangle's base");
+        }
+
+        // A quarter turn under a non-uniformly scaled parent is the one non-commuting composition
+        // that still lands on a plain rotation and scale - S(x,y)·R(90) == R(90)·S(y,x) - so the
+        // parent's two scale components simply trade places. Composing in this format's own order
+        // reaches the wrong one, and on an anisotropic parent that is the difference between a
+        // shape and a streak, so the child's own scale is multiplied by the ratio that undoes it.
+        [TestCase(90f)]
+        [TestCase(270f)]
+        [TestCase(-90f, TestName = "Import_QuarterTurnUnderASquashedParent_TradesTheParentsAxes(-90)")]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_QuarterTurnUnderASquashedParent_TradesTheParentsAxes(float degrees)
+        {
+            const float parentX = 8f;
+            const float parentY = 2f;
+            const float childX = 3f;
+            const float childY = 5f;
+
+            var level = new VgdLevel();
+            level.Objects.Add(Squashed("parent", null, parentX, parentY, 0f));
+            level.Objects.Add(Squashed("child", "parent", childX, childY, degrees));
+
+            var imported = ABLevelImporter.Import(level, null, Options()).Level;
+            var child = imported.Game.Objects.Values
+                .Single(o => o.ParentObjectId.value != 0);
+
+            // Which FIELD the child's own scale lands in is decided by the child's OWN children,
+            // and it has none - so it goes to Sizes, where it reaches the renderer and nothing
+            // else. The parent's went to Scales, since this child inherits it. Asserting the field
+            // is half the point: the correction has to land wherever the scale did.
+            Assert.IsEmpty(child.Scales, "a childless object's scale does not need to propagate");
+            var scale = (Vector2Value)child.Sizes.Single().Scale;
+
+            Assert.AreEqual(childX * (parentY / parentX), scale.X, 1e-4f);
+            Assert.AreEqual(childY * (parentX / parentY), scale.Y, 1e-4f);
+        }
+
+        // Everything else under the same parent is genuinely skewed over there and cannot be here,
+        // so it must be left alone rather than "corrected" into a different wrong answer.
+        [TestCase(0f)]
+        [TestCase(45f)]
+        [TestCase(180f)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_AnyOtherAngleUnderASquashedParent_IsLeftAlone(float degrees)
+        {
+            var level = new VgdLevel();
+            level.Objects.Add(Squashed("parent", null, 8f, 2f, 0f));
+            level.Objects.Add(Squashed("child", "parent", 3f, 5f, degrees));
+
+            var imported = ABLevelImporter.Import(level, null, Options()).Level;
+            var child = imported.Game.Objects.Values
+                .Single(o => o.ParentObjectId.value != 0);
+
+            var scale = (Vector2Value)child.Sizes.Single().Scale;
+            Assert.AreEqual(3f, scale.X, 1e-4f);
+            Assert.AreEqual(5f, scale.Y, 1e-4f);
+        }
+
+        private static VgdObject Squashed(string id, string parentId, float x, float y, float degrees)
+        {
+            var target = new VgdObject
+            {
+                Id = id,
+                ParentId = parentId ?? string.Empty,
+                ParentType = "111",
+                ObjectType = (int)ABObjectType.Hit,
+                AutokillType = (int)ABAutokillType.FixedTime,
+                AutokillOffset = 4f,
+                Shape = (int)ABShape.Square,
+            };
+
+            target.Move.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { 0f, 0f } });
+            target.Scale.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { x, y } });
+            target.Rotate.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { degrees } });
+            target.Color.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { 0f, 100f } });
+            return target;
+        }
+
+        // The whole preset table, pinned against the game's own - every pair below was read out of
+        // DataManager.GameObjectShapes, and the outline widths out of the meshes it points at. A
+        // pair that starts resolving to something else is either a real correction or a regression,
+        // and either way it should not happen quietly.
+        [TestCase(0, 0, nameof(ShapeId.Square))]
+        [TestCase(0, 1, nameof(ShapeId.Square_T4))]
+        [TestCase(0, 2, nameof(ShapeId.Square_T8))]
+        [TestCase(1, 0, nameof(ShapeId.Circle))]
+        [TestCase(1, 1, nameof(ShapeId.Circle_T4))]
+        [TestCase(1, 2, nameof(ShapeId.Circle_F2))]
+        [TestCase(1, 4, nameof(ShapeId.Circle_T8))]
+        [TestCase(1, 5, nameof(ShapeId.Circle_F4))]
+        [TestCase(1, 7, nameof(ShapeId.Circle_F8))]
+        [TestCase(2, 0, nameof(ShapeId.Triangle))]
+        [TestCase(2, 1, nameof(ShapeId.Triangle_T2))]
+        [TestCase(2, 2, nameof(ShapeId.RightTriangle))]
+        [TestCase(2, 3, nameof(ShapeId.RightTriangle_T4))]
+        [TestCase(2, 4, nameof(ShapeId.Triangle))]
+        [TestCase(2, 5, nameof(ShapeId.Triangle_T2))]
+        [TestCase(5, 0, nameof(ShapeId.Hexagon))]
+        [TestCase(5, 1, nameof(ShapeId.Hexagon_T4))]
+        [TestCase(5, 2, nameof(ShapeId.Hexagon_T16))]
+        [TestCase(5, 3, nameof(ShapeId.Hexagon_F2))]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void ShapeMap_PresetPairs_ResolveToTheMeasuredPreset(int shape, int option, string expected)
+        {
+            var resolved = ABShapeMap.Import(shape, option, null);
+            var field = typeof(ShapeId).GetField(expected);
+
+            Assert.IsNotNull(field, $"{expected} is not a ShapeId preset");
+            Assert.AreEqual((ShapeId)field.GetValue(null), resolved);
+        }
+
+        // Misc's third entry is a PA Logo the game's own custom-polygon index makes unreachable:
+        // IsCustom says option 2 is custom, so an object carrying csp there is a polygon and not a
+        // logo. Deferring to the index is what reproduces the game.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_MiscOptionTwo_IsACustomPolygonNotAPreset()
+        {
+            var level = new VgdLevel();
+            var custom = ABMockData.CreateObject("custom");
+            custom.Shape = (int)ABShape.Misc;
+            custom.ShapeOption = ABShapeOptions.MiscCustom;
+            custom.CustomShape = new System.Collections.Generic.List<float> { 5f, 0f, 1f, 5f, 0f };
+            level.Objects.Add(custom);
+
+            var result = ABLevelImporter.Import(level, null, Options());
+            var imported = result.Level.Game.Objects.Values.OfType<ShapeObject>().Single();
+
+            Assert.AreEqual(1, result.Level.Resources.CompositeShapes.Count);
+            Assert.IsTrue(result.Level.Resources.CompositeShapes.ContainsKey(imported.ShapeId));
+        }
+
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
@@ -392,7 +566,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             for (var i = 0; i < 3; i++)
             {
                 var arrow = ABMockData.CreateObject($"arrow{i}");
-                arrow.Shape = (int)ABShape.Arrow;
+                arrow.Shape = (int)ABShape.Misc;
                 level.Objects.Add(arrow);
             }
 

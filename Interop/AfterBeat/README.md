@@ -10,7 +10,24 @@ the host's business.
 ## Where the format description came from
 
 These models were transcribed from the official Afterbeat wiki. Every page below was read at
-transcription time (August 2026); nothing here was reverse-engineered from a binary or a save file.
+transcription time (August 2026).
+
+**The wiki is no longer the authority, though, and where the two disagree the game wins.** Three
+other sources have since been read, in this order of trust:
+
+1. **The game's own decompiled code** — `BeatmapObject`, `DataManager`, `EventManager`,
+   `ObjectManager`, `LSEffectsManager`, `ObjectHelpers`. This is what settled every enum's real
+   numbering, every post-processing scale, what `er` on a keyframe actually means, and the fact that
+   `game_version` is parsed rather than displayed.
+2. **The game's own shipped data** — `Afterbeat_Data/level2`, which holds the Inspector-authored
+   lists the code only references: the 21 default themes, and the 23 easing names a curve may carry.
+3. **Real levels** — measured, not read. Key frequencies, value ranges and start-time distributions
+   over a workshop level and its autosaves, which is what tells a value that does not exist from one
+   that merely never came up.
+
+The wiki was wrong or silent on, among others: `ShapeType` 3 (Misc, not Arrow), `AutoKillType` 0,
+randomization type 2, the fact that `er` is a range END rather than an offset, the default `p_t`,
+the object-type numbering real files use, and every one of the post-processing ranges.
 
 | Page | What it covers |
 |---|---|
@@ -28,7 +45,7 @@ Two caveats the wiki states about itself, both load-bearing here:
   inverted) whose JSON keys are undocumented. This is the direct reason every model in `Models/`
   derives from `ABNode` and carries `[JsonExtensionData]` — unknown keys survive a round trip
   instead of being silently deleted on the first export.
-- **`Level folder` is a stub.** File names (`level.vgd`, `level.jpg`, the song as `.ogg`/`.mp3`/
+- **`Level folder` is a stub.** File names (`level.vgd`, `cover.jpg`, the song as `.ogg`/`.mp3`/
   `.wav`) come from the version-history pages rather than from a specification, so a host should
   probe for them rather than assume them.
 
@@ -96,9 +113,12 @@ including their respawn position, object hierarchy, and the object/prefab struct
 | draw order | absolute depth 0–60 (smaller in front) inside one of three render bands | parent-relative `Layer`, higher in front, four import modes — see below |
 | object colour | theme slot + an opacity in **percent** | `ThemeRef` at full opacity, a literal below it |
 | camera zoom | the camera's orthographic size (half-height), default 20 | `Zoom`, the whole visible height — so **doubled** |
+| camera-parented objects | hang off a node scaled by `zoom / 20`, so they keep a constant screen size | that node is rebuilt as an ordinary object and they hang off it; the export flattens it away again |
 | background | a subsystem of its own, plus the theme's background colour | the theme's background slot referenced on the `Backgrounds` track; the parallax becomes objects |
 | text | a scale and no font size, no bounds at all | `Scale` carries the source scale; `Size` is estimated at one cell per character and per line |
-| post-processing | every effect is keyframed whether used or not | imported **switched off**, values intact — one tick per effect turns it back on |
+| post-processing | every effect is keyframed whether used or not | each keyframe arrives switched **on exactly when its intensity is non-zero**, which is the rule the source game itself applies before writing to the volume |
+| parent inheritance | position / scale / rotation switchable per child (`p_t`, default `101` — no scale) | one transform, always all three — except the **scale** bit, which crosses exactly as the choice of `Size` (does not propagate) vs `Scale` (does); `000` becomes a root |
+| the frame | nothing in the file, and nothing enforced at play time — but every window resolution the game offers is 16:9, so that is what every level was authored inside | a `Fixed` 16:9 screen limit on the first frame. **Import only** — the export writes none, since the target format has no field and always runs at that aspect anyway |
 | shapes | 25 `(shape, option)` pairs | 78 presets, plus synthesized geometry for the seven combinations no preset covers |
 | parallax | a background subsystem | ordinary collider-less objects with the loop baked into keyframes |
 
@@ -134,6 +154,29 @@ track list, offsets, speeds or effects), level-authored geometry, anchors, per-c
 per-character text effects, random values, beat segments past the first, checkpoint spaces other
 than World, several post-processing effects, per-instance prefab overrides, and — worth naming
 separately — **licensing, age rating and attribution**, which `.vgm` has no field for at all.
+
+## Calibration
+
+Measured out of the shipped game rather than guessed — the decompiled source for the behaviour, the
+build's own serialized assets (`sharedassets2.assets`) for the numbers the source does not carry.
+These are what a 1:1 port has to match:
+
+| Thing | Value | Where it was read |
+|---|---|---|
+| camera | `orthographicSize = camZoom`, default `20` | `EventManager.Update`; confirmed by `RenderBounds` drawing its frame at `orthoSize * 2` |
+| visible area | **40 units tall**, 71.11 wide at 16:9 | derived from the above |
+| aspect | **not forced in code** — read from `Screen.width/height` | no `camera.aspect` assignment, no letterbox anywhere |
+| object at scale 1 | exactly **1 unit** | all shape radii are `0.5` (`ObjectManager`), the scale keyframe goes straight into `localScale` |
+| player body | a **1×1 square**, drawn at scale 1 | prefab `new-player` → `Player` → `core`, mesh `square`, local AABB extent `0.5` |
+| player hitbox | **circle, radius 0.25** (trigger), centred | `hit-collider`, `CircleCollider2D.m_Radius`, `CollisionType.Standard`, no scale anywhere up the chain |
+| close-call radius | **1.5** | `close-call-collider`, `CollisionType.CloseCall` |
+| player clamp | **1.2 units** inset from every edge, aspect-independent | `VGPlayer.EDGE_OFFSET = 0.03` of the viewport, × 40 |
+| speeds | `22` normal, `80` boost, `720`°/s turn | `VGPlayer.DEFAULT_*` |
+
+So the hitbox is **half the width of the drawn body** — 0.5 across against 1 — and the whole player
+is 1/40 of the screen height at the neutral zoom. Nothing scales the player at runtime: the boost
+and hit reactions deform mesh vertices (`MeshDeformation`) and shake the transform's position, never
+its scale, and no event track, difficulty modifier or zen mode touches it.
 
 ## Testing
 

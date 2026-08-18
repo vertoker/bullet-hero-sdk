@@ -29,15 +29,50 @@ namespace BH.SDK.Interop.AfterBeat
             return (int)frame;
         }
 
-        /// <summary> A frame's own start, in seconds. </summary>
+        // AFTERBEAT KEEPS NO TIME IT WAS GIVEN. Every keyframe time it reads or writes goes through
+        // EventKeyframe.Time, whose setter converts to an integer count of hundredths of a second
+        // and back (KeyframeOffsetFromTime / TimeFromKeyframeOffset), clamping a negative to zero
+        // on the way. So the file's own grid is 10 ms, whatever this format's framerate is, and an
+        // exported time that is not on it is silently moved to the nearest point that is.
+        //
+        // Snapping here rather than letting it happen over there is what makes an export honest
+        // about what it wrote: a round trip returns the time the target game actually holds, and a
+        // framerate whose frames are FINER than the grid is caught (see MaxLosslessFramerate)
+        // instead of quietly merging two keyframes into one.
+
+        /// <summary> The grid every time in a .vgd sits on, in seconds. </summary>
+        public const float SourceTimeStep = 0.01f;
+
+        /// <summary> The highest framerate whose frames stay distinct on that grid. Above it two
+        /// frames can land on one source time, and the source format allows a track only one
+        /// keyframe per time. </summary>
+        public const int MaxLosslessFramerate = 100;
+
+        /// <summary> A frame's own start, in seconds, on the grid the target format stores. </summary>
         public static float ToSeconds(int frame, int framerate)
         {
             if (framerate <= 0) framerate = FrameRules.MinFramerate;
-            return frame / (float)framerate;
+            return SnapToSourceGrid(frame / (float)framerate);
         }
 
+        /// <summary> One time as the target format will hold it. </summary>
+        public static float SnapToSourceGrid(float seconds)
+        {
+            if (seconds <= 0f) return 0f;
+            return (float)(Math.Round(seconds / (double)SourceTimeStep, MidpointRounding.AwayFromZero)
+                           * SourceTimeStep);
+        }
+
+        // A TRACK OF ONE KEYFRAME CONTRIBUTES NOTHING, which is the source game's own rule rather
+        // than an optimisation: BeatmapObject.GetLongestSequence skips any track whose keyframe
+        // count is 1 or 0 before taking its maximum. A single keyframe is a constant, not an
+        // animation, so an object holding one colour from second five onwards does not live until
+        // second five - it dies immediately, exactly as it does over there. Taking the maximum over
+        // every keyframe instead gives such an object a lifetime the source level never gave it.
+
         /// <summary> The last keyframe time across all four of an object's tracks, in seconds
-        /// relative to the object's own start. Zero when it has no keyframes at all. </summary>
+        /// relative to the object's own start, counting only tracks that actually ANIMATE. Zero
+        /// when it has none. </summary>
         public static float GetLastKeyframeTime(VgdObject source)
         {
             var last = 0f;
@@ -45,12 +80,16 @@ namespace BH.SDK.Interop.AfterBeat
 
             foreach (var track in source.Tracks)
             {
-                if (track?.Keyframes == null) continue;
+                if (track?.Keyframes == null || track.Keyframes.Count <= 1) continue;
                 foreach (var keyframe in track.Keyframes)
                     if (keyframe != null && keyframe.Time > last) last = keyframe.Time;
             }
             return last;
         }
+
+        /// <summary> What the source game gives an object whose Song Time autokill has already
+        /// passed by the time it spawns - a tenth of a second, not a negative lifetime. </summary>
+        public const float MinSongTimeLife = 0.1f;
 
         /// <summary>
         /// Absolute end time in seconds, resolved from the object's autokill rule. An unknown rule
@@ -65,14 +104,26 @@ namespace BH.SDK.Interop.AfterBeat
 
             switch ((ABAutokillType)source.AutokillType)
             {
+                // Nothing to report: the source game resolves it exactly like Last Keyframe
+                // wherever a level plays - see ABAutokillType.OldStyleNoAutokill.
+                case ABAutokillType.OldStyleNoAutokill:
                 case ABAutokillType.LastKeyframe:
                     return start + lastKey;
                 case ABAutokillType.LastKeyframeOffset:
                     return start + lastKey + source.AutokillOffset;
                 case ABAutokillType.FixedTime:
                     return start + source.AutokillOffset;
+
+                // Song Time is the only rule that can name an end BEFORE the object's own start,
+                // and the source game does not read that as a backwards lifetime - it substitutes a
+                // tenth of a second. Resolving it as the raw offset instead builds a span running
+                // from the offset to the start, i.e. an object that plays for the whole stretch of
+                // level it was authored to be absent from.
                 case ABAutokillType.SongTime:
-                    return source.AutokillOffset;
+                    return start >= source.AutokillOffset
+                        ? start + MinSongTimeLife
+                        : source.AutokillOffset;
+
                 default:
                     report?.Approximated("autokill_unknown",
                         $"Autokill type {source.AutokillType} is not one this converter knows; those objects die on their last keyframe.",

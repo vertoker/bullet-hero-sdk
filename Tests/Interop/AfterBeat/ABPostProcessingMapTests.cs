@@ -1,72 +1,96 @@
 ﻿using System.Linq;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Import;
+using BH.SDK.Models.Enums;
 using BH.SDK.Rules;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests.Interop.AfterBeat
 {
-    // Post-processing is the part of the two formats that agrees on every MEANING and on no RANGE,
-    // and nothing in either document says so. Passing a number through untouched clamps at the far
-    // end of this format's own range, which is a level that renders wrong while every value in it
-    // is legal - a lens distortion authored at 30 becomes a permanent maximum fisheye.
+    // Post-processing is the part of the two formats that agrees on every MEANING and, for three of
+    // its numbers, on no RANGE either. Which three is not a matter of opinion: the source game's
+    // EventManager remaps exactly chromatic, bloom diffusion and lens intensity on the way to a URP
+    // volume, and hands every other value over as it stands. So a value it does not remap is
+    // ALREADY a URP value and must cross untouched - scaling it here is as wrong as failing to
+    // scale one it does remap, and less visible, since the result is merely too weak rather than
+    // clamped.
     //
-    // The cases below are the ends and the middle of each source range, taken from the mapping
-    // specification next to the converter.
+    // The cases below are the ends and the middle of each source range, all of them read off the
+    // game rather than off an inspector.
     public class ABPostProcessingMapTests
     {
+        // Not remapped: LSEffectsManager.UpdateBloom writes it into bloom.intensity as it stands.
         [TestCase(0f, 0f)]
-        [TestCase(25f, 5f)]
-        [TestCase(50f, 10f)]
-        [TestCase(80f, 10f, TestName = "ImportBloomIntensity_PastTheSourceRange_Clamps")]
+        [TestCase(5f, 5f)]
+        [TestCase(10f, 10f)]
+        [TestCase(80f, 10f, TestName = "ImportBloomIntensity_PastThisFormatsRange_Clamps")]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
-        public void ImportBloomIntensity_ScalesIntoThisFormatsRange(float source, float expected)
+        public void ImportBloomIntensity_CrossesUntouched(float source, float expected)
             => Assert.AreEqual(expected, ABPostProcessingMap.ImportBloomIntensity(source), 1e-4f);
 
-        // The specification's reciprocal answers 6 at the low end and 1 at the high end, so after
-        // clamping every legal input becomes maximum scatter and the parameter stops existing.
-        // Direct instead: more diffusion is more scatter, which is also what URP means by it.
-        [TestCase(5f, 0.1667f)]
-        [TestCase(15f, 0.5f)]
+        // Remapped: LSMath.Remap(ev[1], 5, 30, 0, 1), which is (d - 5) / 25 - so the bottom of the
+        // source range is NO scatter, not a sixth of it.
+        [TestCase(5f, 0f)]
+        [TestCase(7f, 0.08f, TestName = "ImportBloomScatter_TheSourcesOwnDefault")]
+        [TestCase(15f, 0.4f)]
         [TestCase(30f, 1f)]
-        [TestCase(0f, 0.1667f, TestName = "ImportBloomScatter_BelowTheSourceRange_ReadsAsItsFloor")]
+        [TestCase(0f, 0f, TestName = "ImportBloomScatter_BelowTheSourceRange_Clamps")]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
         public void ImportBloomScatter_RisesWithDiffusion(float source, float expected)
             => Assert.AreEqual(expected, ABPostProcessingMap.ImportBloomScatter(source), 1e-3f);
 
+        // Remapped onto 0-3 against a volume whose range is 0-1, so the source range SATURATES at
+        // 8/3 - reproducing that is the point, since dividing by 8 instead would render a level
+        // authored at 3 as a third of the aberration its author saw.
         [TestCase(0f, 0f)]
-        [TestCase(4f, 0.5f)]
-        [TestCase(8f, 1f)]
+        [TestCase(1f, 0.375f)]
+        [TestCase(2.6667f, 1f)]
+        [TestCase(8f, 1f, TestName = "ImportChromatic_TopOfTheSourceRange_Saturates")]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
-        public void ImportChromatic_ScalesIntoThisFormatsRange(float source, float expected)
+        public void ImportChromatic_SaturatesLikeTheSourceGame(float source, float expected)
             => Assert.AreEqual(expected, ABPostProcessingMap.ImportChromatic(source), 1e-4f);
 
+        // Not remapped: UpdateVignette writes it into vignette.intensity, whose range is 0-1. The
+        // old /100 made every imported vignette invisible.
         [TestCase(0f, 0f)]
-        [TestCase(50f, 0.5f)]
-        [TestCase(100f, 1f)]
+        [TestCase(0.5f, 0.5f)]
+        [TestCase(1f, 1f)]
+        [TestCase(100f, 1f, TestName = "ImportVignetteIntensity_PastThisFormatsRange_Clamps")]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
-        public void ImportVignetteIntensity_ScalesIntoThisFormatsRange(float source, float expected)
+        public void ImportVignetteIntensity_CrossesUntouched(float source, float expected)
             => Assert.AreEqual(expected, ABPostProcessingMap.ImportVignetteIntensity(source), 1e-4f);
 
-        // Saturating above 2 is deliberate - that is where the source format's own smoothness stops
-        // being visually distinguishable.
+        // Not remapped either, with one substitution the source game makes itself: a smoothness of
+        // exactly zero becomes URP's own minimum rather than a hard edge.
         [TestCase(0f, 0.01f)]
-        [TestCase(1f, 0.5f)]
-        [TestCase(2f, 1f)]
+        [TestCase(0.5f, 0.5f)]
+        [TestCase(1f, 1f)]
         [TestCase(25f, 1f)]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
-        public void ImportVignetteSmoothness_HalvesAndSaturates(float source, float expected)
+        public void ImportVignetteSmoothness_CrossesUntouchedExceptZero(float source, float expected)
             => Assert.AreEqual(expected, ABPostProcessingMap.ImportVignetteSmoothness(source), 1e-4f);
+
+        // Slot 2 of a grain keyframe is a FilmGrainLookup index, not a size - and this format's own
+        // enum reserves 0 for "no grain", so the two are one apart.
+        [TestCase(0f, FilmGrainType.Thin1)]
+        [TestCase(1f, FilmGrainType.Thin2)]
+        [TestCase(9f, FilmGrainType.Large02)]
+        [TestCase(40f, FilmGrainType.Large02, TestName = "ImportGrainType_PastTheSourceClamp_Saturates")]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void ImportGrainType_IsTheSamePresetTableOffsetByOne(float source, FilmGrainType expected)
+            => Assert.AreEqual(expected, ABPostProcessingMap.ImportGrainType(source));
 
         // The one that actually broke a level: a real file carries -30..30 here.
         [TestCase(-80f, -1f)]
@@ -164,6 +188,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             Assert.LessOrEqual(post.Chromatics.Single().Intensity,
                 PostProcessingRules.ChromaticAberration.IntensityMax);
+
+            Assert.AreEqual(0.08f, bloom.Scatter, 1e-3f, "a diffusion of 7 is a tight bloom, not a third of one");
 
             var vignette = post.Vignettes.Single();
             Assert.LessOrEqual(vignette.Intensity, PostProcessingRules.Vignette.IntensityMax);

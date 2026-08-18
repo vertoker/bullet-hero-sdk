@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using BH.SDK.Interop.AfterBeat.Models;
 using BH.SDK.Models;
 using BH.SDK.Models.Data;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Interop.AfterBeat.Import
@@ -86,9 +91,10 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 level.Game, level.Settings, level.Resources.CompositeShapes);
 
             ImportThemes(source, level, context);
-            level.Settings.FrameDuration = MeasureDuration(source, options);
+            level.Settings.FrameDuration = ResolveDuration(source, meta, options, report);
 
             if (options.ImportPrefabs) ImportPrefabs(source, level, context);
+            ImportCameraScaleRoot(source, level, context);
             ABObjectImporter.ImportAll(source.Objects, context, "objects");
             if (options.ImportParallax)
                 ABParallaxImporter.ImportAll(source.Parallax, context,
@@ -186,6 +192,79 @@ namespace BH.SDK.Interop.AfterBeat.Import
             return null;
         }
 
+        // The node Afterbeat hangs every camera-parented object off - see ABImportContext
+        // .CameraScaleRootId for why it has to exist at all. It is built BEFORE the objects, since
+        // resolving their "camera" parent is what it exists for.
+        //
+        // Built only when the level has something parented to the camera: an empty object costs a
+        // timeline row and an id, and a level that never uses the feature should read exactly as it
+        // did. A level whose zoom never moves still gets one - the factor is constant then, but it
+        // is a constant of 1.5 on the ordinary authored zoom of 30, not 1.
+        private static void ImportCameraScaleRoot(VgdLevel source, Level level, ABImportContext context)
+        {
+            if (source.Objects == null) return;
+
+            var used = false;
+            foreach (var obj in source.Objects)
+                if (obj != null && obj.IsParentedToCamera) { used = true; break; }
+            if (!used) return;
+
+            var root = new RectObject
+            {
+                ObjectId = level.Settings.GetNextObjectId(),
+                ParentObjectId = ObjectId.Camera,
+                Name = CameraScaleRootName,
+                Active = true,
+                Layer = ValueRules.DefaultLayer,
+                Span = new FrameSpan(FrameRules.MinFrame,
+                    Math.Max(FrameRules.MinFrameDuration, level.Settings.FrameDuration)),
+            };
+
+            foreach (var key in ReadCameraScale(source, context))
+                root.Scales.Add(key);
+
+            if (root.Scales.Count == 0)
+                root.Scales.Add(new ScaKey(Vector2Value.One, FrameRules.MinFrame));
+
+            level.Game.Objects[root.ObjectId] = root;
+            context.CameraScaleRootId = root.ObjectId;
+
+            context.Report.Info("camera_scale_root",
+                "Afterbeat scales everything parented to its camera by the camera's own zoom, so a node carrying that scale was rebuilt and those objects hang off it - without it they draw at the size they were authored at rather than the size they were seen at.",
+                "objects");
+        }
+
+        /// <summary> Name the rebuilt camera-scale node carries. The export reads it back to flatten
+        /// the node away again - the source format applies the same factor itself, so writing the
+        /// node out would scale that content twice. </summary>
+        public const string CameraScaleRootName = "Camera Scale";
+
+        // One key per zoom keyframe, capped like any other track. The factor is the zoom over the
+        // format's neutral 20; the eases cross with it, so a zoom ramp scales the way it ramped.
+        private static IEnumerable<ScaKey> ReadCameraScale(VgdLevel source, ABImportContext context)
+        {
+            var framerate = context.Options.Framerate;
+            var keys = source.GetEvents(ABEventTrack.CameraZoom);
+            var written = 0;
+            var seen = new HashSet<int>();
+
+            foreach (var key in keys)
+            {
+                if (written >= LevelRules.MaxObjectKeys) break;
+
+                // Two zoom keyframes can land on one frame at a low framerate, and a track with a
+                // repeated frame is not valid data here (RuleCollectionUnique) - the first wins,
+                // exactly as the object importer's own Deduplicate does.
+                var frame = ABTimeMap.ToFrame(key.Time, framerate);
+                if (!seen.Add(frame)) continue;
+
+                written++;
+                var factor = key.GetFloat(0) / ABEventsImporter.DefaultSourceZoom;
+                yield return new ScaKey(new Vector2Value(factor, factor), frame,
+                    ABEaseMap.Import(key.Ease, context.Report, "events"));
+            }
+        }
+
         private static void ImportPrefabs(VgdLevel source, Level level, ABImportContext context)
         {
             if (source.Prefabs == null) return;
@@ -208,6 +287,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 if (prefab == null) continue;
 
                 level.Resources.Prefabs[prefab.PrefabId] = prefab;
+                ABPrefabImporter.RegisterLeadTime(sourcePrefab, prefab, context);
             }
         }
 
@@ -217,6 +297,12 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static void ImportPlacements(VgdLevel source, Level level, ABImportContext context)
         {
             if (source.PrefabPlacements == null) return;
+
+            // Minted up front for the same reason the objects are: a placement can be PARENTED to
+            // another placement, and the source list is in no particular order.
+            foreach (var sourcePlacement in source.PrefabPlacements)
+                if (sourcePlacement != null)
+                    context.Mint(sourcePlacement.Id);
 
             for (var i = 0; i < source.PrefabPlacements.Count; i++)
             {
@@ -253,9 +339,65 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         #region Length
 
-        // Afterbeat stores no level length, so it is measured off everything that carries a time:
-        // object lifetimes, checkpoints, markers, and every level-global event keyframe. Missing any
-        // of those would produce a timeline that ends before content the file still contains.
+        // A LEVEL IS AS LONG AS ITS SONG, and measuring it off its content is the fallback rather
+        // than the rule. Afterbeat has no length field because it does not need one: its timeline
+        // IS the audio clip, an object timed past the end of the song never plays, and its editor
+        // cannot scroll past it. A converted level whose length came from its content therefore
+        // ends wherever its last object happened to - not where the song does, and not where its
+        // author was working - which is the mismatch this resolves.
+        //
+        // Three sources, in falling order of trust:
+        //
+        //   the HOST's own measurement (ABOptions.AudioLengthSeconds), which is the clip itself and
+        //   is what the source game would have used;
+        //
+        //   the metadata's song.time, which IS the clip length when it was written with the song
+        //   loaded - and is the literal 60 when it was not (DataManager.SaveMetadata's own fallback
+        //   initialises it to 60f). A real clip is essentially never exactly 60.0000 seconds long,
+        //   so that one value is read as "unset" rather than as a minute. A level really a minute
+        //   long loses nothing by it: the measured length below still covers its content;
+        //
+        //   and failing both, the content, with a tail so the level does not end on the exact frame
+        //   its final object dies.
+        //
+        // Content reaching past the song is legal and is NOT extended over: a root object's span is
+        // not bounded by the level's length in this format either, so it survives in the file and
+        // plays exactly as much as it did over there, which is none of it. It is reported, because
+        // an author looking at a timeline that stops before their last object deserves to know why.
+        private static int ResolveDuration(VgdLevel source, VgmMeta meta, ABOptions options,
+            InteropReport report)
+        {
+            var measured = MeasureDuration(source, options);
+            var songSeconds = ResolveSongLength(meta, options);
+            if (songSeconds <= 0f) return measured;
+
+            var songFrames = Math.Clamp(ABTimeMap.ToFrame(songSeconds, options.Framerate),
+                FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration);
+
+            if (measured > songFrames)
+                report.Info("content_past_the_song",
+                    "This level holds content timed past the end of its song. The timeline is the song's length, exactly as it is in Afterbeat, so that content is kept but never plays.",
+                    "level");
+
+            return songFrames;
+        }
+
+        /// <summary> What <see cref="VgmMeta"/> writes into song.time when it is saved with no song
+        /// loaded, and therefore the one value of it that means nothing. </summary>
+        public const float UnsetSongTime = 60f;
+
+        private static float ResolveSongLength(VgmMeta meta, ABOptions options)
+        {
+            if (options.AudioLengthSeconds > 0f) return options.AudioLengthSeconds;
+
+            var declared = meta?.Song?.Time ?? 0f;
+            if (declared <= 0f) return 0f;
+            return Math.Abs(declared - UnsetSongTime) < 1e-4f ? 0f : declared;
+        }
+
+        // The fallback: measured off everything that carries a time - object lifetimes, checkpoints,
+        // markers, prefab placements, and every level-global event keyframe. Missing any of those
+        // would produce a timeline that ends before content the file still contains.
         private static int MeasureDuration(VgdLevel source, ABOptions options)
         {
             var seconds = 0f;
@@ -284,8 +426,56 @@ namespace BH.SDK.Interop.AfterBeat.Import
                         if (key != null && key.Time > seconds) seconds = key.Time;
                 }
 
+            // A placement plus the length of what it places. Measured off the TEMPLATE's own
+            // objects rather than off the placement, which carries no length of its own - a level
+            // whose last content is a prefab would otherwise end before the prefab does.
+            if (source.PrefabPlacements != null)
+            {
+                var templates = BuildTemplateIndex(source);
+                foreach (var placement in source.PrefabPlacements)
+                {
+                    if (placement == null) continue;
+
+                    var end = placement.StartTime;
+                    if (templates != null && placement.PrefabId != null
+                        && templates.TryGetValue(placement.PrefabId, out var template))
+                        end += MeasureTemplateLength(template);
+
+                    if (end > seconds) seconds = end;
+                }
+            }
+
             var frames = ABTimeMap.ToFrame(seconds, options.Framerate) + TailFrames;
             return Math.Clamp(frames, FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration);
+        }
+
+        /// <summary> The source templates by their own string id, for measuring what a placement
+        /// reaches. Null when the document defines none. </summary>
+        private static Dictionary<string, VgpPrefab> BuildTemplateIndex(VgdLevel source)
+        {
+            if (source.Prefabs == null || source.Prefabs.Count == 0) return null;
+
+            var templates = new Dictionary<string, VgpPrefab>(source.Prefabs.Count);
+            foreach (var prefab in source.Prefabs)
+                if (prefab != null && !string.IsNullOrEmpty(prefab.Id))
+                    templates[prefab.Id] = prefab;
+            return templates;
+        }
+
+        /// <summary> How far past a placement's own start the template it places reaches, in
+        /// seconds. </summary>
+        private static float MeasureTemplateLength(VgpPrefab template)
+        {
+            if (template?.Objects == null) return 0f;
+
+            var end = 0f;
+            foreach (var obj in template.Objects)
+            {
+                if (obj == null) continue;
+                var reach = ABTimeMap.ResolveEndTime(obj);
+                if (reach > end) end = reach;
+            }
+            return end;
         }
 
         #endregion

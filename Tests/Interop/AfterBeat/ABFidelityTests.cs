@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BH.SDK.Interop;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Export;
 using BH.SDK.Interop.AfterBeat.Import;
@@ -7,6 +8,7 @@ using BH.SDK.Interop.AfterBeat.Models;
 using BH.SDK.Models;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using NUnit.Framework;
 
@@ -155,6 +157,69 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
         #endregion
 
+        #region Screen limit
+
+        // Afterbeat offers ten window resolutions and every one of them is 16:9, so a level was
+        // authored inside that frame - while nothing in the game enforces it at play time (the zoom
+        // fixes the visible HEIGHT and the player is clamped in viewport space). Left unpinned, a
+        // converted level shown wider hands the player more room and reveals whatever its author
+        // parked off the sides.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TheScreenLimit_IsPinnedToTheAspectTheSourceGameRunsAt()
+        {
+            var level = Import(LevelOf(Square(0f)));
+
+            var limit = level.Game.Events.ScreenLimits.Single();
+            var fixedLimit = limit.ScreenLimit as ScreenLimitFixed;
+
+            Assert.IsNotNull(fixedLimit, "the frame is fixed, not merely bounded");
+            Assert.AreEqual(ABEventsImporter.SourceAspectWidth, fixedLimit.Aspect.Width);
+            Assert.AreEqual(ABEventsImporter.SourceAspectHeight, fixedLimit.Aspect.Height);
+            Assert.AreEqual(0, limit.Frame);
+        }
+
+        // The export writes no limit either way - the target format has no field for one. What is
+        // asserted here is the REPORT: a level pinned to the aspect Afterbeat runs at anyway loses
+        // nothing by having it left out, and calling that a loss puts a finding on every level that
+        // came from there in the first place.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Export_AScreenLimitAtTheSourceAspect_IsNotReportedAsALoss()
+        {
+            var imported = Import(LevelOf(Square(0f)));
+            var report = new InteropReport();
+
+            ABLevelExporter.Export(imported, null, null, report);
+
+            Assert.IsFalse(report.Issues.Any(issue => issue.Code == "screen_limits"),
+                "16:9 is the target format's own frame");
+            Assert.IsTrue(report.Issues.Any(issue => issue.Code == "screen_limit_matches_source"));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Export_AScreenLimitAtAnyOtherAspect_IsReportedAsALoss()
+        {
+            var imported = Import(LevelOf(Square(0f)));
+            imported.Game.Events.ScreenLimits.Clear();
+            imported.Game.Events.ScreenLimits.Add(new ScreenLimitKey(
+                new ScreenLimitFixed(new ScreenAspect(21, 9)), 0));
+
+            var report = new InteropReport();
+            ABLevelExporter.Export(imported, null, null, report);
+
+            Assert.IsTrue(report.Issues.Any(issue => issue.Code == "screen_limits"));
+        }
+
+        #endregion
+
         #region Camera zoom
 
         [TestCase(20f, 40f)]
@@ -205,38 +270,173 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
         #endregion
 
-        #region Post-processing
+        #region Camera-parented objects
+
+        private static VgdObject CameraChild(string id, float sizeX, float sizeY)
+        {
+            var target = new VgdObject
+            {
+                Id = id,
+                ParentId = VgdObject.CameraParentId,
+                ObjectType = (int)ABObjectType.NoHit,
+                Shape = (int)ABShape.Square,
+                AutokillType = (int)ABAutokillType.FixedTime,
+                AutokillOffset = 1f,
+            };
+
+            target.Scale.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { sizeX, sizeY } });
+            target.Color.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { 0f } });
+            return target;
+        }
+
+        private static void AddZoom(VgdLevel level, float time, float zoom)
+            => level.Events[(int)ABEventTrack.CameraZoom].Add(new VgdEventKeyframe
+            {
+                Time = time,
+                Values = new Newtonsoft.Json.Linq.JArray { zoom },
+            });
+
+        // Afterbeat hangs camera-parented content off a node scaled by zoom/20, so at the ordinary
+        // authored zoom of 30 all of it is drawn half again as large as its own numbers say. This
+        // format's camera carries no scale, so without rebuilding that node the content arrives at
+        // two thirds of the size it was seen at.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_CameraParentedObjects_HangOffARebuiltScaleNode()
+        {
+            var source = LevelOf(CameraChild("pinned", 2f, 2f));
+            AddZoom(source, 0f, 30f);
+
+            var level = Import(source);
+
+            var root = level.Game.Objects.Values
+                .Single(o => o.ParentObjectId == ObjectId.Camera);
+            Assert.AreEqual(ABLevelImporter.CameraScaleRootName, root.Name);
+            Assert.IsNotInstanceOf<ShapeObject>(root, "the node is a transform, it draws nothing");
+
+            var scale = (Vector2Value)root.Scales.Single().Scale;
+            Assert.AreEqual(30f / ABEventsImporter.DefaultSourceZoom, scale.X, 1e-4f);
+            Assert.AreEqual(30f / ABEventsImporter.DefaultSourceZoom, scale.Y, 1e-4f);
+
+            var pinned = level.Game.Objects.Values.OfType<ShapeObject>().Single();
+            Assert.AreEqual(root.ObjectId, pinned.ParentObjectId,
+                "the camera parent resolves to the node, not to the camera");
+        }
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Normal)]
-        public void Import_PostProcessingKeyframes_ArriveSwitchedOff()
+        public void Import_TheScaleNode_FollowsEveryZoomKeyframe()
+        {
+            var source = LevelOf(CameraChild("pinned", 1f, 1f));
+            AddZoom(source, 0f, 20f);
+            AddZoom(source, 1f, 40f);
+
+            var root = Import(source).Game.Objects.Values
+                .Single(o => o.ParentObjectId == ObjectId.Camera);
+
+            var scales = root.Scales.OrderBy(k => k.Frame).ToArray();
+            Assert.AreEqual(2, scales.Length);
+            Assert.AreEqual(1f, ((Vector2Value)scales[0].Scale).X, 1e-4f, "the neutral zoom is a factor of one");
+            Assert.AreEqual(2f, ((Vector2Value)scales[1].Scale).X, 1e-4f);
+        }
+
+        // A level that never parents anything to the camera must read exactly as it did - the node
+        // costs an id and a timeline row, and nothing would hang off it.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ALevelWithNothingOnTheCamera_GetsNoScaleNode()
         {
             var source = LevelOf(Square(0f));
-            foreach (var track in new[]
-                     {
-                         ABEventTrack.Chromatic, ABEventTrack.Bloom,
-                         ABEventTrack.Vignette, ABEventTrack.LensDistortion,
-                         ABEventTrack.Grain, ABEventTrack.Glitch,
-                     })
+            AddZoom(source, 0f, 30f);
+
+            var level = Import(source);
+
+            Assert.IsEmpty(level.Game.Objects.Values.Where(o => o.Name == ABLevelImporter.CameraScaleRootName));
+            Assert.AreEqual(1, level.Game.Objects.Count);
+        }
+
+        // The source game rebuilds the node itself, so writing it back out would scale that content
+        // by the zoom twice. It is dropped and its children go back onto the camera.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Conversion_TheScaleNode_IsFlattenedBackOntoTheCamera()
+        {
+            var source = LevelOf(CameraChild("pinned", 2f, 2f));
+            AddZoom(source, 0f, 30f);
+
+            var imported = ABLevelImporter.Import(source, null, Options());
+            var exported = ABLevelExporter.Export(imported.Level, null, Options());
+
+            var returned = exported.Level.Objects.Single();
+            Assert.AreEqual(VgdObject.CameraParentId, returned.ParentId, "back on the camera itself");
+            Assert.AreEqual(2f, returned.Scale.Keyframes.Single().GetValue(0), 1e-3f,
+                "and at its own authored size, since that game applies the zoom factor itself");
+        }
+
+        #endregion
+
+        #region Post-processing
+
+        // An Afterbeat level has to carry a keyframe on all fourteen of its event tracks whether its
+        // author touched one or not, so the question is which of them count as authored - and the
+        // source game answers it rather than this converter: every LSEffectsManager.Update* sets
+        // `active = intensity > 0` before writing anything, so an effect keyframed at zero is off
+        // over there and is off here. Importing them all switched OFF (what this used to do) loses
+        // every effect an author did reach for; importing them all ON runs a dozen full-screen
+        // passes for a level that asked for none.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_PostProcessingKeyframes_FollowTheSourcesOwnActiveRule()
+        {
+            var tracks = new[]
+            {
+                ABEventTrack.Chromatic, ABEventTrack.Bloom,
+                ABEventTrack.Vignette, ABEventTrack.LensDistortion,
+                ABEventTrack.Grain, ABEventTrack.Glitch,
+            };
+
+            var source = LevelOf(Square(0f));
+            foreach (var track in tracks)
+            {
                 source.Events[(int)track].Add(new VgdEventKeyframe
                 {
                     Time = 0f,
+                    Values = new Newtonsoft.Json.Linq.JArray { 0f, 0f, 0f },
+                });
+                source.Events[(int)track].Add(new VgdEventKeyframe
+                {
+                    Time = 1f,
                     Values = new Newtonsoft.Json.Linq.JArray { 1f, 1f, 1f },
                 });
+            }
 
             var post = Import(source).Game.PostProcessingEvents;
 
-            Assert.IsTrue(post.Chromatics.All(key => !key.Active));
-            Assert.IsTrue(post.Blooms.All(key => !key.Active));
-            Assert.IsTrue(post.Vignettes.All(key => !key.Active));
-            Assert.IsTrue(post.Lenses.All(key => !key.Active));
-            Assert.IsTrue(post.Grains.All(key => !key.Active));
-            Assert.IsTrue(post.AnalogGlitches.All(key => !key.Active));
-            Assert.IsTrue(post.DigitalGlitches.All(key => !key.Active));
+            AssertActiveFollowsIntensity(post.Chromatics.Select(key => key.Active), "chromatic");
+            AssertActiveFollowsIntensity(post.Blooms.Select(key => key.Active), "bloom");
+            AssertActiveFollowsIntensity(post.Vignettes.Select(key => key.Active), "vignette");
+            AssertActiveFollowsIntensity(post.Lenses.Select(key => key.Active), "lens");
+            AssertActiveFollowsIntensity(post.Grains.Select(key => key.Active), "grain");
+            AssertActiveFollowsIntensity(post.AnalogGlitches.Select(key => key.Active), "analog glitch");
+            AssertActiveFollowsIntensity(post.DigitalGlitches.Select(key => key.Active), "digital glitch");
+        }
 
-            Assert.IsNotEmpty(post.Blooms, "the authored numbers are still there to switch back on");
+        private static void AssertActiveFollowsIntensity(IEnumerable<bool> active, string name)
+        {
+            var flags = active.ToList();
+            Assert.AreEqual(2, flags.Count, $"{name}: both keyframes are imported");
+            Assert.IsFalse(flags[0], $"{name}: a keyframe at zero intensity is off, as it is over there");
+            Assert.IsTrue(flags[1], $"{name}: a keyframe the author gave a value to stays on");
         }
 
         // Temporarily off, and DEFERRED rather than dropped - nothing about the mapping is in doubt,

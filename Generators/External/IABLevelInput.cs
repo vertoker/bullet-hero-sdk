@@ -24,5 +24,11 @@
 
         /// <summary> Where the folder was, for the report to name. Never opened by the SDK. </summary>
         string SourceFolder { get; set; }
+
+        /// <summary> How long that song is, in seconds. A level in this foreign format has no
+        /// length of its own - its timeline IS its song - so this is what the converted level's
+        /// length is taken from. Zero when the host could not measure it, and only then is the
+        /// length derived from the level's own content instead. </summary>
+        float AudioLengthSeconds { get; set; }
     }
 }
