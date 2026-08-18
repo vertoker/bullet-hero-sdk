@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Interop.AfterBeat.Models
@@ -12,110 +12,110 @@ namespace BH.SDK.Interop.AfterBeat.Models
     // object, while "t.s" and "an.s" are scale VECTORS.
 
     /// <summary> The .vgd parallax_settings block - five background layers plus their depth of field. </summary>
-    public class VgdParallaxSettings : AfterBeatNode
+    public class VgdParallaxSettings : ABNode
     {
         public const int LayerCount = 5;
 
-        [JsonProperty(AfterBeatNames.ParallaxLayers)]
+        [JsonProperty(ABNames.ParallaxLayers)]
         public List<VgdParallaxLayer> Layers { get; set; } = new();
 
         /// <summary> Zero-indexed main layer; -1 for none. </summary>
-        [JsonProperty(AfterBeatNames.ParallaxMainLayer)]
+        [JsonProperty(ABNames.ParallaxMainLayer)]
         public int MainLayer { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxDofActive)]
+        [JsonProperty(ABNames.ParallaxDofActive)]
         public bool DepthOfFieldActive { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxDofValue)]
+        [JsonProperty(ABNames.ParallaxDofValue)]
         public int DepthOfFieldValue { get; set; }
     }
 
     /// <summary> One parallax layer. </summary>
-    public class VgdParallaxLayer : AfterBeatNode
+    public class VgdParallaxLayer : ABNode
     {
-        [JsonProperty(AfterBeatNames.ParallaxLayerDepth)]
+        [JsonProperty(ABNames.ParallaxLayerDepth)]
         public int Depth { get; set; }
 
         /// <summary> Index into the theme's parallax palette; overrides each object's own. </summary>
-        [JsonProperty(AfterBeatNames.ParallaxLayerColor)]
+        [JsonProperty(ABNames.ParallaxLayerColor)]
         public int Color { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxLayerObjects)]
+        [JsonProperty(ABNames.ParallaxLayerObjects)]
         public List<VgdParallaxObject> Objects { get; set; } = new();
     }
 
     /// <summary> One background object. </summary>
-    public class VgdParallaxObject : AfterBeatNode
+    public class VgdParallaxObject : ABNode
     {
-        [JsonProperty(AfterBeatNames.ObjectId)]
+        [JsonProperty(ABNames.ObjectId)]
         public string Id { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.ParallaxObjectShape)]
+        [JsonProperty(ABNames.ParallaxObjectShape)]
         public VgdParallaxShape Shape { get; set; } = new();
 
         /// <summary> Index into the theme's parallax palette; the layer's own may override it. </summary>
-        [JsonProperty(AfterBeatNames.ParallaxObjectColor)]
+        [JsonProperty(ABNames.ParallaxObjectColor)]
         public int Color { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxObjectTransform)]
+        [JsonProperty(ABNames.ParallaxObjectTransform)]
         public VgdParallaxTransform Transform { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ParallaxObjectAnimation)]
+        [JsonProperty(ABNames.ParallaxObjectAnimation)]
         public VgdParallaxAnimation Animation { get; set; } = new();
     }
 
     /// <summary> The shape/option pair, nested here rather than flat as it is on a gameplay object. </summary>
-    public class VgdParallaxShape : AfterBeatNode
+    public class VgdParallaxShape : ABNode
     {
-        [JsonProperty(AfterBeatNames.ObjectShape)]
+        [JsonProperty(ABNames.ObjectShape)]
         public int Shape { get; set; }
 
-        [JsonProperty(AfterBeatNames.ObjectShapeOption)]
+        [JsonProperty(ABNames.ObjectShapeOption)]
         public int ShapeOption { get; set; }
     }
 
     /// <summary> A parallax object's static transform. Rotation is in DEGREES here, unlike an
     /// object keyframe's, and is absolute rather than relative to anything. </summary>
-    public class VgdParallaxTransform : AfterBeatNode
+    public class VgdParallaxTransform : ABNode
     {
-        [JsonProperty(AfterBeatNames.ParallaxTransformPosition)]
+        [JsonProperty(ABNames.ParallaxTransformPosition)]
         public VgdVector2 Position { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ParallaxTransformScale)]
+        [JsonProperty(ABNames.ParallaxTransformScale)]
         public VgdVector2 Scale { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ParallaxTransformRotation)]
+        [JsonProperty(ABNames.ParallaxTransformRotation)]
         public float Rotation { get; set; }
     }
 
     /// <summary> The endless loop a parallax object interpolates towards. Each of the three
     /// switches is independent, so a layer can breathe in scale while standing still. </summary>
-    public class VgdParallaxAnimation : AfterBeatNode
+    public class VgdParallaxAnimation : ABNode
     {
         /// <summary> Loop period in seconds. </summary>
-        [JsonProperty(AfterBeatNames.ParallaxAnimationLength)]
+        [JsonProperty(ABNames.ParallaxAnimationLength)]
         public float Length { get; set; }
 
         /// <summary> Phase - where the loop starts, in seconds from the start of the level. </summary>
-        [JsonProperty(AfterBeatNames.ParallaxAnimationDelay)]
+        [JsonProperty(ABNames.ParallaxAnimationDelay)]
         public float Delay { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxAnimationLoopPosition)]
+        [JsonProperty(ABNames.ParallaxAnimationLoopPosition)]
         public bool LoopPosition { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxAnimationLoopScale)]
+        [JsonProperty(ABNames.ParallaxAnimationLoopScale)]
         public bool LoopScale { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxAnimationLoopRotation)]
+        [JsonProperty(ABNames.ParallaxAnimationLoopRotation)]
         public bool LoopRotation { get; set; }
 
-        [JsonProperty(AfterBeatNames.ParallaxTransformPosition)]
+        [JsonProperty(ABNames.ParallaxTransformPosition)]
         public VgdVector2 Position { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ParallaxTransformScale)]
+        [JsonProperty(ABNames.ParallaxTransformScale)]
         public VgdVector2 Scale { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ParallaxTransformRotation)]
+        [JsonProperty(ABNames.ParallaxTransformRotation)]
         public float Rotation { get; set; }
 
         /// <summary> True when anything at all loops - a zero-length loop animates nothing however

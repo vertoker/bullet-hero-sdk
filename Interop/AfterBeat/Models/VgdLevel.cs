@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Interop.AfterBeat.Models
@@ -13,48 +13,52 @@ namespace BH.SDK.Interop.AfterBeat.Models
 
     /// <summary> An Afterbeat level file - .vgd. Themes and prefabs live INSIDE it; the standalone
     /// .vgt/.vgp files are a sharing format, not part of a level folder. </summary>
-    public class VgdLevel : AfterBeatNode
+    public class VgdLevel : ABNode
     {
         /// <summary> How many keyframe arrays events[] always holds. </summary>
         public const int EventTrackCount = 14;
 
-        [JsonProperty(AfterBeatNames.Editor)]
+        [JsonProperty(ABNames.Editor)]
         public VgdEditor Editor { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.Triggers)]
+        [JsonProperty(ABNames.Triggers)]
         public List<VgdTrigger> Triggers { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.EditorPrefabSpawn)]
+        [JsonProperty(ABNames.EditorPrefabSpawn)]
         public List<VgdPrefabSpawnSlot> PrefabSpawnSlots { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ParallaxSettings)]
+        [JsonProperty(ABNames.ParallaxSettings)]
         public VgdParallaxSettings Parallax { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.Checkpoints)]
+        [JsonProperty(ABNames.Checkpoints)]
         public List<VgdCheckpoint> Checkpoints { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.Objects)]
+        [JsonProperty(ABNames.Objects)]
         public List<VgdObject> Objects { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.PrefabObjects)]
+        [JsonProperty(ABNames.PrefabObjects)]
         public List<VgdPrefabPlacement> PrefabPlacements { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.Prefabs)]
+        [JsonProperty(ABNames.Prefabs)]
         public List<VgpPrefab> Prefabs { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.Themes)]
+        [JsonProperty(ABNames.Themes)]
         public List<VgtTheme> Themes { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.Markers)]
+        [JsonProperty(ABNames.Markers)]
         public List<VgdMarker> Markers { get; set; } = new();
 
-        /// <summary> Fourteen arrays, addressed by <see cref="AfterBeatEventTrack"/>. </summary>
-        [JsonProperty(AfterBeatNames.Events)]
+        /// <summary> Freehand notes the author drew over the editor's own canvas. </summary>
+        [JsonProperty(ABNames.Annotations)]
+        public List<VgdAnnotation> Annotations { get; set; } = new();
+
+        /// <summary> Fourteen arrays, addressed by <see cref="ABEventTrack"/>. </summary>
+        [JsonProperty(ABNames.Events)]
         public List<List<VgdEventKeyframe>> Events { get; set; } = CreateEvents();
 
         /// <summary> One track, or an empty list when the file is short of the full fourteen -
         /// which a hand-edited or older file can be. </summary>
-        public IReadOnlyList<VgdEventKeyframe> GetEvents(AfterBeatEventTrack track)
+        public IReadOnlyList<VgdEventKeyframe> GetEvents(ABEventTrack track)
         {
             var index = (int)track;
             if (Events == null || index < 0 || index >= Events.Count) return System.Array.Empty<VgdEventKeyframe>();
@@ -63,7 +67,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
 
         /// <summary> Replaces one track, growing the outer list to the full fourteen if needed -
         /// a shorter events[] is not a legal document. </summary>
-        public void SetEvents(AfterBeatEventTrack track, List<VgdEventKeyframe> keyframes)
+        public void SetEvents(ABEventTrack track, List<VgdEventKeyframe> keyframes)
         {
             Events ??= CreateEvents();
             while (Events.Count < EventTrackCount) Events.Add(new List<VgdEventKeyframe>());
@@ -79,118 +83,118 @@ namespace BH.SDK.Interop.AfterBeat.Models
     }
 
     /// <summary> Everything in a .vgd that only the editor reads. </summary>
-    public class VgdEditor : AfterBeatNode
+    public class VgdEditor : ABNode
     {
-        [JsonProperty(AfterBeatNames.EditorGeneral)]
+        [JsonProperty(ABNames.EditorGeneral)]
         public VgdEditorGeneral General { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.EditorBpm)]
+        [JsonProperty(ABNames.EditorBpm)]
         public VgdEditorBpm Bpm { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.EditorGrid)]
+        [JsonProperty(ABNames.EditorGrid)]
         public VgdEditorGrid Grid { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.EditorPreview)]
+        [JsonProperty(ABNames.EditorPreview)]
         public VgdEditorPreview Preview { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.EditorAutosave)]
+        [JsonProperty(ABNames.EditorAutosave)]
         public VgdEditorAutosave Autosave { get; set; } = new();
     }
 
     /// <summary> Editor preferences saved with the level. </summary>
-    public class VgdEditorGeneral : AfterBeatNode
+    public class VgdEditorGeneral : ABNode
     {
         /// <summary> Documented as unused and always 0. </summary>
-        [JsonProperty(AfterBeatNames.EditorComplexity)]
+        [JsonProperty(ABNames.EditorComplexity)]
         public int Complexity { get; set; }
 
         /// <summary> Documented as unused and always 0 - NOT the level's active theme. </summary>
-        [JsonProperty(AfterBeatNames.EditorTheme)]
+        [JsonProperty(ABNames.EditorTheme)]
         public int Theme { get; set; }
 
-        [JsonProperty(AfterBeatNames.EditorTestMode)]
-        public int TestMode { get; set; } = (int)AfterBeatTestMode.Normal;
+        [JsonProperty(ABNames.EditorTestMode)]
+        public int TestMode { get; set; } = (int)ABTestMode.Normal;
 
-        [JsonProperty(AfterBeatNames.EditorTextSelectObjects)]
+        [JsonProperty(ABNames.EditorTextSelectObjects)]
         public bool TextSelectObjects { get; set; }
 
-        [JsonProperty(AfterBeatNames.EditorTextSelectBackgrounds)]
+        [JsonProperty(ABNames.EditorTextSelectBackgrounds)]
         public bool TextSelectBackgrounds { get; set; }
 
-        [JsonProperty(AfterBeatNames.EditorOutlineMode)]
+        [JsonProperty(ABNames.EditorOutlineMode)]
         public int OutlineMode { get; set; }
 
-        [JsonProperty(AfterBeatNames.EditorCollapseLength)]
+        [JsonProperty(ABNames.EditorCollapseLength)]
         public float CollapseLength { get; set; } = 0.25f;
     }
 
     /// <summary> The level's tempo, as far as this format records one. It exists for snapping in
     /// the editor - nothing in the file is stored in beats. </summary>
-    public class VgdEditorBpm : AfterBeatNode
+    public class VgdEditorBpm : ABNode
     {
-        [JsonProperty(AfterBeatNames.EditorBpmSnap)]
+        [JsonProperty(ABNames.EditorBpmSnap)]
         public VgdEditorBpmSnap Snap { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.EditorBpmValue)]
+        [JsonProperty(ABNames.EditorBpmValue)]
         public float Value { get; set; } = DefaultBpm;
 
         /// <summary> Phase of the first beat, in seconds. </summary>
-        [JsonProperty(AfterBeatNames.EditorBpmOffset)]
+        [JsonProperty(ABNames.EditorBpmOffset)]
         public float Offset { get; set; }
 
         /// <summary> A second copy of <see cref="Value"/> the format writes and is documented as
         /// possibly unused. Kept so a round trip does not decide which of the two was right. </summary>
-        [JsonProperty(AfterBeatNames.EditorBpmValueDuplicate)]
+        [JsonProperty(ABNames.EditorBpmValueDuplicate)]
         public float ValueDuplicate { get; set; } = DefaultBpm;
 
         public const float DefaultBpm = 140f;
     }
 
     /// <summary> Which timeline items the BPM grid catches. </summary>
-    public class VgdEditorBpmSnap : AfterBeatNode
+    public class VgdEditorBpmSnap : ABNode
     {
-        [JsonProperty(AfterBeatNames.EditorBpmSnapObjects)]
+        [JsonProperty(ABNames.EditorBpmSnapObjects)]
         public bool Objects { get; set; }
 
-        [JsonProperty(AfterBeatNames.EditorBpmSnapCheckpoints)]
+        [JsonProperty(ABNames.EditorBpmSnapCheckpoints)]
         public bool Checkpoints { get; set; }
     }
 
     /// <summary> The editor viewport's own grid. </summary>
-    public class VgdEditorGrid : AfterBeatNode
+    public class VgdEditorGrid : ABNode
     {
-        [JsonProperty(AfterBeatNames.EditorGridScale)]
+        [JsonProperty(ABNames.EditorGridScale)]
         public VgdVector2 Scale { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.EditorGridThickness)]
+        [JsonProperty(ABNames.EditorGridThickness)]
         public int Thickness { get; set; } = 2;
 
-        [JsonProperty(AfterBeatNames.EditorGridOpacity)]
+        [JsonProperty(ABNames.EditorGridOpacity)]
         public float Opacity { get; set; } = 0.2f;
 
         /// <summary> Palette index, not a colour value. </summary>
-        [JsonProperty(AfterBeatNames.EditorGridColor)]
+        [JsonProperty(ABNames.EditorGridColor)]
         public int Color { get; set; } = 1;
     }
 
     /// <summary> How far the editor preview zooms out past the real camera. </summary>
-    public class VgdEditorPreview : AfterBeatNode
+    public class VgdEditorPreview : ABNode
     {
-        [JsonProperty(AfterBeatNames.EditorPreviewCamZoomOffset)]
+        [JsonProperty(ABNames.EditorPreviewCamZoomOffset)]
         public float CameraZoomOffset { get; set; }
 
-        [JsonProperty(AfterBeatNames.EditorPreviewCamZoomOffsetColor)]
+        [JsonProperty(ABNames.EditorPreviewCamZoomOffsetColor)]
         public int CameraZoomOffsetColor { get; set; } = 3;
     }
 
     /// <summary> Autosave policy, stored per level. </summary>
-    public class VgdEditorAutosave : AfterBeatNode
+    public class VgdEditorAutosave : ABNode
     {
-        [JsonProperty(AfterBeatNames.EditorAutosaveMax)]
+        [JsonProperty(ABNames.EditorAutosaveMax)]
         public int Max { get; set; } = 3;
 
         /// <summary> Minutes. </summary>
-        [JsonProperty(AfterBeatNames.EditorAutosaveInterval)]
+        [JsonProperty(ABNames.EditorAutosaveInterval)]
         public int Interval { get; set; } = 10;
     }
 }

@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace BH.SDK.Interop.AfterBeat.Models
 {
@@ -8,114 +8,114 @@ namespace BH.SDK.Interop.AfterBeat.Models
 
     /// <summary> An Afterbeat level's metadata file - .vgm. A separate document from .vgd, exactly
     /// like this project's own metadata.json is separate from level.json. </summary>
-    public class VgmMeta : AfterBeatNode
+    public class VgmMeta : ABNode
     {
-        [JsonProperty(AfterBeatNames.MetaBeatmap)]
+        [JsonProperty(ABNames.MetaBeatmap)]
         public VgmBeatmap Beatmap { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.MetaCreator)]
+        [JsonProperty(ABNames.MetaCreator)]
         public VgmCreator Creator { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.MetaSong)]
+        [JsonProperty(ABNames.MetaSong)]
         public VgmSong Song { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.MetaArtist)]
+        [JsonProperty(ABNames.MetaArtist)]
         public VgmArtist Artist { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.MetaReferences)]
+        [JsonProperty(ABNames.MetaReferences)]
         public VgmReferences References { get; set; } = new();
     }
 
     /// <summary> The level itself and its Steam Workshop listing. </summary>
-    public class VgmBeatmap : AfterBeatNode
+    public class VgmBeatmap : ABNode
     {
         /// <summary> "YYYY-MM-DD_HH.MM.SS", in the saving machine's own local time. </summary>
-        [JsonProperty(AfterBeatNames.MetaDateEdited)]
+        [JsonProperty(ABNames.MetaDateEdited)]
         public string DateEdited { get; set; } = string.Empty;
 
         /// <summary> Version of Afterbeat that last wrote the level. The nearest thing this format
         /// has to a format version - there is no other. </summary>
-        [JsonProperty(AfterBeatNames.MetaGameVersion)]
+        [JsonProperty(ABNames.MetaGameVersion)]
         public string GameVersion { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.MetaWorkshopId)]
+        [JsonProperty(ABNames.MetaWorkshopId)]
         public long WorkshopId { get; set; }
 
-        [JsonProperty(AfterBeatNames.MetaVisibility)]
+        [JsonProperty(ABNames.MetaVisibility)]
         public int Visibility { get; set; }
 
-        [JsonProperty(AfterBeatNames.MetaChangelog)]
+        [JsonProperty(ABNames.MetaChangelog)]
         public string Changelog { get; set; } = string.Empty;
     }
 
     /// <summary> Who made the level, as Steam knows them. </summary>
-    public class VgmCreator : AfterBeatNode
+    public class VgmCreator : ABNode
     {
-        [JsonProperty(AfterBeatNames.MetaSteamName)]
+        [JsonProperty(ABNames.MetaSteamName)]
         public string SteamName { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.MetaSteamId)]
+        [JsonProperty(ABNames.MetaSteamId)]
         public long SteamId { get; set; }
     }
 
     /// <summary> The song, plus a few level-wide settings that ended up here. </summary>
-    public class VgmSong : AfterBeatNode
+    public class VgmSong : ABNode
     {
-        [JsonProperty(AfterBeatNames.MetaSongTitle)]
+        [JsonProperty(ABNames.MetaSongTitle)]
         public string Title { get; set; } = string.Empty;
 
         /// <summary> Description of the LEVEL, despite living under "song". </summary>
-        [JsonProperty(AfterBeatNames.MetaSongDescription)]
+        [JsonProperty(ABNames.MetaSongDescription)]
         public string Description { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.MetaSongDifficulty)]
+        [JsonProperty(ABNames.MetaSongDifficulty)]
         public int Difficulty { get; set; }
 
-        [JsonProperty(AfterBeatNames.MetaSongBpm)]
+        [JsonProperty(ABNames.MetaSongBpm)]
         public float Bpm { get; set; } = 140f;
 
-        [JsonProperty(AfterBeatNames.MetaSongTime)]
+        [JsonProperty(ABNames.MetaSongTime)]
         public float Time { get; set; } = 60f;
 
-        [JsonProperty(AfterBeatNames.MetaSongPreviewStart)]
+        [JsonProperty(ABNames.MetaSongPreviewStart)]
         public float PreviewStart { get; set; } = -1f;
 
-        [JsonProperty(AfterBeatNames.MetaSongPreviewLength)]
+        [JsonProperty(ABNames.MetaSongPreviewLength)]
         public float PreviewLength { get; set; } = -1f;
 
-        [JsonProperty(AfterBeatNames.MetaSongCamJiggle)]
+        [JsonProperty(ABNames.MetaSongCamJiggle)]
         public int CamJiggle { get; set; }
     }
 
     /// <summary> Who made the song, and where to hear more of it. </summary>
-    public class VgmArtist : AfterBeatNode
+    public class VgmArtist : ABNode
     {
-        [JsonProperty(AfterBeatNames.MetaArtistName)]
+        [JsonProperty(ABNames.MetaArtistName)]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.MetaArtistLinkType)]
+        [JsonProperty(ABNames.MetaArtistLinkType)]
         public int LinkType { get; set; }
 
         /// <summary> A FRAGMENT, not a URL - the service's own template turns it into one. </summary>
-        [JsonProperty(AfterBeatNames.MetaArtistLink)]
+        [JsonProperty(ABNames.MetaArtistLink)]
         public string Link { get; set; } = string.Empty;
     }
 
     /// <summary> External works the level points at. </summary>
-    public class VgmReferences : AfterBeatNode
+    public class VgmReferences : ABNode
     {
-        [JsonProperty(AfterBeatNames.MetaReferenceGame)]
+        [JsonProperty(ABNames.MetaReferenceGame)]
         public VgmGameReference Game { get; set; } = new();
     }
 
     /// <summary> Which game the song came from. </summary>
-    public class VgmGameReference : AfterBeatNode
+    public class VgmGameReference : ABNode
     {
-        [JsonProperty(AfterBeatNames.MetaReferenceGameId)]
+        [JsonProperty(ABNames.MetaReferenceGameId)]
         public int Id { get; set; }
 
         /// <summary> Used only when <see cref="Id"/> is Custom. </summary>
-        [JsonProperty(AfterBeatNames.MetaReferenceGameCustom)]
+        [JsonProperty(ABNames.MetaReferenceGameCustom)]
         public string Custom { get; set; } = string.Empty;
     }
 }

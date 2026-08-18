@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace BH.SDK.Interop.AfterBeat.Models
@@ -12,7 +12,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     // a hand-edited file reads as "missing colour" instead of throwing.
 
     /// <summary> An Afterbeat theme - a whole .vgt file, or one entry of .vgd themes[]. </summary>
-    public class VgtTheme : AfterBeatNode
+    public class VgtTheme : ABNode
     {
         public const int PlayerCount = 4;
         public const int ObjectCount = 9;
@@ -20,32 +20,32 @@ namespace BH.SDK.Interop.AfterBeat.Models
         public const int ParallaxCount = 9;
 
         /// <summary> Present only inside .vgd themes[]; a standalone .vgt has no id. </summary>
-        [JsonProperty(AfterBeatNames.ThemeId)]
+        [JsonProperty(ABNames.ThemeId)]
         public string Id { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.ThemeName)]
+        [JsonProperty(ABNames.ThemeName)]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.ThemeBackground)]
+        [JsonProperty(ABNames.ThemeBackground)]
         public string Background { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.ThemeGui)]
+        [JsonProperty(ABNames.ThemeGui)]
         public string Gui { get; set; } = string.Empty;
 
         /// <summary> GUI accents and the player's tail - one colour serving both. </summary>
-        [JsonProperty(AfterBeatNames.ThemeGuiAccent)]
+        [JsonProperty(ABNames.ThemeGuiAccent)]
         public string GuiAccent { get; set; } = string.Empty;
 
-        [JsonProperty(AfterBeatNames.ThemePlayers)]
+        [JsonProperty(ABNames.ThemePlayers)]
         public List<string> Players { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ThemeObjects)]
+        [JsonProperty(ABNames.ThemeObjects)]
         public List<string> Objects { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ThemeEffects)]
+        [JsonProperty(ABNames.ThemeEffects)]
         public List<string> Effects { get; set; } = new();
 
-        [JsonProperty(AfterBeatNames.ThemeParallax)]
+        [JsonProperty(ABNames.ThemeParallax)]
         public List<string> Parallax { get; set; } = new();
 
         public string GetPlayer(int index) => Read(Players, index);
