@@ -112,6 +112,7 @@ including their respawn position, object hierarchy, and the object/prefab struct
 | rotation | degrees, each key relative to the previous | radians, absolute |
 | draw order | absolute depth 0–60 (smaller in front) inside one of three render bands | parent-relative `Layer`, higher in front, four import modes — see below |
 | object colour | theme slot + an opacity in **percent** | `ThemeRef` at full opacity, a literal below it |
+| whether an object hurts the player | its type **and** its current opacity — the damage check refuses anything whose alpha is below 1 | its type decides `ColliderId`; the opacity half becomes WHEN that collider exists — see below |
 | object gradient | a per-pixel ramp: two theme slots plus a type, a direction in degrees and a length (`gt`/`gr`/`gs`) | the ramp **sampled at the four corners** of the object's box, landing in the narrowest colour keyframe those four samples fit — see below |
 | camera zoom | the camera's orthographic size (half-height), default 20 | `Zoom`, the whole visible height — so **doubled** |
 | camera-parented objects | hang off a node scaled by `zoom / 20`, so they keep a constant screen size | that node is rebuilt as an ordinary object and they hang off it; the export flattens it away again |
@@ -123,6 +124,37 @@ including their respawn position, object hierarchy, and the object/prefab struct
 | shapes | 25 `(shape, option)` pairs | 78 presets, plus synthesized geometry for the seven combinations no preset covers |
 | parallax | a background subsystem | ordinary collider-less objects with the loop baked into keyframes |
 | a rotated child under a non-uniformly scaled parent | a matrix product, so the child is genuinely **skewed** | the nearest rotation and scale there is (`ABLinearFit`, least squares in closed form) — exact at every quarter and straight angle, an approximation between them, and reported as `parent_scale_shear` only where a residue is actually left |
+
+### Opacity decides damage over there (`ABOpacityHitGate`)
+
+The rule no document states and every level relies on: Afterbeat never disables an object's collider,
+it vetoes the damage. `VGPlayer.CheckForObjectCollision` reads the object's material and returns
+false whenever `_BaseColor.a < 1` (or `_Alpha < 1` on the gradient shader), and opacity is the only
+thing that reaches either property. Three consequences, in the order they bite:
+
+- **The threshold is below 1, not zero.** An object authored at a constant 35% is decoration for its
+  whole life; one at 99% is already harmless.
+- **A fade is intangible for its whole length**, not only at the transparent end. This is *why*
+  authors fade things out — a splash, a shockwave, a telegraph — instead of killing them: the game
+  hands them intangibility for free, so the collider outliving the visible object costs nothing.
+- **Nothing on screen explains it.** An object faded to zero that keeps its hitbox kills the player
+  with no visible cause, which is exactly what an import that ignores this produces. Measured on one
+  real level: 964 objects carrying ~56 000 object-seconds of invisible lethal collider, plus 222 that
+  are lethal for their entire life and were never meant to touch anybody.
+
+`ColliderId` here is a per-object constant with no keyframe track, so "hits between these frames and
+not those" cannot be said on one object. The import therefore splits it: an object whose opacity
+crosses the boundary keeps drawing and gives up its own collider, and gains one invisible child
+(`ShapeId` Null + a real `ColliderId`) per fully-opaque stretch, anchor-stretched over its parent's
+whole rect so it inherits the motion, the size, the rotation and the `Active` flag for free. An
+object opaque for its whole life — the overwhelming majority of every level — is untouched, so only
+the levels using the rule pay for it.
+
+**The export cannot undo this, and does not pretend to.** An object that draws nothing is an empty
+over there and an empty cannot hit the player, so an invisible hitbox — whether this pass made it or
+an author did — exports as an empty object and is reported as `collider_invisible`. That asymmetry is
+the format's, not the converter's: the only invisible object Afterbeat has is a transparent one, and a
+transparent one is precisely what its damage check refuses.
 
 ### Object gradients
 

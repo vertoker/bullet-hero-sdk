@@ -72,7 +72,11 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             target.Move.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { 0f, 0f } });
             target.Move.Keyframes.Add(new VgdKeyframe { Time = 2f, Values = new List<float> { 5f, -5f } });
             target.Scale.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { 2f, 3f } });
-            target.Color.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { 1f, 1f, 0f } });
+            // Opacity is the SECOND value and it is a PERCENTAGE - 100 is opaque, not 1. It matters
+            // beyond the colour now: an object below full opacity cannot hurt the player in the
+            // source game, so a fixture written at 1% would arrive with no collider at all
+            // (ABOpacityHitGate), and every test here asking about one would be asking about a fade.
+            target.Color.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { 1f, 100f, 0f } });
 
             return target;
         }

@@ -73,6 +73,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 ApplyParentOrigin(source, imported, byId);
                 ReportShear(source, byId, context.Report, path);
                 context.Scope.Objects[imported.ObjectId] = imported;
+
+                // After the object is in the scope, because it may add collider children beside it -
+                // see ABOpacityHitGate for the rule (an object below full opacity cannot hurt the
+                // player over there) and for why it cannot be expressed on the object itself.
+                ABOpacityHitGate.Apply(source, imported, context, path);
             }
         }
 

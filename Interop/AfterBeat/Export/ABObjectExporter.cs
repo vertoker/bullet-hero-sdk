@@ -547,6 +547,22 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
                 case ShapeObject shape:
                 {
+                    // An object that draws nothing is an empty over there, and an empty cannot hit
+                    // the player. That pair is unrepresentable rather than approximable: an
+                    // invisible hitbox in that engine would have to be a fully transparent object,
+                    // and a transparent object is exactly what its damage check refuses (see
+                    // ABOpacityHitGate). Exporting one as a Square instead would put a visible
+                    // square in a level that never had one.
+                    if (!shape.ShapeId.IsEnabled())
+                    {
+                        target.ObjectType = (int)ABObjectType.AlphaEmpty;
+                        if (shape.ColliderId.IsEnabled())
+                            context.Report.Dropped("collider_invisible",
+                                "Afterbeat cannot be hit by an object it does not draw; invisible hitboxes exported as empty objects and no longer hurt the player.",
+                                path);
+                        return;
+                    }
+
                     var (main, option) = ABShapeMap.Export(shape.ShapeId, context.Report, path);
                     target.Shape = main;
                     target.ShapeOption = option;
