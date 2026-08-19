@@ -211,7 +211,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
         public int GetParentEffectiveLayer(string sourceParentId)
         {
             if (string.IsNullOrEmpty(sourceParentId)) return 0;
-            return EffectiveLayers.TryGetValue(sourceParentId, out var layer) ? layer : 0;
+            return EffectiveLayers.GetValueOrDefault(sourceParentId, 0);
         }
 
         /// <summary> Widens the band this scope's content occupies. Called once per resolved object
