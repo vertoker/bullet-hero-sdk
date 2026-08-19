@@ -53,6 +53,17 @@
         Particles = 7,
     }
 
+    // Anything that is not exactly 1 is a Rectangle, including a value the file never wrote - the
+    // source game rounds and then tests against 1 alone (BeatmapObject.GetParticleEmitterShapeType),
+    // so an out-of-range number is a box rather than an error.
+
+    /// <summary> Afterbeat particle emitter volume - .vgd objects[].e[0].k[0].ev[8]. </summary>
+    public enum ABParticleEmitterShapeType
+    {
+        Rectangle = 0,
+        Circle = 1,
+    }
+
     // Draw order is where the two formats agree least, and the disagreement is in three places at
     // once. Afterbeat sorts by an ABSOLUTE depth 0-60 with SMALLER in front, while this format
     // sorts by a PARENT-RELATIVE Layer with HIGHER in front. Afterbeat also organises a level into

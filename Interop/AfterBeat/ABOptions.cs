@@ -34,6 +34,20 @@ namespace BH.SDK.Interop.AfterBeat
         /// create. </summary>
         public bool KeepObjectNames = true;
 
+        // A gradient corner landing between the ramp's two ends is a BLEND of two theme colours,
+        // and no theme reference expresses a blend - so a rotated or short ramp can be carried
+        // either by its angle or by its theme, never by both. Neither answer is right for every
+        // level, which is why this is a switch rather than a decision made in ABGradientMap.
+        //
+        // On is the default because reproducing how the source level LOOKS is what an importer is
+        // for. Off is worth reaching for on a level built around theme switching, where a frozen
+        // colour is the more visible loss of the two.
+
+        /// <summary> Let a gradient corner become a literal colour when the ramp does not land it
+        /// exactly on one of its two ends. Off snaps such a corner to its nearer end instead: a
+        /// hard edge in place of a blend, with every theme reference kept alive. </summary>
+        public bool BakeGradientCorners = true;
+
         // Everything in a converted level used to land on layer 0, because Afterbeat's DEPTH is
         // mostly left at its default and its editor layers - the thing that actually organises a
         // level over there - are bookkeeping this format has no field for. The result was a

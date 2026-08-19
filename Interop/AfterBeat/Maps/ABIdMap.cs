@@ -25,6 +25,7 @@ namespace BH.SDK.Interop.AfterBeat
         private const string ThemeTag = "afterbeat.theme";
         private const string PrefabTag = "afterbeat.prefab";
         private const string ShapeTag = "afterbeat.shape";
+        private const string EffectTag = "afterbeat.effect";
 
         /// <summary> A stable Guid for a (namespace, id) pair. An empty id yields
         /// <see cref="Guid.Empty"/>, which every id type here reads as Null. </summary>
@@ -51,5 +52,16 @@ namespace BH.SDK.Interop.AfterBeat
         /// <summary> For a shape this converter has to synthesize; a shape that maps onto a built-in
         /// preset keeps that preset's own id instead. </summary>
         public static ShapeId ToShapeId(string sourceId) => new(ToGuid(ShapeTag, sourceId));
+
+        // Afterbeat has no effect resources at all, so unlike a theme or a prefab there is no source
+        // id to hash. What identifies an imported effect is WHAT IT IS - the emitter parameters it
+        // was built out of - so the caller passes a canonical description of those and two emitters
+        // authored the same way land on one resource. Keying it by the source OBJECT's id instead
+        // would be equally deterministic and would write one near-identical resource per emitter,
+        // which is what the format's shared-resource design exists to avoid.
+
+        /// <summary> For an effect this converter synthesizes out of an emitter's parameters; the
+        /// argument is a canonical description of those, not a source id. </summary>
+        public static EffectId ToEffectId(string signature) => new(ToGuid(EffectTag, signature));
     }
 }

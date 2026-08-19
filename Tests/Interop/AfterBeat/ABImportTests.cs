@@ -455,28 +455,120 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual(childY * (parentX / parentY), scale.Y, 1e-4f);
         }
 
-        // Everything else under the same parent is genuinely skewed over there and cannot be here,
-        // so it must be left alone rather than "corrected" into a different wrong answer.
+        // R(180) == -I commutes with a diagonal scale just as R(0) does, so a straight angle is
+        // already exact and must be left alone. It used to be REPORTED as shear, which is the same
+        // misreading as correcting it would be.
         [TestCase(0f)]
-        [TestCase(45f)]
         [TestCase(180f)]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Normal)]
-        public void Import_AnyOtherAngleUnderASquashedParent_IsLeftAlone(float degrees)
+        public void Import_AStraightAngleUnderASquashedParent_IsLeftAlone(float degrees)
         {
             var level = new VgdLevel();
             level.Objects.Add(Squashed("parent", null, 8f, 2f, 0f));
             level.Objects.Add(Squashed("child", "parent", 3f, 5f, degrees));
 
-            var imported = ABLevelImporter.Import(level, null, Options()).Level;
-            var child = imported.Game.Objects.Values
+            var result = ABLevelImporter.Import(level, null, Options());
+            var child = result.Level.Game.Objects.Values
                 .Single(o => o.ParentObjectId.value != 0);
 
             var scale = (Vector2Value)child.Sizes.Single().Scale;
             Assert.AreEqual(3f, scale.X, 1e-4f);
             Assert.AreEqual(5f, scale.Y, 1e-4f);
+            Assert.AreEqual(Radians(degrees), ((FloatValue)child.Rotations.Single().Angle).Value, 1e-4f);
+            CollectionAssert.DoesNotContain(result.Report.Issues.Select(i => i.Code),
+                "parent_scale_shear", "nothing was skewed, so nothing may be reported");
         }
+
+        // Every other angle IS genuinely skewed over there and cannot be here - but "cannot be
+        // held exactly" is not "must be left alone". A childless object with a centred pivot can
+        // take the whole fit, angle included, because its rotation reaches nothing but itself.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ASkewedLeafUnderASquashedParent_TakesTheWholeFit()
+        {
+            const float parentX = 8f, parentY = 2f, childX = 3f, childY = 5f;
+            var rotation = Radians(45f);
+            var fit = ABLinearFit.Free(parentX, parentY, rotation, childX, childY);
+
+            var level = new VgdLevel();
+            level.Objects.Add(Squashed("parent", null, parentX, parentY, 0f));
+            level.Objects.Add(Squashed("child", "parent", childX, childY, 45f));
+
+            var result = ABLevelImporter.Import(level, null, Options());
+            var child = result.Level.Game.Objects.Values
+                .Single(o => o.ParentObjectId.value != 0);
+
+            var scale = (Vector2Value)child.Sizes.Single().Scale;
+            Assert.AreEqual(childX * fit.ScaleX, scale.X, 1e-4f);
+            Assert.AreEqual(childY * fit.ScaleY, scale.Y, 1e-4f);
+            Assert.AreEqual(fit.Rotation, ((FloatValue)child.Rotations.Single().Angle).Value, 1e-4f);
+            Assert.AreNotEqual(rotation, fit.Rotation, "the free fit has to have moved the angle at all");
+            CollectionAssert.Contains(result.Report.Issues.Select(i => i.Code), "parent_scale_shear",
+                "a fitted object is still an approximated one");
+        }
+
+        // An object with children may NOT have its angle moved, however much closer that would be:
+        // this format rotates a child's offset by its parent's rotation, so the whole subtree would
+        // swing. It takes the scale half of the fit, which reaches only its own extent.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ASkewedParentUnderASquashedParent_KeepsItsOwnRotation()
+        {
+            const float parentX = 8f, parentY = 2f, middleX = 3f, middleY = 5f;
+            var rotation = Radians(45f);
+            var fit = ABLinearFit.KeepingRotation(parentX, parentY, rotation);
+
+            var level = new VgdLevel();
+            level.Objects.Add(Squashed("parent", null, parentX, parentY, 0f));
+            level.Objects.Add(Squashed("middle", "parent", middleX, middleY, 45f));
+            level.Objects.Add(Squashed("leaf", "middle", 1f, 1f, 0f));
+
+            var imported = ABLevelImporter.Import(level, null, Options()).Level;
+            var middle = imported.Game.Objects.Values.Single(o => o.Name == "middle");
+
+            var scale = (Vector2Value)middle.Scales.Single().Scale;
+            Assert.AreEqual(middleX * fit.ScaleX, scale.X, 1e-4f);
+            Assert.AreEqual(middleY * fit.ScaleY, scale.Y, 1e-4f);
+            Assert.AreEqual(rotation, ((FloatValue)middle.Rotations.Single().Angle).Value, 1e-4f);
+        }
+
+        // The correction is a CONSTANT, and it can only be one where both of its inputs are. An
+        // animated rotation makes it vary within a single object, so nothing is applied and the
+        // object is reported instead.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ASkewedChildWithAnAnimatedRotation_IsLeftAloneAndReported()
+        {
+            var level = new VgdLevel();
+            level.Objects.Add(Squashed("parent", null, 8f, 2f, 0f));
+
+            var child = Squashed("child", "parent", 3f, 5f, 45f);
+            child.Rotate.Keyframes.Add(new VgdKeyframe
+            {
+                Time = 1f,
+                Values = new System.Collections.Generic.List<float> { 20f },
+            });
+            level.Objects.Add(child);
+
+            var result = ABLevelImporter.Import(level, null, Options());
+            var imported = result.Level.Game.Objects.Values
+                .Single(o => o.ParentObjectId.value != 0);
+
+            var scale = (Vector2Value)imported.Sizes.Single().Scale;
+            Assert.AreEqual(3f, scale.X, 1e-4f);
+            Assert.AreEqual(5f, scale.Y, 1e-4f);
+            CollectionAssert.Contains(result.Report.Issues.Select(i => i.Code), "parent_scale_shear");
+        }
+
+        private static float Radians(float degrees) => degrees * (float)System.Math.PI / 180f;
 
         private static VgdObject Squashed(string id, string parentId, float x, float y, float degrees)
         {

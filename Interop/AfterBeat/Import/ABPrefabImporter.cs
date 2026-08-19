@@ -33,7 +33,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> One .vgp - or one entry of .vgd prefabs[] - into a template. </summary>
         public static Prefab ImportTemplate(VgpPrefab source, ABOptions options,
             InteropReport report, IDictionary<ShapeId, CompositeShape> shapes,
-            ThemeData referenceTheme, string path)
+            ThemeData referenceTheme, string path,
+            IDictionary<EffectId, EffectData> effects = null)
         {
             if (source == null) return null;
 
@@ -45,7 +46,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             // A Prefab is one of the two places in this format where the scope and the id counter
             // are the SAME object - at level scope they are Level.Game and Level.Settings.
-            var context = new ABImportContext(options, report, prefab, prefab, shapes)
+            var context = new ABImportContext(options, report, prefab, prefab, shapes, effects)
             {
                 ReferenceTheme = referenceTheme,
             };

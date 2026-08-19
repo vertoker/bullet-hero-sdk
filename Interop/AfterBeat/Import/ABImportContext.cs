@@ -40,6 +40,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// null when a prefab is imported on its own, in which case nothing is synthesized. </summary>
         public IDictionary<ShapeId, CompositeShape> Shapes { get; }
 
+        /// <summary> Level effect resources; an imported particle emitter's definition is added
+        /// here on first use. May be null on the same terms as <see cref="Shapes"/> - a prefab
+        /// imported on its own has nowhere to put one, and the placement still gets its id. </summary>
+        public IDictionary<EffectId, EffectData> Effects { get; }
+
         /// <summary> The theme a semi-transparent colour is resolved against. May be null. </summary>
         public ThemeData ReferenceTheme { get; set; }
 
@@ -101,10 +106,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// them. </summary>
         public Dictionary<string, (float X, float Y)> ScaleCompensations { get; } = new();
 
-        /// <summary> The factor a child's own scale is multiplied by so that a quarter turn under a
-        /// non-uniformly scaled parent composes the way it does over there - see ABObjectImporter's
-        /// ResolveAxisSwaps. Applies to the SCALE only, never to the position. </summary>
-        public Dictionary<string, (float X, float Y)> AxisSwaps { get; } = new();
+        /// <summary> The factor a child's own scale is multiplied by so that its composition under
+        /// a non-uniformly scaled parent lands as near as this format can reach to the matrix
+        /// Afterbeat composes - see ABObjectImporter's ResolveShearFits and ABLinearFit. Applies to
+        /// the SCALE only, never to the position. </summary>
+        public Dictionary<string, (float X, float Y)> ShearScales { get; } = new();
+
+        /// <summary> The angle added to a child's own rotation track by the same fit, in radians.
+        /// Only ever present for an object whose rotation reaches nothing but itself - see
+        /// ResolveShearFits - so it is absent for most of the objects ShearScales covers. </summary>
+        public Dictionary<string, float> ShearRotations { get; } = new();
 
         // Afterbeat does not hang a camera-parented object off the camera directly: it hangs it off
         // a node whose scale is the camera's own zoom over 20 (EventManager.Update, 20 being the
@@ -131,13 +142,15 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         public ABImportContext(ABOptions options, InteropReport report,
             IObjectScope scope, IObjectIdCounter counter,
-            IDictionary<ShapeId, CompositeShape> shapes = null)
+            IDictionary<ShapeId, CompositeShape> shapes = null,
+            IDictionary<EffectId, EffectData> effects = null)
         {
             Options = options ?? new ABOptions();
             Report = report ?? new InteropReport();
             Scope = scope;
             Counter = counter;
             Shapes = shapes;
+            Effects = effects;
         }
 
         /// <summary> Mints an id for one source object, or hands back the one already minted for it.

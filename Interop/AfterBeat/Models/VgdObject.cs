@@ -58,9 +58,20 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ObjectGradientType)]
         public int GradientType { get; set; }
 
-        [JsonProperty(ABNames.ObjectGradientRotation)]
-        public int GradientRotation { get; set; }
+        // FLOAT, not int, however integral every value a source editor writes is: that editor
+        // formats the field as "f0", which is a display format and not a constraint on the field
+        // itself (BeatmapObject.gradientRotation is a float). Read as an int, a level written by
+        // any other tool loses its fraction on import and again on export, silently.
 
+        /// <summary> Direction of the object's colour ramp, in degrees. </summary>
+        [JsonProperty(ABNames.ObjectGradientRotation)]
+        public float GradientRotation { get; set; }
+
+        // Defaults to ONE, not to zero, and the source omits both this and the rotation whenever
+        // the object has no gradient - so an absent gs has to read as this default rather than as
+        // the format's usual missing-number zero, which would collapse every ramp to a hard edge.
+
+        /// <summary> Length of the object's colour ramp, in box units. </summary>
         [JsonProperty(ABNames.ObjectGradientScale)]
         public float GradientScale { get; set; } = 1f;
 

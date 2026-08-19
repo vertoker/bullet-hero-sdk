@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using BH.SDK.Interop;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Export;
 using BH.SDK.Interop.AfterBeat.Import;
 using BH.SDK.Interop.AfterBeat.Models;
+using BH.SDK.Models.Objects;
 using BH.SDK.Validations;
 using BH.SDK.Validations.Graph;
 using NUnit.Framework;
@@ -69,6 +71,21 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                     failures.AppendLine($"{file}: imported into a level that fails validation - " +
                                         $"{validation}{Environment.NewLine}{Breakdown(validation)}");
 
+                // Every emitter has to have become a real effect placement pointing at a resource
+                // that is actually there. A dangling EffectId draws nothing and says nothing, which
+                // is precisely the silent failure the derived id exists to prevent.
+                var emitters = CountEmitters(json);
+                var placements = result.Level.Game.Objects.Values.OfType<EffectObject>().ToArray();
+
+                if (placements.Length != emitters)
+                    failures.AppendLine($"{file}: {emitters} emitter(s) in the document, " +
+                                        $"{placements.Length} effect placement(s) imported");
+
+                foreach (var placement in placements)
+                    if (!result.Level.Resources.Effects.ContainsKey(placement.EffectId))
+                        failures.AppendLine($"{file}: effect placement {placement.ObjectId} " +
+                                            "points at a resource that is not in the level");
+
                 var exported = ABLevelExporter.Export(result.Level, result.Meta);
                 if (exported.Level == null)
                     failures.AppendLine($"{file}: imported but could not be exported back");
@@ -78,6 +95,21 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             }
 
             Assert.IsEmpty(failures.ToString());
+        }
+
+        /// <summary> Emitters in the raw document, counted off the source rather than off what the
+        /// importer produced - the point is to compare the two. </summary>
+        private static int CountEmitters(string json)
+        {
+            if (!ABSerialization.TryDeserialize<VgdLevel>(json, out var source, out _)) return 0;
+            if (source?.Objects == null) return 0;
+
+            var count = 0;
+            foreach (var candidate in source.Objects)
+                if (ABParticleMap.IsEmitter(candidate))
+                    count++;
+
+            return count;
         }
 
         [Test]

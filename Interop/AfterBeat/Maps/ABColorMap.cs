@@ -114,6 +114,20 @@ namespace BH.SDK.Interop.AfterBeat
             return theme.Matrix[themeIndex] ?? Color4Value.white;
         }
 
+        // Blending is the one operation that cannot go through a theme reference, so whoever needs
+        // to blend has to leave the reference behind first. Reading a slot the level's own theme
+        // does not cover as white matches the literal branch of Import above - a colour nobody
+        // authored is better arriving visible than arriving invisible.
+
+        /// <summary> A colour of any variant as the literal it resolves to under
+        /// <paramref name="referenceTheme"/>. </summary>
+        public static Color4Value ResolveSlot(ThemeData referenceTheme, IColor4 color) => color switch
+        {
+            Color4Value literal => literal,
+            Color4ThemeRef themeRef => Resolve(referenceTheme, themeRef.ThemeColorIndex),
+            _ => Color4Value.white,
+        };
+
         #endregion
 
         #region Export
@@ -246,9 +260,6 @@ namespace BH.SDK.Interop.AfterBeat
                         palette, referenceTheme, report, path);
 
                 case ColorVerticalKey vertical:
-                    report?.Approximated("gradient_direction",
-                        "Afterbeat draws an object gradient along one axis of its own; a vertical gradient exports with its two colours in place but not its direction.",
-                        path);
                     return Pair(vertical.Color4Bottom, vertical.Color4Top,
                         palette, referenceTheme, report, path);
 
@@ -260,6 +271,19 @@ namespace BH.SDK.Interop.AfterBeat
                 }
             }
         }
+
+        // The axis is the half of a gradient this format expresses by CHOOSING A KEYFRAME TYPE
+        // while Afterbeat expresses it as a number, so it has to be read back off the type. Left
+        // unwritten, the number defaulted to zero and every vertical gradient in the level went
+        // out rotated by ninety degrees - the same bug the import had in the other direction.
+
+        /// <summary> Which direction, in the degrees Afterbeat stores, a two-ended colour keyframe
+        /// runs in. </summary>
+        public static float ExportRotation(IColor4X4Key key) => key switch
+        {
+            ColorVerticalKey => ABGradientMap.VerticalRotation,
+            _ => ABGradientMap.HorizontalRotation,
+        };
 
         private static ExportedColorKey Pair(IColor4 start, IColor4 end, ABPalette palette,
             ThemeData referenceTheme, InteropReport report, string path)

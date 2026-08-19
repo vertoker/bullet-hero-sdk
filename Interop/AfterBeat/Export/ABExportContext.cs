@@ -26,6 +26,11 @@ namespace BH.SDK.Interop.AfterBeat.Export
         public IObjectScope Scope { get; }
         public ThemeData ReferenceTheme { get; set; }
 
+        /// <summary> The level's effect definitions, so an effect placement can be written as the
+        /// emitter it describes. Null when a scope is exported on its own, in which case an effect
+        /// has nothing to resolve against and is reported rather than written. </summary>
+        public IReadOnlyDictionary<EffectId, EffectData> Effects { get; set; }
+
         private readonly Dictionary<ObjectId, int> _effectiveLayers = new();
 
         public ABExportContext(ABOptions options, InteropReport report, IObjectScope scope)

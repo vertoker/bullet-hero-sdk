@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BH.SDK.Models.Enums;
 
 namespace BH.SDK.Interop.AfterBeat
@@ -173,5 +174,89 @@ namespace BH.SDK.Interop.AfterBeat
 
             return name;
         }
+
+        // THIS FORMAT NEVER EVALUATES AN EASE, and that is why the arithmetic below lives here
+        // rather than in Utils. An EaseType is stored on a keyframe and resolved by whoever plays
+        // the level - the Unity project's own Easings - and the SDK deliberately cannot reach that
+        // way round. A particle curve is the one thing that has to be BAKED rather than stored: its
+        // keys carry tangents and no EaseType at all, so the shape has to be sampled at conversion
+        // time or lost. Only ABCurveMap needs this, which is why it sits in the interop folder
+        // instead of being offered to the format at large.
+
+        /// <summary> One easing evaluated at normalized progress, for baking a curve. </summary>
+        public static float Evaluate(EaseType ease, float t)
+        {
+            if (t <= 0f) return 0f;
+            if (t >= 1f) return 1f;
+
+            switch (ease)
+            {
+                case EaseType.Linear: return t;
+                case EaseType.Constant: return 0f;
+
+                case EaseType.InSine: return 1f - (float)Math.Cos(t * Math.PI / 2d);
+                case EaseType.OutSine: return (float)Math.Sin(t * Math.PI / 2d);
+                case EaseType.InOutSine: return (float)(-(Math.Cos(Math.PI * t) - 1d) / 2d);
+
+                case EaseType.InQuad: return t * t;
+                case EaseType.OutQuad: return 1f - (1f - t) * (1f - t);
+                case EaseType.InOutQuad: return t < 0.5f
+                    ? 2f * t * t
+                    : 1f - (float)Math.Pow(-2d * t + 2d, 2d) / 2f;
+
+                case EaseType.InCubic: return t * t * t;
+                case EaseType.OutCubic: return 1f - (float)Math.Pow(1d - t, 3d);
+                case EaseType.InOutCubic: return t < 0.5f
+                    ? 4f * t * t * t
+                    : 1f - (float)Math.Pow(-2d * t + 2d, 3d) / 2f;
+
+                case EaseType.InQuart: return t * t * t * t;
+                case EaseType.OutQuart: return 1f - (float)Math.Pow(1d - t, 4d);
+                case EaseType.InOutQuart: return t < 0.5f
+                    ? 8f * t * t * t * t
+                    : 1f - (float)Math.Pow(-2d * t + 2d, 4d) / 2f;
+
+                case EaseType.InQuint: return t * t * t * t * t;
+                case EaseType.OutQuint: return 1f - (float)Math.Pow(1d - t, 5d);
+                case EaseType.InOutQuint: return t < 0.5f
+                    ? 16f * t * t * t * t * t
+                    : 1f - (float)Math.Pow(-2d * t + 2d, 5d) / 2f;
+
+                case EaseType.InExpo: return (float)Math.Pow(2d, 10d * t - 10d);
+                case EaseType.OutExpo: return 1f - (float)Math.Pow(2d, -10d * t);
+                case EaseType.InOutExpo: return t < 0.5f
+                    ? (float)Math.Pow(2d, 20d * t - 10d) / 2f
+                    : (2f - (float)Math.Pow(2d, -20d * t + 10d)) / 2f;
+
+                case EaseType.InCirc: return 1f - (float)Math.Sqrt(1d - t * (double)t);
+                case EaseType.OutCirc: return (float)Math.Sqrt(1d - Math.Pow(t - 1d, 2d));
+                case EaseType.InOutCirc: return t < 0.5f
+                    ? (float)((1d - Math.Sqrt(1d - Math.Pow(2d * t, 2d))) / 2d)
+                    : (float)((Math.Sqrt(1d - Math.Pow(-2d * t + 2d, 2d)) + 1d) / 2d);
+
+                case EaseType.InBack: return (BackC3 * t - BackC1) * t * t;
+                case EaseType.OutBack: return 1f + BackC3 * (float)Math.Pow(t - 1d, 3d)
+                                              + BackC1 * (float)Math.Pow(t - 1d, 2d);
+                case EaseType.InOutBack: return t < 0.5f
+                    ? (float)(Math.Pow(2d * t, 2d) * ((BackC2 + 1d) * 2d * t - BackC2) / 2d)
+                    : (float)((Math.Pow(2d * t - 2d, 2d) * ((BackC2 + 1d) * (t * 2d - 2d) + BackC2) + 2d) / 2d);
+
+                case EaseType.InElastic:
+                    return (float)(-Math.Pow(2d, 10d * t - 10d) * Math.Sin((t * 10d - 10.75d) * ElasticC4));
+                case EaseType.OutElastic:
+                    return (float)(Math.Pow(2d, -10d * t) * Math.Sin((t * 10d - 0.75d) * ElasticC4) + 1d);
+                case EaseType.InOutElastic: return t < 0.5f
+                    ? (float)(-(Math.Pow(2d, 20d * t - 10d) * Math.Sin((20d * t - 11.125d) * ElasticC5)) / 2d)
+                    : (float)(Math.Pow(2d, -20d * t + 10d) * Math.Sin((20d * t - 11.125d) * ElasticC5) / 2d + 1d);
+
+                default: return t;
+            }
+        }
+
+        private const float BackC1 = 1.70158f;
+        private const float BackC2 = BackC1 * 1.525f;
+        private const float BackC3 = BackC1 + 1f;
+        private const double ElasticC4 = 2d * Math.PI / 3d;
+        private const double ElasticC5 = 2d * Math.PI / 4.5d;
     }
 }

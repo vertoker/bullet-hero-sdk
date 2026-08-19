@@ -88,7 +88,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
             level.Settings.Framerate = options.Framerate;
 
             var context = new ABImportContext(options, report,
-                level.Game, level.Settings, level.Resources.CompositeShapes);
+                level.Game, level.Settings, level.Resources.CompositeShapes,
+                level.Resources.Effects);
 
             ImportThemes(source, level, context);
             level.Settings.FrameDuration = ResolveDuration(source, meta, options, report);
@@ -283,7 +284,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 }
 
                 var prefab = ABPrefabImporter.ImportTemplate(sourcePrefab, context.Options,
-                    context.Report, level.Resources.CompositeShapes, context.ReferenceTheme, $"prefabs[{i}]");
+                    context.Report, level.Resources.CompositeShapes, context.ReferenceTheme,
+                    $"prefabs[{i}]", level.Resources.Effects);
                 if (prefab == null) continue;
 
                 level.Resources.Prefabs[prefab.PrefabId] = prefab;

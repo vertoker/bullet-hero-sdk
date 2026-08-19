@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using BH.SDK.Interop.AfterBeat.Models;
+using BH.SDK.Models.Data;
+using BH.SDK.Models.Effects;
 using BH.SDK.Models.Enums;
 using BH.SDK.Models.Interfaces;
+using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Interfaces.Keyframes;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
+using BH.SDK.Utils;
 
 namespace BH.SDK.Interop.AfterBeat.Export
 {
@@ -57,9 +62,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
             switch (source)
             {
-                case EffectObject:
-                    report.Dropped("effects",
-                        "Afterbeat has no particle effects; effect objects are not exported.", path);
+                case EffectObject effect when ResolveEffect(effect, context, path) == null:
                     return null;
                 case PrefabObject:
                     // A placement is a reference, not content: the objects it materialized into are
@@ -100,10 +103,362 @@ namespace BH.SDK.Interop.AfterBeat.Export
             ExportSizes(source, target, framerate, context, path);
             ExportRotations(source, target, framerate, context, path);
             ExportColors(source, target, context, path);
+            ExportEmitter(source, target, context, path);
             ReportUnsupported(source, report, path);
 
             return target;
         }
+
+        #region Particles
+
+        // THE EMITTER IS WRITTEN OVER THE ORDINARY TRACKS, not instead of them. Values 0/1 of each
+        // track keep the meaning every other object gives them - where the emitter is, how big it
+        // is, which way it faces - and the particle's own life is laid on top as values 2/3, with
+        // the eight parameters appended to the first position keyframe. So the ordinary exporters
+        // above run first and this only adds.
+        //
+        // A round trip is deliberately NOT lossless, and the losses are named one by one below
+        // rather than summarised: the whole Forces group past the start velocity, every shape that
+        // is not a box or a circle, every Random and BySpeed variant, the particle texture and
+        // pivot. An effect authored here rather than imported will lose most of what it is.
+
+        /// <summary> The definition an effect placement points at, or null when it cannot be
+        /// resolved - in which case the object has already been reported and is not exported. </summary>
+        private static EffectData ResolveEffect(EffectObject source, ABExportContext context,
+            string path)
+        {
+            if (context.Effects != null
+                && context.Effects.TryGetValue(source.EffectId, out var data) && data != null)
+                return data;
+
+            context.Report.Dropped("effect_unresolved",
+                "Some effect objects point at a definition the level does not hold; those objects are not exported.",
+                path);
+            return null;
+        }
+
+        private static void ExportEmitter(RectObject source, VgdObject target,
+            ABExportContext context, string path)
+        {
+            if (source is not EffectObject effect) return;
+
+            var data = ResolveEffect(effect, context, path);
+            if (data == null) return;
+
+            var report = context.Report;
+            var framerate = context.Options.Framerate;
+
+            target.ObjectType = (int)ABObjectType.Particles;
+
+            var (shape, option) = ABShapeMap.Export(data.Core.ParticleShapeId, report, path);
+            target.Shape = shape;
+            target.ShapeOption = option;
+
+            var life = ResolveExportedLifetime(data, report, path);
+
+            ApplyEmitterParameters(data, target, report, path);
+            ApplyEmitterVolume(data, target, report, path);
+            ApplyParticleScale(data, target, life, framerate);
+            ApplyParticleAngle(data, target, life, framerate);
+            ApplyParticleColor(data, target, life, framerate, context, path);
+            ReportEmitterLosses(data, report, path);
+        }
+
+        // A lifetime SPREAD has no representation at all - over there every particle lives exactly
+        // as long as the object's own animation, one number with no range - so a spread collapses to
+        // its lower bound and says so.
+        private static float ResolveExportedLifetime(EffectData data, InteropReport report, string path)
+        {
+            var bounds = data.Core.LifetimeBounds as Vector2Value;
+            if (bounds == null) return ABParticleMap.MinTimelineLength;
+
+            if (!BHSDKMath.Approximately(bounds.X, bounds.Y))
+                report.Approximated("particle_lifetime_spread",
+                    "Afterbeat gives every particle of an emitter the same lifetime; a lifetime range exports as its lower bound.",
+                    path);
+
+            return Math.Max(bounds.X, ABParticleMap.MinTimelineLength);
+        }
+
+        private static void ApplyEmitterParameters(EffectData data, VgdObject target,
+            InteropReport report, string path)
+        {
+            var keyframe = FirstKeyframe(target, VgdObject.TrackIndex.Move);
+            if (keyframe == null) return;
+
+            var circle = data.Shape as EffectShapeCircle;
+
+            Write(keyframe, ABParticleMap.SpawnRatePerSecondIndex, data.Core.ParticleCount);
+            Write(keyframe, ABParticleMap.SpawnRatePerUnitIndex, ABParticleMap.SpawnRatePerUnitDefault);
+
+            // Effects here always simulate in their own space, which is Afterbeat's local emitter.
+            Write(keyframe, ABParticleMap.WorldSpaceIndex, 0f);
+
+            // Emission stopping early is what a stop frame IS, and an emitter with none runs until
+            // it dies with its particles.
+            Write(keyframe, ABParticleMap.DespawnOnEndIndex, data.HasStopLocalFrame ? 0f : 1f);
+
+            Write(keyframe, ABParticleMap.EmitterShapeIndex,
+                circle != null ? (int)ABParticleEmitterShapeType.Circle : (int)ABParticleEmitterShapeType.Rectangle);
+            Write(keyframe, ABParticleMap.EmitterArcIndex,
+                circle != null ? ToDegrees(Read(circle.Arc, EffectRules.Shape.Arc_Max)) : ABParticleMap.EmitterArcDefault);
+            Write(keyframe, ABParticleMap.EmitterRadiusThicknessIndex,
+                circle != null ? Read(circle.Thickness, 1f) : ABParticleMap.EmitterRadiusThicknessDefault);
+            Write(keyframe, ABParticleMap.StartSpeedIndex, ABParticleMap.StartSpeedDefault);
+
+            if (!BHSDKMath.Approximately(VelocityOf(data), 0f))
+                report.Approximated("particle_start_velocity",
+                    "Afterbeat describes a particle's travel as a position over its life rather than as one start velocity; the velocity exports as the straight line it draws over that life.",
+                    path);
+        }
+
+        private static void ApplyEmitterVolume(EffectData data, VgdObject target,
+            InteropReport report, string path)
+        {
+            var (x, y) = ResolveExportedVolume(data);
+
+            var track = target.GetTrack(VgdObject.TrackIndex.Scale);
+            if (track == null) return;
+
+            if (track.Keyframes.Count == 0)
+                track.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { x, y } });
+
+            foreach (var keyframe in track.Keyframes)
+            {
+                Write(keyframe, 0, x);
+                Write(keyframe, 1, y);
+            }
+        }
+
+        private static void ApplyParticleScale(EffectData data, VgdObject target, float life,
+            int framerate)
+        {
+            if (data.Scale is not EffectScaleCurvesOverLife curves) return;
+
+            var track = target.GetTrack(VgdObject.TrackIndex.Scale);
+            if (track == null) return;
+
+            foreach (var time in CurveTimes(curves.CurveX, curves.CurveY))
+            {
+                var keyframe = KeyframeAt(track, time * life);
+                Write(keyframe, ABParticleMap.ParticleScaleXIndex, Sample(curves.CurveX, time));
+                Write(keyframe, ABParticleMap.ParticleScaleYIndex, Sample(curves.CurveY, time));
+            }
+        }
+
+        private static void ApplyParticleAngle(EffectData data, VgdObject target, float life,
+            int framerate)
+        {
+            var track = target.GetTrack(VgdObject.TrackIndex.Rotate);
+            if (track == null) return;
+
+            switch (data.Angle)
+            {
+                case EffectAngleValue value:
+                    Write(KeyframeAt(track, 0f), ABParticleMap.ParticleAngleIndex,
+                        ToDegrees(Read(value.Angle, 0f)));
+                    return;
+
+                case EffectAngleCurvesOverLife curves:
+                    foreach (var time in CurveTimes(curves.Curve, curves.Curve))
+                        Write(KeyframeAt(track, time * life), ABParticleMap.ParticleAngleIndex,
+                            ToDegrees(Sample(curves.Curve, time)));
+                    return;
+            }
+        }
+
+        private static void ApplyParticleColor(EffectData data, VgdObject target, float life,
+            int framerate, ABExportContext context, string path)
+        {
+            if (data.Color is not EffectColorGradientOverLife gradient) return;
+
+            var track = target.GetTrack(VgdObject.TrackIndex.Color);
+            if (track == null) return;
+
+            foreach (var stop in gradient.Gradient.ColorKeys)
+            {
+                var keyframe = KeyframeAt(track, stop.Time * life);
+                var (index, opacity) = ABColorMap.Export(stop.Color4, ABPalette.Objects,
+                    context.ReferenceTheme, context.Report, path);
+
+                Write(keyframe, ABCurveMap.ColorSlotIndex, index);
+                Write(keyframe, ABCurveMap.ColorOpacityIndex,
+                    AlphaAt(gradient, stop.Time) * ABCurveMap.ColorOpacityScale);
+            }
+        }
+
+        /// <summary> Every target of an effect that Afterbeat has no field for at all, named one by
+        /// one - a category would tell an author nothing about what to rebuild. </summary>
+        private static void ReportEmitterLosses(EffectData data, InteropReport report, string path)
+        {
+            if (data.Shape is not (EffectShapeRectangle or EffectShapeCircle))
+                report.Dropped("particle_shape_unsupported",
+                    "Afterbeat emitters are a box or a circle; Point, Line, Cone and Torus emitter shapes have no equivalent and export as a box.",
+                    path);
+
+            if (data.Shape is EffectShapeCircle { Spread: not null })
+                report.Dropped("particle_shape_spread",
+                    "Afterbeat walks a rim at random and has no spread setting; Random, Loop, PingPong and Sine spreads are not exported.",
+                    path);
+
+            if (data.Scale is not (EffectScaleValue or EffectScaleCurvesOverLife))
+                report.Dropped("particle_scale_variant",
+                    "Afterbeat sizes a particle by one curve over its life; the RandomUniform, RandomPerComponent and CurvesBySpeed variants are not exported.",
+                    path);
+
+            if (data.Angle is not (EffectAngleValue or EffectAngleCurvesOverLife))
+                report.Dropped("particle_angle_variant",
+                    "Afterbeat turns a particle by one curve over its life; the RandomUniform, RandomPerComponent and CurvesBySpeed variants are not exported.",
+                    path);
+
+            if (data.Color is not (EffectColorValue or EffectColorGradientOverLife))
+                report.Dropped("particle_color_variant",
+                    "Afterbeat tints a particle by one ramp over its life; the RandomUniform, RandomPerComponent, GradientBySpeed and GradientRandom variants are not exported.",
+                    path);
+
+            if (HasForcesPastVelocity(data))
+                report.Dropped("particle_forces",
+                    "Afterbeat has no gravity, angular velocity, orbital or linear force on a particle; those are not exported.",
+                    path);
+
+            if (data.Core.TextureResourceId.value != TextureResourceId.Null.value)
+                report.Dropped("particle_texture",
+                    "Afterbeat draws a particle with the emitter's own shape and no image of its own; a particle texture is not exported.",
+                    path);
+
+            if (!data.Core.Render)
+                report.Dropped("particle_render_off",
+                    "Afterbeat has no way to simulate an emitter without drawing it; an effect with rendering turned off exports as a visible one.",
+                    path);
+
+            if (!data.Core.Loop)
+                report.Dropped("particle_burst",
+                    "Afterbeat clears an emitter's burst list unconditionally and only emits at a rate; a one-shot effect exports as a continuous one.",
+                    path);
+        }
+
+        private static bool HasForcesPastVelocity(EffectData data)
+        {
+            var forces = data.Forces;
+
+            return !IsZero(forces.StartGravityMin) || !IsZero(forces.StartGravityMax)
+                || !IsZero(forces.StartAngularVelocityMin) || !IsZero(forces.StartAngularVelocityMax)
+                || !IsZeroVector(forces.LinearVelocity) || !IsZeroVector(forces.LinearForce);
+        }
+
+        private static bool IsZero(IFloat value)
+            => value is not FloatValue literal || BHSDKMath.Approximately(literal.Value, 0f);
+
+        private static bool IsZeroVector(IVector2 value)
+            => value is not Vector2Value literal
+               || (BHSDKMath.Approximately(literal.X, 0f) && BHSDKMath.Approximately(literal.Y, 0f));
+
+        private static float VelocityOf(EffectData data)
+            => data.Forces.StartVelocityMin is Vector2Value velocity
+                ? Math.Abs(velocity.X) + Math.Abs(velocity.Y)
+                : 0f;
+
+        private static (float X, float Y) ResolveExportedVolume(EffectData data)
+        {
+            switch (data.Shape)
+            {
+                case EffectShapeRectangle rectangle when rectangle.Size is Vector2Value size:
+                    return (size.X, size.Y);
+                case EffectShapeCircle circle:
+                    var diameter = Read(circle.Radius, 1f) / ABParticleMap.EmitterRadiusOfExtent;
+                    return (diameter, diameter);
+                default:
+                    return (ABParticleMap.DefaultEmitterExtent, ABParticleMap.DefaultEmitterExtent);
+            }
+        }
+
+        private static float Read(IFloat value, float fallback)
+            => value is FloatValue literal ? literal.Value : fallback;
+
+        private static float ToDegrees(float radians) => radians * (float)(180d / Math.PI);
+
+        /// <summary> Every distinct time two curves put a key on, in order. </summary>
+        private static List<float> CurveTimes(CurveValue first, CurveValue second)
+        {
+            var times = new List<float>();
+
+            foreach (var curve in new[] { first, second })
+            foreach (var key in curve.KeyFrames)
+                if (!times.Contains(key.Time))
+                    times.Add(key.Time);
+
+            times.Sort();
+            return times;
+        }
+
+        // Linear between the two keys around it, deliberately ignoring their tangents: Afterbeat
+        // stores an easing NAME per keyframe and has no way to say "this bend", so a sampled point
+        // is the only honest thing to write.
+        private static float Sample(CurveValue curve, float time)
+        {
+            var keys = curve.KeyFrames;
+            if (keys.Count == 0) return 0f;
+            if (time <= keys[0].Time) return keys[0].Value;
+
+            for (var i = 1; i < keys.Count; i++)
+            {
+                if (time > keys[i].Time) continue;
+
+                var span = keys[i].Time - keys[i - 1].Time;
+                if (span <= 0f) return keys[i].Value;
+
+                var t = (time - keys[i - 1].Time) / span;
+                return keys[i - 1].Value + (keys[i].Value - keys[i - 1].Value) * t;
+            }
+
+            return keys[^1].Value;
+        }
+
+        private static float AlphaAt(EffectColorGradientOverLife gradient, float time)
+        {
+            var keys = gradient.Gradient.AlphaKeys;
+            if (keys == null || keys.Count == 0) return ValueRules.MaxColor;
+
+            var closest = keys[0];
+            foreach (var key in keys)
+                if (Math.Abs(key.Time - time) < Math.Abs(closest.Time - time))
+                    closest = key;
+
+            return closest.Alpha;
+        }
+
+        /// <summary> The keyframe standing at that time, created if the track has none there. </summary>
+        private static VgdKeyframe KeyframeAt(VgdTrack track, float time)
+        {
+            foreach (var keyframe in track.Keyframes)
+                if (BHSDKMath.Approximately(keyframe.Time, time))
+                    return keyframe;
+
+            var created = new VgdKeyframe { Time = time, Values = new List<float>() };
+            track.Keyframes.Add(created);
+            track.Keyframes.Sort((left, right) => left.Time.CompareTo(right.Time));
+            return created;
+        }
+
+        private static VgdKeyframe FirstKeyframe(VgdObject target, int index)
+        {
+            var track = target.GetTrack(index);
+            if (track == null) return null;
+
+            if (track.Keyframes.Count == 0)
+                track.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float>() });
+
+            return track.Keyframes[0];
+        }
+
+        private static void Write(VgdKeyframe keyframe, int index, float value)
+        {
+            keyframe.Values ??= new List<float>();
+            while (keyframe.Values.Count <= index) keyframe.Values.Add(0f);
+            keyframe.Values[index] = value;
+        }
+
+        #endregion
 
         // p_t has to be WRITTEN, and writing nothing is not the same as writing the common value.
         // Afterbeat's own default for the key is "101" - position and rotation inherited, SCALE NOT
@@ -271,7 +626,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
             // Text goes the way it came in: over there a text object's scale is the only thing
             // sizing its glyphs, while here that is Scale and Size is only the block they lay out
             // in - a block this converter estimated on the way in and that means nothing on the
-            // far side. See ABObjectImporter.ApplyTextSize.
+            // far side. See ABParticleMap.ApplyTextSize.
             var isText = source is TextObject;
             var exported = isText ? source.Scales : source.Sizes;
             var dropped = isText ? source.Sizes : source.Scales;
@@ -318,18 +673,26 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 case ShapeObject shape when shape.Colors != null:
                 {
                     var gradient = false;
+                    var rotation = ABGradientMap.HorizontalRotation;
                     foreach (var key in SortedKeys(shape.Colors))
                     {
                         var exported = ABColorMap.ExportKey(key, ABPalette.Objects,
                             context.ReferenceTheme, context.Report, path);
+                        if (exported.IsGradient && !gradient)
+                            rotation = ABColorMap.ExportRotation(key);
                         gradient |= exported.IsGradient;
                         track.Keyframes.Add(NewKeyframe(key.Frame, key.Ease, framerate,
                             exported.StartIndex, ToSourceOpacity(exported.Opacity), exported.EndIndex));
                     }
 
                     // The type lives on the object, so it is decided once the whole track has been
-                    // read - a gradient anywhere in it means the object has one.
-                    if (gradient) target.GradientType = (int)ABGradientType.Linear;
+                    // read - a gradient anywhere in it means the object has one. So does the axis,
+                    // which is why it comes from the FIRST key that carried one: a track whose keys
+                    // disagree about direction is a thing this format can hold and that one cannot.
+                    if (!gradient) return;
+                    target.GradientType = (int)ABGradientType.Linear;
+                    target.GradientRotation = rotation;
+                    target.GradientScale = ABGradientMap.NeutralScale;
                     return;
                 }
 

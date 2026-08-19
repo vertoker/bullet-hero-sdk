@@ -75,7 +75,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     "level");
 
             var target = new VgdLevel();
-            var context = new ABExportContext(options, report, level.Game);
+            var context = new ABExportContext(options, report, level.Game)
+            {
+                Effects = level.Resources.Effects,
+            };
 
             ExportThemes(level, target, context);
             target.Objects = ABObjectExporter.ExportAll(context, "objects");
@@ -118,6 +121,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 var prefabContext = new ABExportContext(context.Options, context.Report, prefab)
                 {
                     ReferenceTheme = context.ReferenceTheme,
+                    Effects = context.Effects,
                 };
 
                 target.Prefabs.Add(new VgpPrefab
@@ -433,9 +437,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     "An Afterbeat level is one song file in its folder - it has no track list, offsets, speeds or audio effects, so none of this level's audio setup is exported. Put the song in the exported folder by hand.",
                     "audio");
 
-            if (level.Resources.Effects is { Count: > 0 })
+            if (CountUnreferencedEffects(level) > 0)
                 report.Dropped("effect_resources",
-                    "Afterbeat has no particle effects; effect resources are not exported.", "resources.effects");
+                    "Effect definitions nothing places are not written on their own - Afterbeat has no effect resources, only emitter objects, so an unused definition has nowhere to go.",
+                    "resources.effects");
 
             if (level.Resources.CompositeShapes is { Count: > 0 })
                 report.Dropped("shape_resources",
@@ -558,5 +563,27 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     "Afterbeat has one glitch effect; the analog and digital tracks were merged into it, keeping the digital one's intensity.",
                     "postprocessing");
         }
+        // An effect nobody places has nothing to become: over there an emitter IS the object, so a
+        // definition only travels as the objects referencing it. One that is referenced is not a
+        // loss and must not be reported as one.
+
+        /// <summary> Effect definitions no object in the level points at. </summary>
+        private static int CountUnreferencedEffects(Level level)
+        {
+            if (level.Resources?.Effects == null || level.Resources.Effects.Count == 0) return 0;
+
+            var referenced = new HashSet<EffectId>();
+            foreach (var value in level.Game.Objects.Values)
+                if (value is EffectObject effect)
+                    referenced.Add(effect.EffectId);
+
+            var count = 0;
+            foreach (var pair in level.Resources.Effects)
+                if (!referenced.Contains(pair.Key))
+                    count++;
+
+            return count;
+        }
+
     }
 }

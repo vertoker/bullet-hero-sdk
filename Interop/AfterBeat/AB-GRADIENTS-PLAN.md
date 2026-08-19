@@ -1,5 +1,28 @@
 # Afterbeat object gradients — integration plan
 
+> **Status: superseded in its central decision, and shipped in a smaller form.** §5's
+> `ColorGradientKey` — a fifth `Color4X4KeyType` storing the ramp's own parameters — was **not
+> built**, and neither was anything else that changes the level format or the shader. The author's
+> call, and the reasoning is worth keeping: a rotated linear ramp is an affine field, which is
+> exactly what `Color4X4Key` already expresses, so the new variant bought no rendering the format
+> lacked; the one genuinely new capability, radial, does not render until §6.5's stage 2, which §9
+> still blocks. That left round-trip fidelity as the only thing the new variant was for, and it was
+> judged not worth a permanent superset of `Horizontal`/`Vertical` in the format.
+>
+> What shipped instead is `Maps/ABGradientMap.cs`: the source ramp **sampled at the four corners**
+> of the object's box, landing in the narrowest existing keyframe those samples fit. It fixes the
+> defects of §3 and most of the appearance, and it does **not** make the round trip exact — `gs`
+> never survives and `gr` only as the axis its keyframe type implies. See `README.md`'s "Object
+> gradients" section for the shipped behaviour, and §4's Option 1 analysis here for why the theme
+> references are the whole cost. Two things this document asserts are also wrong about the
+> consumer and should not be trusted: **§6.4's claim that `Color4X4KeyState` receives the theme
+> matrix** (it does not — resolution happens later, in `Core`'s `StateValuesExtensions`), and
+> **§8.11's "variant picker"** in `InspectorKeyColorView` (removed; the variant is derived from the
+> keyframe).
+>
+> Everything below is kept for its measurements and its reading of the source game, both of which
+> held up.
+
 Afterbeat lets an object's colour be a two-colour gradient instead of a flat fill: `gt`/`gr`/`gs` on
 the object, plus a second theme slot in every colour keyframe. Today this converter reads exactly one
 of those five numbers. `ABObjectImporter.BuildShapeColor` (`Import/ABObjectImporter.cs:830-861`) turns

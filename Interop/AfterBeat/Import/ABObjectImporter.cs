@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using BH.SDK.Interop.AfterBeat.Models;
+using BH.SDK.Models.Data;
+using BH.SDK.Models.Effects;
 using BH.SDK.Models.Enums;
+using BH.SDK.Models.Interfaces.Effects;
 using BH.SDK.Models.Interfaces.Keyframes;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;
@@ -9,6 +13,7 @@ using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
+using BH.SDK.Utils;
 
 namespace BH.SDK.Interop.AfterBeat.Import
 {
@@ -54,7 +59,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             var byId = IndexById(sources);
             ResolveScaleTargets(sources, byId, context, pathPrefix);
-            ResolveAxisSwaps(sources, byId, context);
+            ResolveShearFits(sources, byId, context);
 
             for (var i = 0; i < sources.Count; i++)
             {
@@ -84,48 +89,80 @@ namespace BH.SDK.Interop.AfterBeat.Import
         // reaches the wrong one. On a parent squashed 35:1 that is not a subtle error: measured on a
         // real level, one object came out 1710 by 3.18 where it should have been 47.7 by 114.
         //
-        // So the child's own scale is multiplied by the ratio that undoes the trade. Position needs
-        // nothing - a parent's scale reaches a child's offset identically in both models - and it
-        // must NOT be folded into the position for the same reason.
+        // EVERY OTHER ANGLE IS GENUINELY SKEWED, AND THAT IS STILL NOT A REASON TO LEAVE IT ALONE.
+        // The quarter turns used to be the only case handled, because they are the only case with
+        // an EXACT answer; but a parallelogram this format cannot hold still has a nearest
+        // rectangle, and reaching for it is strictly better than composing the wrong one. ABLinearFit
+        // solves that in closed form and reduces to the axis trade above wherever the trade applies,
+        // so this pass no longer has an angle table at all - it hands the fit two numbers and writes
+        // down what comes back.
         //
-        // Exact when the parent's scale is constant and one link in the chain turns; a second turned
-        // link below it composes against the accumulated scale rather than the parent's own, which
-        // this per-hop rule approximates rather than solves. Measured over two real levels, the rule
-        // covers 96 objects, and they are the anisotropic ones - three quarters of them sit above
-        // 1.5:1, where an axis trade is the difference between a shape and a streak.
-        private static void ResolveAxisSwaps(IReadOnlyList<VgdObject> sources,
+        // WHAT THE FIT IS ALLOWED TO CHANGE depends on what else reads it. The scale half is always
+        // safe: it reaches the object's own extent, and its children's through a Scales track that
+        // Afterbeat's own parenting propagates identically. The ANGLE half is not - this format
+        // rotates a child's offset by its parent's rotation, so moving a parent's angle swings the
+        // whole subtree, and a non-centred pivot swings the object's own mesh around itself. So the
+        // angle is only fitted on an object that is nobody's parent and whose pivot is centred;
+        // everything else keeps its rotation and takes the scale.
+        //
+        // Both halves need the correction to be a CONSTANT, which is why an animated parent scale or
+        // an animated child rotation falls through to the report instead. A child whose own scale is
+        // animated keeps the angle it was authored at as well: the scale-only fit does not read the
+        // child's scale, but the free one does, and one angle cannot serve a changing aspect ratio.
+        private static void ResolveShearFits(IReadOnlyList<VgdObject> sources,
             IReadOnlyDictionary<string, VgdObject> byId, ABImportContext context)
         {
+            var parents = CollectParentIds(sources);
+
             foreach (var source in sources)
             {
-                if (source == null || string.IsNullOrEmpty(source.ParentId)) continue;
+                if (source == null || string.IsNullOrEmpty(source.Id)) continue;
+                if (string.IsNullOrEmpty(source.ParentId)) continue;
                 if (!InheritsScale(source)) continue;
                 if (!byId.TryGetValue(source.ParentId, out var parent) || parent == null) continue;
-                if (!IsQuarterTurned(source)) continue;
 
                 if (!TryGetConstantScale(parent, out var x, out var y)) continue;
                 if (Math.Abs(x) < MinCompensableScale || Math.Abs(y) < MinCompensableScale) continue;
                 if (Math.Abs(x - y) <= ShearEpsilon) continue;
+                if (!TryGetConstantRotation(source, out var degrees)) continue;
 
-                if (!string.IsNullOrEmpty(source.Id))
-                    context.AxisSwaps[source.Id] = (y / x, x / y);
+                var rotation = Radians(degrees);
+                var fit = CanFitRotation(source, parents)
+                          && TryGetConstantScale(source, out var childX, out var childY)
+                    ? ABLinearFit.Free(x, y, rotation, childX, childY)
+                    : ABLinearFit.KeepingRotation(x, y, rotation);
+
+                if (!fit.IsIdentity)
+                    context.ShearScales[source.Id] = (fit.ScaleX, fit.ScaleY);
+
+                var offset = fit.Rotation - rotation;
+                if (Math.Abs(offset) > float.Epsilon)
+                    context.ShearRotations[source.Id] = offset;
             }
         }
 
-        /// <summary> Whether an object's own rotation is a constant quarter or three-quarter turn -
-        /// the two angles at which a non-uniform parent scale trades axes rather than skewing. </summary>
-        public static bool IsQuarterTurned(VgdObject source)
+        /// <summary> Whether the fit may move this object's own angle: only when nothing hangs off
+        /// it to be swung, and nothing but its centre to swing around. </summary>
+        private static bool CanFitRotation(VgdObject source, ICollection<string> parents)
         {
-            if (!TryGetConstantRotation(source, out var degrees)) return false;
+            if (parents.Contains(source.Id)) return false;
+            if (Math.Abs(source.Origin?.X ?? 0f) > float.Epsilon) return false;
+            if (Math.Abs(source.Origin?.Y ?? 0f) > float.Epsilon) return false;
 
-            var wrapped = ((degrees % 360f) + 360f) % 360f;
-            return Math.Abs(wrapped - 90f) <= QuarterTurnEpsilon
-                   || Math.Abs(wrapped - 270f) <= QuarterTurnEpsilon;
+            return Math.Abs(ABShapeMap.GetPivotOffsetY(source.Shape, source.ShapeOption))
+                   <= float.Epsilon;
         }
 
-        /// <summary> How far off a quarter turn still counts as one. Anything further is a genuine
-        /// skew, and pretending otherwise would trade a visible error for a different one. </summary>
-        public const float QuarterTurnEpsilon = 0.5f;
+        private static HashSet<string> CollectParentIds(IReadOnlyList<VgdObject> sources)
+        {
+            var parents = new HashSet<string>();
+            foreach (var source in sources)
+                if (!string.IsNullOrEmpty(source?.ParentId))
+                    parents.Add(source.ParentId);
+            return parents;
+        }
+
+        private static float Radians(float degrees) => (float)(degrees * Math.PI / 180.0);
 
         // Afterbeat's rotation keyframes are DELTAS, so a constant rotation is one whose deltas
         // after the first are all zero - not one with a single keyframe.
@@ -163,30 +200,35 @@ namespace BH.SDK.Interop.AfterBeat.Import
             return true;
         }
 
-        // WHAT IS LEFT AFTER THE QUARTER TURNS IS GENUINE SHEAR. Afterbeat parents with
-        // plain Unity transforms, and a non-uniform scale above a rotation SHEARS what is under it -
-        // a square under a parent scaled (3, 1) and turned 30 degrees comes out a parallelogram.
-        // This format composes a rotation and a per-axis scale without a matrix between them, so it
-        // has no shear to give: the same object comes out a rotated rectangle.
+        // WHAT IS LEFT AFTER THE FIT IS GENUINE SHEAR. Afterbeat parents with plain Unity
+        // transforms, and a non-uniform scale above a rotation SHEARS what is under it - a square
+        // under a parent scaled (3, 1) and turned 30 degrees comes out a parallelogram. This format
+        // composes a rotation and a per-axis scale without a matrix between them, so it has no shear
+        // to give: the same object comes out the nearest rectangle to that parallelogram.
         //
-        // Nothing here can fix that, and nothing here should pretend to - what it can do is say
-        // which objects it happens to, since they are the ones that will look subtly wrong while
-        // every number in them is right. Reported only when all three conditions actually meet, so
-        // an ordinary level says nothing.
+        // The fit above closes the gap as far as it closes; what is reported is the RESIDUE, which
+        // is why this asks ABLinearFit rather than counting angles. An exactly representable
+        // composition - every quarter turn, every straight angle, every uniform parent - leaves no
+        // residue and says nothing, and a hop whose residue is below a hundredth of the map it came
+        // from is a rectangle staying a rectangle. Both used to be reported, which buried the
+        // objects that really are skewed among the ones that were never wrong.
         //
-        // The quarter turns are deliberately EXCLUDED. They used to be reported here, which was a
-        // wrong diagnosis twice over: it called an exactly representable composition unrepresentable,
-        // and it buried the objects that really are skewed among the ones that are now correct.
+        // A correction that could not be computed at all (an animated parent scale, an animated
+        // child rotation) is reported whatever its angle: nothing was fitted there.
         private static void ReportShear(VgdObject source, IReadOnlyDictionary<string, VgdObject> byId,
             InteropReport report, string path)
         {
             if (string.IsNullOrEmpty(source.ParentId) || !InheritsScale(source)) return;
             if (!byId.TryGetValue(source.ParentId, out var parent) || parent == null) return;
             if (!IsNonUniformlyScaled(parent) || !IsRotated(source)) return;
-            if (IsQuarterTurned(source)) return;
+
+            if (TryGetConstantScale(parent, out var x, out var y)
+                && TryGetConstantRotation(source, out var degrees)
+                && ABLinearFit.Shear(x, y, Radians(degrees)) <= ABLinearFit.Epsilon)
+                return;
 
             report.Approximated("parent_scale_shear",
-                "Afterbeat skews a rotated object sitting under a non-uniformly scaled parent; this format rotates and scales without skewing, so those objects keep their shape. The wider apart the parent's two scales are, the more it shows.",
+                "Afterbeat skews a rotated object sitting under a non-uniformly scaled parent; this format has no skew to give, so the object is fitted to the nearest rotation and scale it can hold. The wider apart the parent's two scales are, the more of the skew is lost.",
                 path);
         }
 
@@ -356,13 +398,17 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var report = context.Report;
             var framerate = context.Options.Framerate;
 
-            var target = CreateTarget(source, context, path);
+            // Resolved BEFORE the target is built, because an emitter's definition carries the
+            // frame its emission stops on and that frame is this span's own duration.
+            var span = ABTimeMap.ResolveSpan(source, framerate, report, path);
+
+            var target = CreateTarget(source, span, context, path);
             target.ObjectId = context.Mint(source.Id);
             target.Name = context.Options.KeepObjectNames
                 ? (string.IsNullOrEmpty(source.Name) ? source.Id ?? string.Empty : source.Name)
                 : string.Empty;
             target.Active = true;
-            target.Span = ABTimeMap.ResolveSpan(source, framerate, report, path);
+            target.Span = ResolveEmitterSpan(source, target, span, framerate);
 
             // A mask of "000" inherits nothing at all, which this format cannot say of a child -
             // but CAN say of a root, exactly and with nothing baked. So such an object is imported
@@ -379,7 +425,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             ImportPositions(source, target, framerate, context, path);
             ImportScales(source, target, framerate, context, path);
             ApplyTextSize(target, report, path);
-            ImportRotations(source, target, framerate, report, path);
+            ImportRotations(source, target, framerate, context, path);
             ImportColors(source, target, context, path);
 
             return target;
@@ -399,8 +445,15 @@ namespace BH.SDK.Interop.AfterBeat.Import
         // format expresses the distinction. Empty carries no geometry at all and becomes the base
         // type - it is a transform other objects hang off, and giving it a shape would draw
         // something the source level never drew.
-        private static RectObject CreateTarget(VgdObject source, ABImportContext context, string path)
+        private static RectObject CreateTarget(VgdObject source, FrameSpan span,
+            ABImportContext context, string path)
         {
+            // Before the text branch, exactly as the source game orders it: InitVisual answers
+            // IsParticles first and returns, so an emitter carrying a text shape is still an
+            // emitter over there.
+            if (ABParticleMap.IsEmitter(source))
+                return CreateEffect(source, span, context, path);
+
             if (ABShapeMap.IsText(source.Shape))
                 return CreateText(source, context, path);
 
@@ -433,10 +486,10 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 case ABObjectType.Decoration:
                 case ABObjectType.NoHit:
                     return false;
+                // Unreachable from CreateTarget, which answers an emitter before it gets here -
+                // kept so that reaching it some other way still cannot hand a collider to
+                // something the source game never let hit the player.
                 case ABObjectType.Particles:
-                    report.Approximated("object_type_particles",
-                        "Afterbeat particle emitters have no equivalent here; those objects were imported as their own shape, drawn once and never hitting the player, and emit nothing.",
-                        path);
                     return false;
                 default:
                     report.Approximated("object_type_unknown",
@@ -448,6 +501,446 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         private static bool IsEmpty(int objectType)
             => (ABObjectType)objectType is ABObjectType.Empty or ABObjectType.AlphaEmpty;
+
+        #endregion
+
+        #region Particles
+
+        // AN AFTERBEAT EMITTER DRAWS NO SHAPE OF ITS OWN. InitVisual spawns the particle prefab and
+        // returns, and the object's (shape, shapeOption) is resolved into the PARTICLE RENDERER's
+        // mesh rather than into a quad of its own. So this replaces the ShapeObject rather than
+        // standing beside one - keeping a shape would keep drawing something the source level never
+        // drew - and the collider goes with it, which an EffectObject has no field for anyway.
+
+        /// <summary> One source emitter as an effect placement, its definition landing in the
+        /// level's own effect resources. </summary>
+        private static RectObject CreateEffect(VgdObject source, FrameSpan span,
+            ABImportContext context, string path)
+        {
+            var settings = ABParticleMap.TryRead(source).Value;
+            var report = context.Report;
+
+            report.Approximated("object_type_particles",
+                "Afterbeat particle emitters were imported as effects: the emission rate, the particle mesh, its lifetime and the emitter volume cross, while world-space emission, the per-particle velocity curve and an animated emitter volume have no counterpart here.",
+                path);
+
+            ReportParticleLosses(source, settings, report, path);
+
+            var shapeId = ABShapeMap.Import(source.Shape, source.ShapeOption,
+                context.Shapes, report, path, source);
+
+            var data = BuildEffectData(source, settings, span, shapeId, context, path);
+            var effectId = ABIdMap.ToEffectId(BuildEffectSignature(settings, data, shapeId));
+            data.EffectId = effectId;
+
+            // First writer wins, exactly as a synthesized shape does: two emitters authored the same
+            // way describe the same effect, so the second one adds nothing.
+            if (context.Effects != null && !context.Effects.ContainsKey(effectId))
+                context.Effects.Add(effectId, data);
+
+            return new EffectObject { EffectId = effectId };
+        }
+
+        private static EffectData BuildEffectData(VgdObject source, ABParticleSettings settings,
+            FrameSpan span, ShapeId shapeId, ABImportContext context, string path)
+        {
+            var data = new EffectData
+            {
+                Name = ResolveEffectName(source),
+            };
+
+            // THE STOP FRAME IS PART OF THE DEFINITION, not of the placement - EffectData is what
+            // carries it, and EffectData is shared. So two emitters agreeing on every parameter but
+            // living for different lengths are NOT the same effect, which is why the signature ends
+            // up naming this too.
+            if (!settings.DespawnOnEnd)
+            {
+                data.HasStopLocalFrame = true;
+                data.StopLocalFrame = Math.Clamp(span.FrameDuration,
+                    EffectRules.StopLocalFrame_Min, EffectRules.StopLocalFrame_Max);
+            }
+
+            // Loop is what gates the graph's constant-rate spawner; without it the definition is a
+            // single burst, and ev[4] is a RATE.
+            data.Core.Loop = true;
+            data.Core.ParticleCount = ToParticleCount(settings.SpawnRatePerSecond);
+            data.Core.LifetimeBounds = ToLifetimeBounds(settings.TimelineLength);
+            data.Core.ParticleShapeId = shapeId;
+            data.Shape = BuildEmitterShape(source, settings);
+            data.Forces.StartVelocityMin = BuildStartVelocity(source, settings);
+            data.Forces.StartVelocityMax = BuildStartVelocity(source, settings);
+            data.Scale = BuildParticleScale(source, settings, context, path);
+            data.Angle = BuildParticleAngle(source, settings, context, path);
+            data.Color = BuildParticleColor(source, settings, context, path);
+
+            return data;
+        }
+
+        /// <summary> Particles per second, as the constant-rate spawner reads it. </summary>
+        private static uint ToParticleCount(float spawnRatePerSecond)
+        {
+            if (spawnRatePerSecond <= 0f) return EffectRules.Core.ParticleCount_Min;
+
+            var rounded = Math.Round(spawnRatePerSecond, MidpointRounding.AwayFromZero);
+            if (rounded >= EffectRules.Core.ParticleCount_Max) return EffectRules.Core.ParticleCount_Max;
+
+            return (uint)rounded;
+        }
+
+        /// <summary> Every particle lives exactly as long as the object's own animation - Afterbeat
+        /// assigns one startLifetime with no spread at all, so both ends are the same number. </summary>
+        private static IVector2 ToLifetimeBounds(float timelineLength)
+        {
+            var lifetime = Math.Clamp(timelineLength,
+                EffectRules.Core.LifetimeBounds_Min, EffectRules.Core.LifetimeBounds_Max);
+
+            return new Vector2Value(lifetime, lifetime);
+        }
+
+        private static string ResolveEffectName(VgdObject source)
+        {
+            var name = string.IsNullOrEmpty(source.Name) ? source.Id ?? string.Empty : source.Name;
+            return name.Length > ValueRules.MaxEditorName
+                ? name[..ValueRules.MaxEditorName]
+                : name;
+        }
+
+        // The scale track's FIRST keyframe only. EffectShape* fields are values rather than tracks,
+        // so an animated emitter volume cannot cross whole - that loss is reported in its own right
+        // rather than approximated silently here.
+
+        /// <summary> The volume particles spawn inside, out of ev[8..10] and the scale track. </summary>
+        private static IEffectShape BuildEmitterShape(VgdObject source, ABParticleSettings settings)
+        {
+            var (x, y) = ReadEmitterVolume(source);
+
+            if (settings.EmitterShape == ABParticleEmitterShapeType.Rectangle)
+                return new EffectShapeRectangle { Size = new Vector2Value(x, y) };
+
+            return new EffectShapeCircle
+            {
+                Radius = new FloatValue(Math.Max(x, y) * ABParticleMap.EmitterRadiusOfExtent),
+                Arc = new FloatValue(ToArcRadians(settings.EmitterArc)),
+                Thickness = new FloatValue(settings.EmitterRadiusThickness),
+            };
+        }
+
+        // AN EMITTER'S FOUR TRACKS DO TWO JOBS AT ONCE. Values 0/1 keep their ordinary meaning and
+        // animate the EMITTER; values 2/3 are a second, hidden channel describing ONE PARTICLE over
+        // its own life. That is the whole feature, and it is why an emitter's tracks are read twice -
+        // once by the ordinary track import above, once here.
+        //
+        // The angle channel crosses DIRECTLY rather than as a derivative. Over there the authored
+        // numbers are fed to rotationOverLifetime, whose parameter is an angular VELOCITY, so the
+        // source game differentiates them first; EffectAngleCurvesOverLife is an angle over
+        // normalized lifetime, which is what the author wrote in the first place.
+
+        /// <summary> Size over a particle's life, out of the scale track's hidden channel. </summary>
+        private static IEffectScale BuildParticleScale(VgdObject source, ABParticleSettings settings,
+            ABImportContext context, string path)
+        {
+            var track = source.Scale;
+            if (!HasChannel(track, ABParticleMap.ParticleScaleXIndex) && !HasChannel(track, ABParticleMap.ParticleScaleYIndex))
+                return new EffectScaleValue();
+
+            return new EffectScaleCurvesOverLife
+            {
+                CurveX = ABCurveMap.Import(track, ABParticleMap.ParticleScaleXIndex, ABParticleMap.ParticleScaleDefault,
+                    settings.TimelineLength, null, context.Report, path),
+                CurveY = ABCurveMap.Import(track, ABParticleMap.ParticleScaleYIndex, ABParticleMap.ParticleScaleDefault,
+                    settings.TimelineLength, null, context.Report, path),
+            };
+        }
+
+        /// <summary> Rotation over a particle's life, out of the rotation track's hidden channel -
+        /// or the one constant angle it is born with, when nothing animates it. </summary>
+        private static IEffectAngle BuildParticleAngle(VgdObject source, ABParticleSettings settings,
+            ABImportContext context, string path)
+        {
+            var track = source.Rotate;
+            if (!HasChannel(track, ABParticleMap.ParticleAngleIndex)) return new EffectAngleValue();
+
+            if (track.Keyframes.Count < 2)
+                return new EffectAngleValue
+                {
+                    Angle = new FloatValue(ToRadians(
+                        ReadChannel(track.Keyframes[0], ABParticleMap.ParticleAngleIndex, ABParticleMap.ParticleAngleDefault))),
+                };
+
+            return new EffectAngleCurvesOverLife
+            {
+                Curve = ABCurveMap.Import(track, ABParticleMap.ParticleAngleIndex, ABParticleMap.ParticleAngleDefault,
+                    settings.TimelineLength, ToRadians, context.Report, path),
+            };
+        }
+
+        /// <summary> Tint over a particle's life. The object's whole colour timeline is a
+        /// per-particle ramp over there, not the emitter's own colour over time. </summary>
+        private static IEffectColor BuildParticleColor(VgdObject source, ABParticleSettings settings,
+            ABImportContext context, string path)
+        {
+            var track = source.Color;
+            if (track?.Keyframes == null || track.Keyframes.Count == 0) return new EffectColorValue();
+
+            context.Report.Approximated("particle_color_theme_lost",
+                "A gradient stop here holds a literal colour rather than a theme slot, so imported particle colours were resolved against the level's own theme once and no longer follow a theme change.",
+                path);
+
+            return new EffectColorGradientOverLife
+            {
+                Gradient = ABCurveMap.ImportGradient(track, settings.TimelineLength,
+                    context.ReferenceTheme, context.Report, path),
+            };
+        }
+
+        // THE VELOCITY CHANNEL IS A POSITION, NOT A SPEED. The authored numbers describe where a
+        // particle has travelled by a given point of its life, and the source game feeds their
+        // DERIVATIVE to velocityOverLifetime - which is what makes the first value almost always
+        // zero, since a particle starts where it was born. Reading the raw value at t = 0 would
+        // therefore give every emitter a start velocity of nothing.
+        //
+        // What crosses is the average velocity over the whole life, which reproduces the net
+        // displacement exactly whenever the channel is linear - two keyframes and Linear easing,
+        // which is what an ordinary emitter authors. The shape of the travel after that is
+        // flattened, and that is the largest single approximation in this whole conversion.
+
+        /// <summary> The one velocity a particle is born with, out of the position channel it was
+        /// authored as. </summary>
+        private static IVector2 BuildStartVelocity(VgdObject source, ABParticleSettings settings)
+        {
+            var track = source.Move;
+            if (!UsesVelocityChannel(source)) return new Vector2Value(0f, 0f);
+
+            var keyframes = track.Keyframes;
+            var first = keyframes[0];
+            var last = keyframes[^1];
+
+            var life = Math.Max(settings.TimelineLength, ABParticleMap.MinTimelineLength);
+            var x = ReadChannel(last, ABParticleMap.ParticleVelocityXIndex, 0f)
+                    - ReadChannel(first, ABParticleMap.ParticleVelocityXIndex, 0f);
+            var y = ReadChannel(last, ABParticleMap.ParticleVelocityYIndex, 0f)
+                    - ReadChannel(first, ABParticleMap.ParticleVelocityYIndex, 0f);
+
+            return new Vector2Value(x / life, y / life);
+        }
+
+        // PRESENCE IS NOT USE for this one channel, and the difference is the whole report. Every
+        // parameter an emitter authors lives past it in the same array (ev[4] onwards), so an
+        // emitter that sets a spawn rate necessarily carries indices 2 and 3 as zeros - and a
+        // channel of zeros describes a particle that does not travel. Asking whether the index
+        // EXISTS would therefore report the largest approximation in this converter on every single
+        // emitter, which is exactly the noise the named codes exist to avoid.
+
+        /// <summary> Whether this emitter actually sends its particles anywhere. </summary>
+        private static bool UsesVelocityChannel(VgdObject source)
+        {
+            var keyframes = source.Move?.Keyframes;
+            if (keyframes == null) return false;
+
+            foreach (var keyframe in keyframes)
+                if (!BHSDKMath.Approximately(ReadChannel(keyframe, ABParticleMap.ParticleVelocityXIndex, 0f), 0f)
+                    || !BHSDKMath.Approximately(ReadChannel(keyframe, ABParticleMap.ParticleVelocityYIndex, 0f), 0f))
+                    return true;
+
+            return false;
+        }
+
+        // NAMED ONE BY ONE, and each one firing only when the source actually used the thing. A
+        // report that says "some particle details were lost" on every emitter is what this
+        // converter's report exists to avoid: an author cannot act on it, and it hides the one
+        // emitter that lost something that mattered.
+
+        /// <summary> Everything about this emitter that has no counterpart here. </summary>
+        private static void ReportParticleLosses(VgdObject source, ABParticleSettings settings,
+            InteropReport report, string path)
+        {
+            if (settings.SpawnRatePerUnit > 0f)
+                report.Dropped("particle_spawn_per_unit",
+                    "Afterbeat can emit a particle every so many units travelled; there is no distance-based emission here, so those emitters spawn on their time rate alone.",
+                    path);
+
+            if (settings.WorldSpace)
+                report.Approximated("particle_world_space",
+                    "A world-space Afterbeat emitter leaves its particles behind as it travels; effects here always simulate in their own space, so those particles are dragged along with the emitter instead.",
+                    path);
+
+            if (!BHSDKMath.Approximately(settings.StartSpeed, ABParticleMap.StartSpeedDefault))
+                report.Dropped("particle_start_speed",
+                    "Afterbeat pushes a particle along its emitter shape's normal at birth; there is no radial-outward force here, so that push is lost.",
+                    path);
+
+            if (UsesVelocityChannel(source))
+                report.Approximated("particle_velocity_curve",
+                    "Afterbeat animates where a particle travels over its whole life; only one start velocity crosses here, so that travel is flattened to its average.",
+                    path);
+
+            if (HasAnimatedEmitterVolume(source))
+                report.Approximated("particle_emitter_volume_animated",
+                    "Afterbeat can animate the volume particles spawn inside; an emitter shape here is a value rather than a track, so only its first keyframe crosses.",
+                    path);
+
+            if (source.GradientType != 0)
+                report.Dropped("particle_gradient_material",
+                    "Afterbeat can draw an emitter's particles with a gradient material; particles here take one colour ramp over their life and nothing else.",
+                    path);
+        }
+
+        /// <summary> Whether the emitter volume moves after its first keyframe - values 0/1 of the
+        /// scale track, which is the emitter half rather than the particle half. </summary>
+        private static bool HasAnimatedEmitterVolume(VgdObject source)
+        {
+            var keyframes = source.Scale?.Keyframes;
+            if (keyframes == null || keyframes.Count < 2) return false;
+
+            var x = ReadChannel(keyframes[0], 0, ABParticleMap.DefaultEmitterExtent);
+            var y = ReadChannel(keyframes[0], 1, ABParticleMap.DefaultEmitterExtent);
+
+            for (var i = 1; i < keyframes.Count; i++)
+                if (!BHSDKMath.Approximately(ReadChannel(keyframes[i], 0, ABParticleMap.DefaultEmitterExtent), x)
+                    || !BHSDKMath.Approximately(ReadChannel(keyframes[i], 1, ABParticleMap.DefaultEmitterExtent), y))
+                    return true;
+
+            return false;
+        }
+
+        /// <summary> Whether any keyframe of a track actually wrote that value index - the hidden
+        /// channels sit past the arity an ordinary track carries, so their absence is ordinary. </summary>
+        private static bool HasChannel(VgdTrack track, int index)
+        {
+            if (track?.Keyframes == null) return false;
+
+            foreach (var keyframe in track.Keyframes)
+                if (keyframe?.Values != null && index < keyframe.Values.Count)
+                    return true;
+
+            return false;
+        }
+
+        private static float ReadChannel(VgdKeyframe keyframe, int index, float fallback)
+        {
+            var values = keyframe?.Values;
+            return values != null && index >= 0 && index < values.Count ? values[index] : fallback;
+        }
+
+        private static float ToRadians(float degrees) => degrees * (float)(Math.PI / 180d);
+
+        // Absolute, not clamped at zero: a negative scale MIRRORS over there, and a spawn volume is
+        // symmetric, so the mirrored one is the same volume. Clamping instead would collapse it.
+        private static (float X, float Y) ReadEmitterVolume(VgdObject source)
+        {
+            var keyframes = source?.Scale?.Keyframes;
+            if (keyframes == null || keyframes.Count == 0)
+                return (ABParticleMap.DefaultEmitterExtent, ABParticleMap.DefaultEmitterExtent);
+
+            var keyframe = keyframes[0];
+            return (Math.Abs(keyframe.GetValue(0)), Math.Abs(keyframe.GetValue(1)));
+        }
+
+        private static float ToArcRadians(float degrees)
+            => Math.Clamp(degrees / ABParticleMap.MaxEmitterArc * EffectRules.Shape.Arc_Max,
+                EffectRules.Shape.Arc_Min, EffectRules.Shape.Arc_Max);
+
+        // ONE RESOURCE PER DEFINITION, and the definition is what the emitter IS - so the signature
+        // has to name every parameter that reaches the EffectData and nothing that does not. A
+        // number is written invariantly, since a signature read differently under another culture
+        // would hand the same emitter two ids on two machines.
+
+        /// <summary> A canonical description of everything this emitter's definition is built out
+        /// of. Two emitters agreeing on it describe one effect. </summary>
+        private static string BuildEffectSignature(ABParticleSettings settings, EffectData data,
+            ShapeId shapeId)
+        {
+            var culture = CultureInfo.InvariantCulture;
+
+            return string.Join("|",
+                "v1",
+                shapeId.value.ToString("N", culture),
+                settings.SpawnRatePerSecond.ToString("R", culture),
+                settings.TimelineLength.ToString("R", culture),
+                ((int)settings.EmitterShape).ToString(culture),
+                settings.EmitterArc.ToString("R", culture),
+                settings.EmitterRadiusThickness.ToString("R", culture),
+                data.HasStopLocalFrame ? "stop" : "run",
+                data.StopLocalFrame.ToString(culture),
+                Describe(data.Forces, culture),
+                Describe(data.Scale, culture),
+                Describe(data.Angle, culture),
+                Describe(data.Color, culture));
+        }
+
+        private static string Describe(EffectObjectForces forces, CultureInfo culture)
+        {
+            var velocity = (Vector2Value)forces.StartVelocityMin;
+            return $"v:{velocity.X.ToString("R", culture)},{velocity.Y.ToString("R", culture)}";
+        }
+
+        private static string Describe(IEffectScale scale, CultureInfo culture)
+            => scale is EffectScaleCurvesOverLife curves
+                ? $"s:{Describe(curves.CurveX, culture)};{Describe(curves.CurveY, culture)}"
+                : "s:-";
+
+        private static string Describe(IEffectAngle angle, CultureInfo culture) => angle switch
+        {
+            EffectAngleCurvesOverLife curves => $"a:{Describe(curves.Curve, culture)}",
+            EffectAngleValue value => $"a={((FloatValue)value.Angle).Value.ToString("R", culture)}",
+            _ => "a:-",
+        };
+
+        private static string Describe(IEffectColor color, CultureInfo culture)
+        {
+            if (color is not EffectColorGradientOverLife gradient) return "c:-";
+
+            var parts = new List<string>();
+            foreach (var stop in gradient.Gradient.ColorKeys)
+                parts.Add(string.Concat(
+                    stop.Time.ToString("R", culture), ",",
+                    stop.Color4.R.ToString("R", culture), ",",
+                    stop.Color4.G.ToString("R", culture), ",",
+                    stop.Color4.B.ToString("R", culture)));
+
+            foreach (var stop in gradient.Gradient.AlphaKeys)
+                parts.Add(string.Concat(
+                    stop.Time.ToString("R", culture), ",", stop.Alpha.ToString("R", culture)));
+
+            return "c:" + string.Join(";", parts);
+        }
+
+        private static string Describe(CurveValue curve, CultureInfo culture)
+        {
+            var parts = new List<string>(curve.KeyFrames.Count);
+            foreach (var key in curve.KeyFrames)
+                parts.Add(string.Concat(
+                    key.Time.ToString("R", culture), ",", key.Value.ToString("R", culture)));
+
+            return string.Join("/", parts);
+        }
+
+        // A NON-DESPAWNING EMITTER OUTLIVES ITS OWN EMISSION. Over there the object's length becomes
+        // logicalLength + particleMaxLifetime, so the last particles finish their life after the
+        // emitter has stopped spawning; here the span is extended by the same amount and the stop
+        // frame above is what ends the emission where the object used to end. An emitter that DOES
+        // despawn keeps its span exactly, because over there it is killed with its particles.
+        //
+        // Running past the end of the level is legal authored data - a root object is not bounded by
+        // the level's own length - so nothing clamps against FrameDuration here.
+
+        /// <summary> The span an emitter actually occupies, once the tail its particles need has
+        /// been added. Anything that is not a non-despawning emitter keeps the span it was given. </summary>
+        private static FrameSpan ResolveEmitterSpan(VgdObject source, RectObject target,
+            FrameSpan span, int framerate)
+        {
+            if (target is not EffectObject) return span;
+
+            var settings = ABParticleMap.TryRead(source);
+            if (settings == null || settings.Value.DespawnOnEnd) return span;
+
+            var tail = ABTimeMap.ToFrame(settings.Value.TimelineLength, framerate);
+            return ABTimeMap.FromFrames(span.StartFrame, span.StartFrame + span.FrameDuration + tail);
+        }
+
+        #endregion
+
+        #region Text
 
         // Afterbeat text has NO bounds of its own - it lays out from its origin and runs as far as
         // it needs to. This format lays text out inside the object's Size, so an imported text has
@@ -720,6 +1213,13 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static void ImportScales(VgdObject source, RectObject target, int framerate,
             ABImportContext context, string path)
         {
+            // AN EMITTER'S SCALE TRACK IS NOT ITS TRANSFORM. Over there it drives shape.scale - the
+            // volume particles spawn inside - while the ordinary branch below drives what the object
+            // itself measures. They are different quantities that happen to be authored on the same
+            // track, so the emitter's went into EffectShape* when the effect was built
+            // (CreateEffect), and writing it here as well would scale the whole system on top of it.
+            if (target is EffectObject) return;
+
             var track = source.Scale;
             if (track?.Keyframes == null) return;
 
@@ -735,15 +1235,14 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var shapeFit = ABShapeMap.GetCustomSizeCompensation(source);
             var sizeFactor = toScale ? 1f : shapeFit;
 
-            // The axis trade is a SCALE correction and belongs nowhere near the position - see
-            // ResolveAxisSwaps.
-            var swap = GetAxisSwap(source, context);
+            // The shear fit's scale half belongs nowhere near the position - see ResolveShearFits.
+            var shear = GetShearScale(source, context);
 
             foreach (var key in Take(track.Keyframes, LevelRules.MaxObjectKeys, report, path))
             {
                 var value = ABValueMap.ImportVector(
-                    key.GetValue(0) * compensation.X * sizeFactor * swap.X,
-                    key.GetValue(1) * compensation.Y * sizeFactor * swap.Y,
+                    key.GetValue(0) * compensation.X * sizeFactor * shear.X,
+                    key.GetValue(1) * compensation.Y * sizeFactor * shear.Y,
                     key, report, path);
                 into.Add(new ScaKey(value, LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
@@ -765,25 +1264,38 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 ? factor
                 : (1f, 1f);
 
-        private static (float X, float Y) GetAxisSwap(VgdObject source, ABImportContext context)
+        private static (float X, float Y) GetShearScale(VgdObject source, ABImportContext context)
             => source?.Id != null
-               && context.AxisSwaps.TryGetValue(source.Id, out var factor)
+               && context.ShearScales.TryGetValue(source.Id, out var factor)
                 ? factor
                 : (1f, 1f);
+
+        private static float GetShearRotation(VgdObject source, ABImportContext context)
+            => source?.Id != null
+               && context.ShearRotations.TryGetValue(source.Id, out var offset)
+                ? offset
+                : 0f;
 
         // The one track that cannot be converted keyframe by keyframe: each source value is a delta
         // from the one before it, so the whole track has to be walked in order while a running total
         // is kept.
+        //
+        // The shear fit's angle half lands here, and only ever as a CONSTANT offset - the fit is
+        // only computed for a constant rotation in the first place, so adding it to every key adds
+        // it to the one angle the track actually holds. See ResolveShearFits for who is allowed one.
         private static void ImportRotations(VgdObject source, RectObject target, int framerate,
-            InteropReport report, string path)
+            ABImportContext context, string path)
         {
             var track = source.Rotate;
             if (track?.Keyframes == null) return;
 
+            var report = context.Report;
+            var offset = GetShearRotation(source, context);
+
             var accumulated = 0f;
             foreach (var key in Take(track.Keyframes, LevelRules.MaxObjectKeys, report, path))
             {
-                var radians = ABValueMap.AccumulateRotation(key.GetValue(0), ref accumulated);
+                var radians = ABValueMap.AccumulateRotation(key.GetValue(0), ref accumulated) + offset;
                 target.Rotations.Add(new AngleKey(new FloatValue(radians), LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
             }
@@ -798,14 +1310,13 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             var report = context.Report;
             var framerate = context.Options.Framerate;
-            var gradient = (ABGradientType)source.GradientType;
 
             switch (target)
             {
                 case ShapeObject shape:
                 {
                     foreach (var key in Take(track.Keyframes, LevelRules.MaxObjectKeys, report, path))
-                        shape.Colors.Add(BuildShapeColor(key, gradient, context, path));
+                        shape.Colors.Add(BuildShapeColor(key, source, context, path));
                     Deduplicate(shape.Colors, k => k.Frame, report, path);
                     break;
                 }
@@ -824,41 +1335,28 @@ namespace BH.SDK.Interop.AfterBeat.Import
             }
         }
 
-        // A linear gradient becomes a two-corner colour, which is the closest this format has; its
-        // ROTATION and SCALE have no equivalent and are reported once. A radial gradient has no
-        // shape here at all and falls back to its start colour.
-        private static IColor4X4Key BuildShapeColor(VgdKeyframe key, ABGradientType gradient,
+        // The ramp's own three numbers live on the OBJECT over there and the two colours it runs
+        // between live in the keyframe, so this reads both: gt/gr/gs off the source object, the
+        // pair of theme slots off the key. ABGradientMap owns everything after that - which of
+        // the four-corner keyframes the ramp samples into, and what it costs.
+        private static IColor4X4Key BuildShapeColor(VgdKeyframe key, VgdObject source,
             ABImportContext context, string path)
         {
             var report = context.Report;
             var frame = LocalFrame(key, context.Options.Framerate);
             var ease = ABEaseMap.Import(key.Ease, report, path);
             var start = ReadStartColor(key, context, path);
+            var gradient = (ABGradientType)source.GradientType;
 
-            switch (gradient)
-            {
-                case ABGradientType.Linear:
-                case ABGradientType.InvertedLinear:
-                {
-                    report.Approximated("gradient_linear",
-                        "Afterbeat's linear object gradient became a two-corner colour; its rotation and scale have no equivalent here.",
-                        path);
-                    var end = ReadEndColor(key, context, path);
-                    return gradient == ABGradientType.Linear
-                        ? new ColorHorizontalKey(start, end, frame, ease)
-                        : new ColorHorizontalKey(end, start, frame, ease);
-                }
+            // A non-gradient object still carries a third colour component in every key, and the
+            // source game ignores it. Reading it here would give an object a second colour its
+            // own level never drew.
+            if (gradient == ABGradientType.None)
+                return new Color4Key(start, frame, ease);
 
-                case ABGradientType.Radial:
-                case ABGradientType.InvertedRadial:
-                    report.Dropped("gradient_radial",
-                        "Afterbeat's radial object gradient has no equivalent here; those objects use their start colour flat.",
-                        path);
-                    return new Color4Key(start, frame, ease);
-
-                default:
-                    return new Color4Key(start, frame, ease);
-            }
+            return ABGradientMap.Build(gradient, source.GradientRotation, source.GradientScale,
+                start, ReadEndColor(key, context, path), frame, ease, context.ReferenceTheme,
+                context.Options.BakeGradientCorners, report, path);
         }
 
         private static IColor4 ReadStartColor(VgdKeyframe key, ABImportContext context, string path)

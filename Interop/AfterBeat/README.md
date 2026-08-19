@@ -112,6 +112,7 @@ including their respawn position, object hierarchy, and the object/prefab struct
 | rotation | degrees, each key relative to the previous | radians, absolute |
 | draw order | absolute depth 0–60 (smaller in front) inside one of three render bands | parent-relative `Layer`, higher in front, four import modes — see below |
 | object colour | theme slot + an opacity in **percent** | `ThemeRef` at full opacity, a literal below it |
+| object gradient | a per-pixel ramp: two theme slots plus a type, a direction in degrees and a length (`gt`/`gr`/`gs`) | the ramp **sampled at the four corners** of the object's box, landing in the narrowest colour keyframe those four samples fit — see below |
 | camera zoom | the camera's orthographic size (half-height), default 20 | `Zoom`, the whole visible height — so **doubled** |
 | camera-parented objects | hang off a node scaled by `zoom / 20`, so they keep a constant screen size | that node is rebuilt as an ordinary object and they hang off it; the export flattens it away again |
 | background | a subsystem of its own, plus the theme's background colour | the theme's background slot referenced on the `Backgrounds` track; the parallax becomes objects |
@@ -121,6 +122,37 @@ including their respawn position, object hierarchy, and the object/prefab struct
 | the frame | nothing in the file, and nothing enforced at play time — but every window resolution the game offers is 16:9, so that is what every level was authored inside | a `Fixed` 16:9 screen limit on the first frame. **Import only** — the export writes none, since the target format has no field and always runs at that aspect anyway |
 | shapes | 25 `(shape, option)` pairs | 78 presets, plus synthesized geometry for the seven combinations no preset covers |
 | parallax | a background subsystem | ordinary collider-less objects with the loop baked into keyframes |
+| a rotated child under a non-uniformly scaled parent | a matrix product, so the child is genuinely **skewed** | the nearest rotation and scale there is (`ABLinearFit`, least squares in closed form) — exact at every quarter and straight angle, an approximation between them, and reported as `parent_scale_shear` only where a residue is actually left |
+
+### Object gradients
+
+Afterbeat evaluates an object's ramp per pixel; this format has four corner colours blended
+bilinearly across the object's box. So the ramp is **sampled** at those four corners
+(`Maps/ABGradientMap.cs`) rather than translated, and the result is the narrowest keyframe the four
+samples fit into — a `Color4Key` when they agree, a `ColorHorizontalKey`/`ColorVerticalKey` when
+they agree in pairs, a `Color4X4Key` only when the ramp is genuinely diagonal.
+
+A bilinear field reproduces any affine function exactly, so the sampling is **pixel-exact whenever
+`gs >= |cos gr| + |sin gr|`** — always at `gs >= sqrt(2)`, and at `gs >= 1` for an axis-aligned
+angle. Below that the real ramp has saturated flat bands no bilinear field holds: the corner
+colours stay right and the distribution comes out softer. A **radial** gradient is rotationally
+symmetric and bilinear at no parameters at all, so its four corners always agree and it arrives
+flat — at the colour of its *edge*, which is what its area is made of, rather than at the colour of
+the single point at its centre (`gradient_radial`).
+
+The cost is theme references. A corner sampled strictly between the two ends is a **blend** of two
+theme colours, and no `Color4ThemeRef` expresses a blend, so such a corner has to become a literal
+and that object stops following a theme change (`gradient_theme_flattened`). `ABOptions
+.BakeGradientCorners` is the choice: on (default) keeps the ramp's shape and pays in references;
+off snaps such a corner to its nearer end instead — a hard edge in place of a blend, every
+reference alive (`gradient_corners_snapped`).
+
+`gr` and `gs` do **not** survive a round trip, since this format stores no ramp of its own to hold
+them: the export re-derives the direction from which keyframe type it is writing (`0` for
+horizontal, `90` for vertical) and always writes `gs = 1`. **Parallax gradients are not imported at
+all** — the source declares the same three fields on `ParallaxObject.ShapeData`, but a parallax
+object carries only one colour index (`c`, clamped 0–9) and `ParallaxManager` never sets the
+shader's second colour, so there is no second end to run a ramp between.
 
 ### Draw order
 
@@ -142,18 +174,75 @@ AbovePlayer — never interleave; the background objects the parallax importer c
 three, and prefab placements above them.
 
 **Not imported:** triggers, the screen-gradient event track, depth of field, per-axis parent
-inheritance and parent time offsets, prefab preview images and lead times, and the emission of a
-particle-emitter object (`ot = 7` — the object itself imports as its own non-hitting shape).
+inheritance and parent time offsets, and prefab preview images and lead times.
 **Two things are reported as deferred rather than dropped**, i.e. waiting on work rather than on a
 decision: player force (`PlayerEvents.Velocities`/`VelocityPoints` exist in the model, commented
 out) and the hue track, whose mapping onto colour curves is settled but is temporarily not written
 while this project's own colour curves are being fixed.
 
-**Not exported:** particle effects, audio (an Afterbeat level is one song file in a folder — no
+**Not exported:** audio (an Afterbeat level is one song file in a folder — no
 track list, offsets, speeds or effects), level-authored geometry, anchors, per-corner colours,
 per-character text effects, random values, beat segments past the first, checkpoint spaces other
 than World, several post-processing effects, per-instance prefab overrides, and — worth naming
 separately — **licensing, age rating and attribution**, which `.vgm` has no field for at all.
+
+### Particle emitters
+
+`ot = 7` is an `EffectObject` in both directions, and the object it replaces is the point: an
+Afterbeat emitter **draws no shape of its own** (`ObjectManager.InitVisual` spawns the particle
+prefab and returns), so its `(shape, shapeOption)` is the particle's MESH rather than a quad. The
+import used to build an ordinary `ShapeObject` out of it, which drew a static shape the level never
+drew, in place of a stream of small ones.
+
+The eight parameters are **not in `csp`**, whatever `BeatmapObject`'s field order suggests — they
+live on the first position keyframe's own value array, `e[0].k[0].ev[4..11]`, each with its own
+default and clamp (`Maps/ABParticleMap.cs`). Beyond them, an emitter's four tracks do **two jobs at
+once**: values 0/1 keep their ordinary meaning and animate the emitter, while values 2/3 are a
+hidden channel describing one particle over its own life. A particle lives exactly as long as the
+object's own animation — the largest keyframe time across its four tracks, which is deliberately
+*not* `ABTimeMap.GetLastKeyframeTime` (that one skips single-keyframe tracks, because it answers a
+different question: how long the OBJECT lives).
+
+One `EffectData` is written per distinct definition, keyed by a canonical signature through
+`ABIdMap.ToEffectId`, so re-importing a level produces the same ids and two emitters authored the
+same way share one resource. The stop frame is part of that signature rather than of the placement:
+`EffectData` is shared, so two emitters agreeing on every parameter but not on how long they run are
+genuinely two definitions.
+
+An emitter that does **not** despawn on end outlives its own emission — its span is extended by one
+particle lifetime and `HasStopLocalFrame`/`StopLocalFrame` end the emission where the object used to
+end, which is exactly `length = logicalLength + particleMaxLifetime` over there.
+
+**Easing has to be baked.** An Afterbeat keyframe carries an easing NAME and the source game samples
+each eased segment at 16 points; a `CurveKeyframeValue` carries TANGENTS and no easing at all, while
+`ValueRules.MaxCurveKeys` bounds the whole curve at 16. So `Maps/ABCurveMap.cs` keeps every authored
+keyframe and shares what is left of the budget among the segments that actually bend — a Linear or
+Instant segment spends nothing. `ABEaseMap.Evaluate` is the sampling half, and it exists here rather
+than in `Utils/` because the format itself never evaluates an ease: a level keyframe stores one and
+the consumer resolves it, and a particle curve is the one thing that has to be baked at conversion
+time or lost.
+
+**Named losses on import** — each fires only when the source actually used the thing:
+`particle_world_space` (effects here always simulate in their own space, so those particles are
+dragged along instead of left behind), `particle_velocity_curve` (the largest approximation in the
+whole conversion — the channel is a POSITION over the particle's life whose derivative the source
+game feeds to `velocityOverLifetime`, and only one start velocity crosses, so the travel is
+flattened to its average), `particle_emitter_volume_animated` (an `EffectShape*` field is a value,
+not a track, so only the first keyframe crosses), `particle_color_theme_lost` (a gradient stop is a
+literal `Color4Value` by design, so the ramp is resolved once against the reference theme),
+`particle_spawn_per_unit` (no distance-based emission exists here), `particle_start_speed` (no
+radial-outward force), `particle_gradient_material`, plus `particle_curve_flattened` and
+`particle_color_stops_capped` when a track carries more keyframes than a curve or a ramp can hold.
+
+**Named losses on export** — an effect is a much larger thing than an emitter, so an effect authored
+here rather than imported loses most of what it is: `particle_shape_unsupported` (Point/Line/Cone/
+Torus), `particle_shape_spread`, `particle_scale_variant`/`particle_angle_variant`/
+`particle_color_variant` (every Random and BySpeed form), `particle_forces` (the whole group past
+the start velocity), `particle_texture`, `particle_render_off`, `particle_burst` (Afterbeat clears
+the burst list unconditionally and only emits at a rate), `particle_lifetime_spread` (one lifetime,
+no range), `particle_start_velocity` and `effect_unresolved`. `effect_resources` now means only what
+it says: a definition **nothing places** has nowhere to go, since over there an emitter IS the
+object.
 
 ## Calibration
 

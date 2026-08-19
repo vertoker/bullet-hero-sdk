@@ -270,6 +270,25 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
         #endregion
 
+        #region Player size
+
+        // Afterbeat's world is built around its own player, which is not this engine's size, so a
+        // converted level states the size it needs rather than leaving the author to notice.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ScalesThePlayerForTheWholeLevel()
+        {
+            var level = Import(LevelOf(Square(0f)));
+
+            var key = level.Game.PlayerEvents.Sizes.Single();
+            Assert.AreEqual(0, key.Frame, "one key on the first frame states it for the whole level");
+            Assert.AreEqual(ABEventsImporter.ImportedPlayerSize, ((FloatValue)key.Value).Value, 1e-4f);
+        }
+
+        #endregion
+
         #region Camera-parented objects
 
         private static VgdObject CameraChild(string id, float sizeX, float sizeY)
@@ -469,7 +488,6 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         [TestCase(ABObjectType.NoHit, false)]
         [TestCase(ABObjectType.Helper, false)]
         [TestCase(ABObjectType.Decoration, false)]
-        [TestCase(ABObjectType.Particles, false)]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Normal)]
@@ -512,6 +530,25 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.IsTrue(result.Report.Issues.Any(issue => issue.Code == "object_type_particles"));
             Assert.IsFalse(result.Report.Issues.Any(issue => issue.Code == "object_type_unknown"),
                 "7 is a type the source game defines, not one nobody has seen");
+        }
+
+        // The whole point of the emitter branch: the source game draws no standalone shape for one,
+        // so importing it as a ShapeObject drew something the level never drew.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_AParticleEmitter_IsAnEffectRatherThanAShape()
+        {
+            var source = Square(0f);
+            source.ObjectType = (int)ABObjectType.Particles;
+
+            var level = Import(LevelOf(source));
+            var imported = level.Game.Objects.Values.Single();
+
+            Assert.IsInstanceOf<EffectObject>(imported);
+            Assert.IsNotInstanceOf<ShapeObject>(imported);
+            Assert.IsTrue(level.Resources.Effects.ContainsKey(((EffectObject)imported).EffectId));
         }
 
         #endregion

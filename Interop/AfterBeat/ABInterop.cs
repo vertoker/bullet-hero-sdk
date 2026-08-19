@@ -92,7 +92,7 @@ namespace BH.SDK.Interop.AfterBeat
         /// CompositeShapes so the prefab keeps working once it is placed. </summary>
         public static Prefab ImportPrefab(string prefabJson, ABOptions options = null,
             InteropReport report = null, IDictionary<ShapeId, CompositeShape> shapes = null,
-            ThemeData referenceTheme = null)
+            ThemeData referenceTheme = null, IDictionary<EffectId, EffectData> effects = null)
         {
             report ??= new InteropReport();
             options = (options ?? new ABOptions()).Sanitized();
@@ -103,7 +103,8 @@ namespace BH.SDK.Interop.AfterBeat
                 return null;
             }
 
-            return ABPrefabImporter.ImportTemplate(source, options, report, shapes, referenceTheme, "prefab");
+            return ABPrefabImporter.ImportTemplate(source, options, report, shapes, referenceTheme,
+                "prefab", effects);
         }
 
         /// <summary> A prefab template into a standalone .vgp. </summary>

@@ -63,6 +63,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             ImportThemes(source, level, context, path);
             ImportBackground(level, context);
+            ImportPlayerSize(level, context);
             ImportScreenLimit(level, context);
 
             // Every number below crosses on its own scale - see ABPostProcessingMap. None of
@@ -263,6 +264,31 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         /// <summary> And back. </summary>
         public static float ExportZoomValue(float zoom) => zoom * 0.5f;
+
+        // Afterbeat's world is calibrated around ITS player, and this engine's avatar is not the
+        // same size - so a converted level plays with a player of the wrong size against content
+        // that is otherwise exactly right, which is the one mismatch an author cannot fix by
+        // editing the level. The size track exists for precisely this, and one key at the first
+        // frame states it for the whole level; an author who wants it different edits that one key
+        // rather than every object.
+        //
+        // The number is a measurement rather than a derivation - see the Calibration table in this
+        // folder's README for what the source game's own player is (a 1x1 body, a hitbox of radius
+        // 0.25, in a frame 40 units tall).
+        private static void ImportPlayerSize(Level level, ABImportContext context)
+        {
+            if (level.Game.PlayerEvents.Sizes.Count > 0) return;
+
+            level.Game.PlayerEvents.Sizes.Add(new FloatKey(
+                new FloatValue(ImportedPlayerSize), FrameRules.MinFrame));
+
+            context.Report.Info("player_size",
+                "The player is scaled for this level so it matches the size Afterbeat's own player is against the same content; change the first keyframe of the player size track to taste.",
+                null);
+        }
+
+        /// <summary> What a converted level scales the player by. </summary>
+        public const float ImportedPlayerSize = 2f;
 
         // Afterbeat's background is a whole subsystem of its own (see ABParallaxImporter),
         // and this format's is a camera clear colour plus ordinary objects - so the two do not
