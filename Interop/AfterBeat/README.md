@@ -235,9 +235,19 @@ object's own animation — the largest keyframe time across its four tracks, whi
 *not* `ABTimeMap.GetLastKeyframeTime` (that one skips single-keyframe tracks, because it answers a
 different question: how long the OBJECT lives).
 
+**A circle emitter over there is an ellipse, and its arc starts at +X going counter-clockwise.**
+`shape.radius` is never assigned, so it keeps the particle prefab's own value while `shape.scale`
+multiplies it per axis — the authored scale IS the pair of semi-axes, and the horizontal one crosses
+as `EffectShapeCircle.Radius` with the vertical one as its `Aspect`. Nothing is halved. Both facts
+come from the source game's own editor gizmo rather than from the wiki
+(`EditorEmptyRendering.cs:423-425`, `:444-449`), and the second one is why the shipped VFX graphs
+were rotated to match: theirs used to start the arc at +Y and sweep clockwise, which turned an
+authored dome into a sideways half-disc.
+
 One `EffectData` is written per distinct definition, keyed by a canonical signature through
 `ABIdMap.ToEffectId`, so re-importing a level produces the same ids and two emitters authored the
-same way share one resource. The stop frame is part of that signature rather than of the placement:
+same way share one resource. The signature names the emitter's spawn volume too — it did not, and
+two emitters differing only in the size particles spawn inside collapsed onto one definition. The stop frame is part of that signature rather than of the placement:
 `EffectData` is shared, so two emitters agreeing on every parameter but not on how long they run are
 genuinely two definitions.
 

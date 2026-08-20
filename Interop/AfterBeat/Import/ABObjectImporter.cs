@@ -622,12 +622,26 @@ namespace BH.SDK.Interop.AfterBeat.Import
             if (settings.EmitterShape == ABParticleEmitterShapeType.Rectangle)
                 return new EffectShapeRectangle { Size = new Vector2Value(x, y) };
 
+            var (radius, aspect) = ToEllipse(x, y);
+
             return new EffectShapeCircle
             {
-                Radius = new FloatValue(Math.Max(x, y) * ABParticleMap.EmitterRadiusOfExtent),
+                Radius = new FloatValue(radius),
+                Aspect = new FloatValue(aspect),
                 Arc = new FloatValue(ToArcRadians(settings.EmitterArc)),
                 Thickness = new FloatValue(settings.EmitterRadiusThickness),
             };
+        }
+
+        /// <summary> The two authored extents as this format's radius-plus-ratio pair. A horizontal
+        /// extent of nothing has no ratio to describe, so it falls back to a circle. </summary>
+        private static (float Radius, float Aspect) ToEllipse(float x, float y)
+        {
+            if (x < ABParticleMap.MinEmitterExtent)
+                return (Math.Max(x, y), EffectRules.Shape.CircleAspect_Default);
+
+            return (x, Math.Clamp(y / x,
+                EffectRules.Shape.CircleAspect_Min, EffectRules.Shape.CircleAspect_Max));
         }
 
         // AN EMITTER'S FOUR TRACKS DO TWO JOBS AT ONCE. Values 0/1 keep their ordinary meaning and
@@ -858,13 +872,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var culture = CultureInfo.InvariantCulture;
 
             return string.Join("|",
-                "v1",
+                "v2",
                 shapeId.value.ToString("N", culture),
                 settings.SpawnRatePerSecond.ToString("R", culture),
                 settings.TimelineLength.ToString("R", culture),
-                ((int)settings.EmitterShape).ToString(culture),
-                settings.EmitterArc.ToString("R", culture),
-                settings.EmitterRadiusThickness.ToString("R", culture),
+                Describe(data.Shape, culture),
                 data.HasStopLocalFrame ? "stop" : "run",
                 data.StopLocalFrame.ToString(culture),
                 Describe(data.Forces, culture),
@@ -872,6 +884,23 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 Describe(data.Angle, culture),
                 Describe(data.Color, culture));
         }
+
+        // THE EMITTER VOLUME BELONGS IN THE SIGNATURE, and it used to be missing: the emitter's own
+        // parameters were named one by one while the size particles spawn inside - the thing an
+        // author most obviously changes between two otherwise identical emitters - was not, so two
+        // of them collapsed onto one shared EffectData.
+
+        private static string Describe(IEffectShape shape, CultureInfo culture) => shape switch
+        {
+            EffectShapeRectangle rectangle when rectangle.Size is Vector2Value size
+                => $"sh:r,{size.X.ToString("R", culture)},{size.Y.ToString("R", culture)}",
+            EffectShapeCircle circle
+                => $"sh:c,{Read(circle.Radius).ToString("R", culture)},{Read(circle.Aspect).ToString("R", culture)},"
+                   + $"{Read(circle.Thickness).ToString("R", culture)},{Read(circle.Arc).ToString("R", culture)}",
+            _ => "sh:-",
+        };
+
+        private static float Read(IFloat value) => value is FloatValue literal ? literal.Value : 0f;
 
         private static string Describe(EffectObjectForces forces, CultureInfo culture)
         {

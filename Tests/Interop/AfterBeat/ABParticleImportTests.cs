@@ -220,6 +220,38 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual(0.9f, ((FloatValue)circle.Thickness).Value, 1e-4f);
         }
 
+        // A circle emitter over there is an ellipse: shape.radius keeps the prefab's own one and
+        // the authored scale multiplies it per axis. So both extents cross, the horizontal as the
+        // radius and the vertical as a ratio of it, and nothing is halved on the way.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ACircleEmitter_KeepsBothSemiAxes()
+        {
+            var circle = (EffectShapeCircle)EffectOf(Import(LevelOf(Emitter("e", 0f, 0f, 1f, 0f, 1f)))).Shape;
+
+            Assert.AreEqual(2f, ((FloatValue)circle.Radius).Value, 1e-4f, "the scale track's own x");
+            Assert.AreEqual(2f, ((FloatValue)circle.Aspect).Value, 1e-4f, "4 over 2, not the larger axis");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ACircleEmitterWithNoWidth_FallsBackToACircle()
+        {
+            var source = Emitter("e", 0f, 0f, 1f, 0f, 1f);
+            foreach (var keyframe in source.Scale.Keyframes)
+                keyframe.Values = new List<float> { 0f, 3f };
+
+            var circle = (EffectShapeCircle)EffectOf(Import(LevelOf(source))).Shape;
+
+            Assert.AreEqual(3f, ((FloatValue)circle.Radius).Value, 1e-4f);
+            Assert.AreEqual(EffectRules.Shape.CircleAspect_Default,
+                ((FloatValue)circle.Aspect).Value, 1e-4f, "no width means no ratio to describe");
+        }
+
         // A mirrored scale is the same spawn volume, so it is taken absolutely rather than clamped
         // to zero - clamping would collapse the emitter instead.
         [Test]
@@ -386,6 +418,18 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 "arc");
             Assert.AreNotEqual(baseline, EffectIdOf(Emitter("e", 100f, 0f, 1f, 0f, 1f, 360f, 0.5f)),
                 "radius thickness");
+            Assert.AreNotEqual(baseline, EffectIdOf(Squashed(Emitter("e", 100f, 0f, 1f, 0f, 1f, 360f, 1f))),
+                "emitter volume");
+        }
+
+        /// <summary> The same emitter spawning inside a different volume - the one parameter the
+        /// signature used to leave out. </summary>
+        private static VgdObject Squashed(VgdObject source)
+        {
+            foreach (var keyframe in source.Scale.Keyframes)
+                keyframe.Values = new List<float> { 7f, 4f };
+
+            return source;
         }
 
         private static EffectId EffectIdOf(VgdObject source)

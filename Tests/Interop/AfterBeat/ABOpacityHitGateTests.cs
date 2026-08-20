@@ -124,9 +124,12 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var ranges = ABOpacityHitGate.ResolveOpaqueRanges(
                 new[] { Sample(0, 0f), Sample(30, 1f), Sample(60, 1f), Sample(90, 0f) }, 120);
 
+            // [30, 60) and nothing else: a segment is opaque only when BOTH of its ends are, so the
+            // fade-in [0, 30) and the fade-out [60, 90) are both out - the stretch BETWEEN them is
+            // what the name says, and it ends where the fade-out begins rather than where it ends.
             Assert.AreEqual(1, ranges.Count);
             Assert.AreEqual(30, ranges[0].Start);
-            Assert.AreEqual(60, ranges[0].Duration);
+            Assert.AreEqual(30, ranges[0].Duration);
         }
 
         [Test]
@@ -142,11 +145,14 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                     Sample(60, 1f), Sample(80, 1f),
                 }, 120);
 
+            // [0, 20) and [60, 120): the second one starts where the fade-in ARRIVES rather than at
+            // the key after it, and runs to the end of the object because the last key's value is
+            // held forward. The two adjacent opaque segments [60, 80) and [80, 120) merge into one.
             Assert.AreEqual(2, ranges.Count);
             Assert.AreEqual(0, ranges[0].Start);
             Assert.AreEqual(20, ranges[0].Duration);
-            Assert.AreEqual(80, ranges[1].Start);
-            Assert.AreEqual(40, ranges[1].Duration);
+            Assert.AreEqual(60, ranges[1].Start);
+            Assert.AreEqual(60, ranges[1].Duration);
         }
 
         // The first key's value is held backwards to the object's own start - a track whose first

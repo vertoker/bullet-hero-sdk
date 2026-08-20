@@ -75,8 +75,16 @@ namespace BH.SDK.Interop.AfterBeat
         /// <summary> What an emitter carrying no scale keyframe spawns inside. </summary>
         public const float DefaultEmitterExtent = 1f;
 
-        /// <summary> A circle emitter's radius is half the extent its scale describes. </summary>
-        public const float EmitterRadiusOfExtent = 0.5f;
+        // A CIRCLE EMITTER OVER THERE IS AN ELLIPSE. The source game never assigns shape.radius, so
+        // it keeps the particle prefab's own value, and shape.scale is what the scale track writes -
+        // Unity multiplies the two per axis, which their editor's gizmo restates verbatim
+        // (radiusX = radius * scale.x, radiusY = radius * scale.y). The prefab's radius is Unity's
+        // default of one, so the authored scale IS the pair of semi-axes: the horizontal one crosses
+        // as Radius and the vertical one as Aspect, and nothing is halved.
+
+        /// <summary> Smallest horizontal extent still usable as a radius; below it the emitter is a
+        /// line rather than an ellipse and its aspect has no meaning. </summary>
+        public const float MinEmitterExtent = 1e-4f;
 
         /// <summary> Tracks 0-3 - the four an object has. Anything past them is not a timeline. </summary>
         public const int TimelineTrackCount = 4;

@@ -144,6 +144,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             data.Shape = new EffectShapeCircle
             {
                 Radius = new FloatValue(2f),
+                Aspect = new FloatValue(1f),
                 Arc = new FloatValue(3.1415927f),
                 Thickness = new FloatValue(0.5f),
             };
@@ -157,8 +158,29 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual(0.5f,
                 Value(emitter, VgdObject.TrackIndex.Move, ABParticleMap.EmitterRadiusThicknessIndex),
                 1e-3f);
-            Assert.AreEqual(4f, Value(emitter, VgdObject.TrackIndex.Scale, 0), 1e-3f,
-                "a radius of two is a four-wide volume");
+            Assert.AreEqual(2f, Value(emitter, VgdObject.TrackIndex.Scale, 0), 1e-3f,
+                "the scale track IS the pair of semi-axes over there");
+            Assert.AreEqual(2f, Value(emitter, VgdObject.TrackIndex.Scale, 1), 1e-3f);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Export_AnEllipticalEmitter_WritesBothSemiAxes()
+        {
+            var data = Plain();
+            data.Shape = new EffectShapeCircle
+            {
+                Radius = new FloatValue(14f),
+                Aspect = new FloatValue(0.25f),
+            };
+
+            var (emitter, _) = Export(data);
+
+            Assert.AreEqual(14f, Value(emitter, VgdObject.TrackIndex.Scale, 0), 1e-3f);
+            Assert.AreEqual(3.5f, Value(emitter, VgdObject.TrackIndex.Scale, 1), 1e-3f,
+                "the aspect is a ratio of the radius, not a second one");
         }
 
         [Test]

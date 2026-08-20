@@ -364,9 +364,11 @@ namespace BH.SDK.Interop.AfterBeat.Export
             {
                 case EffectShapeRectangle rectangle when rectangle.Size is Vector2Value size:
                     return (size.X, size.Y);
+                // The two semi-axes ARE the scale over there - see ABParticleMap's note on why
+                // nothing is doubled here.
                 case EffectShapeCircle circle:
-                    var diameter = Read(circle.Radius, 1f) / ABParticleMap.EmitterRadiusOfExtent;
-                    return (diameter, diameter);
+                    var radius = Read(circle.Radius, EffectRules.Shape.CircleRadius_Default);
+                    return (radius, radius * Read(circle.Aspect, EffectRules.Shape.CircleAspect_Default));
                 default:
                     return (ABParticleMap.DefaultEmitterExtent, ABParticleMap.DefaultEmitterExtent);
             }

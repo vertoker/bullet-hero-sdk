@@ -80,6 +80,14 @@ The bridge is `ConfigureParticleLifetimeFromTimeline` (`ObjectManager.cs:1828-19
 
 ### Everything else the dump settles
 
+- **A circle emitter is an ELLIPSE, and its arc starts at +X going counter-clockwise.**
+  `shape.radius` is never assigned (`ObjectManager.cs:1127-1143`), so it keeps the particle
+  prefab's own value and `shape.scale` multiplies it per axis — their editor's own gizmo restates
+  it verbatim (`EditorEmptyRendering.cs:423-425`, `radiusX = radius * scale.x`), and the same gizmo
+  walks the arc as `cos/sin` from angle zero (`:444-449`), i.e. from +X counter-clockwise. That is
+  the convention this format now matches: `EffectShapeCircle.Aspect` carries the second semi-axis,
+  and the shipped VFX graphs were rotated so their own arc starts at +X too (it used to start at
+  +Y and sweep clockwise, which turned an authored dome into a sideways half-disc).
 - **Parenting is ordinary.** The prefab is spawned under `gameObjRef.ParentChainEnd`
   (`ObjectManager.cs:620`), so an emitter inherits its parent chain like any other object.
 - **Colour is inherited**, through `objRef.rend` — which for the particle prefab *is* the
@@ -176,7 +184,7 @@ ev[8]  Rectangle            => EffectShapeRectangle.Size = scale track key0 (val
 ev[8]  Circle               => EffectShapeCircle
 ev[9]    arc (deg)          =>   .Arc = arc * pi/180        (EffectRules.Shape.Arc_Max = 2pi)
 ev[10]   radiusThickness    =>   .Thickness                 exact, both [0, 1]
-       scale track key0     =>   .Radius = max(val0, val1) / 2
+       scale track key0     =>   .Radius = val0, .Aspect = val1 / val0   (the two semi-axes)
 (shape, shapeOption)        => Core.ParticleShapeId          via ABShapeMap.Import (Maps/ABShapeMap.cs:295)
 track1 vals 2/3 over time   => EffectScaleCurvesOverLife.CurveX / .CurveY
 track2 val 2 over time      => EffectAngleCurvesOverLife.Curve    degrees => radians
@@ -229,10 +237,14 @@ exists to avoid:
    `Core.ParticleShapeId` is always a real shape; `Null` draws nothing rather than a quad.
 9. **`PARTICLE_LOGICAL_END_BUFFER`** — the `0.02 s` grace added to a non-despawning emitter's length
    (`ObjectManager.cs:47`, `460-463`). Sub-frame at 60 fps; drops silently and correctly.
-10. **Emitter-shape `Circle` vs `Box` scale semantics.** Unity's `ShapeModule.scale` on a Circle
-    scales the circle non-uniformly; `EffectShapeCircle` has one `Radius`. A non-square scale on a
-    circle emitter becomes the larger axis. Undetermined how many corpus objects this affects —
-    13 use Circle, and their scale keys were not separated by axis ratio.
+10. ~~**Emitter-shape `Circle` vs `Box` scale semantics.**~~ **Closed — nothing is lost.** Unity's
+    `ShapeModule.scale` on a Circle scales it non-uniformly, and `EffectShapeCircle` grew an
+    `Aspect` to say the same thing: the horizontal extent crosses as `Radius` and the vertical one
+    as a ratio of it. The source game never assigns `shape.radius` either, so the authored scale IS
+    the pair of semi-axes and nothing is halved on the way — see `Maps/ABParticleMap.cs`'s own note.
+    All 13 corpus circles were affected before this; the emitters that draw the cloud tops in
+    `weathergirl` are `14x3`, `15x3`, `16x5`, `18x6.7`, and collapsing them to a circle of the
+    larger axis is what made a flat dome read as a round arc.
 
 ## 5. Structural questions
 
