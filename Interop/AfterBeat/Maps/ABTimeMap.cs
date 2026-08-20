@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BH.SDK.Interop.AfterBeat.Models;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Rules;
@@ -190,6 +191,46 @@ namespace BH.SDK.Interop.AfterBeat
             if (duration > maxDuration) duration = Math.Max(FrameRules.MinFrameDuration, maxDuration);
 
             return new FrameSpan(start, duration);
+        }
+
+        // TWO SOURCE TIMES CAN ROUND ONTO ONE FRAME - the source grid is 10 ms and a frame at any
+        // ordinary framerate is coarser than that - and this format forbids a track holding the
+        // same frame twice outright (RuleCollectionUnique). The LATER keyframe wins, matching what
+        // a timeline does when a key is dragged onto another.
+        //
+        // EVERY track an importer writes goes through here, the level-global ones included. The
+        // collision is a property of the ROUNDING rather than of what the track holds, and a
+        // level-global track that skipped it did not merely validate badly: LevelStateBuilder
+        // builds its sorted lists straight off these lists and throws on the duplicate key, so the
+        // level failed to load at all.
+
+        /// <summary> Drops every keyframe sharing a frame with a later one, keeping the later and
+        /// the order the survivors were already in. </summary>
+        public static void DeduplicateByFrame<T>(List<T> keyframes, Func<T, int> frameOf,
+            InteropReport report = null, string path = null)
+        {
+            if (keyframes == null || keyframes.Count < 2) return;
+
+            var latest = new Dictionary<int, T>(keyframes.Count);
+            var order = new List<int>(keyframes.Count);
+            var dropped = false;
+
+            foreach (var keyframe in keyframes)
+            {
+                var frame = frameOf(keyframe);
+                if (latest.ContainsKey(frame)) dropped = true;
+                else order.Add(frame);
+                latest[frame] = keyframe;
+            }
+
+            if (!dropped) return;
+
+            keyframes.Clear();
+            foreach (var frame in order) keyframes.Add(latest[frame]);
+
+            report?.Approximated("keys_collided",
+                "Some keyframes landed on the same frame once converted from seconds; the later one was kept. A higher framerate keeps them apart.",
+                path);
         }
 
         /// <summary>

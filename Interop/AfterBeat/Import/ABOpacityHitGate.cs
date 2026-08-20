@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BH.SDK.Interop.AfterBeat.Models;
 using BH.SDK.Models.Enums;
 using BH.SDK.Models.Interfaces;
@@ -32,6 +32,20 @@ namespace BH.SDK.Interop.AfterBeat.Import
     /// exactly the parent's - collision and rendering share one mapping, so nothing has to be
     /// recomputed to keep the two aligned.
     ///
+    /// WHERE THE BOUNDARY IS: at the alpha the object is actually DRAWN with on each frame, easing
+    /// included, and not at the pair of keyframes bounding a segment. The source game re-reads the
+    /// material every damage check, so the curve between two keys decides as much as the keys do -
+    /// Instant holds the old opacity across its whole segment, an overshooting curve passes through
+    /// 1 on its way somewhere below it, and a gentle fade is at full alpha for exactly as long as
+    /// its own shape says. See <see cref="ResolveOpaqueRanges"/> for the frame-cell rule that keeps
+    /// this from ever arming a collider the player already saw start to fade.
+    ///
+    /// WHERE THE AUTHOR CAN OVERRULE IT: <see cref="ABOptions.OpacityHitThreshold"/> is the alpha
+    /// this pass arms a collider at, and 1 - the default - is the source game's own. Lowering it
+    /// widens every window to whatever stretch is drawn at or above it, and zero switches the pass
+    /// off entirely, leaving each object holding its own collider for its whole life. That is a
+    /// deliberate break with the source level rather than a tuning knob, and the report says so.
+    ///
     /// WHAT IT DELIBERATELY DOES NOT DO: an object opaque for its whole life is left untouched, which
     /// is the overwhelming majority of every level, so nothing pays for this but the levels that use
     /// it. And the boundary is read from the SOURCE's own opacity percentages rather than from the
@@ -40,16 +54,24 @@ namespace BH.SDK.Interop.AfterBeat.Import
     /// </summary>
     public static class ABOpacityHitGate
     {
-        /// <summary> One source opacity keyframe, reduced to the two things this rule reads. </summary>
+        /// <summary> One source opacity keyframe, reduced to the three things this rule reads. </summary>
         public readonly struct OpacitySample
         {
             public readonly int Frame;
             public readonly float Opacity;
 
-            public OpacitySample(int frame, float opacity)
+            /// <summary> The curve this sample is reached BY. Afterbeat stores easing on the
+            /// keyframe being interpolated TOWARDS, same as this format does, so a track's first
+            /// sample never uses its own. </summary>
+            public readonly EaseType Ease;
+
+            public OpacitySample(int frame, float opacity) : this(frame, opacity, EaseType.Linear) { }
+
+            public OpacitySample(int frame, float opacity, EaseType ease)
             {
                 Frame = frame;
                 Opacity = opacity;
+                Ease = ease;
             }
         }
 
@@ -66,11 +88,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
             }
         }
 
-        // Alpha is compared against 1 with no epsilon, exactly as the source game compares it: the
-        // value there is opacity/100 of an integer percentage, so every legal value is either 1
-        // exactly or visibly below it, and a tolerance would only invent a band where the two
-        // implementations disagree.
-        private const float OpaqueOpacity = 1f;
+        // Alpha is compared against the threshold with no epsilon, exactly as the source game
+        // compares it against 1: the value there is opacity/100 of an integer percentage, so every
+        // legal value is either on a percent boundary or visibly off one, and a tolerance would only
+        // invent a band where the two implementations disagree. Interpolating between two such
+        // values does not change that - where both ends are 1 the lerp multiplies a zero difference
+        // and returns exactly 1, and anywhere else the curve walks between values a percent apart.
+        //
+        // The threshold itself is ABOptions.OpacityHitThreshold, and the default is the only value
+        // that reproduces the source level; see that field for why it can be lowered at all.
+        private const float DefaultThreshold = ABOptions.DefaultOpacityHitThreshold;
 
         /// <summary> Rewrites one imported object's collider to exist only while the source was fully
         /// opaque. Adds the extra collider children to the scope; a no-op for anything that carries
@@ -81,23 +108,33 @@ namespace BH.SDK.Interop.AfterBeat.Import
             if (target is not ShapeObject shape) return;
             if (!shape.ColliderId.IsEnabled()) return;
 
+            var threshold = context.Options.OpacityHitThreshold;
+            if (threshold <= 0f) return;
+
             // No colour track at all is not "invisible": the source game's own reader fills a
             // missing opacity with 100, the same call ABObjectImporter.OpacityOf makes.
             var samples = CollectSamples(source, context.Options.Framerate);
             if (samples.Count == 0) return;
 
             var duration = target.Span.FrameDuration;
-            var ranges = ResolveOpaqueRanges(samples, duration);
+            var ranges = ResolveOpaqueRanges(samples, duration, threshold);
 
             if (IsWholeSpan(ranges, duration)) return;
 
             var colliderId = shape.ColliderId;
             shape.ColliderId = ShapeId.Null;
 
+            // Both reports say "in the source game" only at the default threshold - below it the
+            // level is being deliberately made to differ, and a report claiming fidelity for a
+            // choice the author made against it is worse than no report.
+            var faithful = threshold >= DefaultThreshold;
+
             if (ranges.Count == 0)
             {
                 context.Report.Approximated("collider_opacity_never_opaque",
-                    "Objects that never reach full opacity cannot hurt the player in the source game, so they were imported without a collider.",
+                    faithful
+                        ? "Objects that never reach full opacity cannot hurt the player in the source game, so they were imported without a collider."
+                        : "Objects never drawn at or above the opacity threshold this import was given were imported without a collider.",
                     path);
                 return;
             }
@@ -109,75 +146,104 @@ namespace BH.SDK.Interop.AfterBeat.Import
             }
 
             context.Report.Approximated("collider_opacity_gate",
-                "Objects only hurt the player at full opacity in the source game; a faded object was imported as a collider-less object plus one invisible collider per fully opaque stretch.",
+                faithful
+                    ? "Objects only hurt the player at full opacity in the source game; a faded object was imported as a collider-less object plus one invisible collider per fully opaque stretch."
+                    : "This import was given a lowered opacity threshold, so a faded object was imported as a collider-less object plus one invisible collider per stretch drawn at or above it - which is wider than the source game would hit for.",
                 path);
         }
 
-        // Held before the first key and after the last one, exactly as the source game holds a
-        // sequence's ends, and interpolated in between - which is why a segment counts as opaque
-        // only when BOTH of its ends are. A fade therefore stops hitting on the keyframe it starts
-        // from rather than one frame later: half a frame earlier than the source game, and in the
-        // direction that cannot kill a player who saw the object go transparent.
+        // THE WINDOW IS RESOLVED FROM THE CURVE, not from the pair of keyframes bounding a segment.
+        // The rule over there reads the alpha the object is CURRENTLY drawn with, so the shape of the
+        // easing between two keys is part of the answer and not a detail of playback: Instant holds
+        // the old opacity for the whole segment and drops on the last frame, an overshooting curve
+        // (Back, Elastic) can pass through 1 on the way to a value below it, and both of those are
+        // frames on which the source game does damage. Reading only the two ends called the first
+        // decoration for its whole segment and the second harmless throughout.
+        //
+        // A FRAME IS A CELL, so both of its boundaries have to be opaque for it to count - the same
+        // half-open convention FrameSpan uses, applied to the question "was the object at full alpha
+        // for the whole time this frame was on screen". That is what keeps the fade stopping the
+        // collider on the keyframe it begins from rather than one frame later: at most half a frame
+        // earlier than the source game, in the direction that cannot kill a player who already saw
+        // the object start to fade.
 
         /// <summary> The stretches of [0, duration) over which the source was fully opaque. </summary>
         public static List<FrameRange> ResolveOpaqueRanges(IReadOnlyList<OpacitySample> samples, int duration)
+            => ResolveOpaqueRanges(samples, duration, DefaultThreshold);
+
+        /// <summary> The stretches of [0, duration) the source spent drawn at or above
+        /// <paramref name="threshold"/> alpha. </summary>
+        public static List<FrameRange> ResolveOpaqueRanges(IReadOnlyList<OpacitySample> samples,
+            int duration, float threshold)
         {
             var ranges = new List<FrameRange>();
             if (samples == null || samples.Count == 0 || duration <= 0) return ranges;
 
+            // Walked forwards once, so the cursor only ever moves up: the whole sweep costs one pass
+            // over the frames plus one over the keys, not a key search per frame.
+            var cursor = 0;
             var start = -1;
-            var end = -1;
+            var opaqueAtOpeningEdge = IsOpaque(OpacityAt(samples, 0f, ref cursor), threshold);
 
-            // The first key's value is held backwards to the object's own start, so a track whose
-            // first key sits late has one more stretch than it has keys.
-            if (samples[0].Frame > 0)
-                Append(ranges, ref start, ref end, 0, Clamp(samples[0].Frame, duration),
-                    samples[0].Opacity >= OpaqueOpacity);
-
-            for (var i = 0; i < samples.Count; i++)
+            for (var frame = 0; frame < duration; frame++)
             {
-                var from = Clamp(samples[i].Frame, duration);
-                var to = i + 1 < samples.Count ? Clamp(samples[i + 1].Frame, duration) : duration;
-                var opaque = samples[i].Opacity >= OpaqueOpacity
-                             && (i + 1 >= samples.Count || samples[i + 1].Opacity >= OpaqueOpacity);
+                var opaqueAtClosingEdge = IsOpaque(OpacityAt(samples, frame + 1f, ref cursor), threshold);
+                var opaque = opaqueAtOpeningEdge && opaqueAtClosingEdge;
+                opaqueAtOpeningEdge = opaqueAtClosingEdge;
 
-                Append(ranges, ref start, ref end, from, to, opaque);
+                if (opaque)
+                {
+                    if (start < 0) start = frame;
+                    continue;
+                }
+
+                if (start < 0) continue;
+                ranges.Add(new FrameRange(start, frame - start));
+                start = -1;
             }
 
-            if (start >= 0) ranges.Add(new FrameRange(start, end - start));
+            if (start >= 0) ranges.Add(new FrameRange(start, duration - start));
             return ranges;
         }
 
-        // One stretch at a time, merged into the one before it when both are opaque and they touch -
-        // a track of ten opaque keys is one range, not ten adjacent objects.
-        private static void Append(ICollection<FrameRange> ranges, ref int start, ref int end,
-            int from, int to, bool opaque)
+        /// <summary> The source's own opacity at one point of an object's life, in frames local to
+        /// its span. Fractional frames are legal and meaningful - a frame cell's two boundaries are
+        /// what <see cref="ResolveOpaqueRanges"/> reads. Samples must be sorted by frame. </summary>
+        public static float ResolveOpacity(IReadOnlyList<OpacitySample> samples, float frame)
         {
-            if (to <= from) return;
-
-            if (opaque)
-            {
-                if (start < 0) { start = from; end = to; return; }
-                if (from <= end) { end = to; return; }
-
-                ranges.Add(new FrameRange(start, end - start));
-                start = from;
-                end = to;
-                return;
-            }
-
-            if (start < 0) return;
-            ranges.Add(new FrameRange(start, end - start));
-            start = -1;
-            end = -1;
+            var cursor = 0;
+            return OpacityAt(samples, frame, ref cursor);
         }
 
-        private static int Clamp(int frame, int duration)
-            => frame < 0 ? 0 : frame > duration ? duration : frame;
+        // Held before the first key and after the last one, exactly as the source game holds a
+        // sequence's ends. Two keys on the same frame are a step rather than a division by zero:
+        // the later one's value is what the object is drawn with from that frame on.
+        private static float OpacityAt(IReadOnlyList<OpacitySample> samples, float frame, ref int cursor)
+        {
+            if (samples == null || samples.Count == 0) return DefaultThreshold;
+            if (frame <= samples[0].Frame) return samples[0].Opacity;
+
+            while (cursor + 1 < samples.Count && samples[cursor + 1].Frame <= frame) cursor++;
+            if (cursor + 1 >= samples.Count) return samples[cursor].Opacity;
+
+            var from = samples[cursor];
+            var to = samples[cursor + 1];
+
+            var span = to.Frame - from.Frame;
+            if (span <= 0) return to.Opacity;
+
+            var t = (frame - from.Frame) / span;
+            return from.Opacity + (to.Opacity - from.Opacity) * ABEaseMap.Evaluate(to.Ease, t);
+        }
+
+        private static bool IsOpaque(float opacity, float threshold) => opacity >= threshold;
 
         private static bool IsWholeSpan(IReadOnlyList<FrameRange> ranges, int duration)
             => ranges.Count == 1 && ranges[0].Start == 0 && ranges[0].Duration >= duration;
 
+        // The easing comes across unreported on purpose: ABObjectImporter reads the same names off
+        // the same keys for the colour track itself and reports whatever it approximates there, and
+        // a second pass over the same keyframes would only say it twice.
         private static List<OpacitySample> CollectSamples(VgdObject source, int framerate)
         {
             var samples = new List<OpacitySample>();
@@ -190,7 +256,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 var opacity = key.Values != null && key.Values.Count > 1
                     ? key.GetValue(1) / ABObjectImporter.OpacityScale
                     : 1f;
-                samples.Add(new OpacitySample(ABTimeMap.ToFrame(key.Time, framerate), opacity));
+                samples.Add(new OpacitySample(ABTimeMap.ToFrame(key.Time, framerate), opacity,
+                    ABEaseMap.Import(key.Ease)));
             }
 
             samples.Sort((a, b) => a.Frame.CompareTo(b.Frame));

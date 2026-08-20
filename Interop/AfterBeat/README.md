@@ -117,7 +117,7 @@ including their respawn position, object hierarchy, and the object/prefab struct
 | camera zoom | the camera's orthographic size (half-height), default 20 | `Zoom`, the whole visible height — so **doubled** |
 | camera-parented objects | hang off a node scaled by `zoom / 20`, so they keep a constant screen size | that node is rebuilt as an ordinary object and they hang off it; the export flattens it away again |
 | background | a subsystem of its own, plus the theme's background colour | the theme's background slot referenced on the `Backgrounds` track; the parallax becomes objects |
-| text | a scale and no font size, no bounds at all | `Scale` carries the source scale; `Size` is estimated at one cell per character and per line |
+| text | a scale and no font size, no bounds at all; the authored string reaches TextMeshPro untouched, so its markup vocabulary is TMP's own | `Scale` carries the source scale; `Size` is estimated at one cell per character and per line; the tag names this format shares with TMP are parsed here too, while `<rotate>` — the one with no counterpart — is removed on import (`text_rotate_tag`), because an unparsed tag is drawn as its own literal characters |
 | post-processing | every effect is keyframed whether used or not | each keyframe arrives switched **on exactly when its intensity is non-zero**, which is the rule the source game itself applies before writing to the volume |
 | parent inheritance | position / scale / rotation switchable per child (`p_t`, default `101` — no scale) | one transform, always all three — except the **scale** bit, which crosses exactly as the choice of `Size` (does not propagate) vs `Scale` (does); `000` becomes a root |
 | the frame | nothing in the file, and nothing enforced at play time — but every window resolution the game offers is 16:9, so that is what every level was authored inside | a `Fixed` 16:9 screen limit on the first frame. **Import only** — the export writes none, since the target format has no field and always runs at that aspect anyway |
@@ -149,6 +149,24 @@ crosses the boundary keeps drawing and gives up its own collider, and gains one 
 whole rect so it inherits the motion, the size, the rotation and the `Active` flag for free. An
 object opaque for its whole life — the overwhelming majority of every level — is untouched, so only
 the levels using the rule pay for it.
+
+**An author can overrule the rule: `ABOptions.OpacityHitThreshold`** (the import form's *Opacity hit
+threshold*, in alpha). One — the default — is Afterbeat's own boundary and the only value that
+reproduces the source level. Lowering it arms each collider for every stretch drawn at or above it,
+so a shockwave stays lethal further into its fade; zero switches the pass off outright, leaving each
+object holding its own collider for its whole life. It exists because the rule it relaxes is
+*invisible* in this editor — a ring correctly lethal for a tenth of a second and inert for the next
+three looks exactly like a hitbox lost in conversion — and below the default the report says the
+level was deliberately made to differ rather than claiming fidelity.
+
+**The stretches are resolved from the curve, frame by frame, not from the keyframes bounding a
+segment.** The damage check re-reads the material every time it runs, so the easing between two keys
+decides as much as the keys do: `Instant` holds the old opacity across its whole segment and drops
+only on the key itself, `Back`/`Elastic` overshoot through 1 on their way to a value below it, and a
+gentle fade sits at full alpha for exactly as long as its own shape says. A frame counts only when
+both boundaries of its cell are at full alpha, which is what keeps a fade from ever arming a hitbox
+the player has already seen start to disappear — at most half a frame earlier than the source game,
+and in the only direction that cannot kill somebody unfairly.
 
 **The export cannot undo this, and does not pretend to.** An object that draws nothing is an empty
 over there and an empty cannot hit the player, so an invisible hitbox — whether this pass made it or

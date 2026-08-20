@@ -43,6 +43,7 @@ namespace BH.SDK.Generators.Interop
             // SHOWN, not whether the field is accounted for, and a field in no section still
             // renders, at the bottom, where nobody would look for it.
             .Section(GeneratorSections.Additional, nameof(Parameters.KeepObjectNames),
+                nameof(Parameters.OpacityHitThreshold),
                 nameof(Parameters.EditorGroupStride), nameof(Parameters.PlacementLayerOffset),
                 nameof(Parameters.ParallaxActive), nameof(Parameters.ParallaxLayerOffset),
                 nameof(Parameters.MaxParallaxLoopKeys),
@@ -59,7 +60,13 @@ namespace BH.SDK.Generators.Interop
             // slider an author drags, but a bound a hostile value cannot get past.
             .Range(nameof(Parameters.AudioLengthSeconds), 0f,
                 FrameRules.MaxFrameDuration / (float)FrameRules.MinFramerate)
+            // Zero is not "hit at any alpha" but "leave every collider alone" - see
+            // ABOptions.OpacityHitThreshold. The range is the whole alpha range because the rule
+            // being relaxed is stated in alpha, and any value between the two ends is a level that
+            // hits for more of its fades than the source game did.
+            .Range(nameof(Parameters.OpacityHitThreshold), 0f, ABOptions.DefaultOpacityHitThreshold)
             .Unit(nameof(Parameters.Framerate), "fps")
+            .Unit(nameof(Parameters.OpacityHitThreshold), "alpha")
             .Unit(nameof(Parameters.MaxParallaxLoopKeys), "keys")
             .Unit(nameof(Parameters.EditorGroupStride), "layers")
             .Unit(nameof(Parameters.ParallaxLayerOffset), "layers")
@@ -184,6 +191,7 @@ namespace BH.SDK.Generators.Interop
             EditorGroupStride = parameters.EditorGroupStride,
             PlacementLayerOffset = parameters.PlacementLayerOffset,
             AudioLengthSeconds = parameters.AudioLengthSeconds,
+            OpacityHitThreshold = parameters.OpacityHitThreshold,
         };
 
         /// <summary> Public mutable fields, like every parameters class here - a form binds to them
@@ -197,6 +205,13 @@ namespace BH.SDK.Generators.Interop
             public bool ImportParallax = true;
             public bool ImportPrefabs = true;
             public bool KeepObjectNames = true;
+
+            /// <summary> The alpha an object has to be drawn at to hurt the player. One - the
+            /// default - is Afterbeat's own rule, and the only value that reproduces the source
+            /// level; lower keeps a fading object lethal for more of its fade, and zero leaves every
+            /// collider exactly as the source had it. See
+            /// <see cref="ABOptions.OpacityHitThreshold"/>. </summary>
+            public float OpacityHitThreshold = ABOptions.DefaultOpacityHitThreshold;
 
             /// <summary> Afterbeat sorts by an absolute depth and organises a level into editor
             /// layers this format has no field for, so what a converted level draws in front - and

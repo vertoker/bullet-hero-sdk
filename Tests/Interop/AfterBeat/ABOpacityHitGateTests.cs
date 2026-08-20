@@ -3,6 +3,7 @@ using System.Linq;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Import;
 using BH.SDK.Interop.AfterBeat.Models;
+using BH.SDK.Models.Enums;
 using BH.SDK.Models.Objects;
 using NUnit.Framework;
 
@@ -169,6 +170,197 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual(1, ranges.Count);
             Assert.AreEqual(0, ranges[0].Start);
             Assert.AreEqual(30, ranges[0].Duration);
+        }
+
+        #endregion
+
+        #region Easing
+
+        // The curve between two keys is part of the rule, not a playback detail: the source game
+        // re-reads the material on every damage check, so what matters is the alpha the object is
+        // DRAWN with on a frame. Reading only the two ends of a segment answered this wrong in both
+        // directions - it called an Instant hold decoration for its whole segment, and an
+        // overshooting curve harmless on frames where it is at full alpha.
+
+        private static ABOpacityHitGate.OpacitySample Eased(int frame, float opacity, EaseType ease)
+            => new(frame, opacity, ease);
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void Ranges_InstantEase_HoldsFullOpacityUntilTheKeyframeItself()
+        {
+            // Afterbeat's "Instant" does not interpolate: the object stays at 100% right up to the
+            // frame the next key lands on, and hits for every one of those frames.
+            var ranges = ABOpacityHitGate.ResolveOpaqueRanges(
+                new[] { Sample(0, 1f), Eased(60, 0f, EaseType.Constant) }, 120);
+
+            Assert.AreEqual(1, ranges.Count);
+            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(59, ranges[0].Duration,
+                "only the last cell of the hold straddles the drop");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void Ranges_LinearFade_StillEndsWhereTheFadeBegins()
+        {
+            // The conservative half of the rule, restated against the curve: a frame counts only
+            // when it is at full alpha across its whole cell, so a fade arms nothing extra.
+            var ranges = ABOpacityHitGate.ResolveOpaqueRanges(
+                new[] { Sample(0, 1f), Eased(60, 0f, EaseType.Linear) }, 120);
+
+            Assert.AreEqual(0, ranges.Count);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void Ranges_OvershootingFadeIn_IsOpaqueWhileTheCurveIsAtOrAboveOne()
+        {
+            // OutBack rises past its target and settles back onto it. The frames it spends at or
+            // above full alpha are frames the source game does damage on, and the old two-ends
+            // reading dropped every one of them.
+            var ranges = ABOpacityHitGate.ResolveOpaqueRanges(
+                new[] { Sample(0, 0f), Eased(60, 1f, EaseType.OutBack) }, 120);
+
+            Assert.GreaterOrEqual(ranges.Count, 1, "the overshoot is a hittable stretch");
+            var first = ranges[0];
+            Assert.Less(first.Start, 60, "it starts before the keyframe the curve is heading for");
+
+            var opacityAtStart = ABOpacityHitGate.ResolveOpacity(
+                new[] { Sample(0, 0f), Eased(60, 1f, EaseType.OutBack) }, first.Start);
+            Assert.GreaterOrEqual(opacityAtStart, 1f);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void Opacity_IsHeldBeforeTheFirstKeyAndAfterTheLast()
+        {
+            var samples = new[] { Sample(30, 1f), Eased(60, 0.5f, EaseType.Linear) };
+
+            Assert.AreEqual(1f, ABOpacityHitGate.ResolveOpacity(samples, 0f), 1e-5f);
+            Assert.AreEqual(1f, ABOpacityHitGate.ResolveOpacity(samples, 30f), 1e-5f);
+            Assert.AreEqual(0.75f, ABOpacityHitGate.ResolveOpacity(samples, 45f), 1e-5f);
+            Assert.AreEqual(0.5f, ABOpacityHitGate.ResolveOpacity(samples, 90f), 1e-5f);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void Import_AnInstantDrop_HitsForTheWholeHold()
+        {
+            // End to end, because the easing has to survive CollectSamples as well as the maths:
+            // an object that snaps from 100% to 0% keeps its hitbox for the whole visible stretch.
+            var source = Fading((0f, 100f), (1f, 0f));
+            source.Color.Keyframes[1].Ease = ABEaseMap.InstantEaseName;
+
+            var shapes = Import(source);
+            var collider = shapes.Single(s => !s.ShapeId.IsEnabled());
+
+            Assert.AreEqual(0, collider.Span.StartFrame - shapes.Single(s => s.ShapeId.IsEnabled()).Span.StartFrame);
+            Assert.AreEqual(Framerate - 1, collider.Span.FrameDuration,
+                "one second of hold at 60 fps, less the cell the drop happens on");
+        }
+
+        #endregion
+
+        #region Threshold option
+
+        // The option exists because the rule it relaxes is invisible in this editor: a ring that
+        // grows for three seconds while fading is correctly lethal for a tenth of one, and that
+        // reads exactly like a hitbox lost in conversion. Lowering the threshold is a deliberate
+        // break with the source level, so what is pinned here is that it breaks it in the direction
+        // asked for and in no other.
+
+        private static List<ShapeObject> Import(VgdObject source, float threshold)
+        {
+            var level = new VgdLevel();
+            level.Objects.Add(source);
+
+            var options = Options();
+            options.OpacityHitThreshold = threshold;
+
+            var result = ABLevelImporter.Import(level, null, options);
+            return result.Level.Game.Objects.Values.OfType<ShapeObject>().ToList();
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void Ranges_LoweredThreshold_ArmsTheColliderForMoreOfTheFade()
+        {
+            var samples = new[] { Sample(0, 1f), Eased(60, 0f, EaseType.Linear) };
+
+            var ranges = ABOpacityHitGate.ResolveOpaqueRanges(samples, 120, 0.5f);
+
+            Assert.AreEqual(1, ranges.Count);
+            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(30, ranges[0].Duration,
+                "half a linear fade is where alpha drops through 0.5");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void Ranges_ThresholdDoesNotMoveAnObjectHeldBelowIt()
+        {
+            // 35% stays decoration at a 50% threshold - the option widens windows, it does not
+            // invent them.
+            var ranges = ABOpacityHitGate.ResolveOpaqueRanges(
+                new[] { Sample(0, 0.35f), Sample(60, 0.35f) }, 120, 0.5f);
+
+            Assert.AreEqual(0, ranges.Count);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ThresholdZero_LeavesTheObjectHoldingItsOwnCollider()
+        {
+            var shapes = Import(Fading((0f, 100f), (1f, 100f), (2f, 0f)), 0f);
+
+            Assert.AreEqual(1, shapes.Count, "the gate is off, so no child is made");
+            Assert.IsTrue(shapes[0].ColliderId.IsEnabled(), "the collider stays where the source had it");
+            Assert.IsTrue(shapes[0].ShapeId.IsEnabled());
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_LoweredThreshold_WidensTheColliderChild()
+        {
+            var faithful = Import(Fading((0f, 100f), (1f, 100f), (2f, 0f)))
+                .Single(s => !s.ShapeId.IsEnabled());
+            var relaxed = Import(Fading((0f, 100f), (1f, 100f), (2f, 0f)), 0.5f)
+                .Single(s => !s.ShapeId.IsEnabled());
+
+            Assert.AreEqual(faithful.Span.StartFrame, relaxed.Span.StartFrame);
+            Assert.Greater(relaxed.Span.FrameDuration, faithful.Span.FrameDuration,
+                "a lower threshold keeps the hitbox alive further into the fade");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void Options_ThresholdIsClampedIntoTheAlphaRange()
+        {
+            Assert.AreEqual(0f, new ABOptions { OpacityHitThreshold = -3f }.Sanitized().OpacityHitThreshold);
+            Assert.AreEqual(1f, new ABOptions { OpacityHitThreshold = 7f }.Sanitized().OpacityHitThreshold);
+            Assert.AreEqual(1f, new ABOptions().OpacityHitThreshold,
+                "the default has to be the source game's own rule");
         }
 
         #endregion

@@ -108,6 +108,29 @@ namespace BH.SDK.Interop.AfterBeat
         /// instead. </summary>
         public float AudioLengthSeconds;
 
+        /// <summary> Afterbeat's own threshold: its damage check refuses anything drawn below alpha
+        /// 1, so this is what reproduces the source level. </summary>
+        public const float DefaultOpacityHitThreshold = 1f;
+
+        // The one option here that deliberately BREAKS fidelity, and it exists because the rule it
+        // relaxes is invisible in this editor. A shockwave that grows for three seconds while fading
+        // is lethal for the first tenth of a second over there and inert afterwards - correct, and
+        // indistinguishable on screen from a hitbox that was lost in conversion. An author who wants
+        // the ring to hurt for as long as it is visible cannot express that by editing the import;
+        // they would have to find every generated child and restretch it.
+        //
+        // Zero switches the pass off outright rather than meaning "alpha 0 still hits": an object
+        // keeps its own collider for its whole life and no children are made at all. That is the
+        // same shape ImportParallax = false takes - the option removes the pass, it does not ask it
+        // for a degenerate answer - and it keeps an overshooting curve that dips below zero from
+        // punching a hole in a window the author asked to be whole.
+
+        /// <summary> The alpha an object must be DRAWN at to hurt the player, in [0, 1]. One - the
+        /// default - is Afterbeat's own rule. Lower arms the collider for more of a fade; zero
+        /// disables the gate entirely, leaving every object's collider alone. See
+        /// <see cref="Import.ABOpacityHitGate"/>. </summary>
+        public float OpacityHitThreshold = DefaultOpacityHitThreshold;
+
         public ABOptions() { }
 
         public ABOptions(int framerate)
@@ -126,6 +149,7 @@ namespace BH.SDK.Interop.AfterBeat
             copy.EditorGroupStride = System.Math.Clamp(EditorGroupStride, 1, ValueRules.MaxLayer);
             copy.ParallaxLayerOffset = System.Math.Clamp(ParallaxLayerOffset, 0, ValueRules.MaxLayer);
             copy.PlacementLayerOffset = System.Math.Clamp(PlacementLayerOffset, 0, ValueRules.MaxLayer);
+            copy.OpacityHitThreshold = System.Math.Clamp(OpacityHitThreshold, 0f, DefaultOpacityHitThreshold);
             return copy;
         }
     }

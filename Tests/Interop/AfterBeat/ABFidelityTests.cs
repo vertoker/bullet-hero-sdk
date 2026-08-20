@@ -604,6 +604,58 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual(1, text.Sizes.Count, "the block is the estimate, not the source's scale");
         }
 
+        private static (string Value, InteropReport Report) ImportTextOf(string value)
+        {
+            var result = ABLevelImporter.Import(LevelOf(Text(value)), null, Options());
+            var text = result.Level.Game.Objects.Values.OfType<TextObject>().Single();
+            return (((StringValue)text.Text).Value, result.Report);
+        }
+
+        // The source game hands its authored string to TextMeshPro untouched, so every tag TMP
+        // knows can appear in a level. <rotate> is the only one with nothing to play it here, and
+        // an unparsed tag is not inert - it draws as its own characters. The malformed case is the
+        // author's own corpus, not an invented one.
+        [TestCase("a<rotate=30>b</rotate>c", "abc")]
+        [TestCase("<rotate=-15rotat>x", "x")]
+        [TestCase("<b>a</b><rotate=15>b", "<b>a</b>b")]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextRotateTags_AreRemovedAndReported(string value, string expected)
+        {
+            var (imported, report) = ImportTextOf(value);
+
+            Assert.AreEqual(expected, imported);
+            Assert.IsTrue(report.Issues.Any(issue => issue.Code == "text_rotate_tag"));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextRotateInsideNoparse_IsContentAndSurvives()
+        {
+            const string value = "<noparse><rotate=30></noparse>";
+            var (imported, report) = ImportTextOf(value);
+
+            Assert.AreEqual(value, imported);
+            Assert.IsFalse(report.Issues.Any(issue => issue.Code == "text_rotate_tag"));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextWithoutRotate_KeepsEveryOtherTag()
+        {
+            const string value = "<align=left><b>hi</b>";
+            var (imported, report) = ImportTextOf(value);
+
+            Assert.AreEqual(value, imported);
+            Assert.IsFalse(report.Issues.Any(issue => issue.Code == "text_rotate_tag"));
+            Assert.IsTrue(report.Issues.Any(issue => issue.Code == "text_inline_tags"));
+        }
+
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]

@@ -126,6 +126,71 @@ namespace BH.SDK.Interop.AfterBeat.Import
             ImportHue(source, post, context, path);
             ImportPlayerForce(source, level.Game.PlayerEvents, context, path);
             ImportUnsupported(source, context, path);
+
+            Deduplicate(level, report, path);
+        }
+
+        // EVERY TRACK WRITTEN ABOVE IS DEDUPLICATED IN ONE PLACE RATHER THAN AT ITS OWN LOOP, and
+        // the reason is that the collision does not belong to any of them: a source time is on a
+        // 10 ms grid and a frame at any ordinary framerate is coarser, so ANY two source keyframes
+        // close enough together round onto one frame - a level-global track no more safely than an
+        // object's. Doing it here means a track added to the import later is covered by being
+        // added to this list, and the one report line covers the whole document.
+        //
+        // Missing it was not a validation nicety: LevelStateBuilder builds NativeSortedList
+        // straight off these lists, so one collided camera keyframe threw on load and the imported
+        // level would not open at all.
+
+        /// <summary> Collapses every level-global track this importer writes onto one keyframe per
+        /// frame - see <see cref="ABTimeMap.DeduplicateByFrame{T}"/> for which one survives - then
+        /// cuts each to the count its own rule allows. </summary>
+        private static void Deduplicate(Level level, InteropReport report, string path)
+        {
+            var camera = level.Game.CameraEvents;
+            Fit(camera.Positions, k => k.Frame, LevelRules.MaxCameraKeys, report, path);
+            Fit(camera.Rotations, k => k.Frame, LevelRules.MaxCameraKeys, report, path);
+            Fit(camera.Zooms, k => k.Frame, LevelRules.MaxCameraKeys, report, path);
+            Fit(camera.Pivots, k => k.Frame, LevelRules.MaxObjectKeys, report, path);
+            Fit(camera.Shakes, k => k.Frame, LevelRules.MaxCameraKeys, report, path);
+
+            var events = level.Game.Events;
+            Fit(events.Themes, k => k.Frame, LevelRules.MaxThemeEvents, report, path);
+            Fit(events.Backgrounds, k => k.Frame, LevelRules.MaxBackgroundEvents, report, path);
+            Fit(events.ScreenLimits, k => k.Frame, LevelRules.MaxScreenLimitEvents, report, path);
+
+            var player = level.Game.PlayerEvents;
+            Fit(player.Velocities, k => k.Frame, LevelRules.MaxPlayerKeys, report, path);
+            Fit(player.Sizes, k => k.Frame, LevelRules.MaxPlayerKeys, report, path);
+
+            var post = level.Game.PostProcessingEvents;
+            Fit(post.Chromatics, k => k.Frame, LevelRules.MaxPostProcessingKeys, report, path);
+            Fit(post.Blooms, k => k.Frame, LevelRules.MaxPostProcessingKeys, report, path);
+            Fit(post.Vignettes, k => k.Frame, LevelRules.MaxPostProcessingKeys, report, path);
+            Fit(post.Lenses, k => k.Frame, LevelRules.MaxPostProcessingKeys, report, path);
+            Fit(post.Grains, k => k.Frame, LevelRules.MaxPostProcessingKeys, report, path);
+            Fit(post.DigitalGlitches, k => k.Frame, LevelRules.MaxPostProcessingKeys, report, path);
+            Fit(post.AnalogGlitches, k => k.Frame, LevelRules.MaxPostProcessingKeys, report, path);
+        }
+
+        // DEDUPLICATION COMES FIRST AND THE CAP SECOND, which is the whole reason these are one
+        // call rather than two lists: a keyframe that is about to merge into its neighbour must not
+        // spend a slot, or a track sitting just over the limit loses real content at its end to
+        // make room for keys that were never going to survive.
+        //
+        // The cut itself is the TAIL, matching what the object importer does - the alternative,
+        // thinning the track evenly, moves keyframes the author placed and changes when everything
+        // after the first drop happens.
+        private static void Fit<T>(List<T> keyframes, Func<T, int> frameOf, int max,
+            InteropReport report, string path)
+        {
+            ABTimeMap.DeduplicateByFrame(keyframes, frameOf, report, path);
+
+            if (keyframes.Count <= max) return;
+
+            keyframes.RemoveRange(max, keyframes.Count - max);
+            report.Dropped("event_keys_over_cap",
+                "Some level-global tracks carry more keyframes than this format allows; the ones past the limit were dropped, so those effects stop changing before the end of the level.",
+                path);
         }
 
         // Afterbeat has to write a keyframe on every one of its fourteen event tracks - a track
@@ -462,6 +527,9 @@ namespace BH.SDK.Interop.AfterBeat.Import
                         new Vector2Value(checkpoint.Position?.X ?? 0f, checkpoint.Position?.Y ?? 0f),
                         CheckpointSpace.World));
                 }
+
+            ABTimeMap.DeduplicateByFrame(events.Markers, marker => marker.Frame, context.Report, path);
+            ABTimeMap.DeduplicateByFrame(events.Checkpoints, point => point.Frame, context.Report, path);
         }
 
         /// <summary> Afterbeat's editor tempo as this format's beat map - one segment covering the

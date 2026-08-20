@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using BH.SDK.Interop.AfterBeat.Models;
 using BH.SDK.Models.Data;
 using BH.SDK.Models.Effects;
@@ -1049,16 +1050,122 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         private static RectObject CreateText(VgdObject source, ABImportContext context, string path)
         {
-            if (!string.IsNullOrEmpty(source.Text) && source.Text.IndexOf('<') >= 0)
-                context.Report.Approximated("text_inline_tags",
-                    "Afterbeat text carries inline formatting tags this format does not interpret; they were kept as literal text.",
+            var text = StripRotateTags(source.Text ?? string.Empty, out var dropped);
+
+            if (dropped)
+                context.Report.Dropped("text_rotate_tag",
+                    "Afterbeat rotates individual glyphs with TextMeshPro's <rotate> tag, which has no counterpart here; the tags were removed and the glyphs stand upright.",
                     path);
+
+            if (text.IndexOf('<') >= 0)
+                context.Report.Approximated("text_inline_tags",
+                    "Afterbeat text carries inline formatting tags; the ones this format shares with TextMeshPro are interpreted, the rest are drawn as literal text.",
+                    path);
+
+            // Afterbeat's string is unbounded - real levels carry blocks of ten thousand characters
+            // and more - while this one's is the FIXED SLOT LENGTH of the player's per-frame text
+            // buffers (ValueRules.MaxGameString), so a longer string is not a validation nicety
+            // here but a number the runtime cannot address. Truncating is the only import that
+            // produces a playable level, and it is reported as dropped because it loses content.
+            if (text.Length > ValueRules.MaxGameString)
+            {
+                text = text[..ValueRules.MaxGameString];
+                context.Report.Dropped("text_over_cap",
+                    $"Some text objects carry more than {ValueRules.MaxGameString} characters, which is the fixed length this format's text buffers hold; those strings were cut to fit.",
+                    path);
+            }
 
             return new TextObject
             {
-                Text = new StringValue(source.Text ?? string.Empty),
+                Text = new StringValue(text),
             };
         }
+
+        // Afterbeat draws a text object by assigning the authored string to a TextMeshPro component
+        // verbatim, so its markup vocabulary is TMP's own - nothing custom is added and nothing is
+        // stripped over there. Most of that vocabulary crosses, because this format's renderer
+        // parses the same tag names; <rotate> is the one that cannot, having no counterpart at all.
+        //
+        // A tag nothing parses is not inert - it is DRAWN, as its own literal characters, inside a
+        // block whose width was measured without them, and it also shifts every character index the
+        // per-character fill and appearing tracks address. Removing it is therefore the readable
+        // outcome rather than a lossy shortcut, and it is reported as dropped either way.
+        //
+        // <noparse> is honoured while scanning: inside it TMP treats everything as literal text, so
+        // a <rotate> written there is content the author wanted shown and must survive untouched.
+
+        /// <summary> Removes every TextMeshPro <c>rotate</c> tag from an imported string, reporting
+        /// through <paramref name="dropped"/> whether any was there. </summary>
+        private static string StripRotateTags(string value, out bool dropped)
+        {
+            dropped = false;
+            if (string.IsNullOrEmpty(value) || value.IndexOf('<') < 0) return value;
+
+            var builder = new StringBuilder(value.Length);
+            var literal = false;
+            var index = 0;
+
+            while (index < value.Length)
+            {
+                var open = value.IndexOf('<', index);
+                var close = open < 0 ? -1 : value.IndexOf('>', open + 1);
+
+                if (close < 0)
+                {
+                    builder.Append(value, index, value.Length - index);
+                    break;
+                }
+
+                builder.Append(value, index, open - index);
+                index = close + 1;
+
+                var closing = open + 1 < close && value[open + 1] == '/';
+                var name = ReadTagName(value, closing ? open + 2 : open + 1, close);
+
+                if (literal)
+                {
+                    // Only the closer of the literal run is a tag in here; everything else is text.
+                    if (closing && IsTag(name, NoparseTag)) literal = false;
+                    builder.Append(value, open, close - open + 1);
+                    continue;
+                }
+
+                if (IsTag(name, RotateTag))
+                {
+                    dropped = true;
+                    continue;
+                }
+
+                if (!closing && IsTag(name, NoparseTag)) literal = true;
+                builder.Append(value, open, close - open + 1);
+            }
+
+            return builder.ToString();
+        }
+
+        /// <summary> Reads a tag's name out of the span between its brackets, stopping at whatever
+        /// ends the name - a parameter, whitespace, or the closing bracket itself. </summary>
+        private static string ReadTagName(string value, int start, int close)
+        {
+            var end = start;
+            while (end < close)
+            {
+                var character = value[end];
+                if (!char.IsLetterOrDigit(character) && character != '-') break;
+                end++;
+            }
+
+            return value.Substring(start, end - start);
+        }
+
+        private static bool IsTag(string name, string tag) =>
+            string.Equals(name, tag, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary> TextMeshPro's per-glyph rotation tag, the one tag of theirs nothing here can play. </summary>
+        private const string RotateTag = "rotate";
+
+        /// <summary> TextMeshPro's literal-text tag, inside which no other tag is markup. </summary>
+        private const string NoparseTag = "noparse";
 
         #endregion
 
@@ -1230,7 +1337,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 target.Positions.Add(new PosKey(value, LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
             }
-            Deduplicate(target.Positions, k => k.Frame, report, path);
+            ABTimeMap.DeduplicateByFrame(target.Positions, k => k.Frame, report, path);
         }
 
         // WHICH FIELD the source scale lands in decides whether this object's children inherit it,
@@ -1283,7 +1390,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 into.Add(new ScaKey(value, LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
             }
-            Deduplicate(into, k => k.Frame, report, path);
+            ABTimeMap.DeduplicateByFrame(into, k => k.Frame, report, path);
 
             // The object's own scale went to Scales, so the shape's shrink has nowhere to be undone
             // except a Size of its own - which is empty here and would otherwise fall back to one.
@@ -1335,7 +1442,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 target.Rotations.Add(new AngleKey(new FloatValue(radians), LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
             }
-            Deduplicate(target.Rotations, k => k.Frame, report, path);
+            ABTimeMap.DeduplicateByFrame(target.Rotations, k => k.Frame, report, path);
         }
 
         private static void ImportColors(VgdObject source, RectObject target,
@@ -1353,7 +1460,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 {
                     foreach (var key in Take(track.Keyframes, LevelRules.MaxObjectKeys, report, path))
                         shape.Colors.Add(BuildShapeColor(key, source, context, path));
-                    Deduplicate(shape.Colors, k => k.Frame, report, path);
+                    ABTimeMap.DeduplicateByFrame(shape.Colors, k => k.Frame, report, path);
                     break;
                 }
                 case TextObject text:
@@ -1361,7 +1468,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     foreach (var key in Take(track.Keyframes, LevelRules.MaxObjectKeys, report, path))
                         text.Colors.Add(new Color4Key(ReadStartColor(key, context, path),
                             LocalFrame(key, framerate), ABEaseMap.Import(key.Ease, report, path)));
-                    Deduplicate(text.Colors, k => k.Frame, report, path);
+                    ABTimeMap.DeduplicateByFrame(text.Colors, k => k.Frame, report, path);
                     break;
                 }
                 default:
@@ -1460,38 +1567,6 @@ namespace BH.SDK.Interop.AfterBeat.Import
             if (left == null) return right == null ? 0 : 1;
             if (right == null) return -1;
             return left.Time.CompareTo(right.Time);
-        }
-
-        // Two source keyframes can round onto one frame, and this format forbids that outright
-        // (RuleCollectionUnique). The LATER one wins, matching how a timeline behaves when a key is
-        // dragged onto another.
-        private static void Deduplicate<T>(List<T> keyframes, Func<T, int> frameOf,
-            InteropReport report, string path)
-        {
-            if (keyframes == null || keyframes.Count < 2) return;
-
-            var latest = new Dictionary<int, T>(keyframes.Count);
-            var order = new List<int>(keyframes.Count);
-            var dropped = false;
-
-            foreach (var keyframe in keyframes)
-            {
-                var frame = frameOf(keyframe);
-                if (latest.ContainsKey(frame)) dropped = true;
-                else order.Add(frame);
-                latest[frame] = keyframe;
-            }
-
-            if (dropped)
-            {
-                keyframes.Clear();
-                foreach (var frame in order) keyframes.Add(latest[frame]);
-
-
-                report.Approximated("keys_collided",
-                    "Some keyframes landed on the same frame once converted from seconds; the later one was kept. A higher framerate keeps them apart.",
-                    path);
-            }
         }
 
         #endregion

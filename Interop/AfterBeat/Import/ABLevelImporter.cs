@@ -246,8 +246,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     Math.Max(FrameRules.MinFrameDuration, level.Settings.FrameDuration)),
             };
 
-            foreach (var key in ReadCameraScale(source, context))
-                root.Scales.Add(key);
+            ReadCameraScale(source, context, root.Scales);
 
             if (root.Scales.Count == 0)
                 root.Scales.Add(new ScaKey(Vector2Value.One, FrameRules.MinFrame));
@@ -267,28 +266,32 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         // One key per zoom keyframe, capped like any other track. The factor is the zoom over the
         // format's neutral 20; the eases cross with it, so a zoom ramp scales the way it ramped.
-        private static IEnumerable<ScaKey> ReadCameraScale(VgdLevel source, ABImportContext context)
+        //
+        // Deduplicated through the SAME call the camera's own Zooms track goes through, and that
+        // matters beyond validity: these scales and that track are two readings of one source
+        // event, so a collision resolved differently here would leave the camera framed by one
+        // zoom keyframe while everything parented to it is scaled by the other. Capping happens
+        // after, since a key that is about to be dropped should not spend a slot.
+        private static void ReadCameraScale(VgdLevel source, ABImportContext context, List<ScaKey> into)
         {
             var framerate = context.Options.Framerate;
-            var keys = source.GetEvents(ABEventTrack.CameraZoom);
-            var written = 0;
-            var seen = new HashSet<int>();
 
-            foreach (var key in keys)
+            foreach (var key in source.GetEvents(ABEventTrack.CameraZoom))
             {
-                if (written >= LevelRules.MaxObjectKeys) break;
-
-                // Two zoom keyframes can land on one frame at a low framerate, and a track with a
-                // repeated frame is not valid data here (RuleCollectionUnique) - the first wins,
-                // exactly as the object importer's own Deduplicate does.
-                var frame = ABTimeMap.ToFrame(key.Time, framerate);
-                if (!seen.Add(frame)) continue;
-
-                written++;
                 var factor = key.GetFloat(0) / ABEventsImporter.DefaultSourceZoom;
-                yield return new ScaKey(new Vector2Value(factor, factor), frame,
-                    ABEaseMap.Import(key.Ease, context.Report, "events"));
+                into.Add(new ScaKey(new Vector2Value(factor, factor),
+                    ABTimeMap.ToFrame(key.Time, framerate),
+                    ABEaseMap.Import(key.Ease, context.Report, "events")));
             }
+
+            ABTimeMap.DeduplicateByFrame(into, k => k.Frame, context.Report, "events");
+
+            if (into.Count <= LevelRules.MaxObjectKeys) return;
+
+            into.RemoveRange(LevelRules.MaxObjectKeys, into.Count - LevelRules.MaxObjectKeys);
+            context.Report.Dropped("keys_over_cap",
+                $"Some tracks carry more than {LevelRules.MaxObjectKeys} keyframes, which is this format's limit; the extra ones were dropped.",
+                "events");
         }
 
         // WHERE THE PLACEMENTS SIT IS AN INPUT TO THE TEMPLATES, which is why they are measured
