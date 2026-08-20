@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using BH.SDK.Interop;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Import;
@@ -386,6 +386,12 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         // was read out of its scene data - so every "Triangle Bottom" in a level silently became a
         // Square. They are the same triangle as options 0 and 1, pivoted at the base rather than at
         // the centroid, which is a pivot here and not a second mesh.
+        //
+        // BOTH options carry a pivot now, and that is the AABB-centring showing through: Afterbeat
+        // centres its triangle mesh on the CENTROID while every shape in this library is centred on
+        // its bounding box, so even the plain Triangle has to move its reference point to land where
+        // the source object's transform was. The two offsets differ, which is the whole point of the
+        // pair, and the geometry they share is still one shape.
         [TestCase(4, 0)]
         [TestCase(5, 1)]
         [Author(Metadata.Author.Vertoker)]
@@ -410,12 +416,18 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual(2, shapes.Count);
             Assert.AreEqual(shapes[1].ShapeId, shapes[0].ShapeId, "the geometry is the same one");
             Assert.IsEmpty(result.Level.Resources.CompositeShapes, "nothing had to be synthesized");
-            Assert.IsEmpty(shapes[1].Pivots, "the centred option keeps the default pivot");
 
-            var pivot = (Vector2Value)shapes[0].Pivots.Single().Value;
-            Assert.AreEqual(ABObjectImporter.DefaultPivot, pivot.X, 1e-4f);
+            var basePivot = (Vector2Value)shapes[0].Pivots.Single().Value;
+            Assert.AreEqual(ABObjectImporter.DefaultPivot, basePivot.X, 1e-4f);
+            Assert.AreEqual(ABObjectImporter.DefaultPivot - ABShapeMap.TriangleBaseOffset,
+                basePivot.Y, 1e-4f, "the reference point sits at the triangle's base");
+
+            var centredPivot = (Vector2Value)shapes[1].Pivots.Single().Value;
+            Assert.AreEqual(ABObjectImporter.DefaultPivot, centredPivot.X, 1e-4f);
             Assert.AreEqual(ABObjectImporter.DefaultPivot - ABShapeMap.TriangleCentroidOffset,
-                pivot.Y, 1e-4f, "the reference point sits at the triangle's base");
+                centredPivot.Y, 1e-4f, "the centred option sits on the triangle's centroid");
+
+            Assert.Less(basePivot.Y, centredPivot.Y, "the base is below the centroid");
         }
 
         // A quarter turn under a non-uniformly scaled parent is the one non-commuting composition
@@ -594,34 +606,52 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         // DataManager.GameObjectShapes, and the outline widths out of the meshes it points at. A
         // pair that starts resolving to something else is either a real correction or a regression,
         // and either way it should not happen quietly.
-        [TestCase(0, 0, nameof(ShapeId.Square))]
-        [TestCase(0, 1, nameof(ShapeId.Square_T4))]
-        [TestCase(0, 2, nameof(ShapeId.Square_T8))]
-        [TestCase(1, 0, nameof(ShapeId.Circle))]
-        [TestCase(1, 1, nameof(ShapeId.Circle_T4))]
-        [TestCase(1, 2, nameof(ShapeId.Circle_F2))]
-        [TestCase(1, 4, nameof(ShapeId.Circle_T8))]
-        [TestCase(1, 5, nameof(ShapeId.Circle_F4))]
-        [TestCase(1, 7, nameof(ShapeId.Circle_F8))]
-        [TestCase(2, 0, nameof(ShapeId.Triangle))]
-        [TestCase(2, 1, nameof(ShapeId.Triangle_T2))]
-        [TestCase(2, 2, nameof(ShapeId.RightTriangle))]
-        [TestCase(2, 3, nameof(ShapeId.RightTriangle_T4))]
-        [TestCase(2, 4, nameof(ShapeId.Triangle))]
-        [TestCase(2, 5, nameof(ShapeId.Triangle_T2))]
-        [TestCase(5, 0, nameof(ShapeId.Hexagon))]
-        [TestCase(5, 1, nameof(ShapeId.Hexagon_T4))]
-        [TestCase(5, 2, nameof(ShapeId.Hexagon_T16))]
-        [TestCase(5, 3, nameof(ShapeId.Hexagon_F2))]
+        // THE FORM AND THE MEMBER ARE TWO ARGUMENTS, and that is not a style choice: a built-in
+        // shape's constants live in a nested class per form now (ShapeId.Circle.S2_T4), and `nameof`
+        // yields only the LAST identifier - so one argument pins every case to "S2_T4" and none of
+        // them to a form. Both halves stay compile-checked, which is the property worth keeping:
+        // renaming a shape has to break the build rather than the run.
+        [TestCase(0, 0, nameof(ShapeId.Square), nameof(ShapeId.Square.Fill))]
+        [TestCase(0, 1, nameof(ShapeId.Square), nameof(ShapeId.Square.T4))]
+        [TestCase(0, 2, nameof(ShapeId.Square), nameof(ShapeId.Square.T8))]
+        [TestCase(1, 0, nameof(ShapeId.Circle), nameof(ShapeId.Circle.Fill))]
+        [TestCase(1, 1, nameof(ShapeId.Circle), nameof(ShapeId.Circle.T4))]
+        [TestCase(1, 2, nameof(ShapeId.Circle), nameof(ShapeId.Circle.S2))]
+        [TestCase(1, 4, nameof(ShapeId.Circle), nameof(ShapeId.Circle.T8))]
+        [TestCase(1, 5, nameof(ShapeId.Circle), nameof(ShapeId.Circle.S4))]
+        [TestCase(1, 7, nameof(ShapeId.Circle), nameof(ShapeId.Circle.S8))]
+        [TestCase(2, 0, nameof(ShapeId.Triangle), nameof(ShapeId.Triangle.Fill))]
+        [TestCase(2, 1, nameof(ShapeId.Triangle), nameof(ShapeId.Triangle.T2))]
+        [TestCase(2, 2, nameof(ShapeId.RightTriangle), nameof(ShapeId.RightTriangle.Fill))]
+        [TestCase(2, 3, nameof(ShapeId.RightTriangle), nameof(ShapeId.RightTriangle.T4))]
+        [TestCase(2, 4, nameof(ShapeId.Triangle), nameof(ShapeId.Triangle.Fill))]
+        [TestCase(2, 5, nameof(ShapeId.Triangle), nameof(ShapeId.Triangle.T2))]
+        [TestCase(5, 0, nameof(ShapeId.Hexagon), nameof(ShapeId.Hexagon.Fill))]
+        [TestCase(5, 1, nameof(ShapeId.Hexagon), nameof(ShapeId.Hexagon.T4))]
+        [TestCase(5, 2, nameof(ShapeId.Hexagon), nameof(ShapeId.Hexagon.T16))]
+        [TestCase(5, 3, nameof(ShapeId.Hexagon), nameof(ShapeId.Hexagon.S2))]
+        // The five that used to be BUILT into the level's own resources at import time, because the
+        // library had no "outlined sector" in it at all. They are ordinary built-in shapes now, and
+        // pinning them here is what stops that quietly regressing back into synthesis.
+        [TestCase(1, 3, nameof(ShapeId.Circle), nameof(ShapeId.Circle.S2_T4))]
+        [TestCase(1, 6, nameof(ShapeId.Circle), nameof(ShapeId.Circle.S4_T4))]
+        [TestCase(1, 8, nameof(ShapeId.Circle), nameof(ShapeId.Circle.S8_T4))]
+        [TestCase(5, 4, nameof(ShapeId.Hexagon), nameof(ShapeId.Hexagon.S2_T4))]
+        [TestCase(5, 5, nameof(ShapeId.Hexagon), nameof(ShapeId.Hexagon.S2_T16))]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Easy)]
-        public void ShapeMap_PresetPairs_ResolveToTheMeasuredPreset(int shape, int option, string expected)
+        public void ShapeMap_PresetPairs_ResolveToTheMeasuredPreset(int shape, int option,
+            string form, string member)
         {
             var resolved = ABShapeMap.Import(shape, option, null);
-            var field = typeof(ShapeId).GetField(expected);
 
-            Assert.IsNotNull(field, $"{expected} is not a ShapeId preset");
+            var group = typeof(ShapeId).GetNestedType(form);
+            Assert.IsNotNull(group, $"ShapeId has no {form} group");
+
+            var field = group.GetField(member);
+            Assert.IsNotNull(field, $"ShapeId.{form} has no {member}");
+
             Assert.AreEqual((ShapeId)field.GetValue(null), resolved);
         }
 
@@ -644,8 +674,16 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.Import(level, null, Options());
             var imported = result.Level.Game.Objects.Values.OfType<ShapeObject>().Single();
 
-            Assert.AreEqual(1, result.Level.Resources.CompositeShapes.Count);
-            Assert.IsTrue(result.Level.Resources.CompositeShapes.ContainsKey(imported.ShapeId));
+            // A five-sided, sharp, filled, whole polygon is one of the built-in shapes, so the
+            // custom-polygon branch resolves it rather than building it - which is what the shape
+            // library exists to do and is how this reads as "not the logo preset" now.
+            Assert.IsTrue(BH.SDK.Services.Shapes.ShapeCatalogService.TryDecode(imported.ShapeId, out var decoded),
+                "a custom polygon on the rungs must land on a built-in shape");
+            Assert.AreEqual(5, decoded.Form.Sides);
+            Assert.IsFalse(decoded.IsRing);
+            Assert.IsTrue(decoded.IsFullTurn);
+            Assert.IsEmpty(result.Level.Resources.CompositeShapes,
+                "nothing had to be written into the level");
         }
 
         [Test]

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Import;
 using BH.SDK.Interop.AfterBeat.Models;
@@ -223,9 +223,12 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Normal)]
-        public void Import_CustomPolygon_BecomesLevelAuthoredGeometry()
+        public void Import_CustomPolygonOnTheRungs_LandsOnABuiltInShape()
         {
-            // sides 6, roundness 0, thickness 1 (filled), slices 6 (whole turn), not inverted.
+            // sides 6, roundness 0, thickness 1 (filled), slices 6 (whole turn), not inverted -
+            // every one of which is a rung the built-in library has, so this writes no geometry at
+            // all. It used to write one shape resource per distinct custom polygon, and a level
+            // leaning on the source editor's polygon slider arrived carrying dozens of them.
             const string json = @"{ ""objects"": [ { ""id"": ""a"", ""ot"": 0, ""s"": 5, ""so"": 6,
                 ""csp"": [6.0, 0.0, 1.0, 6.0, 0.0], ""ak_t"": 3, ""ak_o"": 1.0,
                 ""e"": [ {}, {}, {}, {} ] } ] }";
@@ -233,10 +236,30 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.ImportJson(json, null, Options());
             var shape = result.Level.Game.Objects.Values.OfType<ShapeObject>().Single();
 
-            Assert.AreEqual(1, result.Level.Resources.CompositeShapes.Count, "one shape resource");
-            Assert.IsTrue(result.Level.Resources.CompositeShapes.ContainsKey(shape.ShapeId));
+            Assert.AreEqual(ShapeId.Hexagon.Fill, shape.ShapeId);
+            Assert.IsEmpty(result.Level.Resources.CompositeShapes, "nothing had to be built");
             CollectionAssert.DoesNotContain(result.Report.Issues.Select(i => i.Code).ToArray(),
                 "shape_unknown");
+        }
+
+        // The other half of the same rule: a polygon whose thickness sits BETWEEN rungs, or whose
+        // corners are rounded, still has no name in the built-in library and still becomes the
+        // level's own geometry. Rounding is the axis this library has no rung for at all.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_RoundedCustomPolygon_BecomesLevelAuthoredGeometry()
+        {
+            const string json = @"{ ""objects"": [ { ""id"": ""a"", ""ot"": 0, ""s"": 5, ""so"": 6,
+                ""csp"": [6.0, 0.8, 1.0, 6.0, 0.0], ""ak_t"": 3, ""ak_o"": 1.0,
+                ""e"": [ {}, {}, {}, {} ] } ] }";
+
+            var result = ABLevelImporter.ImportJson(json, null, Options());
+            var shape = result.Level.Game.Objects.Values.OfType<ShapeObject>().Single();
+
+            Assert.AreEqual(1, result.Level.Resources.CompositeShapes.Count, "one shape resource");
+            Assert.IsTrue(result.Level.Resources.CompositeShapes.ContainsKey(shape.ShapeId));
         }
 
         // The id is derived from the PARAMETERS, not from the (shape, option) pair - one pair stands
@@ -280,7 +303,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.ImportJson(json, null, Options());
             var shape = result.Level.Game.Objects.Values.OfType<ShapeObject>().Single();
 
-            Assert.AreEqual(ShapeId.Circle, shape.ShapeId);
+            Assert.AreEqual(ShapeId.Circle.Fill, shape.ShapeId);
             Assert.IsEmpty(result.Level.Resources.CompositeShapes);
         }
 

@@ -565,9 +565,38 @@ namespace BH.SDK.Interop.AfterBeat.Export
                         return;
                     }
 
-                    var (main, option) = ABShapeMap.Export(shape.ShapeId, context.Report, path);
-                    target.Shape = main;
-                    target.ShapeOption = option;
+                    // A preset pair first, a CUSTOM POLYGON second, and only then a Square. The
+                    // middle branch is what makes the round trip whole: the built-in library is a
+                    // packed set of parameters, so anything without a preset name over there can
+                    // still be written as the five numbers that mean the same thing - and the source
+                    // game reads csp in preference to its own shape table, so the family the pair
+                    // names is irrelevant. Only a level's OWN geometry has nothing to write.
+                    var (main, option) = ABShapeMap.Export(shape.ShapeId);
+                    if (ABShapeMap.ReverseTableHas(shape.ShapeId))
+                    {
+                        target.Shape = main;
+                        target.ShapeOption = option;
+                    }
+                    else if (ABShapeMap.TryExportCustom(shape.ShapeId, out var customMain,
+                                 out var customOption, out var customShape))
+                    {
+                        target.Shape = customMain;
+                        target.ShapeOption = customOption;
+                        target.CustomShape = customShape;
+
+                        if (ABShapeMap.IsSecondQuarter(shape.ShapeId))
+                            context.Report.Approximated("shape_quarter_variant",
+                                "Afterbeat cuts a quarter one way only; lower-right quarters export as upper-right ones and need turning by hand.",
+                                path);
+                    }
+                    else
+                    {
+                        target.Shape = 0;
+                        target.ShapeOption = 0;
+                        context.Report.Approximated("shape_not_representable",
+                            "Afterbeat has no name for level-authored geometry; those objects export as a Square.",
+                            path);
+                    }
                     // Normal rather than Hit: a real level writes 0 for its hitting objects, and
                     // the documented 4 is Solid in the numbering those files use - an object that
                     // pushes the player rather than one that merely hurts them.
