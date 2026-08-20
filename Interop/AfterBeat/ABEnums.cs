@@ -69,18 +69,21 @@
     // sorts by a PARENT-RELATIVE Layer with HIGHER in front. Afterbeat also organises a level into
     // editor layers and bins, which are bookkeeping there - they decide which timeline rows are
     // shown and nothing else - while here the timeline rows ARE the draw order, so importing that
-    // organisation means spending draw order on it. And its player sits at a fixed point in the
-    // middle of the depth range rather than in front of everything.
+    // organisation means spending draw order on it. And its player is drawn in front of every
+    // ordinary object whatever its depth, so the whole depth range maps behind this format's avatar.
     //
-    // No single mapping is right for every level, which is why this is an author's choice.
+    // No single mapping is right for every level, which is why this is an author's choice - but only
+    // Auto keeps a level's range bounded by what the source format has rather than by how the level
+    // is organised, which is why it is the default.
 
     /// <summary> What an import derives this format's draw order from. </summary>
     public enum ABLayerImport
     {
-        /// <summary> Depth first, editor grouping only to separate objects that would otherwise
-        /// land on one layer, and the result packed into consecutive layers with no gaps. The
-        /// default: it is the only mode whose output size is bounded by what the level actually
-        /// uses rather than by what the source format allows. </summary>
+        /// <summary> Depth alone, packed into consecutive layers inside each band and anchored on
+        /// the player line - the last layer behind the player is -1. The default: it draws the level
+        /// in the order the source game drew it and costs one layer per depth the level actually
+        /// uses, rather than one per depth the format allows. Packed rather than absolute, so an
+        /// export returns the ORDER rather than the original depths. </summary>
         Auto = 0,
 
         /// <summary> Render depth alone - .vgd objects[].d - exactly as the source level draws it.
@@ -106,8 +109,10 @@
     /// <summary> Which render band an object lives in - .vgd objects[].rl. </summary>
     public enum ABRenderLayer
     {
-        /// <summary> Drawn with the level's own content, ordered by depth against it. The source
-        /// game's player sits INSIDE this band, between depth 0 and depth 1. </summary>
+        /// <summary> Drawn with the level's own content, ordered by depth against it. The whole
+        /// band is BEHIND the player, depth 0 included - the source game gives every object here
+        /// one sorting order and separates them by draw distance alone, while its player sits on a
+        /// sorting order above all of them. </summary>
         Default = 0,
 
         /// <summary> Drawn in front of everything in <see cref="Default"/>, player included. </summary>
@@ -121,11 +126,20 @@
     /// changes with it, which is why the two are never read apart. </summary>
     public enum ABAutokillType
     {
-        /// <summary> A legacy .lsb import that never carried a rule at all. The source game
-        /// resolves it exactly like <see cref="LastKeyframe"/> everywhere a level PLAYS
-        /// (BeatmapObject.GetObjectLifeLength) - the 5000-second branch beside it is the editor's
-        /// own timeline row, not a lifetime. It is the value an ak_t the file omits reads as, so it
-        /// is a documented member rather than an unknown one. </summary>
+        // THE SOURCE GAME'S OWN TWO ANSWERS FOR THIS ONE DISAGREE, and which one an importer
+        // copies decides whether the object plays at all. BeatmapObject.GetObjectLifeLength takes
+        // an _oldStyle flag: true returns a literal 5000 seconds, false returns the last keyframe.
+        // Every spawner passes TRUE (ObjectManager.cs, three call sites) and every editor timeline
+        // path passes FALSE (ObjectEditor, EditorElement_ObjectPanel, Prefab.GetLength). So a level
+        // holding one of these LOOKS finite in the editor and never dies when it plays - the kill
+        // callback is scheduled 5000 seconds out and the sequence only runs to the end of the song.
+        //
+        // This is also the value an omitted ak_t reads back as: the field carries no [DefaultValue]
+        // and the source serializer runs DefaultValueHandling.Ignore, so the key is written only
+        // when the rule is something else. It is therefore a documented member rather than an
+        // unknown one - and one that no level in the corpus has ever actually used.
+
+        /// <summary> A legacy .lsb import that never carried a rule at all: it never dies. </summary>
         OldStyleNoAutokill = 0,
 
         /// <summary> Dies on its last keyframe. </summary>

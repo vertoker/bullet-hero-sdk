@@ -12,6 +12,7 @@ using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
+using BH.SDK.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace BH.SDK.Interop.AfterBeat.Export
@@ -145,6 +146,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
         // Exporting the copies rather than the placements is also the more faithful half: an
         // override (PrefabObject.Modifications) is already baked into the copy it belongs to, while
         // an Afterbeat placement has no way to express one at all.
+        //
+        // The placement OBJECT is still written, as an empty - it is the transform its copies hang
+        // off, and dropping it left their parent reference naming nothing. See ABObjectExporter's
+        // ApplyShape. So this step reports rather than writes.
         private static void ExportPlacements(Level level, VgdLevel target, ABExportContext context)
         {
             var placements = 0;
@@ -220,7 +225,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 {
                     ABPostProcessingMap.ExportBloomIntensity(key.Intensity),
                     ABPostProcessingMap.ExportBloomScatter(key.Scatter),
-                    EffectIndex(key.Color4, context),
+                    EffectIndex(key.Color4, ABColorMap.EffectColorWhite, context),
                 }));
 
             target.SetEvents(ABEventTrack.Vignette, Map(post.Vignettes, framerate, context,
@@ -232,7 +237,8 @@ namespace BH.SDK.Interop.AfterBeat.Export
                         ABPostProcessingMap.ExportVignetteIntensity(key.Intensity),
                         ABPostProcessingMap.ExportVignetteSmoothness(key.Smoothness),
                         key.Rounded ? 1f : 0f, 0f,
-                        centerX, centerY, EffectIndex(key.Color4, context),
+                        centerX, centerY,
+                        EffectIndex(key.Color4, ABColorMap.EffectColorBlack, context),
                     };
                 }));
 
@@ -248,14 +254,16 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     };
                 }));
 
-            // ev is [Intensity, unused, Size, Mix]. This format's grain has neither of the last
-            // two, and writing them as zero authors a grain with no grains in it - so they get the
-            // source format's own middle-of-the-road values instead.
+            // ev is [Intensity, unused, TYPE, Response] - slot 2 is not a size, it is the preset
+            // index the source game casts to URP's own FilmGrainLookup, which is what this format's
+            // FilmGrainType is too (see ABPostProcessingMap's own note and the import beside it).
+            // Writing a constant there sent every exported grain over as the same texture, whatever
+            // the author picked. Only the luminance response has no field here.
             target.SetEvents(ABEventTrack.Grain, Map(post.Grains, framerate, context,
                 key => new List<float>
                 {
                     ABPostProcessingMap.ExportGrainIntensity(key.Intensity), 0f,
-                    DefaultExportedGrainSize, DefaultExportedGrainMix,
+                    ABPostProcessingMap.ExportGrainType(key.Type), DefaultExportedGrainResponse,
                 }));
 
             // ev is [Intensity, Width, Speed]. The last two have no counterpart here and no reader
@@ -291,23 +299,34 @@ namespace BH.SDK.Interop.AfterBeat.Export
             ExportMarkersAndCheckpoints(level, target, context);
         }
 
-        /// <summary> Grain size Afterbeat is given when this format has none to give. Its own
-        /// authoring default - a grain of zero size is a grain nobody can see. </summary>
-        public const float DefaultExportedGrainSize = 1f;
-
-        /// <summary> How much of the grain Afterbeat mixes in when this format says nothing. </summary>
-        public const float DefaultExportedGrainMix = 1f;
+        /// <summary> Luminance response Afterbeat is given when this format has none to give - its
+        /// own neutral, since a response of zero is a grain that ignores the image under it. </summary>
+        public const float DefaultExportedGrainResponse = 1f;
 
         /// <summary> Glitch width and speed Afterbeat is given when this format has neither. </summary>
         public const float DefaultExportedGlitchWidth = 1f;
         public const float DefaultExportedGlitchSpeed = 1f;
 
-        private static float EffectIndex(IColor4 color, ABExportContext context)
+        // "NO THEME COLOUR" IS A VALUE, and it is the one every real level carries on the effects
+        // its author never opened - index 9, one past the palette, which the source game reads as
+        // white for a bloom and black for a vignette (ABEventsImporter's EffectColorNone). Matching
+        // those two literals to the nearest palette slot instead hands an untouched bloom a theme
+        // colour it never had, and makes it follow every theme switch afterwards.
+        private static float EffectIndex(IColor4 color, Color4Value none, ABExportContext context)
         {
+            if (color is Color4Value literal && IsSameColor(literal, none))
+                return Import.ABEventsImporter.EffectColorNone;
+
             var (index, _) = ABColorMap.Export(color, ABPalette.Effects,
                 context.ReferenceTheme, context.Report, "events");
             return index;
         }
+
+        private static bool IsSameColor(Color4Value left, Color4Value right)
+            => BHSDKMath.Approximately(left.R, right.R)
+               && BHSDKMath.Approximately(left.G, right.G)
+               && BHSDKMath.Approximately(left.B, right.B)
+               && BHSDKMath.Approximately(left.A, right.A);
 
         private static List<VgdEventKeyframe> Map<T>(List<T> keys, int framerate,
             ABExportContext context, Func<T, List<float>> read) where T : IKeyframe

@@ -100,7 +100,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 ShapeId = shapeId,
                 ColliderId = ShapeId.Null,
                 ShaderType = ShaderType.Auto,
-                Active = true,
+                Active = context.Options.ParallaxActive,
                 Name = context.Options.KeepObjectNames ? source.Id ?? string.Empty : string.Empty,
                 Layer = Math.Clamp(baseLayer, ValueRules.MinLayer, ValueRules.MaxLayer),
                 Span = new FrameSpan(FrameRules.MinFrame,

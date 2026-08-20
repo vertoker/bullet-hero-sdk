@@ -91,11 +91,34 @@ namespace BH.SDK.Interop.AfterBeat
         /// passed by the time it spawns - a tenth of a second, not a negative lifetime. </summary>
         public const float MinSongTimeLife = 0.1f;
 
+        /// <summary> The literal the source game hands an object carrying no autokill rule at all -
+        /// see <see cref="ABAutokillType.OldStyleNoAutokill"/>. Long enough that no level reaches
+        /// the end of it, which is what "never dies" is over there. </summary>
+        public const float OldStyleLifeSeconds = 5000f;
+
+        // SONG TIME IS THE ONE AUTOKILL RULE MEASURED AGAINST THE SONG RATHER THAN THE OBJECT, and
+        // that is what makes a template's objects unresolvable on their own. A template's own st is
+        // relative to whatever places it, while its ak_o stays the absolute moment the author pinned
+        // it to when the group was still ordinary level content - the source game never rewrites it.
+        // At spawn it copies the object, shifts the START (ObjectManager.AddPrefabToLevel:
+        // `StartTimeLimited += placement.t - prefab.Offset`) and leaves ak_o alone, so
+        // GetObjectLifeLength reads the SHIFTED start and the object lives ak_o minus where it
+        // actually spawned.
+        //
+        // Resolving it against the template-local start instead gives it the whole of ak_o - up to
+        // three and a half minutes on real content - and the materializer then shifts that lifetime
+        // to the placement on top, which is what left two thirds of one level's prefab content alive
+        // past the end of its song. So the ABSOLUTE base a template will be placed at is an input
+        // here, zero at level scope where the start already is absolute.
+
         /// <summary>
         /// Absolute end time in seconds, resolved from the object's autokill rule. An unknown rule
         /// is treated as Last Keyframe, which is the format's own default.
+        /// <paramref name="absoluteBase"/> is what the object's own start is relative TO - a
+        /// template's placement time, and zero anywhere else.
         /// </summary>
-        public static float ResolveEndTime(VgdObject source, InteropReport report = null, string path = null)
+        public static float ResolveEndTime(VgdObject source, InteropReport report = null,
+            string path = null, float absoluteBase = 0f)
         {
             if (source == null) return 0f;
 
@@ -104,9 +127,15 @@ namespace BH.SDK.Interop.AfterBeat
 
             switch ((ABAutokillType)source.AutokillType)
             {
-                // Nothing to report: the source game resolves it exactly like Last Keyframe
-                // wherever a level plays - see ABAutokillType.OldStyleNoAutokill.
+                // Reported rather than silent: an object that outlives the level is legal authored
+                // data here, but it is also what a converter looks like when it has misread a rule,
+                // so the one line in the report is what tells those two apart.
                 case ABAutokillType.OldStyleNoAutokill:
+                    report?.Approximated("autokill_none",
+                        "Some objects carry no autokill rule at all; Afterbeat never kills those, so they were imported as living past the end of the level.",
+                        path);
+                    return start + OldStyleLifeSeconds;
+
                 case ABAutokillType.LastKeyframe:
                     return start + lastKey;
                 case ABAutokillType.LastKeyframeOffset:
@@ -120,9 +149,12 @@ namespace BH.SDK.Interop.AfterBeat
                 // from the offset to the start, i.e. an object that plays for the whole stretch of
                 // level it was authored to be absent from.
                 case ABAutokillType.SongTime:
-                    return start >= source.AutokillOffset
+                {
+                    var absoluteStart = absoluteBase + start;
+                    return absoluteStart >= source.AutokillOffset
                         ? start + MinSongTimeLife
-                        : source.AutokillOffset;
+                        : start + (source.AutokillOffset - absoluteStart);
+                }
 
                 default:
                     report?.Approximated("autokill_unknown",
@@ -137,12 +169,12 @@ namespace BH.SDK.Interop.AfterBeat
         /// cannot represent zero, and an object that lived for an instant in Afterbeat did exist.
         /// </summary>
         public static FrameSpan ResolveSpan(VgdObject source, int framerate,
-            InteropReport report = null, string path = null)
+            InteropReport report = null, string path = null, float absoluteBase = 0f)
         {
             if (source == null) return new FrameSpan(FrameRules.MinFrame, FrameRules.MinFrameDuration);
 
             var startFrame = ToFrame(source.StartTime, framerate);
-            var endFrame = ToFrame(ResolveEndTime(source, report, path), framerate);
+            var endFrame = ToFrame(ResolveEndTime(source, report, path, absoluteBase), framerate);
 
             return FromFrames(startFrame, endFrame);
         }

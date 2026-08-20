@@ -64,12 +64,6 @@ namespace BH.SDK.Interop.AfterBeat.Export
             {
                 case EffectObject effect when ResolveEffect(effect, context, path) == null:
                     return null;
-                case PrefabObject:
-                    // A placement is a reference, not content: the objects it materialized into are
-                    // ordinary members of this same scope and are exported on their own. Writing it
-                    // as well would give Afterbeat a second copy to expand - see the level
-                    // exporter's ExportPlacements.
-                    return null;
             }
 
             // Bookkeeping this converter created rather than content the author did, and the source
@@ -476,25 +470,27 @@ namespace BH.SDK.Interop.AfterBeat.Export
         // a bijection - so a level that came from Afterbeat under it goes back unchanged, and one
         // authored here lands where the same layer would have drawn.
         //
-        // Which BAND a layer belongs to is decided the same way the import decided it: layer 0 is
-        // the frontmost depth of the Default band (the source game's player sits just under it),
-        // the whole 61-wide stretch above that is AbovePlayer, the 61 below is Default's own rest,
-        // and everything under THAT is Background. Clamped at both ends, since this format has 2001
+        // Which BAND a layer belongs to is decided the same way the import decided it, and the
+        // player line is what splits them: this format's avatar occupies (-1, 0), the source game
+        // draws its own in front of every Default object and behind every AbovePlayer one, so layer
+        // 0 and up is AbovePlayer, -1 down to -61 is the Default band with depth 0 at its top, and
+        // everything under that is Background. Clamped at both ends, since this format has 2001
         // layers to spend and Afterbeat has 183 - a level using the whole range loses ordering at
         // the extremes rather than everywhere.
         private static void ApplyDrawOrder(int effectiveLayer, VgdObject target)
         {
             const int span = ABLayerMap.DepthSpan;
 
-            var band = effectiveLayer >= 1 ? ABRenderLayer.AbovePlayer
-                : effectiveLayer > -span ? ABRenderLayer.Default
+            var band = effectiveLayer >= 0 ? ABRenderLayer.AbovePlayer
+                : effectiveLayer >= -span ? ABRenderLayer.Default
                 : ABRenderLayer.Background;
 
+            // The layer depth 0 of this band sits on; every deeper depth steps one further down.
             var frontmost = band switch
             {
-                ABRenderLayer.AbovePlayer => span,
-                ABRenderLayer.Default => 0,
-                _ => -span,
+                ABRenderLayer.AbovePlayer => VgdObject.MaxDepth,
+                ABRenderLayer.Default => -1,
+                _ => -1 - span,
             };
 
             target.RenderLayer = (int)band;
@@ -517,11 +513,16 @@ namespace BH.SDK.Interop.AfterBeat.Export
         // export, exactly as OnlyDepth already is. Depth runs 0-60 and the source editor allows six
         // layers of fifteen bins, which is 90 rows for 61 depths - so every depth gets a row of its
         // own with room to spare, rather than several sharing one.
+        // COUNTED FROM LAYER 1, NOT FROM 0, and that is what makes the inverse exact rather than
+        // nearly exact. ABLayerMap.ToEditorIndex reads an editor layer of 0 as 1 - an object nobody
+        // sorted belongs with the ones nobody sorted - so rows written on layer 0 and on layer 1
+        // decode to the same index, and the first thirty depths came back in fifteen rows.
         private static void ApplyEditorRow(VgdObject target)
         {
             var row = Math.Clamp(target.Depth, VgdObject.MinDepth, VgdObject.MaxDepth);
 
-            target.Editor.Layer = Math.Clamp(row / EditorBinsPerLayer, MinEditorLayer, MaxEditorLayer);
+            target.Editor.Layer = Math.Clamp(row / EditorBinsPerLayer + FirstEditorLayer,
+                FirstEditorLayer, MaxEditorLayer);
             target.Editor.Bin = Math.Clamp(row % EditorBinsPerLayer, MinEditorBin, MaxEditorBin);
         }
 
@@ -535,6 +536,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
         /// <summary> The source editor's own layer clamp, 0-5. </summary>
         public const int MinEditorLayer = 0;
         public const int MaxEditorLayer = 5;
+
+        /// <summary> The lowest layer an export writes - see <see cref="ApplyEditorRow"/> for why it
+        /// is not <see cref="MinEditorLayer"/>. </summary>
+        public const int FirstEditorLayer = 1;
 
         private static void ApplyShape(RectObject source, VgdObject target,
             ABExportContext context, string path)
@@ -614,6 +619,15 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 default:
                     // AlphaEmpty (6) rather than Empty (3): both mean "no geometry" over there, and
                     // 6 is the one real levels are written with - 3 appears in no file measured.
+                    //
+                    // A PREFAB PLACEMENT LANDS HERE TOO, and as an empty rather than as nothing at
+                    // all. Its content is exported as the objects it materialized into (see the
+                    // level exporter's ExportPlacements - writing prefab_objects as well would hand
+                    // Afterbeat a second copy to expand), but those copies hang OFF the placement
+                    // and it carries the position, scale and rotation the whole subtree sits at.
+                    // Dropping the object while its children still name it as their parent left
+                    // that reference dangling, which the source game reads as a root - so every
+                    // placed prefab in an exported level snapped back to the origin.
                     target.ObjectType = (int)ABObjectType.AlphaEmpty;
                     return;
             }
@@ -637,6 +651,19 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
         // Only the pivot's FIRST keyframe can cross - Afterbeat's origin is a static field, not a
         // track. Anything animating its pivot loses the animation, which is reported.
+        //
+        // Both of the corrections below are inverses of something ABObjectImporter.ApplyPivot does,
+        // and writing a plain `0.5 - pivot` for everything got both of them wrong in the same
+        // direction it once got the import wrong:
+        //
+        //   TEXT MEASURES IT THE OTHER WAY. A shape's origin moves its mesh by +origin, so its
+        //   pivot is 0.5 - origin; a text's origin picks a TextMeshPro alignment and its pivot is
+        //   0.5 + origin. Subtracting for both mirrored every off-centre text on the way out.
+        //
+        //   A SHAPE'S OWN GEOMETRY OFFSET IS NOT AN ORIGIN. The import folds it into the pivot
+        //   because this format has nowhere else to put it, but over there it is intrinsic to the
+        //   shape - so writing it back into the origin applies it twice, and a Triangle imported
+        //   with no origin at all came back displaced by its own centroid.
         private static void ApplyOrigin(RectObject source, VgdObject target)
         {
             if (source.Pivots == null || source.Pivots.Count == 0) return;
@@ -644,9 +671,21 @@ namespace BH.SDK.Interop.AfterBeat.Export
             var pivot = source.Pivots[0]?.Value;
             if (pivot is not Vector2Value literal) return;
 
+            if (source is TextObject)
+            {
+                target.Origin = new VgdVector2(
+                    literal.X - Import.ABObjectImporter.DefaultPivot,
+                    literal.Y - Import.ABObjectImporter.DefaultPivot);
+                return;
+            }
+
+            // ApplyShape has already run, so this is the pair actually being written rather than
+            // whatever the object came in as.
+            var shapeOffsetY = ABShapeMap.GetPivotOffsetY(target.Shape, target.ShapeOption);
+
             target.Origin = new VgdVector2(
                 Import.ABObjectImporter.DefaultPivot - literal.X,
-                Import.ABObjectImporter.DefaultPivot - literal.Y);
+                Import.ABObjectImporter.DefaultPivot - literal.Y - shapeOffsetY);
         }
 
         #region Tracks
@@ -674,9 +713,13 @@ namespace BH.SDK.Interop.AfterBeat.Export
             // sizing its glyphs, while here that is Scale and Size is only the block they lay out
             // in - a block this converter estimated on the way in and that means nothing on the
             // far side. See ABParticleMap.ApplyTextSize.
-            var isText = source is TextObject;
-            var exported = isText ? source.Scales : source.Sizes;
-            var dropped = isText ? source.Sizes : source.Scales;
+            //
+            // A PREFAB PLACEMENT reads the same way for a different reason: it has no extent of its
+            // own at all, and its scale is the multiplier its whole materialized subtree sits
+            // inside - which over there is exactly what a parent's scale track is.
+            var fromScales = source is TextObject or PrefabObject;
+            var exported = fromScales ? source.Scales : source.Sizes;
+            var dropped = fromScales ? source.Sizes : source.Scales;
             if (exported == null) return;
 
             foreach (var key in Sorted(exported))
@@ -685,7 +728,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 track.Keyframes.Add(NewKeyframe(key.Frame, key.Ease, framerate, x, y));
             }
 
-            if (!isText && dropped is { Count: > 0 })
+            if (!fromScales && dropped is { Count: > 0 })
                 context.Report.Approximated("scale_track_dropped",
                     "Afterbeat has one size per object; this format's separate scale multiplier has no field there and is not exported.",
                     path);

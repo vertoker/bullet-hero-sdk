@@ -193,17 +193,48 @@ author picks:
 
 | Mode | What decides draw order |
 |---|---|
-| `Auto` (default) | Depth, with the editor grouping breaking ties, packed into consecutive layers with no gaps. The only mode whose output is sized by what the level uses rather than by what the format allows. |
-| `OnlyDepth` | Depth alone, one layer per depth. The exact inverse of the export, so a level converted under it round-trips unchanged. |
+| `Auto` (default) | Depth alone, packed into consecutive layers inside each band. Costs one layer per depth the level uses; a real 423-object level lands on 36 layers, -36 to -1. |
+| `OnlyDepth` | Depth alone, one layer per depth the *format* has. The exact inverse of the export, so a level converted under it round-trips unchanged. |
 | `OnlyEditor` | The source editor's own layers and bins alone (bin 0 of layer 1 furthest back); what the level *drew* in front is discarded. |
 | `DepthAndEditor` | Both, each editor group given a fixed `EditorGroupStride`-wide band. Nothing is packed, so a finely organised level runs out of layers and is clamped. |
 
-Two things every mode holds to. **The player line**: Afterbeat draws its player between depth 0 and
-depth 1, this format draws its avatar at layer -0.5, so depth 0 lands at layer >= 0 and everything
-else at layer <= -1 (under the two editor-driven modes, where depth orders nothing, the whole
-Default band sits behind the player). **The three bands** — `rl`, i.e. Background / Default /
-AbovePlayer — never interleave; the background objects the parallax importer creates sit below all
-three, and prefab placements above them.
+Three things every mode holds to.
+
+**The player line.** Afterbeat sorts by `sortingOrder` in one sorting layer: an ordinary object gets
+0, the player gets 61 (`VGPlayer.Init`), an `AbovePlayer` object gets `62 + (60 - depth)`, and a
+`Background` object is drawn by a different camera. So the whole Default band is *behind* the player,
+depth 0 included — depth only separates it by draw distance (`z = 0.1 * depth`). This format draws
+its avatar at layer -0.5, so the Default band lands at layer <= -1 and `AbovePlayer` at layer >= 0.
+
+**The three bands** — `rl`, i.e. Background / Default / AbovePlayer — never interleave; the
+background objects the parallax importer creates sit below all three. Their boundaries are fixed
+(`AbovePlayer` at 0 and up, `Default` at -1 down to -61, `Background` below that) and they are a
+**contract with the export**, not an implementation detail: nothing on an object here records which
+band it came from, so the export infers it from where the layer falls. `Auto` therefore packs each
+band against its own edge of the player line rather than packing all three into one run — the cost
+is a gap between `Default`'s last used layer and `Background`'s first, paid only by a level that
+uses the `Background` band at all.
+
+**One plan orders the whole level.** The level's own objects and every prefab template's are ranked
+against a single table of depths, because that is what the source game does with them: a template's
+objects are copied into the level and sorted against its own by depth alone. A placement therefore
+takes no layer of its own (`PlacementLayerOffset` defaults to 0), and the range a converted level
+occupies is bounded by the source *format* — three bands of 61 depths — rather than by how large or
+how finely organised the level is. Resolving each list separately and stacking the results with
+offsets is what this replaced, and it spread one real level over 894 layers reaching -520.
+
+**Going back out.** A prefab placement is written as an EMPTY object rather than as a
+`prefab_objects` entry: its content is exported as the objects it materialized into (writing the
+placement as well would make Afterbeat expand the same content a second time), but those copies hang
+off it and it carries the transform the whole subtree sits at.
+`ABObjectExporter.ApplyDrawOrder` is the inverse of those boundaries, so a level
+imported under `OnlyDepth` returns with every depth and band unchanged, and one imported under `Auto`
+returns with its depths *packed* — the order the source game drew them in survives, the exact numbers
+do not. For a level authored **here** the same boundaries have a consequence worth knowing: layer 0
+is the default for a new object and draws in front of this format's avatar, and the only way
+Afterbeat can express that is the `AbovePlayer` band — so a level built entirely on layer 0 arrives
+over there entirely above the player. That is faithful (content that covers the player here covers it
+there), but it means an author who wants ordinary content should spend the layers below -1.
 
 **Not imported:** triggers, the screen-gradient event track, depth of field, per-axis parent
 inheritance and parent time offsets, and prefab preview images and lead times.

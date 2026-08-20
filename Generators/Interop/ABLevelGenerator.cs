@@ -44,7 +44,8 @@ namespace BH.SDK.Generators.Interop
             // renders, at the bottom, where nobody would look for it.
             .Section(GeneratorSections.Additional, nameof(Parameters.KeepObjectNames),
                 nameof(Parameters.EditorGroupStride), nameof(Parameters.PlacementLayerOffset),
-                nameof(Parameters.ParallaxLayerOffset), nameof(Parameters.MaxParallaxLoopKeys),
+                nameof(Parameters.ParallaxActive), nameof(Parameters.ParallaxLayerOffset),
+                nameof(Parameters.MaxParallaxLoopKeys),
                 nameof(Parameters.LevelJson), nameof(Parameters.MetaJson),
                 nameof(Parameters.AudioFileName), nameof(Parameters.SourceFolder),
                 nameof(Parameters.AudioLengthSeconds))
@@ -69,6 +70,8 @@ namespace BH.SDK.Generators.Interop
             .VisibleWhen(nameof(Parameters.PlacementLayerOffset),
                 p => ((Parameters)p).ImportPrefabs)
             .VisibleWhen(nameof(Parameters.ParallaxLayerOffset),
+                p => ((Parameters)p).ImportParallax)
+            .VisibleWhen(nameof(Parameters.ParallaxActive),
                 p => ((Parameters)p).ImportParallax)
             // The host fills these in from the folder it opened; showing them as editable rows would
             // invite an author to paste a level document into a text field.
@@ -172,6 +175,7 @@ namespace BH.SDK.Generators.Interop
         {
             Framerate = parameters.Framerate,
             ImportParallax = parameters.ImportParallax,
+            ParallaxActive = parameters.ParallaxActive,
             ImportPrefabs = parameters.ImportPrefabs,
             KeepObjectNames = parameters.KeepObjectNames,
             ParallaxLayerOffset = parameters.ParallaxLayerOffset,
@@ -201,7 +205,12 @@ namespace BH.SDK.Generators.Interop
             public ABLayerImport LayerImport = ABLayerImport.Auto;
 
             public int EditorGroupStride = ABLayerMap.DepthSpan;
-            public int PlacementLayerOffset = 1;
+            public int PlacementLayerOffset;
+
+            /// <summary> Whether the imported background arrives switched on. Off - the default -
+            /// keeps every background object and its baked loop while leaving the level looking
+            /// like its own content; see <see cref="ABOptions.ParallaxActive"/>. </summary>
+            public bool ParallaxActive;
 
             public int ParallaxLayerOffset = 1;
             public int MaxParallaxLoopKeys = LevelRules.MaxObjectKeys;

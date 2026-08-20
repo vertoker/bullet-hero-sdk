@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Export;
 using BH.SDK.Interop.AfterBeat.Import;
 using BH.SDK.Interop.AfterBeat.Models;
+using BH.SDK.Models.Keyframes;
+using BH.SDK.Models.Objects;
 using BH.SDK.Models.Values;
 using NUnit.Framework;
 
@@ -240,6 +243,363 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             Assert.AreEqual(1f, exported.Level.Objects.Single().StartTime, 1e-2f);
         }
+
+        #region Draw order
+
+        /// <summary> A level holding one object per (band, depth) pair, each named after the pair so
+        /// it can be found again on the way back. </summary>
+        private static VgdLevel DrawOrderLevel(params int[] depths)
+        {
+            var level = new VgdLevel();
+
+            foreach (var band in new[]
+                     {
+                         ABRenderLayer.Background,
+                         ABRenderLayer.Default,
+                         ABRenderLayer.AbovePlayer,
+                     })
+                foreach (var depth in depths)
+                {
+                    var source = ABMockData.CreateObject($"b{(int)band}-d{depth}");
+                    source.Name = source.Id;
+                    source.Depth = depth;
+                    source.RenderLayer = (int)band;
+                    level.Objects.Add(source);
+                }
+
+            return level;
+        }
+
+        /// <summary> Where one exported object sits in Afterbeat's own ordering, back to front -
+        /// the band above the depth, exactly as the source game sorts. </summary>
+        private static int SourceOrder(VgdObject source)
+            => ABLayerMap.ToBandRank(ABLayerMap.ToBand(source)) * ABLayerMap.DepthSpan
+               + VgdObject.MaxDepth - ABLayerMap.ToDepth(source);
+
+        // The bijection, stated across all three bands rather than inside one: the bands are only
+        // right relative to each other, and the export decides which band a layer belongs to by the
+        // same boundaries the import placed them on. A drift in either one shows up here as a level
+        // that comes back a band out - drawn in front of the player where it used to be behind it.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Conversion_UnderOnlyDepth_EveryBandAndDepthComesBackUnchanged()
+        {
+            var source = DrawOrderLevel(0, 1, 20, 59, 60);
+            var imported = ABLevelImporter.Import(source, null,
+                new ABOptions(60) { LayerImport = ABLayerImport.OnlyDepth });
+
+            var exported = ABLevelExporter.Export(imported.Level, null);
+            var returned = exported.Level.Objects.ToDictionary(o => o.Name);
+
+            foreach (var original in source.Objects)
+            {
+                var back = returned[original.Name];
+                Assert.AreEqual(original.Depth, back.Depth, $"{original.Name}: depth");
+                Assert.AreEqual(original.RenderLayer, back.RenderLayer, $"{original.Name}: band");
+            }
+        }
+
+        // Auto is not a bijection and is not meant to be - it packs the depths a level does not use
+        // out of the way, so a level that used depths 0 and 60 comes back using 0 and 1. What it
+        // must never do is REORDER, and that is what survives both directions: whatever the source
+        // level drew in front still draws in front after a full round trip.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Conversion_UnderAuto_PacksTheDepthsButKeepsTheirOrder()
+        {
+            var source = DrawOrderLevel(0, 7, 20, 45, 60);
+            var imported = ABLevelImporter.Import(source, null, new ABOptions(60));
+
+            var exported = ABLevelExporter.Export(imported.Level, null);
+            var returned = exported.Level.Objects.ToDictionary(o => o.Name);
+
+            foreach (var first in source.Objects)
+            foreach (var second in source.Objects)
+            {
+                var expected = SourceOrder(first).CompareTo(SourceOrder(second));
+                var actual = SourceOrder(returned[first.Name]).CompareTo(SourceOrder(returned[second.Name]));
+
+                Assert.AreEqual(expected, actual,
+                    $"{first.Name} against {second.Name}: the order the source game drew them in");
+            }
+
+            foreach (var original in source.Objects)
+                Assert.AreEqual(original.RenderLayer, returned[original.Name].RenderLayer,
+                    $"{original.Name}: a packed layer never leaves its own band");
+
+            // Packed, not preserved: five depths went out and five come back, but as the five
+            // smallest ones rather than the five the author happened to pick.
+            var ordinary = returned.Values
+                .Where(o => ABLayerMap.ToBand(o) == ABRenderLayer.Default)
+                .ToArray();
+
+            Assert.AreEqual(5, ordinary.Select(o => o.Depth).Distinct().Count());
+            Assert.AreEqual(4, ordinary.Max(o => o.Depth),
+                "packed means the range is the level's own, not the format's");
+        }
+
+        // The consequence of the player line for a level authored HERE rather than imported: this
+        // format's avatar sits at -0.5, so an object on the default layer 0 draws in FRONT of it,
+        // and the only way Afterbeat can express that is the AbovePlayer band. It is deliberate and
+        // it is what makes the export faithful - a level whose content covers the player here must
+        // cover it over there too - but it does mean an ordinary level authored on layer 0 arrives
+        // as an entirely above-player one, so the author's own layers are worth spending.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Export_LayerZero_IsAbovePlayer_AndMinusOneIsTheTopOfTheOrdinaryBand()
+        {
+            var imported = ABLevelImporter.Import(ABMockData.CreateLevel(), null, new ABOptions(60));
+            var only = imported.Level.Game.Objects.Values.Single();
+
+            only.Layer = 0;
+            var above = ABLevelExporter.Export(imported.Level, null).Level.Objects.Single();
+            Assert.AreEqual((int)ABRenderLayer.AbovePlayer, above.RenderLayer,
+                "layer 0 draws in front of this format's avatar, so it is not an ordinary object there");
+            Assert.AreEqual(VgdObject.MaxDepth, above.Depth, "and it is the backmost of that band");
+
+            only.Layer = -1;
+            var ordinary = ABLevelExporter.Export(imported.Level, null).Level.Objects.Single();
+            Assert.AreEqual((int)ABRenderLayer.Default, ordinary.RenderLayer);
+            Assert.AreEqual(VgdObject.MinDepth, ordinary.Depth,
+                "the last layer behind the player is the frontmost ordinary depth");
+        }
+
+        // A materialized placement's copies are what the export writes, and they hang off a
+        // placement that now takes no draw order of its own - so their depth has to come from the
+        // template's own layers rather than from where the placement sits in the level's list.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Export_AMaterializedPlacementsCopies_CarryTheirOwnDepth()
+        {
+            var imported = ABLevelImporter.Import(ABMockData.CreateFullLevel(), null,
+                new ABOptions(60));
+
+            var placement = imported.Level.Game.Objects.Values.OfType<PrefabObject>().Single();
+            Assert.AreEqual(0, placement.Layer, "a placement is not a render band");
+
+            // Materializing is the host's job, so the copy is written by hand here - one template
+            // object, parented to the placement, carrying the layer the level-wide plan gave it.
+            var template = imported.Level.Resources.Prefabs.Values.Single();
+            var inner = template.Objects.Values.Single();
+            var copy = (ShapeObject)inner.Copy();
+            copy.ObjectId = imported.Level.Settings.GetNextObjectId();
+            copy.ParentObjectId = placement.ObjectId;
+            copy.Name = "materialized";
+            imported.Level.Game.Objects[copy.ObjectId] = copy;
+
+            var exported = ABLevelExporter.Export(imported.Level, null).Level;
+            var back = exported.Objects.Single(o => o.Name == "materialized");
+
+            Assert.AreEqual((int)ABRenderLayer.Default, back.RenderLayer);
+            Assert.AreEqual(-1 - inner.Layer, back.Depth,
+                "the copy's own depth, not one derived from where the placement sat");
+
+            // The placement itself has to be in the document too, or the copy's parent reference
+            // names nothing - which the source game reads as a root, dropping the position, scale
+            // and rotation the whole subtree was placed at.
+            var node = exported.Objects.Single(
+                o => o.Id == ABExportContext.ToSourceId(placement.ObjectId));
+
+            Assert.AreEqual(node.Id, back.ParentId, "the copy still hangs off its placement");
+            Assert.AreEqual((int)ABObjectType.AlphaEmpty, node.ObjectType,
+                "a placement draws nothing of its own - its content is the copies");
+
+            var moved = node.Move.Keyframes[0].Values;
+            Assert.AreEqual(1f, moved[0], 1e-4f, "the placement's own position went with it");
+            Assert.AreEqual(2f, moved[1], 1e-4f);
+        }
+
+        // A placement's scale is the multiplier its whole subtree sits inside, and this format keeps
+        // that on Scales rather than on Sizes - reading Sizes wrote a placement scaled to nothing.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Export_APlacementsScale_ComesFromItsScaleTrack()
+        {
+            var imported = ABLevelImporter.Import(ABMockData.CreateFullLevel(), null,
+                new ABOptions(60));
+
+            var placement = imported.Level.Game.Objects.Values.OfType<PrefabObject>().Single();
+            placement.Scales.Clear();
+            placement.Scales.Add(new ScaKey(new Vector2Value(3f, 4f), 0));
+
+            var exported = ABLevelExporter.Export(imported.Level, null).Level;
+            var node = exported.Objects.Single(
+                o => o.Id == ABExportContext.ToSourceId(placement.ObjectId));
+
+            var scaled = node.Scale.Keyframes[0].Values;
+            Assert.AreEqual(3f, scaled[0], 1e-4f);
+            Assert.AreEqual(4f, scaled[1], 1e-4f);
+        }
+
+        // The editor row an export writes is what makes OnlyEditor the inverse of it, and the two
+        // halves live in different files - so the only way to state it is to run both.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Export_TheEditorRow_DecodesBackToTheDepthItWasWrittenFrom()
+        {
+            var source = new VgdLevel();
+            for (var depth = VgdObject.MinDepth; depth <= VgdObject.MaxDepth; depth++)
+            {
+                var one = ABMockData.CreateObject($"d{depth}");
+                one.Depth = depth;
+                source.Objects.Add(one);
+            }
+
+            var imported = ABLevelImporter.Import(source, null,
+                new ABOptions(60) { LayerImport = ABLayerImport.OnlyDepth });
+            var exported = ABLevelExporter.Export(imported.Level, null).Level;
+
+            foreach (var back in exported.Objects)
+                Assert.AreEqual(back.Depth, ABLayerMap.ToEditorIndex(back),
+                    $"depth {back.Depth}: the row it was filed on has to name it again");
+        }
+
+        #endregion
+
+        #region Origins
+
+        // Text measures its origin from the opposite side - see ABObjectExporter.ApplyOrigin. Writing
+        // it the way a shape's is written mirrors every off-centre text on the way out, which is the
+        // same bug the import had on the way in and is invisible in anything but a round trip.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Conversion_ATextsOrigin_ComesBackOnTheSameSide()
+        {
+            var source = new VgdLevel();
+            var text = ABMockData.CreateObject("text");
+            text.Shape = (int)ABShape.Text;
+            text.Text = "left";
+            text.Origin = new VgdVector2(0.25f, -0.5f);
+            source.Objects.Add(text);
+
+            var imported = ABLevelImporter.Import(source, null, new ABOptions(60));
+            var back = ABLevelExporter.Export(imported.Level, null).Level.Objects.Single();
+
+            Assert.AreEqual(0.25f, back.Origin.X, 1e-4f, "an origin to the right stays to the right");
+            Assert.AreEqual(-0.5f, back.Origin.Y, 1e-4f);
+        }
+
+        // A Triangle's reference point sits at its centroid over there, and the import folds that
+        // into the pivot because this format has nowhere else to keep it. Writing the pivot straight
+        // back out hands Afterbeat the offset a second time, on top of the one its own shape already
+        // has - so an object nobody ever moved comes back moved.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Conversion_AShapesOwnReferencePoint_IsNotWrittenBackAsAnOrigin()
+        {
+            var source = new VgdLevel();
+            var triangle = ABMockData.CreateObject("triangle");
+            triangle.Shape = (int)ABShape.Triangle;
+            triangle.ShapeOption = 0;
+            source.Objects.Add(triangle);
+
+            var imported = ABLevelImporter.Import(source, null, new ABOptions(60));
+            var shape = imported.Level.Game.Objects.Values.OfType<ShapeObject>().Single();
+            Assert.AreEqual(1, shape.Pivots.Count, "the centroid has to live somewhere on the way in");
+
+            var back = ABLevelExporter.Export(imported.Level, null).Level.Objects.Single();
+
+            Assert.AreEqual(0f, back.Origin.X, 1e-4f);
+            Assert.AreEqual(0f, back.Origin.Y, 1e-4f,
+                "the shape carries its own reference point over there; the origin must stay empty");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Conversion_AnAuthoredOriginOnAShapeThatHasOne_SurvivesBothDirections()
+        {
+            var source = new VgdLevel();
+            var triangle = ABMockData.CreateObject("triangle");
+            triangle.Shape = (int)ABShape.Triangle;
+            triangle.ShapeOption = 0;
+            triangle.Origin = new VgdVector2(0.2f, -0.3f);
+            source.Objects.Add(triangle);
+
+            var imported = ABLevelImporter.Import(source, null, new ABOptions(60));
+            var back = ABLevelExporter.Export(imported.Level, null).Level.Objects.Single();
+
+            Assert.AreEqual(0.2f, back.Origin.X, 1e-4f);
+            Assert.AreEqual(-0.3f, back.Origin.Y, 1e-4f, "the author's own offset, and only it");
+        }
+
+        #endregion
+
+        #region Post-processing
+
+        private static VgdEventKeyframe EventKey(float time, params float[] values)
+            => new()
+            {
+                Time = time,
+                Values = Newtonsoft.Json.Linq.JArray.FromObject(values),
+            };
+
+        // The grain keyframe's third slot is the PRESET, not a size - the export used to write a
+        // constant there, so every grain in an exported level came back as the same texture.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Conversion_TheGrainPreset_SurvivesBothDirections()
+        {
+            const float preset = 4f;
+
+            var source = new VgdLevel();
+            source.SetEvents(ABEventTrack.Grain,
+                new List<VgdEventKeyframe> { EventKey(0f, 0.5f, 0f, preset, 1f) });
+
+            var imported = ABLevelImporter.Import(source, null, new ABOptions(60));
+            Assert.AreEqual(ABPostProcessingMap.ImportGrainType(preset),
+                imported.Level.Game.PostProcessingEvents.Grains.Single().Type);
+
+            var back = ABLevelExporter.Export(imported.Level, null).Level
+                .GetEvents(ABEventTrack.Grain).Single();
+
+            Assert.AreEqual(preset, back.GetFloat(2), 1e-4f, "the preset the author picked");
+        }
+
+        // Index 9 is one past the palette and means "no theme colour at all" - the value every real
+        // level carries on the effects nobody opened. Matching its stand-in colour to the nearest
+        // palette slot instead hands an untouched bloom a theme colour, which then follows every
+        // theme switch in the level.
+        [TestCase(ABEventTrack.Bloom, 2)]
+        [TestCase(ABEventTrack.Vignette, 6)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Conversion_AnEffectWithNoThemeColour_KeepsHavingNone(ABEventTrack track, int slot)
+        {
+            var source = ABMockData.CreateLevel();
+            var values = new float[slot + 1];
+            values[0] = 0.5f;
+            values[slot] = ABEventsImporter.EffectColorNone;
+            source.SetEvents(track, new List<VgdEventKeyframe> { EventKey(0f, values) });
+
+            var imported = ABLevelImporter.Import(source, null, new ABOptions(60));
+            var back = ABLevelExporter.Export(imported.Level, null).Level.GetEvents(track).Single();
+
+            Assert.AreEqual(ABEventsImporter.EffectColorNone, back.GetFloat(slot), 1e-4f,
+                "an effect nobody tinted must not come back tinted");
+        }
+
+        #endregion
 
         [Test]
         [Author(Metadata.Author.Vertoker)]

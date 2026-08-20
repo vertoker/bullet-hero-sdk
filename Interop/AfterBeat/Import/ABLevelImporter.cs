@@ -91,6 +91,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 level.Game, level.Settings, level.Resources.CompositeShapes,
                 level.Resources.Effects);
 
+            ResolveLayers(source, options, context);
+
             ImportThemes(source, level, context);
             level.Settings.FrameDuration = ResolveDuration(source, meta, options, report);
 
@@ -111,6 +113,29 @@ namespace BH.SDK.Interop.AfterBeat.Import
         }
 
         #region Steps
+
+        // BEFORE ANYTHING IS IMPORTED, because everything that is imported reads the answer: the
+        // level's own objects and every template's are ordered against ONE table of depths, since
+        // that is what the source game does with them - a template's objects are copied into the
+        // level and sorted against its own by depth alone. Resolving each list separately and then
+        // stacking the results is what this replaced; see ABLayerMap's header for what it cost.
+        //
+        // The templates are read here even though they are imported later, and the parallax
+        // deliberately is not: its objects are drawn by a different camera over there, so they
+        // belong below the whole band rather than inside it (ABParallaxImporter places them off
+        // LowestContentLayer).
+        private static void ResolveLayers(VgdLevel source, ABOptions options, ABImportContext context)
+        {
+            var lists = new List<IReadOnlyList<VgdObject>> { source.Objects };
+
+            if (options.ImportPrefabs && source.Prefabs != null)
+                foreach (var prefab in source.Prefabs)
+                    if (prefab?.Objects != null)
+                        lists.Add(prefab.Objects);
+
+            context.LayerPlan = ABLayerMap.Build(lists, options, context.Report, "objects");
+            context.RegisterContentLayers(context.LayerPlan.Lowest, context.LayerPlan.Highest);
+        }
 
         // Themes are read first because every literal colour anywhere in the level is resolved
         // against one, and the theme the LEVEL STARTS ON becomes that reference - a colour is
@@ -266,30 +291,61 @@ namespace BH.SDK.Interop.AfterBeat.Import
             }
         }
 
+        // WHERE THE PLACEMENTS SIT IS AN INPUT TO THE TEMPLATES, which is why they are measured
+        // here rather than read in the pass that imports them: a Song Time autokill inside a
+        // template names an absolute moment of the song and cannot be resolved without knowing what
+        // the template's own times are relative to. See ABPrefabImporter.ResolveAbsoluteBase.
         private static void ImportPrefabs(VgdLevel source, Level level, ABImportContext context)
         {
             if (source.Prefabs == null) return;
+
+            var placements = ABPrefabImporter.MeasurePlacements(source.PrefabPlacements);
 
             for (var i = 0; i < source.Prefabs.Count; i++)
             {
                 var sourcePrefab = source.Prefabs[i];
                 if (sourcePrefab == null) continue;
 
+                // Counted rather than summarised as "the rest": a level over the cap loses whole
+                // sections of itself, and the two numbers are what tell an author whether what they
+                // are looking at is the level or a fraction of it.
                 if (level.Resources.Prefabs.Count >= LevelRules.MaxPrefabs)
                 {
+                    CountPrefabsOverCap(source, placements, i, out var lostPrefabs, out var lostPlacements);
                     context.Report.Dropped("prefabs_over_cap",
-                        $"This format allows {LevelRules.MaxPrefabs} prefabs per level; the rest were dropped along with their placements.",
+                        $"This format allows {LevelRules.MaxPrefabs} prefabs per level and this one has {source.Prefabs.Count}: {lostPrefabs} were dropped, taking {lostPlacements} of their placements with them.",
                         "prefabs");
                     break;
                 }
 
                 var prefab = ABPrefabImporter.ImportTemplate(sourcePrefab, context.Options,
                     context.Report, level.Resources.CompositeShapes, context.ReferenceTheme,
-                    $"prefabs[{i}]", level.Resources.Effects);
+                    $"prefabs[{i}]", level.Resources.Effects, context.LayerPlan, placements);
                 if (prefab == null) continue;
 
                 level.Resources.Prefabs[prefab.PrefabId] = prefab;
                 ABPrefabImporter.RegisterLeadTime(sourcePrefab, prefab, context);
+            }
+        }
+
+        /// <summary> What the prefab cap costs this level, counted from the first template it could
+        /// not take. </summary>
+        private static void CountPrefabsOverCap(VgdLevel source,
+            IReadOnlyDictionary<string, ABPrefabImporter.PlacementWindow> placements,
+            int firstDropped, out int lostPrefabs, out int lostPlacements)
+        {
+            lostPrefabs = 0;
+            lostPlacements = 0;
+
+            for (var i = firstDropped; i < source.Prefabs.Count; i++)
+            {
+                var sourcePrefab = source.Prefabs[i];
+                if (sourcePrefab == null) continue;
+
+                lostPrefabs++;
+                if (placements != null && !string.IsNullOrEmpty(sourcePrefab.Id)
+                                       && placements.TryGetValue(sourcePrefab.Id, out var window))
+                    lostPlacements += window.Count;
             }
         }
 
@@ -404,10 +460,15 @@ namespace BH.SDK.Interop.AfterBeat.Import
         {
             var seconds = 0f;
 
+            // An object with no autokill rule is skipped, not measured: it never dies, so it
+            // reaches 5000 seconds and would make a three-minute level five thousand seconds long
+            // all by itself. What it says about the level's length is nothing.
             if (source.Objects != null)
                 foreach (var obj in source.Objects)
                 {
                     if (obj == null) continue;
+                    if ((ABAutokillType)obj.AutokillType == ABAutokillType.OldStyleNoAutokill) continue;
+
                     var end = ABTimeMap.ResolveEndTime(obj);
                     if (end > seconds) seconds = end;
                 }
@@ -441,7 +502,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     var end = placement.StartTime;
                     if (templates != null && placement.PrefabId != null
                         && templates.TryGetValue(placement.PrefabId, out var template))
-                        end += MeasureTemplateLength(template);
+                        end += MeasureTemplateLength(template,
+                            placement.StartTime - (template?.Offset ?? 0f));
 
                     if (end > seconds) seconds = end;
                 }
@@ -465,8 +527,9 @@ namespace BH.SDK.Interop.AfterBeat.Import
         }
 
         /// <summary> How far past a placement's own start the template it places reaches, in
-        /// seconds. </summary>
-        private static float MeasureTemplateLength(VgpPrefab template)
+        /// seconds. <paramref name="absoluteBase"/> is where that placement puts it, which one
+        /// autokill rule out of five needs - see <see cref="ABTimeMap.ResolveEndTime"/>. </summary>
+        private static float MeasureTemplateLength(VgpPrefab template, float absoluteBase)
         {
             if (template?.Objects == null) return 0f;
 
@@ -474,7 +537,9 @@ namespace BH.SDK.Interop.AfterBeat.Import
             foreach (var obj in template.Objects)
             {
                 if (obj == null) continue;
-                var reach = ABTimeMap.ResolveEndTime(obj);
+                if ((ABAutokillType)obj.AutokillType == ABAutokillType.OldStyleNoAutokill) continue;
+
+                var reach = ABTimeMap.ResolveEndTime(obj, null, null, absoluteBase);
                 if (reach > end) end = reach;
             }
             return end;

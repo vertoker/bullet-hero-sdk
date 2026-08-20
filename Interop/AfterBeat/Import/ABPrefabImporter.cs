@@ -30,11 +30,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
     /// <summary> Afterbeat prefabs and their placements. </summary>
     public static class ABPrefabImporter
     {
-        /// <summary> One .vgp - or one entry of .vgd prefabs[] - into a template. </summary>
+        /// <summary> One .vgp - or one entry of .vgd prefabs[] - into a template.
+        /// <paramref name="placements"/> is where this document's placements sit on the timeline,
+        /// which a Song Time autokill inside the template cannot be resolved without - see
+        /// <see cref="ResolveAbsoluteBase"/>. </summary>
         public static Prefab ImportTemplate(VgpPrefab source, ABOptions options,
             InteropReport report, IDictionary<ShapeId, CompositeShape> shapes,
             ThemeData referenceTheme, string path,
-            IDictionary<EffectId, EffectData> effects = null)
+            IDictionary<EffectId, EffectData> effects = null,
+            ABLayerMap.Plan layerPlan = null,
+            IReadOnlyDictionary<string, PlacementWindow> placements = null)
         {
             if (source == null) return null;
 
@@ -49,6 +54,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var context = new ABImportContext(options, report, prefab, prefab, shapes, effects)
             {
                 ReferenceTheme = referenceTheme,
+                LayerPlan = layerPlan,
+                AbsoluteTimeBase = ResolveAbsoluteBase(source, placements, report, path),
             };
 
             ABObjectImporter.ImportAll(source.Objects, context, $"{path}.objs");
@@ -69,6 +76,103 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     path);
 
             return prefab;
+        }
+
+        /// <summary> Where a template's placements sit on the timeline, in SECONDS. Both ends of
+        /// the window, because one placement resolves a Song Time autokill exactly and several
+        /// spread apart cannot resolve it at all. </summary>
+        public readonly struct PlacementWindow
+        {
+            public PlacementWindow(float earliest, float latest, int count)
+            {
+                Earliest = earliest;
+                Latest = latest;
+                Count = count;
+            }
+
+            public float Earliest { get; }
+            public float Latest { get; }
+
+            /// <summary> How many placements of this template the document carries. </summary>
+            public int Count { get; }
+
+            /// <summary> True when every placement of this template starts on the same time, so one
+            /// resolution is right for all of them. </summary>
+            public bool IsSingular => Latest <= Earliest;
+        }
+
+        /// <summary> Every template's placement window, keyed by the source document's own prefab
+        /// id. Null when the document places nothing. </summary>
+        public static Dictionary<string, PlacementWindow> MeasurePlacements(
+            IReadOnlyList<VgdPrefabPlacement> placements)
+        {
+            if (placements == null || placements.Count == 0) return null;
+
+            var windows = new Dictionary<string, PlacementWindow>();
+            foreach (var placement in placements)
+            {
+                if (placement == null || string.IsNullOrEmpty(placement.PrefabId)) continue;
+
+                var time = placement.StartTime;
+                windows[placement.PrefabId] = windows.TryGetValue(placement.PrefabId, out var window)
+                    ? new PlacementWindow(Math.Min(window.Earliest, time),
+                        Math.Max(window.Latest, time), window.Count + 1)
+                    : new PlacementWindow(time, time, 1);
+            }
+            return windows.Count > 0 ? windows : null;
+        }
+
+        // WHERE A TEMPLATE WILL BE PLACED IS PART OF ITS CONTENT, for one autokill rule out of five.
+        // Song Time names an absolute moment in the song, the source game keeps it absolute through
+        // a prefab, and its objects therefore live `ak_o` minus where the placement put them -
+        // ABTimeMap.ResolveEndTime's own header carries the source-side citation. A template read on
+        // its own resolves those objects as living the whole of ak_o, which on real content is
+        // minutes, and the materializer then adds the placement's start to that.
+        //
+        // The EARLIEST placement, not the latest or the mean: a lifetime is `ak_o - start`, so the
+        // earliest start is the longest lifetime, and erring long keeps content the source game drew
+        // rather than cutting content it did not. It is EXACT for a template placed once, which is
+        // most of them - an author who wants a group at several times usually ends up with several
+        // prefabs, since saving a prefab over there makes a new one rather than reusing it.
+        private static float ResolveAbsoluteBase(VgpPrefab source,
+            IReadOnlyDictionary<string, PlacementWindow> placements, InteropReport report, string path)
+        {
+            if (placements == null || string.IsNullOrEmpty(source.Id)) return 0f;
+            if (!placements.TryGetValue(source.Id, out var window)) return 0f;
+
+            if (!window.IsSingular && HasSongTimeAutokill(source))
+                report?.Approximated("autokill_songtime_in_prefab",
+                    "Some prefabs contain objects that die at a fixed moment of the SONG and are placed at several different times; every copy was resolved against the earliest of those placements, so the later ones stay on screen longer than they did.",
+                    path);
+
+            return window.Earliest - source.Offset;
+        }
+
+        private static bool HasSongTimeAutokill(VgpPrefab source)
+        {
+            if (source.Objects == null) return false;
+
+            foreach (var obj in source.Objects)
+                if (obj != null && (ABAutokillType)obj.AutokillType == ABAutokillType.SongTime)
+                    return true;
+            return false;
+        }
+
+        // A PLACEMENT IS NAMED AFTER WHAT IT PLACES. Its source id is a bare Guid, and naming the
+        // placement after it put a few hundred rows of hex in the timeline of a prefab-heavy level -
+        // unreadable, and unsearchable, since the one string an author would look for is the
+        // template's name. Nothing is lost by it: the placement is MINTED from that id, so a second
+        // import lands on the same object, and which template it places is still PrefabObject.PrefabId.
+        private static string ResolveName(VgdPrefabPlacement source, ABImportContext context,
+            PrefabId prefabId, IReadOnlyDictionary<PrefabId, Prefab> templates)
+        {
+            if (!context.Options.KeepObjectNames) return string.Empty;
+
+            if (templates != null && templates.TryGetValue(prefabId, out var template)
+                                  && !string.IsNullOrEmpty(template?.Name))
+                return template.Name;
+
+            return source.Id ?? string.Empty;
         }
 
         /// <summary> Records a template's lead time so the placements can apply it. Separate from
@@ -97,7 +201,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             {
                 ObjectId = context.Mint(source.Id),
                 PrefabId = prefabId,
-                Name = context.Options.KeepObjectNames ? source.Id ?? string.Empty : string.Empty,
+                Name = ResolveName(source, context, prefabId, templates),
                 Active = true,
                 Span = ResolveSpan(source, context, prefabId, levelFrameDuration, templates),
                 Layer = ResolveLayer(context, placementIndex, path),
@@ -160,17 +264,27 @@ namespace BH.SDK.Interop.AfterBeat.Import
             return ABTimeMap.FromFrames(startFrame, startFrame + duration);
         }
 
-        // Layer is parent-relative here and a placement's materialized children hang off it, so one
-        // number moves a whole subtree - which is the cheapest way to give the several thousand
-        // objects a prefab-heavy level materializes into more than a single timeline row.
+        // A PLACEMENT IS NOT A RENDER CONCEPT over there - it is a group of ordinary objects, each
+        // carrying its own depth, drawn against the level's own objects by that depth and nothing
+        // else. So a placement takes no draw order of its own: it sits on layer 0 and its
+        // materialized children keep the layers the level-wide plan already gave them (Layer is
+        // parent-relative here, so a placement at 0 adds nothing to the subtree hanging off it).
         //
-        // A level with more placements than there are layers left above the base wraps rather than
-        // piling the remainder on the last one. Wrapping puts two placements on one row, which is
-        // exactly what the level looked like before any of this; being told is the point.
+        // Giving each placement a layer of its own is what this replaced, and the cost was the
+        // level's whole positive range: one real level's 386 placements reached layer +395, on top
+        // of templates ranked independently underneath. The motive was timeline rows for the
+        // several thousand objects a prefab-heavy level materializes into - a real problem, and one
+        // that belongs to the editor's own grouping rather than to draw order.
+        //
+        // The offset therefore now defaults to 0 and the old stacking is what an author opts INTO
+        // by raising it, in which case a level with more placements than there is room above the
+        // base wraps rather than piling the remainder on the last one.
         private static int ResolveLayer(ABImportContext context, int placementIndex, string path)
         {
-            var baseLayer = context.HighestContentLayer
-                            + Math.Max(1, context.Options.PlacementLayerOffset);
+            var offset = context.Options.PlacementLayerOffset;
+            if (offset <= 0) return ValueRules.DefaultLayer;
+
+            var baseLayer = context.HighestContentLayer + offset;
 
             var room = ValueRules.MaxLayer - baseLayer + 1;
             if (room <= 0) return ValueRules.MaxLayer;

@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using BH.SDK.Interop;
 using BH.SDK.Interop.AfterBeat;
 using BH.SDK.Interop.AfterBeat.Import;
@@ -126,8 +126,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var parent = shapes.Single(o => o.ParentObjectId == ObjectId.Null);
             var child = shapes.Single(o => o.ParentObjectId == parent.ObjectId);
 
-            Assert.AreEqual(-VgdObject.DefaultDepth, parent.Layer,
-                "the source's default depth draws behind its player, so it is a negative layer here");
+            Assert.AreEqual(-1 - VgdObject.DefaultDepth, parent.Layer,
+                "the whole Default band draws behind the player, so depth 0 is -1 and this is deeper");
             Assert.AreEqual(5, child.Layer);
         }
 
@@ -265,6 +265,137 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.IsEmpty(placement.ObjectIds, "materializing is the host's job, not the importer's");
         }
 
+        // The regression the whole level-wide layer plan exists for. A prefab-heavy level used to
+        // cost a layer per placement on top of independently ranked templates - a real 423-object
+        // level arrived spread over 894 layers reaching -520, which is not a number an author can
+        // work with. What it costs now is one layer per DEPTH, however many placements share them.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ManyPlacements_CostNoDrawOrderOfTheirOwn()
+        {
+            const int count = 50;
+            var source = ABMockData.CreateLevel();
+
+            for (var i = 0; i < count; i++)
+            {
+                var prefab = new VgpPrefab { Id = $"p{i}", Name = $"p{i}" };
+                var inner = ABMockData.CreateObject($"inner-{i}");
+                inner.Depth = VgdObject.DefaultDepth;
+                prefab.Objects.Add(inner);
+                source.Prefabs.Add(prefab);
+
+                source.PrefabPlacements.Add(new VgdPrefabPlacement { Id = $"pl{i}", PrefabId = $"p{i}" });
+            }
+
+            var result = ABLevelImporter.Import(source, null, Options());
+
+            var placements = result.Level.Game.Objects.Values.OfType<PrefabObject>().ToArray();
+            Assert.AreEqual(count, placements.Length);
+            Assert.IsTrue(placements.All(p => p.Layer == 0),
+                "a placement is a group of ordinary objects over there, not a render band");
+
+            var levelObject = result.Level.Game.Objects.Values.OfType<ShapeObject>().Single();
+            var templateObjects = result.Level.Resources.Prefabs.Values
+                .SelectMany(prefab => prefab.Objects.Values)
+                .ToArray();
+
+            Assert.IsTrue(templateObjects.All(o => o.Layer == levelObject.Layer),
+                "one depth is one layer, inside a template as much as outside it");
+            Assert.AreEqual(-1, levelObject.Layer,
+                "the level uses one depth, so it costs exactly the one layer behind the player");
+        }
+
+        /// <summary> A prefab holding one object that dies at song time <paramref name="autokill"/>,
+        /// placed once per entry of <paramref name="placementTimes"/>. </summary>
+        private static VgdLevel SongTimePrefabLevel(float autokill, params float[] placementTimes)
+        {
+            var level = ABMockData.CreateLevel();
+
+            var inner = ABMockData.CreateObject("inner-1");
+            inner.StartTime = 0f;
+            inner.AutokillType = (int)ABAutokillType.SongTime;
+            inner.AutokillOffset = autokill;
+
+            var prefab = new VgpPrefab { Id = "p1", Name = "Burst" };
+            prefab.Objects.Add(inner);
+            level.Prefabs.Add(prefab);
+
+            for (var i = 0; i < placementTimes.Length; i++)
+                level.PrefabPlacements.Add(new VgdPrefabPlacement
+                {
+                    Id = $"pl{i}",
+                    PrefabId = "p1",
+                    StartTime = placementTimes[i],
+                });
+
+            return level;
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_SongTimeInsideAPrefab_IsResolvedAgainstItsPlacement()
+        {
+            var result = ABLevelImporter.Import(SongTimePrefabLevel(30f, 20f), null, Options());
+
+            var inner = result.Level.Resources.Prefabs.Values.Single().Objects.Values.Single();
+
+            Assert.AreEqual(10 * Framerate, inner.Span.FrameDuration,
+                "song time 30 reached from a placement at 20 is ten seconds of life, not thirty");
+            Assert.IsEmpty(result.Report.Issues.Where(i => i.Code == "autokill_songtime_in_prefab"),
+                "one placement resolves it exactly, so there is nothing to approximate");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_SongTimeInsideAPrefabPlacedSeveralTimes_TakesTheEarliestAndSaysSo()
+        {
+            var result = ABLevelImporter.Import(SongTimePrefabLevel(30f, 25f, 20f), null, Options());
+
+            var inner = result.Level.Resources.Prefabs.Values.Single().Objects.Values.Single();
+
+            Assert.AreEqual(10 * Framerate, inner.Span.FrameDuration,
+                "the earliest placement, which is the longest of the two lifetimes");
+            Assert.AreEqual(1,
+                result.Report.Issues.Count(i => i.Code == "autokill_songtime_in_prefab"),
+                "the later placement outlives what it did over there, and the report says so");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_PrefabPlacement_IsNamedAfterWhatItPlaces()
+        {
+            var result = ABLevelImporter.Import(ABMockData.CreateFullLevel(), null, Options());
+
+            var placement = result.Level.Game.Objects.Values.OfType<PrefabObject>().Single();
+            Assert.AreEqual("Burst", placement.Name, "not the placement's own Guid");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ObjectWithNoAutokillRule_OutlivesTheLevel()
+        {
+            var level = ABMockData.CreateLevel();
+            level.Objects.Single().AutokillType = (int)ABAutokillType.OldStyleNoAutokill;
+
+            var result = ABLevelImporter.Import(level, null, Options());
+            var imported = result.Level.Game.Objects.Values.Single();
+
+            Assert.Greater(imported.Span.EndFrame, result.Level.Settings.FrameDuration,
+                "Afterbeat never kills these, so neither does the import");
+            Assert.AreEqual(1, result.Report.Issues.Count(i => i.Code == "autokill_none"),
+                "reported, because it is also what a misread autokill rule looks like");
+        }
+
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
@@ -339,6 +470,52 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual(1, background.Positions.Count);
             Assert.IsTrue(shapes.Where(o => o != background).All(o => o.Layer > background.Layer),
                 "the background is below every object of the level itself");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_Parallax_ArrivesInactiveByDefault()
+        {
+            var level = ABMockData.CreateLevel();
+            level.Parallax.Layers.Add(new VgdParallaxLayer
+            {
+                Objects = { new VgdParallaxObject { Id = "bg1" } },
+            });
+
+            var options = Options();
+            Assert.IsFalse(options.ParallaxActive, "the background is imported switched off");
+
+            var result = ABLevelImporter.Import(level, null, options);
+            var shapes = result.Level.Game.Objects.Values.OfType<ShapeObject>().ToArray();
+            var background = shapes.OrderBy(o => o.Layer).First();
+
+            Assert.IsFalse(background.Active, "imported, kept, and drawing nothing");
+            Assert.IsTrue(shapes.Where(o => o != background).All(o => o.Active),
+                "the level's own content is untouched by it");
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ParallaxActive_TurnsTheBackgroundOn()
+        {
+            var level = ABMockData.CreateLevel();
+            level.Parallax.Layers.Add(new VgdParallaxLayer
+            {
+                Objects = { new VgdParallaxObject { Id = "bg1" } },
+            });
+
+            var options = Options();
+            options.ParallaxActive = true;
+
+            var result = ABLevelImporter.Import(level, null, options);
+            var background = result.Level.Game.Objects.Values.OfType<ShapeObject>()
+                .OrderBy(o => o.Layer).First();
+
+            Assert.IsTrue(background.Active);
         }
 
         [Test]

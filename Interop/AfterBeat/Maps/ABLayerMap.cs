@@ -6,34 +6,46 @@ using BH.SDK.Rules;
 namespace BH.SDK.Interop.AfterBeat
 {
     // Draw order, all of it, in one place: this is the only thing in the converter that cannot be
-    // decided one object at a time, because two of the four modes need to see the whole list before
-    // any single object's layer is known.
+    // decided one object at a time, and it is resolved for a WHOLE LEVEL at once - its own objects
+    // and every prefab template's - rather than per list. Per-list resolves stacked with offsets is
+    // what produced the numbers this replaced: 386 placements each given a layer of their own above
+    // whatever the level reached, templates ranked independently underneath them, and one real
+    // level arriving spread over -520 to +401 with 894 distinct layers on 4151 objects.
     //
-    // THE PLAYER LINE is what the whole layout is anchored on. Afterbeat draws its player at a
-    // fixed point between depth 0 and depth 1, so an ordinary object with a depth of 20 is BEHIND
-    // the player and only a depth of 0 is in front of it. This format draws its own avatar at layer
-    // -0.5 (Services.Shared's AvatarInitData.BaseLayer), i.e. between layer -1 and layer 0. So the
-    // two lines are made to coincide: layer >= 0 is in front of the player, layer <= -1 is behind
-    // it, and every mode lays its bands out around that boundary. The previous mapping put depth 20
-    // on layer 0, which drew the whole of an ordinary level in FRONT of the player.
+    // THE PLAYER LINE, measured in the source game rather than assumed. Afterbeat sorts by
+    // sortingOrder in a single sorting layer: an ordinary object gets 0 (ObjectManager, the Default
+    // branch), the player gets 61 (VGPlayer.Init), an AbovePlayer object gets 62 + (60 - depth),
+    // and a Background object is drawn by a different camera entirely. So the whole Default band -
+    // depth 0 included - is BEHIND the player, and depth orders it only by z (0.1 * depth, ordinary
+    // draw distance). This format's avatar sits at layer -0.5 (Services.Shared's AvatarInitData
+    // .BaseLayer), so layer >= 0 is in front of it and layer <= -1 behind: Default lands at -1 and
+    // down, AbovePlayer at 0 and up, Background below Default. An earlier reading of the source put
+    // the player between depth 0 and depth 1, which pulled one object per level in front of it and
+    // pushed the whole rest of the level into the negatives to make room.
     //
-    // THE THREE BANDS come from the source object's own rl - Background behind everything, Default
-    // with the level's content, AbovePlayer in front of all of it. They are laid out as three
-    // consecutive stretches of the same width rather than interleaved, because that is what the
-    // source game does: they are separate cameras over there, and no depth in one can reach into
-    // another.
+    // THE THREE BANDS are laid out as consecutive stretches rather than interleaved, because that
+    // is what the source game does: they are separate sorting ranges over there, and no depth in
+    // one can reach into another.
     //
-    // Only OnlyDepth and Auto honour the player line per object, and that is not an oversight: the
-    // line is a statement about DEPTH, and in the two modes where the editor's own grouping decides
-    // draw order, depth no longer orders anything. There the whole Default band sits behind the
-    // player, which is where all but one depth of an ordinary level sat anyway.
+    // DEPTH IS THE ONLY ORDERING INPUT, and the source editor's own layer/bin grouping is
+    // deliberately not one. It orders nothing over there - it never reaches sortingOrder - so
+    // spending draw order on it reproduces an organisation the source game does not draw, at a
+    // measured 6.3x the layers (221 where 35 order the level). Two objects sharing a depth share a
+    // layer here, which is faithful: sharing a depth over there means sharing both sortingOrder and
+    // z, i.e. an undefined order the source game does not define either, and this format already
+    // separates coplanar objects deterministically (ValueRules.LayerZOffsetStep). An author who
+    // wants the source editor's grouping expressed as draw order asks for it by name - that is what
+    // OnlyEditor and DepthAndEditor are.
 
-    /// <summary> One .vgd object list's draw order, resolved into this format's effective (absolute,
+    /// <summary> One .vgd's draw order, resolved into this format's effective (absolute,
     /// pre-parent-subtraction) layers. </summary>
     public static class ABLayerMap
     {
         /// <summary> How many depths the source format has - 0 through 60, both included. </summary>
         public const int DepthSpan = VgdObject.MaxDepth - VgdObject.MinDepth + 1;
+
+        /// <summary> How many render bands the source format has. </summary>
+        public const int BandCount = 3;
 
         /// <summary> Lowest editor bin the source editor allows. </summary>
         public const int MinEditorBin = 0;
@@ -78,8 +90,232 @@ namespace BH.SDK.Interop.AfterBeat
         public static int ToDepth(VgdObject source)
             => Math.Clamp(source?.Depth ?? VgdObject.DefaultDepth, VgdObject.MinDepth, VgdObject.MaxDepth);
 
-        /// <summary> What one resolve produced: a layer per object, plus the range they occupy,
-        /// which is what the background and the prefab placements are placed around. </summary>
+        #region Plan
+
+        // One object's whole ordering input as a single sortable number: the band above the depth,
+        // the depth already reversed so that larger is drawn in front. The range is 3 * 61 = 183
+        // values, small enough that the Auto ranking is an array walk rather than a sort, and small
+        // enough that Auto CANNOT reach ValueRules.MinLayer no matter what a level contains - the
+        // deepest layer it can produce is -122. That bound is the point of the whole design: the
+        // range a converted level occupies is a property of the source FORMAT, not of how large or
+        // how finely organised the level happens to be.
+
+        /// <summary> Where one object sits in the whole ordering, before it is turned into a
+        /// layer. </summary>
+        private static int ToKey(VgdObject source)
+            => ToBandRank(ToBand(source)) * DepthSpan + VgdObject.MaxDepth - ToDepth(source);
+
+        /// <summary> One level's draw order, resolved once and read by every list in it - the
+        /// level's own objects and every prefab template's alike, so a template object and a level
+        /// object at the same depth land on the same layer. </summary>
+        public sealed class Plan
+        {
+            private readonly ABLayerImport _mode;
+            private readonly int _stride;
+            private readonly int _span;
+            private readonly int[] _layerByKey;
+
+            /// <summary> Lowest and highest layer anything in the whole level landed on. </summary>
+            public int Lowest { get; }
+            public int Highest { get; }
+
+            internal Plan(ABLayerImport mode, int stride, int span, int[] layerByKey,
+                int lowest, int highest)
+            {
+                _mode = mode;
+                _stride = stride;
+                _span = span;
+                _layerByKey = layerByKey;
+                Lowest = lowest;
+                Highest = highest;
+            }
+
+            /// <summary> The effective layer of one source object. </summary>
+            public int Get(VgdObject source)
+            {
+                if (source == null) return 0;
+
+                if (_layerByKey != null) return _layerByKey[ToKey(source)];
+
+                var bandBase = (ToBandRank(ToBand(source)) - 2) * _span;
+                return Math.Clamp(bandBase + ToOrder(source, _mode, _stride),
+                    ValueRules.MinLayer, ValueRules.MaxLayer);
+            }
+        }
+
+        /// <summary> Resolves the draw order of every list a level is made of at once. Pass every
+        /// object list the level holds - its own and each template's - or the result orders them
+        /// against each other by accident. </summary>
+        public static Plan Build(IReadOnlyList<IReadOnlyList<VgdObject>> lists, ABOptions options,
+            InteropReport report = null, string path = null)
+        {
+            options ??= new ABOptions();
+
+            return options.LayerImport == ABLayerImport.Auto
+                ? BuildAuto(lists)
+                : BuildBanded(lists, options, report, path);
+        }
+
+        /// <summary> The plan for a single list, for a template imported on its own - a bare .vgp
+        /// has no level to be ordered against. </summary>
+        public static Plan Build(IReadOnlyList<VgdObject> sources, ABOptions options,
+            InteropReport report = null, string path = null)
+            => Build(new[] { sources }, options, report, path);
+
+        #endregion
+
+        #region Auto
+
+        // Every ordering key the level actually uses gets its own layer, and inside a band those
+        // layers are consecutive - so a level using six depths costs six rows rather than the
+        // sixty-one its depth range spans, and two objects the source game drew in front of one
+        // another still are. Rank, in other words, which is why it cannot be computed one object at
+        // a time.
+        //
+        // EACH BAND IS PACKED AGAINST ITS OWN EDGE OF THE PLAYER LINE, and that is what "flattened
+        // onto 0" means here: Default's frontmost key is layer -1 and it grows downwards,
+        // AbovePlayer's backmost is layer 0 and it grows upwards. An ordinary level - one where
+        // nothing is marked AbovePlayer or Background, which is nearly all of them - therefore
+        // reaches exactly -1 and steps down from there, and the object an author sees at the top of
+        // the level is the one the source game drew nearest the camera.
+        //
+        // PACKING THE THREE BANDS INTO ONE RUN INSTEAD WOULD LOSE THE BAND. Nothing on an object
+        // here records which band it came from - a layer is all there is - so the export infers it
+        // from where the layer falls, against the fixed boundaries OnlyDepth lays the bands out on.
+        // A single run puts a Background key a few layers under the Default ones, i.e. inside the
+        // stretch the export reads as Default, and the level comes back with its background drawn
+        // as ordinary content. Anchoring each band inside its own boundaries costs a gap between
+        // Default's last used layer and Background's first, and only for the levels that actually
+        // use the Background band - it is empty in every level of the corpus.
+        private static Plan BuildAuto(IReadOnlyList<IReadOnlyList<VgdObject>> lists)
+        {
+            var used = new bool[BandCount * DepthSpan];
+
+            if (lists != null)
+                foreach (var sources in lists)
+                {
+                    if (sources == null) continue;
+                    foreach (var source in sources)
+                        if (source != null)
+                            used[ToKey(source)] = true;
+                }
+
+            var layerByKey = new int[used.Length];
+            var lowest = int.MaxValue;
+            var highest = int.MinValue;
+
+            for (var band = 0; band < BandCount; band++)
+            {
+                var first = band * DepthSpan;
+                var last = first + DepthSpan - 1;
+
+                // The two bands behind the player fill downwards from their own top; the one in
+                // front fills upwards from the player line. Both directions start at the edge the
+                // export measures that band from, so a packed layer never leaves its own stretch.
+                var forward = band == ToBandRank(ABRenderLayer.AbovePlayer);
+                var next = forward ? 0 : band == ToBandRank(ABRenderLayer.Default) ? -1 : -1 - DepthSpan;
+
+                for (var step = 0; step < DepthSpan; step++)
+                {
+                    var key = forward ? first + step : last - step;
+                    if (!used[key]) continue;
+
+                    var layer = next;
+                    next += forward ? 1 : -1;
+                    layerByKey[key] = layer;
+
+                    if (layer < lowest) lowest = layer;
+                    if (layer > highest) highest = layer;
+                }
+            }
+
+            // An ordinary level reaches -1 and no further, so seeding the range at zero would report
+            // a band the level does not occupy - and the parallax is placed below whatever this says.
+            if (lowest > highest) (lowest, highest) = (0, 0);
+
+            return new Plan(ABLayerImport.Auto, 0, 0, layerByKey, lowest, highest);
+        }
+
+        #endregion
+
+        #region Banded
+
+        // Each band is one stretch `span` layers wide and the three sit back to back, with Default
+        // ending at -1 so that the band the player is in front of ends where the player is: Default
+        // occupies [-span, -1], AbovePlayer [0, span-1], Background [-2*span, -span-1]. `span` is
+        // the source format's whole depth range for OnlyDepth - fixed, because that mode's promise
+        // is that a depth means the same layer in every level - and the widest order the level
+        // actually reaches for the two editor-driven modes, whose ordering has no fixed extent to
+        // be measured against.
+        private static Plan BuildBanded(IReadOnlyList<IReadOnlyList<VgdObject>> lists,
+            ABOptions options, InteropReport report, string path)
+        {
+            var mode = options.LayerImport;
+            var stride = Math.Max(1, options.EditorGroupStride);
+
+            var span = DepthSpan;
+            if (mode != ABLayerImport.OnlyDepth)
+            {
+                var widest = 0;
+                if (lists != null)
+                    foreach (var sources in lists)
+                    {
+                        if (sources == null) continue;
+                        foreach (var source in sources)
+                            if (source != null)
+                                widest = Math.Max(widest, ToOrder(source, mode, stride));
+                    }
+
+                span = widest + 1;
+            }
+
+            var lowest = int.MaxValue;
+            var highest = int.MinValue;
+            var clamped = false;
+
+            if (lists != null)
+                foreach (var sources in lists)
+                {
+                    if (sources == null) continue;
+                    foreach (var source in sources)
+                    {
+                        if (source == null) continue;
+
+                        var raw = (ToBandRank(ToBand(source)) - 2) * span
+                                  + ToOrder(source, mode, stride);
+                        var layer = Math.Clamp(raw, ValueRules.MinLayer, ValueRules.MaxLayer);
+
+                        if (layer != raw) clamped = true;
+                        if (layer < lowest) lowest = layer;
+                        if (layer > highest) highest = layer;
+                    }
+                }
+
+            if (lowest > highest) (lowest, highest) = (0, 0);
+
+            if (clamped)
+                report?.Approximated("layers_clamped",
+                    "This level is organised more finely than there is draw order to spend on it, so the outermost objects share a layer. The Auto layer mode packs the same level into far fewer layers.",
+                    path);
+
+            return new Plan(mode, stride, span, null, lowest, highest);
+        }
+
+        private static int ToOrder(VgdObject source, ABLayerImport mode, int stride) => mode switch
+        {
+            ABLayerImport.OnlyDepth => VgdObject.MaxDepth - ToDepth(source),
+            ABLayerImport.OnlyEditor => ToEditorIndex(source),
+            ABLayerImport.DepthAndEditor
+                => ToEditorIndex(source) * stride + VgdObject.MaxDepth - ToDepth(source),
+            _ => VgdObject.MaxDepth - ToDepth(source),
+        };
+
+        #endregion
+
+        #region Resolve
+
+        /// <summary> What one list's resolve produced: a layer per object, plus the range they
+        /// occupy. </summary>
         public readonly struct Result
         {
             /// <summary> One layer per source object, in the order they were handed over. </summary>
@@ -88,7 +324,8 @@ namespace BH.SDK.Interop.AfterBeat
             /// <summary> The same, by the source object's own id. Objects with no id are absent. </summary>
             public Dictionary<string, int> ById { get; }
 
-            /// <summary> Lowest and highest layer anything landed on; both 0 for an empty list. </summary>
+            /// <summary> Lowest and highest layer anything in THIS list landed on; both 0 for an
+            /// empty list. The level's whole range is the plan's, not this. </summary>
             public int Lowest { get; }
             public int Highest { get; }
 
@@ -105,181 +342,33 @@ namespace BH.SDK.Interop.AfterBeat
                 => sourceId != null && ById != null && ById.TryGetValue(sourceId, out var layer) ? layer : 0;
         }
 
-        /// <summary> Resolves a whole object list. </summary>
+        /// <summary> Reads one list's layers off a plan. A null plan resolves the list on its own,
+        /// which is what a template imported outside any level gets. </summary>
         public static Result Resolve(IReadOnlyList<VgdObject> sources, ABOptions options,
-            InteropReport report = null, string path = null)
+            InteropReport report = null, string path = null, Plan plan = null)
         {
-            options ??= new ABOptions();
-
             var count = sources?.Count ?? 0;
             var layers = new int[count];
             if (count == 0) return new Result(layers, new Dictionary<string, int>(), 0, 0);
 
-            if (options.LayerImport == ABLayerImport.Auto) ResolveAuto(sources, layers);
-            else ResolveBanded(sources, options, layers);
+            plan ??= Build(sources, options, report, path);
 
-            return Finish(sources, layers, report, path);
-        }
-
-        #region Banded
-
-        // Each band is one stretch `span` layers wide, and the three sit back to back. `span` is the
-        // source format's whole depth range for OnlyDepth - fixed, because the player line is a
-        // statement about an absolute depth and a band sized to what the level happens to use would
-        // move depth 0 off layer 0 - and the widest order the level actually reaches for the two
-        // editor-driven modes, whose ordering has no fixed extent to be measured against.
-        private static void ResolveBanded(IReadOnlyList<VgdObject> sources, ABOptions options,
-            int[] layers)
-        {
-            var mode = options.LayerImport;
-            var stride = Math.Max(1, options.EditorGroupStride);
-
-            var span = DepthSpan;
-            if (mode != ABLayerImport.OnlyDepth)
-            {
-                var widest = 0;
-                foreach (var source in sources)
-                {
-                    if (source == null) continue;
-                    widest = Math.Max(widest, ToOrder(source, mode, stride));
-                }
-
-                span = widest + 1;
-            }
-
-            // How many of the Default band's own orders sit in FRONT of the player: the single
-            // depth-0 one where depth is what orders, none where it is not.
-            var aboveCut = mode == ABLayerImport.OnlyDepth ? 1 : 0;
-            var defaultBase = aboveCut - span;
-
-            for (var i = 0; i < layers.Length; i++)
-            {
-                var source = sources[i];
-                if (source == null) continue;
-
-                var bandBase = defaultBase + (ToBandRank(ToBand(source)) - 1) * span;
-                layers[i] = bandBase + ToOrder(source, mode, stride);
-            }
-        }
-
-        private static int ToOrder(VgdObject source, ABLayerImport mode, int stride) => mode switch
-        {
-            ABLayerImport.OnlyDepth => VgdObject.MaxDepth - ToDepth(source),
-            ABLayerImport.OnlyEditor => ToEditorIndex(source),
-            ABLayerImport.DepthAndEditor
-                => ToEditorIndex(source) * stride + VgdObject.MaxDepth - ToDepth(source),
-            _ => VgdObject.MaxDepth - ToDepth(source),
-        };
-
-        #endregion
-
-        #region Auto
-
-        // Two things at once, and they are the same operation: every DISTINCT ordering key the level
-        // actually uses gets its own layer (so two objects the source editor kept apart are not
-        // stacked into one row), and those layers are consecutive (so a level using six depths costs
-        // six rows rather than the sixty-one its depth range spans). Rank, in other words - which is
-        // also why it cannot be computed per object.
-        //
-        // The tie-break is the editor grouping, UNDER the depth: Auto is OnlyDepth with the
-        // collisions resolved, not a third ordering. If a level is so finely divided that the ranks
-        // do not fit in the authored layer range, the tie-break is dropped and the whole thing
-        // re-ranked - a level drawn slightly flatter than its author organised it beats one whose
-        // deepest content is clamped into a single row.
-        private static void ResolveAuto(IReadOnlyList<VgdObject> sources, int[] layers)
-        {
-            if (TryRank(sources, layers, true)) return;
-            TryRank(sources, layers, false);
-        }
-
-        private static bool TryRank(IReadOnlyList<VgdObject> sources, int[] layers, bool separateGroups)
-        {
-            var keys = new long[layers.Length];
-            var distinct = new SortedSet<long>();
-
-            for (var i = 0; i < layers.Length; i++)
-            {
-                var source = sources[i];
-                if (source == null) continue;
-
-                keys[i] = ToKey(source, separateGroups);
-                distinct.Add(keys[i]);
-            }
-
-            var ranks = new Dictionary<long, int>(distinct.Count);
-            var pivot = 0;
-            var rank = 0;
-
-            foreach (var key in distinct)
-            {
-                ranks[key] = rank++;
-                if (IsBehindPlayer(key)) pivot = rank;
-            }
-
-            if (pivot > -ValueRules.MinLayer || distinct.Count - pivot - 1 > ValueRules.MaxLayer) return false;
-
-            for (var i = 0; i < layers.Length; i++)
-            {
-                if (sources[i] == null) continue;
-                layers[i] = ranks[keys[i]] - pivot;
-            }
-
-            return true;
-        }
-
-        // One sortable number per ordering key rather than a comparer over a struct: the ranking is
-        // a set operation, and a long that sorts back-to-front by construction makes it one.
-        private static long ToKey(VgdObject source, bool separateGroups)
-        {
-            var band = (long)ToBandRank(ToBand(source));
-            var order = (long)(VgdObject.MaxDepth - ToDepth(source));
-            var group = separateGroups ? (long)ToEditorIndex(source) : 0L;
-
-            return (band << 48) | (order << 32) | (uint)Math.Min(group, uint.MaxValue);
-        }
-
-        // Everything in the Background band, and everything in the Default band except the single
-        // depth-0 order - see the player line in this file's header.
-        private static bool IsBehindPlayer(long key)
-        {
-            var band = (int)(key >> 48);
-            var order = (int)((key >> 32) & 0xFFFF);
-
-            if (band < ToBandRank(ABRenderLayer.Default)) return true;
-            return band == ToBandRank(ABRenderLayer.Default) && order < VgdObject.MaxDepth;
-        }
-
-        #endregion
-
-        #region Finish
-
-        private static Result Finish(IReadOnlyList<VgdObject> sources, int[] layers,
-            InteropReport report, string path)
-        {
-            var byId = new Dictionary<string, int>(layers.Length);
+            var byId = new Dictionary<string, int>(count);
             var lowest = int.MaxValue;
             var highest = int.MinValue;
-            var clamped = false;
 
-            for (var i = 0; i < layers.Length; i++)
+            for (var i = 0; i < count; i++)
             {
                 var source = sources[i];
                 if (source == null) continue;
 
-                var layer = Math.Clamp(layers[i], ValueRules.MinLayer, ValueRules.MaxLayer);
-                if (layer != layers[i]) clamped = true;
-
+                var layer = plan.Get(source);
                 layers[i] = layer;
                 if (!string.IsNullOrEmpty(source.Id)) byId[source.Id] = layer;
 
                 if (layer < lowest) lowest = layer;
                 if (layer > highest) highest = layer;
             }
-
-            if (clamped)
-                report?.Approximated("layers_clamped",
-                    "This level is organised more finely than there is draw order to spend on it, so the outermost objects share a layer. The Auto layer mode packs the same level into far fewer layers.",
-                    path);
 
             if (lowest > highest) return new Result(layers, byId, 0, 0);
             return new Result(layers, byId, lowest, highest);

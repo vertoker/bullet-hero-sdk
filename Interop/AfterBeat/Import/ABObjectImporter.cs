@@ -45,7 +45,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
         {
             if (sources == null || context?.Scope?.Objects == null) return;
 
-            var layers = ABLayerMap.Resolve(sources, context.Options, context.Report, pathPrefix);
+            var layers = ABLayerMap.Resolve(sources, context.Options, context.Report, pathPrefix,
+                context.LayerPlan);
             context.RegisterContentLayers(layers.Lowest, layers.Highest);
 
             for (var i = 0; i < sources.Count; i++)
@@ -405,7 +406,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             // Resolved BEFORE the target is built, because an emitter's definition carries the
             // frame its emission stops on and that frame is this span's own duration.
-            var span = ABTimeMap.ResolveSpan(source, framerate, report, path);
+            var span = ABTimeMap.ResolveSpan(source, framerate, report, path,
+                context.AbsoluteTimeBase);
 
             var target = CreateTarget(source, span, context, path);
             target.ObjectId = context.Mint(source.Id);

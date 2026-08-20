@@ -48,6 +48,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> The theme a semi-transparent colour is resolved against. May be null. </summary>
         public ThemeData ReferenceTheme { get; set; }
 
+        // Draw order is a property of the LEVEL, not of one object list: a prefab template's
+        // objects are materialized into the level and ordered against its own objects there, by the
+        // same depths, so both read one plan. Resolving each list on its own and stacking the
+        // results with offsets is what spread one real level over 900 layers - see ABLayerMap's
+        // header. Null while a list is imported outside any level (a bare .vgp), which is the one
+        // case where a list IS the whole ordering.
+
+        /// <summary> The whole level's resolved draw order, shared by every list in it. </summary>
+        public ABLayerMap.Plan LayerPlan { get; set; }
+
         /// <summary> Afterbeat's own object id to the one minted for it here. </summary>
         public Dictionary<string, ObjectId> ObjectIds { get; } = new();
 
@@ -64,6 +74,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> Each imported template's lead time in SECONDS, as the source document wrote
         /// it. A template nothing recorded has none. </summary>
         public Dictionary<PrefabId, float> PrefabLeadTimes { get; } = new();
+
+        /// <summary> What the times in this scope are relative TO, in seconds - the moment a
+        /// template will be placed at, and zero at level scope, where a start already is absolute.
+        /// Only Song Time autokill reads it; see <see cref="ABTimeMap.ResolveEndTime"/>. </summary>
+        public float AbsoluteTimeBase { get; set; }
 
         // WHICH FIELD AN OBJECT'S SCALE IS WRITTEN INTO IS NOT A STYLE CHOICE - it is how this
         // format expresses Afterbeat's per-child scale-inheritance switch, and getting it wrong is

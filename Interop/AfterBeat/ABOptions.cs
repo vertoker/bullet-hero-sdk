@@ -20,6 +20,18 @@ namespace BH.SDK.Interop.AfterBeat
         /// the level's whole background is dropped. </summary>
         public bool ImportParallax = true;
 
+        // The background is the one part of an imported level that is always on screen and never
+        // authored: it spans the whole timeline, it loops by itself, and its keyframes are BAKED,
+        // so it is also the part an author is most likely to want out of the way while working on
+        // the content. Importing it inactive keeps the objects - the bake is expensive to redo and
+        // impossible to recover once dropped - while leaving the level looking like its content
+        // alone. Off by default for that reason, which is the one place in this class where the
+        // default is not the one that changes the level least.
+
+        /// <summary> Whether imported parallax objects arrive ACTIVE. Inactive ones are stored, kept
+        /// and editable, and draw nothing until the author ticks them on. </summary>
+        public bool ParallaxActive;
+
         /// <summary> Read prefabs and their placements. Off flattens nothing - the placements are
         /// simply not created, and the templates not stored. </summary>
         public bool ImportPrefabs = true;
@@ -48,11 +60,14 @@ namespace BH.SDK.Interop.AfterBeat
         /// hard edge in place of a blend, with every theme reference kept alive. </summary>
         public bool BakeGradientCorners = true;
 
-        // Everything in a converted level used to land on layer 0, because Afterbeat's DEPTH is
-        // mostly left at its default and its editor layers - the thing that actually organises a
-        // level over there - are bookkeeping this format has no field for. The result was a
-        // timeline of several thousand clips stacked in one row. Spending a fixed band per editor
-        // group fixed the row count and broke the range instead, which is what Auto exists for.
+        // Afterbeat's DEPTH is what orders a level over there and it is mostly left at its default,
+        // so a converted level's objects share few layers - which reads as several thousand clips
+        // stacked into a handful of timeline rows. Spending draw order on the source EDITOR's own
+        // grouping is what this fixed once and paid for with the range (a real level over 900
+        // layers, reaching -520); the row count is the editor's problem to solve by grouping, not
+        // draw order's. Auto is depth alone, packed - see ABLayerMap. The other three modes are
+        // there for an author who wants the source editor's organisation expressed as layers
+        // anyway, and they are the ones that can run out of range.
 
         /// <summary> What the converted level's draw order is derived from. See
         /// <see cref="ABLayerImport"/> - this changes what draws in front of what, so it is
@@ -73,9 +88,11 @@ namespace BH.SDK.Interop.AfterBeat
 
         /// <summary> How far above the level's highest content layer the first prefab placement
         /// sits; each further placement steps one up, carrying its whole materialized subtree with
-        /// it. Above ordinary content, since a placement's own objects are usually the level's
-        /// foreground. </summary>
-        public int PlacementLayerOffset = 1;
+        /// it. Zero, the default, gives a placement no draw order of its own, which is what the
+        /// source game does with one - see ABPrefabImporter's ResolveLayer. Raising it pulls every
+        /// placement in front of the level and spreads them over a layer each, which is a timeline
+        /// row per placement and a level drawn in an order Afterbeat never drew it in. </summary>
+        public int PlacementLayerOffset;
 
         // THE SONG IS THE LEVEL over there. Afterbeat stores no length of its own: its timeline is
         // its audio clip, an object timed past the end of the song simply never plays, and its
