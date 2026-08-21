@@ -1050,12 +1050,27 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         private static RectObject CreateText(VgdObject source, ABImportContext context, string path)
         {
-            var text = StripRotateTags(source.Text ?? string.Empty, out var dropped);
+            var fonts = new ABFontMap.Selector();
+            var text = StripUnplayableTags(source.Text ?? string.Empty, fonts, out var dropped);
 
             if (dropped)
                 context.Report.Dropped("text_rotate_tag",
                     "Afterbeat rotates individual glyphs with TextMeshPro's <rotate> tag, which has no counterpart here; the tags were removed and the glyphs stand upright.",
                     path);
+
+            var fontResourceId = fonts.Resolve(out var mixed);
+
+            if (fonts.Recognized)
+            {
+                if (mixed)
+                    context.Report.Dropped("text_font_mixed",
+                        "Afterbeat can switch typeface inside one string; a font here is a property of the object, so those objects were given the closest of this game's own typefaces to the one covering most of their text, and the rest of the string changed face.",
+                        path);
+                else
+                    context.Report.Approximated("text_font_tag",
+                        "Afterbeat sets a text's typeface inline with TextMeshPro's <font> tag; a font here is a property of the object, so the tags were removed and the object was given the closest of this game's own typefaces.",
+                        path);
+            }
 
             if (text.IndexOf('<') >= 0)
                 context.Report.Approximated("text_inline_tags",
@@ -1078,13 +1093,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
             return new TextObject
             {
                 Text = new StringValue(text),
+                FontResourceId = fontResourceId,
             };
         }
 
         // Afterbeat draws a text object by assigning the authored string to a TextMeshPro component
         // verbatim, so its markup vocabulary is TMP's own - nothing custom is added and nothing is
         // stripped over there. Most of that vocabulary crosses, because this format's renderer
-        // parses the same tag names; <rotate> is the one that cannot, having no counterpart at all.
+        // parses the same tag names; two cannot. <rotate> has no counterpart at all, and <font>
+        // has one that is not a tag: a typeface is a property of the object here, so the tag is
+        // removed and what it named is written onto the object (ABFontMap).
         //
         // A tag nothing parses is not inert - it is DRAWN, as its own literal characters, inside a
         // block whose width was measured without them, and it also shifts every character index the
@@ -1092,14 +1110,23 @@ namespace BH.SDK.Interop.AfterBeat.Import
         // outcome rather than a lossy shortcut, and it is reported as dropped either way.
         //
         // <noparse> is honoured while scanning: inside it TMP treats everything as literal text, so
-        // a <rotate> written there is content the author wanted shown and must survive untouched.
+        // a <rotate> written there is content the author wanted shown and must survive untouched -
+        // and a <font> written there is content too, which is why the selector is fed the literal
+        // run as ordinary characters rather than being pushed by it.
 
-        /// <summary> Removes every TextMeshPro <c>rotate</c> tag from an imported string, reporting
-        /// through <paramref name="dropped"/> whether any was there. </summary>
-        private static string StripRotateTags(string value, out bool dropped)
+        /// <summary> Removes every TextMeshPro tag nothing here can play from an imported string,
+        /// charging what it draws to <paramref name="fonts"/> and reporting through
+        /// <paramref name="dropped"/> whether a <c>rotate</c> was there. </summary>
+        private static string StripUnplayableTags(string value, ABFontMap.Selector fonts, out bool dropped)
         {
             dropped = false;
-            if (string.IsNullOrEmpty(value) || value.IndexOf('<') < 0) return value;
+            if (string.IsNullOrEmpty(value)) return value;
+
+            if (value.IndexOf('<') < 0)
+            {
+                fonts.Count(value.Length);
+                return value;
+            }
 
             var builder = new StringBuilder(value.Length);
             var literal = false;
@@ -1112,10 +1139,12 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
                 if (close < 0)
                 {
+                    fonts.Count(value.Length - index);
                     builder.Append(value, index, value.Length - index);
                     break;
                 }
 
+                fonts.Count(open - index);
                 builder.Append(value, index, open - index);
                 index = close + 1;
 
@@ -1126,6 +1155,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 {
                     // Only the closer of the literal run is a tag in here; everything else is text.
                     if (closing && IsTag(name, NoparseTag)) literal = false;
+                    else fonts.Count(close - open + 1);
                     builder.Append(value, open, close - open + 1);
                     continue;
                 }
@@ -1133,6 +1163,13 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 if (IsTag(name, RotateTag))
                 {
                     dropped = true;
+                    continue;
+                }
+
+                if (IsTag(name, FontTag))
+                {
+                    if (closing) fonts.Pop();
+                    else fonts.Push(ReadFontName(value, open, close));
                     continue;
                 }
 
@@ -1158,6 +1195,29 @@ namespace BH.SDK.Interop.AfterBeat.Import
             return value.Substring(start, end - start);
         }
 
+        // A quoted value is read to its closing quote and an unquoted one to the end of the tag,
+        // rather than to the first space: the spelling levels written before the source game's own
+        // fonts migration carry is "<font=LiberationSans SDF>", a name with a space in it and no
+        // quotes at all, and cutting at the space would leave "liberationsans" resolving by luck
+        // and "electronic highway sign" resolving to nothing.
+
+        /// <summary> Reads what a <c>font</c> tag names, empty when it names nothing. </summary>
+        private static string ReadFontName(string value, int open, int close)
+        {
+            var assign = value.IndexOf('=', open + 1);
+            if (assign < 0 || assign > close) return string.Empty;
+
+            var start = assign + 1;
+            while (start < close && char.IsWhiteSpace(value[start])) start++;
+            if (start >= close) return string.Empty;
+
+            var quote = value[start];
+            if (quote != '"' && quote != '\'') return value[start..close].Trim();
+
+            var end = value.IndexOf(quote, start + 1);
+            return end < 0 || end > close ? value[(start + 1)..close].Trim() : value[(start + 1)..end];
+        }
+
         private static bool IsTag(string name, string tag) =>
             string.Equals(name, tag, StringComparison.OrdinalIgnoreCase);
 
@@ -1166,6 +1226,10 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         /// <summary> TextMeshPro's literal-text tag, inside which no other tag is markup. </summary>
         private const string NoparseTag = "noparse";
+
+        /// <summary> TextMeshPro's typeface tag, the one this format answers with a field rather
+        /// than with markup of its own. </summary>
+        private const string FontTag = "font";
 
         #endregion
 

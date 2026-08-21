@@ -195,7 +195,9 @@ namespace BH.SDK.Interop.AfterBeat.Export
             Write(keyframe, ABParticleMap.EmitterShapeIndex,
                 circle != null ? (int)ABParticleEmitterShapeType.Circle : (int)ABParticleEmitterShapeType.Rectangle);
             Write(keyframe, ABParticleMap.EmitterArcIndex,
-                circle != null ? ToDegrees(Read(circle.Arc, EffectRules.Shape.Arc_Max)) : ABParticleMap.EmitterArcDefault);
+                circle != null
+                    ? ToDegrees(Read(circle.Arc, EffectRules.Shape.Arc_Max))
+                    : ABParticleMap.EmitterArcDefault);
             Write(keyframe, ABParticleMap.EmitterRadiusThicknessIndex,
                 circle != null ? Read(circle.Thickness, 1f) : ABParticleMap.EmitterRadiusThicknessDefault);
             Write(keyframe, ABParticleMap.StartSpeedIndex, ABParticleMap.StartSpeedDefault);
@@ -336,8 +338,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
             var forces = data.Forces;
 
             return !IsZero(forces.StartGravityMin) || !IsZero(forces.StartGravityMax)
-                || !IsZero(forces.StartAngularVelocityMin) || !IsZero(forces.StartAngularVelocityMax)
-                || !IsZeroVector(forces.LinearVelocity) || !IsZeroVector(forces.LinearForce);
+                                                   || !IsZero(forces.StartAngularVelocityMin) ||
+                                                   !IsZero(forces.StartAngularVelocityMax)
+                                                   || !IsZeroVector(forces.LinearVelocity) ||
+                                                   !IsZeroVector(forces.LinearForce);
         }
 
         private static bool IsZero(IFloat value)
@@ -535,6 +539,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
         /// <summary> The source editor's own layer clamp, 0-5. </summary>
         public const int MinEditorLayer = 0;
+
         public const int MaxEditorLayer = 5;
 
         /// <summary> The lowest layer an export writes - see <see cref="ApplyEditorRow"/> for why it
@@ -602,6 +607,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                             "Afterbeat has no name for level-authored geometry; those objects export as a Square.",
                             path);
                     }
+
                     // Normal rather than Hit: a real level writes 0 for its hitting objects, and
                     // the documented 4 is Solid in the numbering those files use - an object that
                     // pushes the player rather than one that merely hurts them.
@@ -634,6 +640,9 @@ namespace BH.SDK.Interop.AfterBeat.Export
         }
 
         private static string ReadText(TextObject source, ABExportContext context, string path)
+            => ApplyFontTag(source, ReadTextValue(source, context, path));
+
+        private static string ReadTextValue(TextObject source, ABExportContext context, string path)
         {
             switch (source.Text)
             {
@@ -647,6 +656,29 @@ namespace BH.SDK.Interop.AfterBeat.Export
                         path);
                     return string.Empty;
             }
+        }
+
+        // The typeface is a FIELD here and a tag inside the string there, so the way back is to
+        // write the tag - the same one ABObjectImporter strips, naming whichever of Afterbeat's own
+        // ten fonts is nearest (ABFontMap.TryExport). Only the object's own default is written
+        // silently and without a tag: it pairs with LiberationSans, which is what the source game
+        // draws an untagged string in anyway, so tagging it would put markup into every exported
+        // text to say what was already true.
+        //
+        // The tag opens and never closes, which is what makes it the whole string's: it is prepended
+        // rather than wrapped, so nothing inside - a <noparse> run included - has to be understood
+        // to place it correctly.
+
+        /// <summary> Prepends the <c>font</c> tag naming what this text is set in, unchanged when
+        /// there is nothing to name or nothing to name it on. </summary>
+        private static string ApplyFontTag(TextObject source, string value)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            if (source.FontResourceId == FontResourceId.Default) return value;
+
+            return ABFontMap.TryExport(source.FontResourceId, out var name)
+                ? $"<font=\"{name}\">{value}"
+                : value;
         }
 
         // Only the pivot's FIRST keyframe can cross - Afterbeat's origin is a static field, not a
@@ -794,6 +826,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                         track.Keyframes.Add(NewKeyframe(key.Frame, key.Ease, framerate,
                             index, ToSourceOpacity(opacity), index));
                     }
+
                     return;
             }
         }
@@ -861,14 +894,28 @@ namespace BH.SDK.Interop.AfterBeat.Export
         }
 
         // An Afterbeat text object is a string and a colour. Everything this format wraps around one
-        // - which font it is set in, how big, how it is aligned, whether it wraps - has no field
-        // there at all. None of it is a conversion that could be got wrong, which is exactly why it
-        // used to leave no trace: an author sent a level away and learned about it by looking.
+        // - how big it is, how it is aligned, whether it wraps - has no field there at all. None of
+        // it is a conversion that could be got wrong, which is exactly why it used to leave no
+        // trace: an author sent a level away and learned about it by looking.
+        //
+        // THE FONT IS THE ONE THAT CROSSES, because over there it lives inside the string rather
+        // than beside it (ApplyFontTag). It still reports, since the tag names the nearest of that
+        // game's own ten fonts and never the one this level is actually set in.
         private static void ReportTextSetup(TextObject source, InteropReport report, string path)
         {
-            if (source.FontResourceId.IsValid())
+            if (source.FontResourceId.IsUserDefined())
                 report.Dropped("text_font",
-                    "Afterbeat text uses the game's own font; the font this level set is not exported.", path);
+                    "Afterbeat can only name the fonts it ships itself; text set in a font this level brings along exports in the source game's default one.",
+                    path);
+            else if (source.FontResourceId != FontResourceId.Default
+                     && ABFontMap.TryExport(source.FontResourceId, out _))
+                report.Approximated("text_font_tag",
+                    "Afterbeat has no font field - the typeface is a <font> tag inside the string - so the text was prefixed with one naming the nearest of the fonts that game ships.",
+                    path);
+            else if (source.FontResourceId != FontResourceId.Default)
+                report.Dropped("text_font",
+                    "Afterbeat ships nothing resembling the font this text is set in; it exports in that game's default one.",
+                    path);
 
             if (source.FontSizes is { Count: > 0 })
                 report.Dropped("text_font_size",

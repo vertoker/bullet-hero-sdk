@@ -9,6 +9,7 @@ using BH.SDK.Models;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
 using NUnit.Framework;
 
@@ -606,9 +607,15 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
         private static (string Value, InteropReport Report) ImportTextOf(string value)
         {
+            var (text, report) = ImportTextObjectOf(value);
+            return (((StringValue)text.Text).Value, report);
+        }
+
+        private static (TextObject Text, InteropReport Report) ImportTextObjectOf(string value)
+        {
             var result = ABLevelImporter.Import(LevelOf(Text(value)), null, Options());
             var text = result.Level.Game.Objects.Values.OfType<TextObject>().Single();
-            return (((StringValue)text.Text).Value, result.Report);
+            return (text, result.Report);
         }
 
         // The source game hands its authored string to TextMeshPro untouched, so every tag TMP
@@ -640,6 +647,158 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             Assert.AreEqual(value, imported);
             Assert.IsFalse(report.Issues.Any(issue => issue.Code == "text_rotate_tag"));
+        }
+
+        // The source game has no font field - the typeface is a <font> tag inside the string, one of
+        // the ten assets its Resources folder answers with - while a font here is a property of the
+        // object. The tag therefore leaves the string and lands on the object, and the cases below
+        // are the four ways that can go: one tag, the pre-migration spelling with the asset's own
+        // "SDF" suffix, a name the source game itself resolves to nothing, and a string that changes
+        // typeface halfway.
+        [TestCase("<font=\"Inconsolata\">abc", "abc", 3)]
+        [TestCase("<font=LiberationSans SDF>abc", "abc", 1)]
+        [TestCase("<font=\"Oswald Bold SDF\">abc", "abc", 9)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextFontTag_LeavesTheStringAndLandsOnTheObject(string value, string expected,
+            int fontResourceId)
+        {
+            var (text, report) = ImportTextObjectOf(value);
+
+            Assert.AreEqual(expected, ((StringValue)text.Text).Value);
+            Assert.AreEqual(fontResourceId, text.FontResourceId.value);
+            Assert.IsTrue(report.Issues.Any(issue => issue.Code == "text_font_tag"));
+        }
+
+        // Afterbeat resolves a font by Resources.Load, so a name it does not ship loads nothing and
+        // the text goes on drawing in whatever it was drawing. Nothing is lost by importing it as
+        // the default, hence no issue is reported - but the tag still leaves the string, since
+        // nothing here draws it as markup either.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextFontTagNamingNothing_IsTheDefaultAndNoLoss()
+        {
+            var (text, report) = ImportTextObjectOf("<font=\"Comic Sans\">abc");
+
+            Assert.AreEqual("abc", ((StringValue)text.Text).Value);
+            Assert.AreEqual(FontResourceId.Default, text.FontResourceId);
+            Assert.IsFalse(report.Issues.Any(issue => issue.Code == "text_font_tag"));
+            Assert.IsFalse(report.Issues.Any(issue => issue.Code == "text_font_mixed"));
+        }
+
+        // One object, one font: the typeface covering most of the string wins, and a tie goes to
+        // whichever was written first. The nested case is what proves </font> pops rather than
+        // clearing - "a" and "c" are Anton's, "bb" is Bangers', so Anton wins on the tie.
+        [TestCase("<font=\"Inconsolata\">aaaa</font><font=\"Bangers\">b", 3)]
+        [TestCase("<font=\"Bangers\">ab</font><font=\"Anton\">cd", 5)]
+        [TestCase("<font=\"Anton\">a<font=\"Bangers\">bb</font>c", 6)]
+        [TestCase("a<font=\"Anton\">bcd", 6)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextMixingFonts_KeepsTheOneCoveringMostOfIt(string value, int fontResourceId)
+        {
+            var (text, report) = ImportTextObjectOf(value);
+
+            Assert.AreEqual(fontResourceId, text.FontResourceId.value);
+            Assert.IsTrue(report.Issues.Any(issue => issue.Code == "text_font_mixed"));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextFontInsideNoparse_IsContentAndSurvives()
+        {
+            const string value = "<noparse><font=\"Anton\"></noparse>";
+            var (text, report) = ImportTextObjectOf(value);
+
+            Assert.AreEqual(value, ((StringValue)text.Text).Value);
+            Assert.AreEqual(FontResourceId.Default, text.FontResourceId);
+            Assert.IsFalse(report.Issues.Any(issue => issue.Code == "text_font_tag"));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextWithoutFontTag_KeepsTheDefaultAndReportsNothing()
+        {
+            var (text, report) = ImportTextObjectOf("plain text");
+
+            Assert.AreEqual(FontResourceId.Default, text.FontResourceId);
+            Assert.IsFalse(report.Issues.Any(issue => issue.Code == "text_font_tag"));
+        }
+
+        // Out again: the field becomes a tag on the front of the string. The pairing is not
+        // injective, so a preset exports as its canonical source name - two of ours came from
+        // Inconsolata and MajorMonoDisplay alike, and Inconsolata is the one written back.
+        [TestCase("<font=\"Inconsolata\">abc", "<font=\"Inconsolata\">abc")]
+        [TestCase("<font=\"MajorMonoDisplay\">abc", "<font=\"Inconsolata\">abc")]
+        [TestCase("<font=\"Poorstory\">abc", "<font=\"Bangers SDF\">abc")]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Export_TextFont_IsWrittenBackAsAFontTag(string value, string expected)
+        {
+            var imported = ABLevelImporter.Import(LevelOf(Text(value)), null, Options());
+            var exported = ABLevelExporter.Export(imported.Level, null, Options());
+
+            Assert.AreEqual(expected, exported.Level.Objects.Single().Text);
+            Assert.IsTrue(exported.Report.Issues.Any(issue => issue.Code == "text_font_tag"));
+        }
+
+        // The default pairs with LiberationSans, which is what an untagged string draws in over
+        // there - so writing a tag for it would put markup into every exported text to say what was
+        // already true.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Export_TextInTheDefaultFont_WritesNoTagAndReportsNothing()
+        {
+            var imported = ABLevelImporter.Import(LevelOf(Text("abc")), null, Options());
+            var exported = ABLevelExporter.Export(imported.Level, null, Options());
+
+            Assert.AreEqual("abc", exported.Level.Objects.Single().Text);
+            Assert.IsFalse(exported.Report.Issues.Any(issue => issue.Code == "text_font_tag"));
+            Assert.IsFalse(exported.Report.Issues.Any(issue => issue.Code == "text_font"));
+        }
+
+        // A font the level ships itself has no name Afterbeat could resolve, so it is the one case
+        // that still loses the typeface outright.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Export_TextInALevelsOwnFont_KeepsTheStringAndReportsTheLoss()
+        {
+            var imported = ABLevelImporter.Import(LevelOf(Text("abc")), null, Options());
+            var text = imported.Level.Game.Objects.Values.OfType<TextObject>().Single();
+            text.FontResourceId = new FontResourceId(-1);
+
+            var exported = ABLevelExporter.Export(imported.Level, null, Options());
+
+            Assert.AreEqual("abc", exported.Level.Objects.Single().Text);
+            Assert.IsTrue(exported.Report.Issues.Any(issue => issue.Code == "text_font"));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Conversion_TextFont_SurvivesBothDirections()
+        {
+            var imported = ABLevelImporter.Import(LevelOf(Text("<font=\"Anton SDF\">abc")), null, Options());
+            var exported = ABLevelExporter.Export(imported.Level, null, Options());
+            var returned = ABLevelImporter.Import(exported.Level, null, Options());
+
+            var text = returned.Level.Game.Objects.Values.OfType<TextObject>().Single();
+            Assert.AreEqual(6, text.FontResourceId.value, "Anton pairs with Oi in both directions");
+            Assert.AreEqual("abc", ((StringValue)text.Text).Value);
         }
 
         [Test]
