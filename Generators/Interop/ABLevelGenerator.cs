@@ -31,6 +31,9 @@ namespace BH.SDK.Generators.Interop
     {
         public override string NameKey => "gen_level_afterbeat";
 
+        // Last: an import from another game's format is nobody's first answer to "make a level".
+        public override int ListOrder => 10;
+
         public override GeneratorRequirements Requirements => GeneratorRequirements.ExternalAnalysis;
 
         public override GeneratorHints Hints => HintsValue;
