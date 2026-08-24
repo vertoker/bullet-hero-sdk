@@ -22,9 +22,12 @@ namespace BH.SDK.Generators.Interop
     // export consumes a level and writes files, which is a host service (see
     // Interop/AfterBeat/ABInterop.ExportLevel).
     //
-    // ExternalAnalysis for the same reason gen_level_audio_file needs it: the SDK reads no files.
-    // The host opens the folder and fills in IABLevelInput before this runs. Handed nothing,
-    // this produces an empty level and says why - never a plausible-looking one.
+    // ExternalAnalysis because the host is what probes an Afterbeat folder: which files it holds is
+    // undocumented and differs per level, so the host opens it and fills in IABLevelInput before
+    // this runs. Handed nothing, this produces an empty level and says why - never a
+    // plausible-looking one. (The SDK CAN read a file now - see Services/Content - and the level
+    // package import goes through the same interface for the different reason its own header gives:
+    // a passphrase and an open handle have no business in a serialized preset.)
 
     /// <summary> Builds a level out of an Afterbeat (Project Arrhythmia) level folder. </summary>
     public class ABLevelGenerator : BaseLevelGenerator<ABLevelGenerator.Parameters>

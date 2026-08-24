@@ -13,7 +13,8 @@ namespace BH.SDK.Interop.AfterBeat
     // know which of the importers and maps to call in which order, or that a lone .vgp needs a
     // scope built for it while a level's prefabs do not.
     //
-    // Everything here takes and returns TEXT, never a path: this library reads no files. Where the
+    // Everything here takes and returns TEXT, never a path: this LAYER reads no files, whatever the
+    // rest of the SDK does (Services/Content addresses directories and archives). Where the
     // documents come from, what encoding they were in, and which of them the folder actually had
     // are all the host's business.
 

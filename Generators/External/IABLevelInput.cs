@@ -1,9 +1,13 @@
 ﻿namespace BH.SDK.Generators.External
 {
     // The same bargain the rest of External/ makes, for a different reason. The others exist
-    // because the SDK has no decoder; this one exists because the SDK reads no FILES. A level
-    // folder is a directory somebody picked, on a platform this library knows nothing about, so
-    // the host opens it and hands over what it found.
+    // because the SDK has no decoder; this one exists because an Afterbeat level folder is
+    // somebody ELSE'S format, probed rather than known - which names the folder differs per level
+    // and is documented nowhere - so the host is what opens it and hands over what it found.
+    //
+    // It is NOT that the SDK cannot read a file. It used to be: Services/Content now addresses
+    // directories and archives directly, and the level package pipeline built on it reads and
+    // writes both. What has not changed is who decides what an Afterbeat folder CONTAINS.
     //
     // Text rather than paths, deliberately: it keeps this side free of IO, and it lets the same
     // generator run against a folder, a zip entry, or a paste from a web page without knowing which.

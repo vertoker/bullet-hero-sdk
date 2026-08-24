@@ -4,7 +4,8 @@ Two-way conversion between this format and **Afterbeat** (formerly *Project Arrh
 Games): its level (`.vgd`), metadata (`.vgm`), theme (`.vgt`) and prefab (`.vgp`) documents.
 
 `ABInterop` is the entry point — one method per thing a host converts. Everything here takes
-and returns **text**, never a path: this library reads no files, and where a document came from is
+and returns **text**, never a path: this LAYER reads no files - whatever the rest of the SDK does,
+and it does now (`Services/Content`) - and where a document came from is
 the host's business.
 
 ## Where the format description came from
