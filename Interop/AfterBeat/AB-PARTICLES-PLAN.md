@@ -161,7 +161,7 @@ Two runtime facts decide most of the mapping, and both were measured rather than
   (`UniversalVFX_Local.vfx:2106`, `2146`) and `VFXSpawnerBurst`'s count
   (`UniversalVFX_Local.vfx:2780`, `2788`); `Core.Loop` gates which spawner runs
   (`GamePlayer/Models/Effects/EffectTimeData.cs`, the comment above `GetReplayWindow`). System
-  capacity is a fixed `32768` (`UniversalVFX_Local.vfx:2262`). So with `Loop = true`,
+  capacity is a fixed `1024` (`UniversalVFX_Local.vfx`, and it is `ParticleCount_Max`). So with `Loop = true`,
   `ParticleCount` is **particles per second** — an exact counterpart for `ev[4]`.
 - **Simulation space is not authorable.** Two graphs exist (`UniversalVFX_Local.vfx`,
   `UniversalVFX_World.vfx`) and `EffectProperties.Core_IsLocal` exists
@@ -174,7 +174,7 @@ Two runtime facts decide most of the mapping, and both were measured rather than
 ### Source → target
 
 ```
-ev[4]  spawnRatePerSecond   => Core.ParticleCount            (uint, clamp EffectRules.Core.ParticleCount_Max = 32768)
+ev[4]  spawnRatePerSecond   => Core.ParticleCount            (uint, clamp EffectRules.Core.ParticleCount_Max = 1024)
        (no source)          => Core.Loop = true              constant-rate spawner
 T                           => Core.LifetimeBounds = (T, T)  seconds; AB has no lifetime spread
 ev[7]  despawnOnEnd = false => FrameSpan extended by ToFrame(T)
@@ -383,7 +383,7 @@ remove particle emission from "Not imported", add the named losses, and reword t
   the two is wrong and the discrepancy is worth resolving before a conversion law is written on top
   of it.
 - **Afterbeat's own `ev[4]` scale.** `100` particles/second is the modal value and `500` the maximum
-  observed, against our `ParticleCount_Default = 10` and `_Max = 32768`. Whether a direct copy is
+  observed, against our `ParticleCount_Default = 10` and `_Max = 1024`. Whether a direct copy is
   visually equivalent, or whether Afterbeat's rate is throttled somewhere the dump does not show, is
   undetermined.
 - **What a `0` arc means.** `GetParticleEmitterArc` clamps to `[0, 360]` and the graph nudges an
