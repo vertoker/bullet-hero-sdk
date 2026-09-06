@@ -10,6 +10,12 @@ namespace BH.SDK.Interop.AfterBeat.Export
     // Afterbeat's metadata has no field for any of it. That is the one loss worth naming out loud -
     // an exported level arrives somewhere else with its attribution stripped, which is a licensing
     // problem rather than a rendering one.
+    //
+    // An author's Credit goes with it, and the POSITION is what survives instead: the target has one
+    // creator field and one artist field, so which author is which is said by the order here rather
+    // than by what they are credited for. Matching on the credit instead would read better and be
+    // wrong - it is free text, and a level authored here has no reason to spell it the way an
+    // imported one does.
 
     /// <summary> <see cref="LevelMeta"/> back into a .vgm. </summary>
     public static class ABMetaExporter
@@ -73,7 +79,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
             if (report == null) return;
 
             report.Dropped("meta_licensing",
-                "Afterbeat metadata has no licence, age rating, content descriptors or per-resource attribution; all of it is lost on export. Re-attach it wherever the exported level ends up.",
+                "Afterbeat metadata has no licence, age rating, content descriptors, per-resource attribution or per-author credit; all of it is lost on export. Re-attach it wherever the exported level ends up.",
                 "metadata");
 
             if (source.LevelLogo != null && !string.IsNullOrEmpty(source.LevelLogo.Uri))

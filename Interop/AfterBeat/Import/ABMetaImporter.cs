@@ -19,10 +19,22 @@ namespace BH.SDK.Interop.AfterBeat.Import
     //   This format has, and Afterbeat does not: a licence, an age rating, content descriptors and
     //   per-resource attribution. An import leaves those unset rather than inventing them, which is
     //   the only honest answer - nobody can infer a licence from a level file.
+    //
+    // The one place the source says MORE than a name is the creator/artist split, and an Author's
+    // Credit is where it lands. That is a mapping rather than an invention: the .vgm's own fields
+    // are what say which of the two a person is, and without a credit both arrive as bare names in
+    // one list with the distinction gone. The two strings are English literals, exactly like the
+    // names beside them - a foreign file carries no languages to import.
 
     /// <summary> .vgm into <see cref="LevelMeta"/>. </summary>
     public static class ABMetaImporter
     {
+        /// <summary> What an imported Afterbeat creator is credited for. </summary>
+        public const string CreatorCredit = "Level design";
+
+        /// <summary> What an imported Afterbeat artist is credited for. </summary>
+        public const string ArtistCredit = "Music";
+
         /// <summary> The URL template each Afterbeat link type expands into. </summary>
         public static string BuildArtistUrl(int linkType, string link)
         {
@@ -56,12 +68,13 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             var creator = source.Creator;
             if (!string.IsNullOrEmpty(creator?.SteamName))
-                meta.LevelAuthors.Add(new Author(new StringValue(creator.SteamName), string.Empty));
+                meta.LevelAuthors.Add(new Author(new StringValue(creator.SteamName), string.Empty,
+                    new StringValue(CreatorCredit)));
 
             var artist = source.Artist;
             if (!string.IsNullOrEmpty(artist?.Name))
                 meta.LevelAuthors.Add(new Author(new StringValue(artist.Name),
-                    BuildArtistUrl(artist.LinkType, artist.Link)));
+                    BuildArtistUrl(artist.LinkType, artist.Link), new StringValue(ArtistCredit)));
 
             ReportUnsupported(source, report, path);
             return meta;

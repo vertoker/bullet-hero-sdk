@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using BH.SDK.Models.Enums;
+using BH.SDK.Models.Enums.Values;
+using BH.SDK.Models.Values;
 using BH.SDK.Rules;
 
 namespace BH.SDK.Interop.AfterBeat
@@ -196,10 +199,50 @@ namespace BH.SDK.Interop.AfterBeat
 
         public static float ImportHue(float degrees)
             => Clamp(Repeat(degrees / HueDegrees + HueNeutral, 1f),
-                PostProcessingRules.ColorCurves.HueVsHueMin, PostProcessingRules.ColorCurves.HueVsHueMax);
+                PostProcessingRules.ColorCurves.CurveMin, PostProcessingRules.ColorCurves.CurveMax);
 
         public static float ExportHue(float hueVsHue)
             => Repeat(hueVsHue - HueNeutral, 1f) * HueDegrees;
+
+        // THE TWO FORMATS MEET AT A FLAT CURVE. Afterbeat's Hue track is one number per keyframe -
+        // a rotation applied to every colour equally - and this format's Hue vs Hue is a curve
+        // indexed BY the input hue. A single rotation is exactly a flat one, so the conversion is
+        // lossless in this direction and lossy only in the other, where a curve that is not flat
+        // has no number to become. A rotation of zero converts to NULL rather than to a flat
+        // neutral: null is what an untouched control reads as here, and a converted level should
+        // not arrive looking edited.
+
+        /// <summary> One Afterbeat hue keyframe as this format's Hue vs Hue curve. </summary>
+        public static CurveValue ImportHueCurve(float degrees)
+        {
+            var value = ImportHue(degrees);
+            if (Math.Abs(value - HueNeutral) < float.Epsilon) return null;
+
+            return new CurveValue(new List<CurveKeyframeValue>
+            {
+                new(ValueRules.MinCurveTime, value),
+                new(ValueRules.MaxCurveTime, value),
+            }, CurveWrapMode.ClampForever, CurveWrapMode.ClampForever);
+        }
+
+        /// <summary> The one rotation a Hue vs Hue curve can be expressed as over there. A curve
+        /// that is not flat has no such number, so its FIRST key answers and the rest is lost -
+        /// which is what <paramref name="isFlat"/> is for, so a caller can report it. </summary>
+        public static float ExportHueCurve(CurveValue curve, out bool isFlat)
+        {
+            isFlat = true;
+            if (curve?.KeyFrames == null || curve.KeyFrames.Count == 0) return ExportHue(HueNeutral);
+
+            var value = curve.KeyFrames[0].Value;
+            for (var i = 1; i < curve.KeyFrames.Count; i++)
+            {
+                if (Math.Abs(curve.KeyFrames[i].Value - value) < float.Epsilon) continue;
+
+                isFlat = false;
+                break;
+            }
+            return ExportHue(value);
+        }
 
         #endregion
 

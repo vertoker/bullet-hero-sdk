@@ -107,6 +107,50 @@ namespace BH.SDK.Interop.AfterBeat
             return new Color4Value(resolved.R, resolved.G, resolved.B, alpha);
         }
 
+        // THREE-CHANNEL COLOURS CROSS THROUGH THEIR FOUR-CHANNEL TWIN rather than through a second
+        // copy of the mapping. Only the post-processing grading colours are IColor3 - the fourth
+        // component of those was URP's own offset and was removed from the format, see
+        // LiftGammaGainKey's header - and Afterbeat's side of them is the same palette index either
+        // way. A theme reference therefore still crosses exactly, which is the property the pair of
+        // conversions below exists to preserve; opacity is 1 in both directions, since an effect
+        // with no alpha has none to carry.
+
+        /// <summary> <see cref="Import(int, float, ABPalette, ThemeData, InteropReport, string)"/>
+        /// for a three-channel colour. </summary>
+        public static IColor3 ImportColor3(int paletteIndex, float opacity, ABPalette palette,
+            ThemeData referenceTheme, InteropReport report = null, string path = null)
+        {
+            switch (Import(paletteIndex, opacity, palette, referenceTheme, report, path))
+            {
+                case Color4ThemeRef themeRef: return new Color3ThemeRef(themeRef.ThemeColorIndex);
+                case Color4Value literal: return new Color3Value(literal.R, literal.G, literal.B);
+                default: return Color3Value.white;
+            }
+        }
+
+        /// <summary> <see cref="Export(IColor4, ABPalette, ThemeData, InteropReport, string)"/> for a
+        /// three-channel colour. </summary>
+        public static (int Index, float Opacity) Export(IColor3 color, ABPalette palette,
+            ThemeData referenceTheme, InteropReport report = null, string path = null)
+            => Export(ToColor4(color), palette, referenceTheme, report, path);
+
+        private static IColor4 ToColor4(IColor3 color)
+        {
+            switch (color)
+            {
+                case null: return null;
+                case Color3ThemeRef themeRef: return new Color4ThemeRef(themeRef.ThemeColorIndex);
+                case Color3Value literal: return new Color4Value(literal.R, literal.G, literal.B, 1f);
+
+                case Color3MinMax minMax:
+                    return new Color4MinMax(
+                        minMax.MinR, minMax.MinG, minMax.MinB, 1f,
+                        minMax.MaxR, minMax.MaxG, minMax.MaxB, 1f);
+
+                default: return null;
+            }
+        }
+
         private static Color4Value Resolve(ThemeData theme, int themeIndex)
         {
             if (theme?.Matrix == null || themeIndex < 0 || themeIndex >= theme.Matrix.Length)

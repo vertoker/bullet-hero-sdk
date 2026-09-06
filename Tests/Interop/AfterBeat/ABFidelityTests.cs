@@ -459,25 +459,53 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.IsTrue(flags[1], $"{name}: a keyframe the author gave a value to stays on");
         }
 
-        // Temporarily off, and DEFERRED rather than dropped - nothing about the mapping is in doubt,
-        // this project's own colour curves are.
+        // One rotation per keyframe over there IS a flat Hue vs Hue here, so the track crosses whole
+        // and reports nothing. It was deferred for a while, and the blocker was this project's own
+        // colour curves rather than the mapping - see docs/issues/COLOR_CURVES_HISTORY.md.
         [Test]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.Normal)]
-        public void Import_TheHueTrack_IsNotWrittenToColorCurvesYet()
+        public void Import_TheHueTrack_LandsOnColorCurves()
         {
             var source = LevelOf(Square(0f));
             source.Events[(int)ABEventTrack.Hue].Add(new VgdEventKeyframe
             {
                 Time = 0f,
-                Values = new Newtonsoft.Json.Linq.JArray { 0.5f },
+                Values = new Newtonsoft.Json.Linq.JArray { 180f },
             });
 
             var result = ABLevelImporter.Import(source, null, Options());
 
-            Assert.IsEmpty(result.Level.Game.PostProcessingEvents.ColorCurveses);
-            Assert.IsTrue(result.Report.Issues.Any(issue => issue.Code == "event_hue_curves"));
+            var key = result.Level.Game.PostProcessingEvents.ColorCurveses.Single();
+            Assert.IsNotNull(key.HueVsHue, "a rotation becomes a flat Hue vs Hue curve");
+            foreach (var curveKey in key.HueVsHue.KeyFrames)
+                Assert.AreEqual(ABPostProcessingMap.ImportHue(180f), curveKey.Value, 1e-4f);
+
+            Assert.IsNull(key.Master, "no other curve is invented");
+            Assert.IsNull(key.SatVsSat);
+            Assert.IsFalse(result.Report.Issues.Any(issue => issue.Code == "event_hue_curves"));
+        }
+
+        // Zero rotation is the neutral, and the neutral is the absence of an edit - a converted level
+        // must not arrive looking as though somebody had graded it.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_AHueKeyframeAtZero_CarriesNoCurve()
+        {
+            var source = LevelOf(Square(0f));
+            source.Events[(int)ABEventTrack.Hue].Add(new VgdEventKeyframe
+            {
+                Time = 0f,
+                Values = new Newtonsoft.Json.Linq.JArray { 0f },
+            });
+
+            var result = ABLevelImporter.Import(source, null, Options());
+
+            var key = result.Level.Game.PostProcessingEvents.ColorCurveses.Single();
+            Assert.IsNull(key.HueVsHue);
         }
 
         #endregion

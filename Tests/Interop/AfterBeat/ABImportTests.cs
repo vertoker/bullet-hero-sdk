@@ -431,9 +431,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             CollectionAssert.Contains(codes, "event_gradient");
             CollectionAssert.Contains(codes, "event_player_force");
 
-            // Hue is not lost - it lands on colour curves, which rotate hue the same way - so what
-            // it reports is an approximation rather than a drop.
-            CollectionAssert.Contains(codes, "event_hue_curves");
+            // Hue crosses whole - one rotation per keyframe is exactly a flat Hue vs Hue curve - so
+            // it reports nothing at all. See ABFidelityTests.Import_TheHueTrack_LandsOnColorCurves.
+            CollectionAssert.DoesNotContain(codes, "event_hue_curves");
             CollectionAssert.DoesNotContain(codes, "event_hue");
 
             // Player force is waiting on work, the other two are not - an author has to be able to
@@ -917,6 +917,22 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.AreEqual("Test Song", ((StringValue)meta.LevelName).Value);
             Assert.AreEqual(2, meta.LevelAuthors.Count);
             Assert.AreEqual("https://someband.bandcamp.com", meta.LevelAuthors[1].Url);
+        }
+
+        // The creator/artist split is the only thing the source says about a person beyond their
+        // name, and a bare list of names is where it used to go to die.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void ImportMeta_CreditsTheCreatorAndTheArtistSeparately()
+        {
+            var meta = ABMetaImporter.Import(ABMockData.CreateMeta());
+
+            Assert.AreEqual("Creator", ((StringValue)meta.LevelAuthors[0].Name).Value);
+            Assert.AreEqual(ABMetaImporter.CreatorCredit, ((StringValue)meta.LevelAuthors[0].Credit).Value);
+            Assert.AreEqual("Artist", ((StringValue)meta.LevelAuthors[1].Name).Value);
+            Assert.AreEqual(ABMetaImporter.ArtistCredit, ((StringValue)meta.LevelAuthors[1].Credit).Value);
         }
     }
 }

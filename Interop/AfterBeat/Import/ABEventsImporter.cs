@@ -86,7 +86,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             // the gap at index 3, which the source game reads on no branch at all.
             foreach (var key in source.GetEvents(ABEventTrack.Vignette))
                 post.Vignettes.Add(new VignetteKey(
-                    EffectColor(key, 6, ABColorMap.EffectColorBlack, context, path),
+                    EffectColor3(key, 6, ABColorMap.EffectColorBlack, context, path),
                     new Vector2Value(
                         ABPostProcessingMap.ImportVignetteCenter(key.GetFloat(4)),
                         ABPostProcessingMap.ImportVignetteCenter(key.GetFloat(5))),
@@ -418,19 +418,35 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         // Afterbeat rotates the whole picture's hue with one number; this format has no hue effect,
         // but its colour curves carry a Hue vs Hue control that does exactly that, so the track
-        // belongs there. It is NOT written today: this project's own colour curves have a bug that
-        // has nothing to do with the conversion, and a converted level is not the place to meet it.
-        // Reported as deferred rather than dropped, since nothing about the mapping is in doubt -
-        // delete this early return and the block below is the whole feature.
+        // belongs there. It was deferred for a while, and the blocker was NOT the mapping: this
+        // format's colour curves were two scalars whose consumer scaled them into degrees and
+        // percents before handing them to a control URP reads as 0..1, so the neutral arrived as a
+        // half-turn and a grey frame. They are eight real curves now, and a single rotation is
+        // exactly a flat Hue vs Hue - see ABPostProcessingMap.ImportHueCurve.
         private static void ImportHue(VgdLevel source, PostProcessingEvents post,
             ABImportContext context, string path)
         {
             var keys = source.GetEvents(ABEventTrack.Hue);
             if (keys.Count == 0) return;
 
-            context.Report.Deferred("event_hue_curves",
-                "Afterbeat's global hue shift maps onto this format's colour curves, which are temporarily not imported; those keyframes are missing from the converted level.",
-                path);
+            var framerate = context.Options.Framerate;
+            var report = context.Report;
+            foreach (var key in keys)
+            {
+                if (post.ColorCurveses.Count >= LevelRules.MaxPostProcessingKeys)
+                {
+                    report.Dropped("event_hue_over_cap",
+                        "More hue keyframes than this format allows on one track; the rest were dropped.",
+                        path);
+                    break;
+                }
+
+                post.ColorCurveses.Add(new ColorCurvesKey(IsActive(key, 0), Frame(key, framerate),
+                    Ease(key, report, path))
+                {
+                    HueVsHue = ABPostProcessingMap.ImportHueCurve(key.GetFloat(0)),
+                });
+            }
         }
 
         // The force the level applies to the player. This format carries the track but the player
@@ -577,6 +593,19 @@ namespace BH.SDK.Interop.AfterBeat.Import
             if (paletteIndex == EffectColorNone) return none;
 
             return ABColorMap.Import(paletteIndex, 1f, ABPalette.Effects,
+                context.ReferenceTheme, context.Report, path);
+        }
+
+        // The three-channel twin, for a post-processing colour that no longer carries a fourth
+        // component. The palette constants stay four-channel - they are what the palettes are - so
+        // the fallback is narrowed here rather than duplicated over there.
+        private static IColor3 EffectColor3(VgdEventKeyframe key, int index, Color4Value none,
+            ABImportContext context, string path)
+        {
+            var paletteIndex = (int)key.GetFloat(index, EffectColorNone);
+            if (paletteIndex == EffectColorNone) return new Color3Value(none.R, none.G, none.B);
+
+            return ABColorMap.ImportColor3(paletteIndex, 1f, ABPalette.Effects,
                 context.ReferenceTheme, context.Report, path);
         }
     }

@@ -199,10 +199,10 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.GreaterOrEqual(lens.Intensity, PostProcessingRules.LensDistortion.IntensityMin);
             Assert.AreEqual(-0.375f, lens.Intensity, 1e-4f, "a real level's -30 is not a maximum fisheye");
 
-            // The hue track's own mapping is still exact and still tested - it is only the WRITE
-            // that is temporarily off, so this asserts the number rather than the keyframe.
+            // The hue track's own mapping, and the flat curve the write turns it into.
             Assert.AreEqual(0f, ABPostProcessingMap.ImportHue(180f), 1e-4f, "180 degrees, wrapped");
-            Assert.IsEmpty(post.ColorCurveses, "colour curves are not imported for now");
+            var colorCurves = post.ColorCurveses.Single();
+            Assert.IsNotNull(colorCurves.HueVsHue, "the hue track lands on Hue vs Hue");
         }
     }
 }

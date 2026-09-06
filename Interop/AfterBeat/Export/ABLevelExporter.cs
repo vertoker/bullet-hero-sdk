@@ -9,6 +9,7 @@ using BH.SDK.Models.Interfaces;
 using BH.SDK.Models.Interfaces.Values;
 using BH.SDK.Models.Keyframes;
 using BH.SDK.Models.Objects;
+using BH.SDK.Models.PostProcessing;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Values;
 using BH.SDK.Rules;
@@ -238,7 +239,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                         ABPostProcessingMap.ExportVignetteSmoothness(key.Smoothness),
                         key.Rounded ? 1f : 0f, 0f,
                         centerX, centerY,
-                        EffectIndex(key.Color4, ABColorMap.EffectColorBlack, context),
+                        EffectIndex(key.Color3, ABColorMap.EffectColorBlack, context),
                     };
                 }));
 
@@ -276,11 +277,25 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     DefaultExportedGlitchWidth, DefaultExportedGlitchSpeed,
                 }));
 
+            // Only Hue vs Hue crosses, and only as far as one number: Afterbeat's track is a single
+            // rotation, so a curve that is not flat loses its shape and the other seven curves have
+            // nowhere to go at all. Both are reported rather than silently flattened.
+            var hueReshaped = false;
             target.SetEvents(ABEventTrack.Hue, Map(post.ColorCurveses, framerate, context,
-                key => new List<float>
+                key =>
                 {
-                    ABPostProcessingMap.ExportHue(key.HueVsHue), 0f, 0f,
+                    var hue = ABPostProcessingMap.ExportHueCurve(key.HueVsHue, out var isFlat);
+                    if (!isFlat) hueReshaped = true;
+                    if (HasOtherColorCurves(key)) hueReshaped = true;
+
+                    return new List<float> { hue, 0f, 0f };
                 }));
+            if (hueReshaped)
+            {
+                context.Report.Dropped("color_curves_shape",
+                    "Afterbeat's hue track is one rotation per keyframe, so a colour curve that is not flat - and every curve other than Hue vs Hue - has nothing to convert into.",
+                    "game.post_processing.color_curves");
+            }
 
             // Afterbeat's force track is a flat direction, so the directional half crosses and the
             // radial one (VelocityPoints) has nowhere to go.
@@ -315,6 +330,20 @@ namespace BH.SDK.Interop.AfterBeat.Export
         private static float EffectIndex(IColor4 color, Color4Value none, ABExportContext context)
         {
             if (color is Color4Value literal && IsSameColor(literal, none))
+                return Import.ABEventsImporter.EffectColorNone;
+
+            var (index, _) = ABColorMap.Export(color, ABPalette.Effects,
+                context.ReferenceTheme, context.Report, "events");
+            return index;
+        }
+
+        // The three-channel twin, for the post-processing colours that stopped carrying a fourth
+        // component - see LiftGammaGainKey's header. "None" is still stated as a Color4Value because
+        // that is what the palette constants are; only the comparison drops the alpha.
+        private static float EffectIndex(IColor3 color, Color4Value none, ABExportContext context)
+        {
+            if (color is Color3Value literal
+                && IsSameColor(new Color4Value(literal.R, literal.G, literal.B, none.A), none))
                 return Import.ABEventsImporter.EffectColorNone;
 
             var (index, _) = ABColorMap.Export(color, ABPalette.Effects,
@@ -604,5 +633,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
             return count;
         }
 
+        /// <summary> Whether a ColorCurves key authored anything Afterbeat has no track for - i.e.
+        /// any curve but Hue vs Hue. </summary>
+        private static bool HasOtherColorCurves(ColorCurvesKey key)
+            => key.Master != null || key.Red != null || key.Green != null || key.Blue != null
+                || key.HueVsSat != null || key.SatVsSat != null || key.LumVsSat != null;
     }
 }
