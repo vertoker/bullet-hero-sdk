@@ -433,7 +433,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var report = context.Report;
             foreach (var key in keys)
             {
-                if (post.ColorCurveses.Count >= LevelRules.MaxPostProcessingKeys)
+                if (post.ColorCurves.Count >= LevelRules.MaxPostProcessingKeys)
                 {
                     report.Dropped("event_hue_over_cap",
                         "More hue keyframes than this format allows on one track; the rest were dropped.",
@@ -441,7 +441,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     break;
                 }
 
-                post.ColorCurveses.Add(new ColorCurvesKey(IsActive(key, 0), Frame(key, framerate),
+                post.ColorCurves.Add(new ColorCurvesKey(IsActive(key, 0), Frame(key, framerate),
                     Ease(key, report, path))
                 {
                     HueVsHue = ABPostProcessingMap.ImportHueCurve(key.GetFloat(0)),

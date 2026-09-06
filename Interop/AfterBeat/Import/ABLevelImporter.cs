@@ -85,7 +85,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             }
 
             var level = new Level();
-            level.Settings.Framerate = options.Framerate;
+            level.Settings.Fps = options.Framerate;
 
             var context = new ABImportContext(options, report,
                 level.Game, level.Settings, level.Resources.CompositeShapes,

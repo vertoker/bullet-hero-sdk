@@ -477,7 +477,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             var result = ABLevelImporter.Import(source, null, Options());
 
-            var key = result.Level.Game.PostProcessingEvents.ColorCurveses.Single();
+            var key = result.Level.Game.PostProcessingEvents.ColorCurves.Single();
             Assert.IsNotNull(key.HueVsHue, "a rotation becomes a flat Hue vs Hue curve");
             foreach (var curveKey in key.HueVsHue.KeyFrames)
                 Assert.AreEqual(ABPostProcessingMap.ImportHue(180f), curveKey.Value, 1e-4f);
@@ -504,7 +504,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             var result = ABLevelImporter.Import(source, null, Options());
 
-            var key = result.Level.Game.PostProcessingEvents.ColorCurveses.Single();
+            var key = result.Level.Game.PostProcessingEvents.ColorCurves.Single();
             Assert.IsNull(key.HueVsHue);
         }
 

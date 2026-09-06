@@ -111,7 +111,7 @@ namespace BH.SDK.Generators.Interop
                 // Handed nothing usable, produce nothing usable - an empty level the author can see
                 // is empty, rather than one that looks like a failed conversion of their content.
                 var empty = new Level();
-                empty.Settings.Framerate = options.Framerate;
+                empty.Settings.Fps = options.Framerate;
                 return new GeneratedLevel(empty, new LevelMeta());
             }
 

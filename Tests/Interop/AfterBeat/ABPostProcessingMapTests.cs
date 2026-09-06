@@ -201,7 +201,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             // The hue track's own mapping, and the flat curve the write turns it into.
             Assert.AreEqual(0f, ABPostProcessingMap.ImportHue(180f), 1e-4f, "180 degrees, wrapped");
-            var colorCurves = post.ColorCurveses.Single();
+            var colorCurves = post.ColorCurves.Single();
             Assert.IsNotNull(colorCurves.HueVsHue, "the hue track lands on Hue vs Hue");
         }
     }

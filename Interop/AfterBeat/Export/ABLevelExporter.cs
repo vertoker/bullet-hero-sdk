@@ -62,11 +62,11 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 return new Result(null, null, report);
             }
 
-            options = (options ?? new ABOptions(level.Settings.Framerate)).Sanitized();
+            options = (options ?? new ABOptions(level.Settings.Fps)).Sanitized();
 
             // The export's framerate is the LEVEL's, not the caller's preference: frames are being
             // turned back into seconds, and reading them at any other rate retimes the whole level.
-            options.Framerate = level.Settings.Framerate;
+            options.Framerate = level.Settings.Fps;
 
             // Afterbeat rounds every time it stores onto a 10 ms grid (ABTimeMap.SourceTimeStep), so
             // a level running finer than 100 fps has frames it cannot tell apart - and a track over
@@ -281,7 +281,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
             // rotation, so a curve that is not flat loses its shape and the other seven curves have
             // nowhere to go at all. Both are reported rather than silently flattened.
             var hueReshaped = false;
-            target.SetEvents(ABEventTrack.Hue, Map(post.ColorCurveses, framerate, context,
+            target.SetEvents(ABEventTrack.Hue, Map(post.ColorCurves, framerate, context,
                 key =>
                 {
                     var hue = ABPostProcessingMap.ExportHueCurve(key.HueVsHue, out var isFlat);
@@ -450,8 +450,8 @@ namespace BH.SDK.Interop.AfterBeat.Export
             if (beats == null || beats.Count == 0) return;
 
             var first = beats[0];
-            target.Editor.Bpm.Value = first.Bpm;
-            target.Editor.Bpm.ValueDuplicate = first.Bpm;
+            target.Editor.Bpm.Value = first.BPM;
+            target.Editor.Bpm.ValueDuplicate = first.BPM;
             target.Editor.Bpm.Offset = ABTimeMap.ToSeconds(first.Span.StartFrame, context.Options.Framerate)
                                        + first.Offset / context.Options.Framerate;
 
@@ -536,7 +536,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     "events");
 
             // Velocities are NOT on this list - they have Afterbeat's own force track to go to.
-            if (player.Visibles is { Count: > 0 } || player.Controls is { Count: > 0 }
+            if (player.Visibilities is { Count: > 0 } || player.Controls is { Count: > 0 }
                 || player.Collisions is { Count: > 0 })
                 report.Dropped("player_events",
                     "Afterbeat levels cannot hide the player, take control away or turn collision off; those tracks are not exported.",
@@ -591,7 +591,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
             var unsupported =
                 post.MotionBlurs is { Count: > 0 } ||
                 post.LiftGammaGains is { Count: > 0 } ||
-                post.ShadowsMidtonesHighlightses is { Count: > 0 } ||
+                post.ShadowsMidtonesHighlights is { Count: > 0 } ||
                 post.WhiteBalances is { Count: > 0 };
 
             if (unsupported)
@@ -601,7 +601,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
             // Colour curves DO have a destination - Afterbeat's hue track - but only half of one:
             // it rotates hue and knows nothing about saturation.
-            if (post.ColorCurveses is { Count: > 0 })
+            if (post.ColorCurves is { Count: > 0 })
                 report.Approximated("color_curves_hue_only",
                     "Afterbeat has a hue rotation but no saturation curve; only the hue half of this level's colour curves was exported.",
                     "postprocessing");

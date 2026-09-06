@@ -38,7 +38,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.Import(ABMockData.CreateLevel(), null, Options());
 
             Assert.IsNotNull(result.Level);
-            Assert.AreEqual(Framerate, result.Level.Settings.Framerate);
+            Assert.AreEqual(Framerate, result.Level.Settings.Fps);
             Assert.AreEqual(1, result.Level.Game.Objects.Count);
             Assert.AreEqual(1, result.Level.Resources.Themes.Count);
             Assert.AreEqual(1, result.Level.Game.Events.Markers.Count);
@@ -210,7 +210,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var beats = result.Level.Game.Events.Beats;
 
             Assert.AreEqual(1, beats.Count);
-            Assert.AreEqual(128f, beats[0].Bpm, 1e-4f);
+            Assert.AreEqual(128f, beats[0].BPM, 1e-4f);
             Assert.AreEqual(result.Level.Settings.FrameDuration, beats[0].Span.FrameDuration);
         }
 
