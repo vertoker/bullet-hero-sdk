@@ -70,7 +70,7 @@ namespace BH.SDK.Generators.Interop
                 nameof(Parameters.AudioLengthSeconds))
             .Range(nameof(Parameters.Framerate), FrameRules.MinFramerate, FrameRules.MaxFramerate)
             .Range(nameof(Parameters.ParallaxLayerOffset), 0, ValueRules.MaxLayer)
-            .Range(nameof(Parameters.MaxParallaxLoopKeys), 2, LevelRules.MaxObjectKeys)
+            .Range(nameof(Parameters.MaxParallaxLoopKeys), 2, ABOptions.MaxParallaxLoopKeysCap)
             .Range(nameof(Parameters.EditorGroupStride), 1, ValueRules.MaxLayer)
             .Range(nameof(Parameters.PlacementLayerOffset), 0, ValueRules.MaxLayer)
             // Zero is "the host could not measure the song"; the top is the longest level this
@@ -230,8 +230,10 @@ namespace BH.SDK.Generators.Interop
 
             /// <summary> Whether the background layers are converted too. </summary>
             public bool ImportParallax = true;
+
             /// <summary> Whether prefab templates are. </summary>
             public bool ImportPrefabs = true;
+
             /// <summary> Whether the source's object names survive. </summary>
             public bool KeepObjectNames = true;
 
@@ -250,6 +252,7 @@ namespace BH.SDK.Generators.Interop
 
             /// <summary> How far apart the imported editor groups are placed in layer space. </summary>
             public int EditorGroupStride = ABLayerMap.DepthSpan;
+
             /// <summary> How far prefab placements are lifted above the rest. </summary>
             public int PlacementLayerOffset;
 
@@ -260,20 +263,25 @@ namespace BH.SDK.Generators.Interop
 
             /// <summary> How far background layers are pushed behind it. </summary>
             public int ParallaxLayerOffset = 1;
+
             /// <summary> How many keyframes a parallax loop may be baked into before it is truncated. </summary>
-            public int MaxParallaxLoopKeys = LevelRules.MaxObjectKeys;
+            public int MaxParallaxLoopKeys = ABOptions.MaxParallaxLoopKeysCap;
 
             /// <summary> Filled in by the host from the folder it opened - see
             /// <see cref="IABLevelInput"/>. Fields with explicit interface forwarding, the
             /// same shape every other external input in this folder takes: a form binds to fields,
             /// and an interface member is not one. </summary>
             public string LevelJson = string.Empty;
+
             /// <summary> The .vgm document, where the host found one. </summary>
             public string MetaJson = string.Empty;
+
             /// <summary> The song the source level names. </summary>
             public string AudioFileName = string.Empty;
+
             /// <summary> Where it all came from, for the report. </summary>
             public string SourceFolder = string.Empty;
+
             /// <summary> How long that song is; filled by the host, and what bounds the timeline. </summary>
             public float AudioLengthSeconds;
 
@@ -282,21 +290,25 @@ namespace BH.SDK.Generators.Interop
                 get => LevelJson;
                 set => LevelJson = value;
             }
+
             string IABLevelInput.MetaJson
             {
                 get => MetaJson;
                 set => MetaJson = value;
             }
+
             string IABLevelInput.AudioFileName
             {
                 get => AudioFileName;
                 set => AudioFileName = value;
             }
+
             string IABLevelInput.SourceFolder
             {
                 get => SourceFolder;
                 set => SourceFolder = value;
             }
+
             float IABLevelInput.AudioLengthSeconds
             {
                 get => AudioLengthSeconds;

@@ -34,8 +34,18 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     /// nobody here authored is read. </summary>
     public class ABCorpusTests
     {
-        /// <summary> Where the author keeps real Afterbeat content. Expected to point at the
-        /// "afterbeat" folder beside the game's own saves. </summary>
+        // The search is RECURSIVE, so this wants the folder that CONTAINS the levels rather than a
+        // level folder - and the richest such root is Steam's own workshop directory for the game,
+        // `steamapps/workshop/content/440310`, which holds one folder per subscribed level plus the
+        // three autosaves each keeps. That is where the five-level corpus §11 was measured on lives.
+        // Pointing it at the "afterbeat" folder beside the game's saves works the same way.
+        //
+        // It is read from the PROCESS environment, so setting it needs the Editor restarted before
+        // these run for real - and an unset variable passes having checked nothing, which is the
+        // state four of those five levels were invisible in.
+
+        /// <summary> Where the author keeps real Afterbeat content - any folder with `.vgd` files
+        /// somewhere under it. </summary>
         public const string CorpusVariable = "BH_AFTERBEAT_CORPUS";
 
         /// <summary> The framerate the corpus is imported at. High enough that keyframes a level
@@ -303,7 +313,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 }
 
                 foreach (var pair in samples[index])
-                    if (!examples.ContainsKey(pair.Key)) examples[pair.Key] = pair.Value;
+                    if (!examples.ContainsKey(pair.Key))
+                        examples[pair.Key] = pair.Value;
             }
 
             if (totals.Count == 0)

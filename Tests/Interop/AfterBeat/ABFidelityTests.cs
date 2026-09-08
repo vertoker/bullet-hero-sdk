@@ -11,6 +11,7 @@ using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
 using BH.SDK.Models.Primitives.Resources;
 using BH.SDK.Models.Values;
+using BH.SDK.Rules;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests.Interop.AfterBeat
@@ -875,6 +876,333 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var returned = exported.Level.Objects.Single().Scale.Keyframes.Single();
             Assert.AreEqual(3f, returned.GetValue(0), 1e-3f);
             Assert.AreEqual(3f, returned.GetValue(1), 1e-3f);
+        }
+
+        #endregion
+
+        #region What five real workshop levels found
+
+        // Everything below was measured on the five Afterbeat workshop levels the author downloaded
+        // rather than reasoned about, and every one of them was a loss no round trip could see -
+        // both directions agreed, so the level survived a conversion and did not survive PLAYING.
+
+        private static VgdObject Spinner(float deltaDegrees, ABRandomType random,
+            params float[] randomValues)
+        {
+            var target = new VgdObject
+            {
+                Id = "spin",
+                ObjectType = (int)ABObjectType.Normal,
+                Shape = (int)ABShape.Square,
+                AutokillType = (int)ABAutokillType.FixedTime,
+                AutokillOffset = 2f,
+            };
+
+            target.Color.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new List<float> { 0f } });
+            target.Rotate.Keyframes.Add(new VgdKeyframe
+            {
+                Time = 0f,
+                Values = new List<float> { deltaDegrees },
+                RandomType = (int)random,
+                RandomValues = new List<float>(randomValues),
+            });
+
+            return target;
+        }
+
+        private static void AddShake(VgdLevel level, float time, params float[] values)
+        {
+            var array = new Newtonsoft.Json.Linq.JArray();
+            foreach (var value in values) array.Add(value);
+
+            level.Events[(int)ABEventTrack.CameraShake].Add(new VgdEventKeyframe
+            {
+                Time = time,
+                Values = array,
+            });
+        }
+
+        // Two thirds of every rotation keyframe in the corpus carries r != 0, and the importer read
+        // the value and nothing else - so an object authored to spin by a random amount spun by a
+        // fixed one, on 1 334 objects of a single level, and the report said nothing at all.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_RotationRandomization_SurvivesAsARange()
+        {
+            var imported = Import(LevelOf(Spinner(0f, ABRandomType.Linear, 360f, 0f, 0f)));
+
+            var angle = imported.Game.Objects.Values.OfType<ShapeObject>().Single()
+                .Rotations.Single().Angle;
+
+            Assert.IsInstanceOf<FloatMinMax>(angle, "a randomized rotation must not flatten to a literal");
+            var range = (FloatMinMax)angle;
+            Assert.AreEqual(0f, range.Min, 1e-4f);
+            Assert.AreEqual(360f * ABValueMap.DegreesToRadians, range.Max, 1e-4f,
+                "the range crosses in radians, like the value it replaces");
+        }
+
+        // The range is a range of the DELTA, so it has to be measured from the running total rather
+        // than from zero - the mistake that would make every later keyframe of a spinning object
+        // roll around the origin instead of around where the object had turned to.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ARandomRotationAfterAPlainOne_IsOffsetByWhatCameBefore()
+        {
+            var source = Spinner(90f, ABRandomType.None);
+            source.Rotate.Keyframes.Add(new VgdKeyframe
+            {
+                Time = 1f,
+                Values = new List<float> { 0f },
+                RandomType = (int)ABRandomType.Linear,
+                RandomValues = new List<float> { 90f, 0f, 0f },
+            });
+
+            var rotations = Import(LevelOf(source)).Game.Objects.Values.OfType<ShapeObject>()
+                .Single().Rotations.OrderBy(k => k.Frame).ToArray();
+
+            var range = (FloatMinMax)rotations[1].Angle;
+            Assert.AreEqual(90f * ABValueMap.DegreesToRadians, range.Min, 1e-4f,
+                "the low end is the accumulated 90 degrees, not zero");
+            Assert.AreEqual(180f * ABValueMap.DegreesToRadians, range.Max, 1e-4f);
+        }
+
+        // One random keyframe crosses exactly; it is the COMPOUNDING between several that this
+        // format cannot express, so that is the only case worth a line in the report.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ASingleRandomRotation_IsNotReportedAsApproximated()
+        {
+            var result = ABLevelImporter.Import(
+                LevelOf(Spinner(0f, ABRandomType.Linear, 360f, 0f, 0f)), null, Options());
+
+            Assert.IsFalse(result.Report.Issues.Any(i => i.Code == "rotation_random_not_compounded"));
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_SeveralRandomRotations_AreReportedAsNotCompounding()
+        {
+            var source = Spinner(0f, ABRandomType.Linear, 360f, 0f, 0f);
+            source.Rotate.Keyframes.Add(new VgdKeyframe
+            {
+                Time = 1f,
+                Values = new List<float> { 0f },
+                RandomType = (int)ABRandomType.Linear,
+                RandomValues = new List<float> { 360f, 0f, 0f },
+            });
+
+            var result = ABLevelImporter.Import(LevelOf(source), null, Options());
+
+            Assert.IsTrue(result.Report.Issues.Any(i => i.Code == "rotation_random_not_compounded"));
+        }
+
+        // A shake keyframe over there is four numbers and this read only the first, on 90% of the
+        // corpus' shake keyframes. The two per-axis weights are exactly this format's own and cross
+        // untouched; the speed blend is folded into a rate and an amplitude - see ImportShake.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_ADirectionalShake_StaysDirectional()
+        {
+            var source = LevelOf(Square(0f));
+            AddShake(source, 0f, 2f, 1f, 0f, 0f);
+
+            var shake = Import(source).Game.CameraEvents.Shakes.Single();
+
+            Assert.AreEqual(2f, shake.Intensity, 1e-4f, "no speed blend means no amplitude change");
+            Assert.AreEqual(1f, shake.IntensityX, 1e-4f);
+            Assert.AreEqual(0f, shake.IntensityY, 1e-4f, "a sideways-only shake must not become circular");
+            Assert.AreEqual(ABEventsImporter.ShakeSpeedSlow, shake.Speed, 1e-4f);
+        }
+
+        // A keyframe that omits the three optional numbers means the source's own defaults, which
+        // are "no weighting" and "the slow generator" - not zero.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_AShakeWithOnlyItsStrength_TakesTheSourcesOwnDefaults()
+        {
+            var source = LevelOf(Square(0f));
+            AddShake(source, 0f, 3f);
+
+            var shake = Import(source).Game.CameraEvents.Shakes.Single();
+
+            Assert.AreEqual(3f, shake.Intensity, 1e-4f);
+            Assert.AreEqual(ABEventsImporter.DefaultShakeWeight, shake.IntensityX, 1e-4f);
+            Assert.AreEqual(ABEventsImporter.DefaultShakeWeight, shake.IntensityY, 1e-4f);
+        }
+
+        // The fast generator is a quarter stronger over there, and this format has one noise rather
+        // than two - so that difference has to come out of the intensity or a fully-blended shake
+        // is quietly weaker than it was.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_AFullyBlendedShake_CarriesTheFastGeneratorsAmplitude()
+        {
+            var source = LevelOf(Square(0f));
+            AddShake(source, 0f, 2f, 1f, 1f, 1f);
+
+            var shake = Import(source).Game.CameraEvents.Shakes.Single();
+
+            Assert.AreEqual(2f * ABEventsImporter.ShakeFastAmplitude, shake.Intensity, 1e-4f);
+            Assert.AreEqual(ABEventsImporter.ShakeSpeedFast, shake.Speed, 1e-4f);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Conversion_Shake_SurvivesBothDirections()
+        {
+            var source = LevelOf(Square(0f));
+            AddShake(source, 0f, 2f, 1f, 0.25f, 1f);
+
+            var imported = ABLevelImporter.Import(source, null, Options());
+            var exported = ABLevelExporter.Export(imported.Level, null, Options());
+
+            var returned = exported.Level.Events[(int)ABEventTrack.CameraShake].Single();
+            Assert.AreEqual(2f, returned.GetFloat(0), 1e-3f, "the amplitude the blend folded in comes back out");
+            Assert.AreEqual(1f, returned.GetFloat(1), 1e-3f);
+            Assert.AreEqual(0.25f, returned.GetFloat(2), 1e-3f);
+            Assert.AreEqual(1f, returned.GetFloat(3), 1e-3f);
+        }
+
+        // The node mirrors the camera's own zoom track, and the camera's cap is 512 while this was
+        // capped at the object cap of 32 - so on the corpus' largest level every camera-parented
+        // object froze at its 32nd keyframe, at t=103s of 229s, while the camera kept zooming.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TheScaleNode_KeepsFarMoreThanTheOldThirtyTwoKeyframes()
+        {
+            var source = LevelOf(CameraChild("pinned", 1f, 1f));
+            for (var i = 0; i < 64; i++) AddZoom(source, i * 0.5f, 20f + i);
+
+            var root = Import(source).Game.Objects.Values
+                .Single(o => o.ParentObjectId == ObjectId.Camera);
+
+            Assert.AreEqual(64, root.Scales.Count,
+                "the node follows the camera's zoom track, which is not bounded by the object cap");
+        }
+
+        // A marker's colour is an index into the editor's own seven-entry list, and every marker
+        // used to arrive white - one corpus level colours 43 markers across six of the seven.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Easy)]
+        public void Import_AMarkerColour_ComesFromTheEditorsOwnPalette()
+        {
+            var source = LevelOf(Square(0f));
+            source.Markers.Add(new VgdMarker { Id = "m", Name = "drop", Color = 3, Time = 0f });
+
+            var marker = Import(source).Game.Events.Markers.Single();
+            var expected = ABEditorColors.GridColors[3];
+
+            Assert.AreEqual(expected.R, marker.Color4.R, 1e-4f);
+            Assert.AreEqual(expected.G, marker.Color4.G, 1e-4f);
+            Assert.AreEqual(expected.B, marker.Color4.B, 1e-4f);
+        }
+
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Hard)]
+        public void Conversion_AMarkerColour_SurvivesBothDirections()
+        {
+            var source = LevelOf(Square(0f));
+            source.Markers.Add(new VgdMarker { Id = "m", Name = "drop", Color = 5, Time = 0f });
+
+            var imported = ABLevelImporter.Import(source, null, Options());
+            var exported = ABLevelExporter.Export(imported.Level, null, Options());
+
+            Assert.AreEqual(5, exported.Level.Markers.Single().Color);
+        }
+
+        // A colour index reaches this converter as a float, because every .vgd keyframe value does,
+        // and five reads truncated it. A whole number can arrive as 3.9999999 - which is what the
+        // lenient int reader exists for elsewhere - and truncating picks the ADJACENT theme colour
+        // with nothing reported: the object simply renders in the wrong colour.
+        [TestCase(3f, 3)]
+        [TestCase(3.9999999f, 4)]
+        [TestCase(4.0000001f, 4)]
+        [TestCase(3.5f, 4)]
+        [TestCase(-3.5f, -4)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void ToIndex_RoundsRatherThanTruncating(float value, int expected)
+            => Assert.AreEqual(expected, ABColorMap.ToIndex(value));
+
+        // Cutting a string at a fixed length cuts UTF-16 code units, and a non-BMP character is two
+        // of them - so a cut landing between the halves leaves a string that is not valid UTF-16.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextCutMidSurrogatePair_KeepsTheStringValid()
+        {
+            // One astral character is two chars, so 512 of them fill the cap exactly and 513 put
+            // the cut squarely between a pair's two halves.
+            var source = Text(string.Concat(Enumerable.Repeat("\U0001F600", 513)));
+
+            var imported = Import(LevelOf(source)).Game.Objects.Values.OfType<TextObject>().Single();
+            var text = ((StringValue)imported.Text).Value;
+
+            Assert.LessOrEqual(text.Length, ValueRules.MaxGameString);
+            Assert.IsFalse(char.IsHighSurrogate(text[^1]), "the cut must not leave half a character");
+            for (var i = 0; i < text.Length; i++)
+                if (char.IsHighSurrogate(text[i]))
+                {
+                    Assert.Less(i + 1, text.Length, "a high surrogate needs its pair");
+                    Assert.IsTrue(char.IsLowSurrogate(text[i + 1]));
+                    i++;
+                }
+        }
+
+        // The other half of the same cut: a tag the cut opens and never closes draws its own source
+        // instead of formatting anything.
+        [Test]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.Normal)]
+        public void Import_TextCutInsideATag_DropsThePartialTag()
+        {
+            var source = Text(new string('a', ValueRules.MaxGameString - 4) + "<color=#FF0000>b</color>");
+
+            var imported = Import(LevelOf(source)).Game.Objects.Values.OfType<TextObject>().Single();
+            var text = ((StringValue)imported.Text).Value;
+
+            var open = text.LastIndexOf('<');
+            Assert.IsTrue(open < 0 || text.IndexOf('>', open) >= 0,
+                "no '<' may be left without its '>'");
+        }
+
+        // Out of range is what the source game's own draw does with it, so a hand-edited index
+        // must land the same on both sides rather than throwing.
+        [TestCase(-4, 0)]
+        [TestCase(99, 6)]
+        [Author(Metadata.Author.Vertoker)]
+        [Category(Metadata.Category.Self)]
+        [Category(Metadata.Category.VeryEasy)]
+        public void ImportMarkerColour_OutOfRange_ClampsLikeTheSourceGame(int index, int expected)
+        {
+            var colour = ABEditorColors.Import(index);
+            Assert.AreEqual(ABEditorColors.GridColors[expected].R, colour.R, 1e-4f);
+            Assert.AreEqual(ABEditorColors.GridColors[expected].B, colour.B, 1e-4f);
         }
 
         #endregion

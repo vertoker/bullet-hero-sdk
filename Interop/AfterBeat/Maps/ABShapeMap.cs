@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BH.SDK.Models.Data;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
 using BH.SDK.Services.Shapes;
 using BH.SDK.Utils;
 
@@ -73,10 +74,13 @@ namespace BH.SDK.Interop.AfterBeat
         {
             /// <summary> The shape this project already ships, where one matches. </summary>
             public readonly ShapeId Preset;
+
             /// <summary> How to build the geometry instead, where none does. </summary>
             public readonly Synth Synth;
+
             /// <summary> What the source calls this shape, kept for the report. </summary>
             public readonly string Name;
+
             /// <summary> How far the source's own pivot sits from the centre this format measures from. </summary>
             public readonly float PivotOffsetY;
 
@@ -94,6 +98,7 @@ namespace BH.SDK.Interop.AfterBeat
                 PivotOffsetY = pivotOffsetY;
                 Canonical = canonical;
             }
+
             /// <summary> A shape that has to be built instead. </summary>
             public Entry(Synth synth, string name)
             {
@@ -120,6 +125,7 @@ namespace BH.SDK.Interop.AfterBeat
 
         /// <summary> The source editor's own slider bounds for a custom polygon's side count. </summary>
         public const int MinCustomSides = 3;
+
         /// <summary> As many sides as a custom polygon may have. </summary>
         public const int MaxCustomSides = 32;
 
@@ -137,6 +143,7 @@ namespace BH.SDK.Interop.AfterBeat
         /// polygon gains sides - a triangle rounds by up to half its radius, a twelve-sided shape by
         /// a quarter. </summary>
         public const float MaxRoundnessAtMinSides = 0.5f;
+
         /// <summary> How round a polygon of that many sides may be before it stops being one. </summary>
         public const float MaxRoundnessAtMaxSides = 0.25f;
 
@@ -259,6 +266,7 @@ namespace BH.SDK.Interop.AfterBeat
                 if (!entry.Canonical) continue;
                 reverse[entry.Preset.value] = pair.Key;
             }
+
             return reverse;
         }
 
@@ -327,7 +335,8 @@ namespace BH.SDK.Interop.AfterBeat
                 return ShapeId.Square.Fill;
             }
 
-            levelShapes.Add(shapeId, built);
+            if (!TryStore(levelShapes, shapeId, built, report, path)) return ShapeId.Square.Fill;
+
             report?.Info("shape_synthesized",
                 "Afterbeat's two arrows are the only shapes with no equivalent here, so they were added to the level's own shape resources.",
                 path);
@@ -354,12 +363,16 @@ namespace BH.SDK.Interop.AfterBeat
         {
             /// <summary> How many sides the polygon has. </summary>
             public readonly int Sides;
+
             /// <summary> How rounded its corners are. </summary>
             public readonly float Roundness;
+
             /// <summary> Ring thickness, where it is hollow. </summary>
             public readonly float Thickness;
+
             /// <summary> How many of its sides are actually drawn. </summary>
             public readonly int Slices;
+
             /// <summary> Whether the cut-out half is drawn instead. </summary>
             public readonly bool Inverted;
 
@@ -430,6 +443,7 @@ namespace BH.SDK.Interop.AfterBeat
                 form = candidate;
                 return true;
             }
+
             return false;
         }
 
@@ -449,6 +463,7 @@ namespace BH.SDK.Interop.AfterBeat
                 rung = candidate;
                 return true;
             }
+
             return false;
         }
 
@@ -469,6 +484,7 @@ namespace BH.SDK.Interop.AfterBeat
                 slice = candidate;
                 return true;
             }
+
             return false;
         }
 
@@ -496,8 +512,10 @@ namespace BH.SDK.Interop.AfterBeat
 
             var filled = custom.Thickness >= 1f;
             var name = $"Custom {custom.Sides}-gon" + (filled ? string.Empty : " Outline")
-                       + (custom.Turns < 1f ? $" {custom.Slices}/{custom.Sides}" : string.Empty)
-                       + (custom.Roundness > 0f ? " Rounded" : string.Empty);
+                                                    + (custom.Turns < 1f
+                                                        ? $" {custom.Slices}/{custom.Sides}"
+                                                        : string.Empty)
+                                                    + (custom.Roundness > 0f ? " Rounded" : string.Empty);
 
             var built = ShapeSynthUtils.RoundedShape(shapeId, name, custom.Sides, custom.Roundness,
                 custom.Thickness, custom.Turns, GetCustomRadius(custom.Sides),
@@ -510,7 +528,8 @@ namespace BH.SDK.Interop.AfterBeat
                 return ShapeId.Square.Fill;
             }
 
-            levelShapes.Add(shapeId, built);
+            if (!TryStore(levelShapes, shapeId, built, report, path)) return ShapeId.Square.Fill;
+
             report?.Info("shape_custom_polygon",
                 "Custom polygons whose corners are rounded have no built-in equivalent here, so each distinct one became a shape resource.",
                 path);
@@ -576,6 +595,30 @@ namespace BH.SDK.Interop.AfterBeat
         public static bool IsSecondQuarter(ShapeId shapeId)
             => ShapeCatalogService.TryDecode(shapeId, out var parameters)
                && parameters.Variant == ShapeSliceVariant.Second;
+
+        // Both synthesis paths used to Add unconditionally, which was the one capacity in this
+        // converter with no ceiling check and no report - every other one in the format says so
+        // when it truncates. The overflow surfaced later, in RuleCollectionMaxCount, as a level
+        // that simply failed validation with nothing connecting that to the import. Two of five
+        // real levels already reach half this cap, and 85% of their custom polygons synthesize a
+        // fresh entry rather than landing on the built-in library, so it is reachable.
+
+        /// <summary> Stores a synthesized shape unless the level is already full, in which case it
+        /// says so once and the caller falls back to a Square. </summary>
+        private static bool TryStore(IDictionary<ShapeId, CompositeShape> levelShapes,
+            ShapeId shapeId, CompositeShape built, InteropReport report, string path)
+        {
+            if (levelShapes.Count >= ResourceRules.MaxCompositeShapes)
+            {
+                report?.Dropped("composite_shapes_over_cap",
+                    $"This level needs more than {ResourceRules.MaxCompositeShapes} shapes of its own, which is this format's limit; the ones past it are drawn as squares.",
+                    path);
+                return false;
+            }
+
+            levelShapes.Add(shapeId, built);
+            return true;
+        }
 
         #endregion
     }

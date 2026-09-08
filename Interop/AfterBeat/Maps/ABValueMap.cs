@@ -266,6 +266,91 @@ namespace BH.SDK.Interop.AfterBeat
             return accumulatedDegrees * DegreesToRadians;
         }
 
+        // Rotation randomization used to be dropped here, silently and completely - the track read
+        // its value with GetValue(0) and never looked at the keyframe's own r/er, so two thirds of
+        // every real workshop level's rotation keyframes converted to a fixed angle and no report
+        // said so. It is the same five types as every other track; only the ARITHMETIC differs.
+        //
+        // Afterbeat randomizes a rotation DELTA, this format randomizes an ABSOLUTE angle, so the
+        // delta's range is added onto the running total. That is exact for a single random keyframe
+        // and an APPROXIMATION for a run of them: over there each roll moves the base every later
+        // keyframe is measured from, so the spread compounds along the track, while every key here
+        // rolls at its own address against the authored total. The per-keyframe spread is right and
+        // the drift between keyframes is not - which is what the caller reports once per track.
+
+        /// <summary>
+        /// One of Afterbeat's relative degree deltas as this format's absolute radians, carrying
+        /// whatever randomization the keyframe held. Call once per track, in keyframe order,
+        /// carrying <paramref name="accumulatedDegrees"/> between calls.
+        /// </summary>
+        public static IFloat AccumulateRotationValue(float deltaDegrees, VgdKeyframe source,
+            ref float accumulatedDegrees, float offsetRadians = 0f,
+            InteropReport report = null, string path = null)
+        {
+            var baseDegrees = accumulatedDegrees;
+            var radians = AccumulateRotation(deltaDegrees, ref accumulatedDegrees) + offsetRadians;
+
+            if (source == null || !TryRotationDelta(deltaDegrees, source,
+                    out var a, out var b, out var stepDegrees, report, path))
+                return new FloatValue(radians);
+
+            var min = (baseDegrees + Min(a, b)) * DegreesToRadians + offsetRadians;
+            var max = (baseDegrees + Max(a, b)) * DegreesToRadians + offsetRadians;
+            if (max - min < MinInterval) return new FloatValue(radians);
+
+            var step = Math.Abs(stepDegrees) * DegreesToRadians;
+            return step > MinInterval
+                ? new FloatMinMaxStep(min, max, step)
+                : new FloatMinMax(min, max);
+        }
+
+        /// <summary> Whether this keyframe randomizes its delta, and between which two degree
+        /// amounts - the same five types every other track takes, applied to a delta. </summary>
+        private static bool TryRotationDelta(float deltaDegrees, VgdKeyframe source,
+            out float a, out float b, out float stepDegrees, InteropReport report, string path)
+        {
+            a = deltaDegrees;
+            b = deltaDegrees;
+            stepDegrees = 0f;
+
+            switch ((ABRandomType)source.RandomType)
+            {
+                case ABRandomType.None:
+                    return false;
+
+                case ABRandomType.Linear:
+                    b = source.GetRandom(0);
+                    stepDegrees = source.GetRandom(2);
+                    return true;
+
+                case ABRandomType.LinearRounded:
+                    b = source.GetRandom(0);
+                    stepDegrees = WholeNumberInterval;
+                    return true;
+
+                case ABRandomType.Toggle:
+                    // A step equal to the whole width leaves exactly the two ends reachable, which
+                    // is what a toggle is - and for one number the pairing problem a vector has
+                    // does not arise, so this crosses exactly.
+                    b = source.GetRandom(0);
+                    stepDegrees = Math.Abs(b - a);
+                    return true;
+
+                case ABRandomType.Scale:
+                    // The factor multiplies the DELTA, and the interval snaps that same factor.
+                    a = deltaDegrees * source.GetRandom(0);
+                    b = deltaDegrees * source.GetRandom(1);
+                    stepDegrees = Math.Abs(deltaDegrees * source.GetRandom(2));
+                    return true;
+
+                default:
+                    report?.Dropped("random_unknown",
+                        $"Randomization type {source.RandomType} is not one this converter knows; those keyframes use their authored value.",
+                        path);
+                    return false;
+            }
+        }
+
         /// <summary>
         /// The reverse - absolute radians back to the delta in degrees Afterbeat expects. Carry
         /// <paramref name="previousRadians"/> between calls; it starts at zero, because an object's

@@ -74,7 +74,17 @@ namespace BH.SDK.Interop.AfterBeat.Models
         public VgdParallaxAnimation Animation { get; set; } = new();
     }
 
-    /// <summary> The shape/option pair, nested here rather than flat as it is on a gameplay object. </summary>
+    // A parallax shape node is a gameplay object's shape fields nested one level down, and it
+    // carries FIVE more than the pair this used to model - the source game's ParallaxObject
+    // .ShapeData declares a custom polygon, a gradient triple and its own text, and its
+    // ParallaxObjectShapeAdapter feeds HasGradient/HasLinearGradient off them, so none of it is
+    // vestigial. They are modelled here so they survive a round trip instead of resting in the
+    // extension data, and the importer REPORTS each one it cannot apply rather than acting on it:
+    // across five real workshop levels not one parallax object uses any of them (no "gt" key at
+    // all, and all 28 "gr"/"gs" values sitting on their own neutral defaults), so building a
+    // gradient, text or polygon path here would be machinery written against no evidence.
+
+    /// <summary> A parallax object's shape, nested rather than flat as a gameplay object's is. </summary>
     public class VgdParallaxShape : ABNode
     {
         /// <summary> Main shape family, numbered as a gameplay object's is. </summary>
@@ -84,6 +94,30 @@ namespace BH.SDK.Interop.AfterBeat.Models
         /// <summary> Variant within that family. </summary>
         [JsonProperty(ABNames.ObjectShapeOption)]
         public int ShapeOption { get; set; }
+
+        /// <summary> Parameters of a custom polygon, in the editor's own order: sides, roundness,
+        /// thickness, slices, inverted - as on a gameplay object. </summary>
+        [JsonProperty(ABNames.ObjectCustomShape)]
+        public List<float> CustomShape { get; set; }
+
+        /// <summary> Which gradient this shape is painted with, if any. Zero is none, and the
+        /// source game's own HasGradient is exactly this test. </summary>
+        [JsonProperty(ABNames.ObjectGradientType)]
+        public int GradientType { get; set; }
+
+        /// <summary> How far that gradient is turned. </summary>
+        [JsonProperty(ABNames.ObjectGradientRotation)]
+        public float GradientRotation { get; set; }
+
+        /// <summary> How far it is stretched. One is the source game's own field initializer and
+        /// therefore the neutral value - zero would be a degenerate ramp, not an absent one. </summary>
+        [JsonProperty(ABNames.ObjectGradientScale)]
+        public float GradientScale { get; set; } = 1f;
+
+        /// <summary> What a text-shaped parallax object says, under this node's own key rather than
+        /// a gameplay object's. </summary>
+        [JsonProperty(ABNames.ParallaxShapeText)]
+        public string Text { get; set; }
     }
 
     /// <summary> A parallax object's static transform. Rotation is in DEGREES here, unlike an

@@ -185,6 +185,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 if (i == 0) degrees = value;
                 else if (Math.Abs(value) > ShearEpsilon) return false;
             }
+
             return true;
         }
 
@@ -204,6 +205,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 if (Math.Abs((key?.GetValue(0) ?? 0f) - x) > ShearEpsilon) return false;
                 if (Math.Abs((key?.GetValue(1) ?? 0f) - y) > ShearEpsilon) return false;
             }
+
             return true;
         }
 
@@ -249,6 +251,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 if (key == null) continue;
                 if (Math.Abs(key.GetValue(0) - key.GetValue(1)) > ShearEpsilon) return true;
             }
+
             return false;
         }
 
@@ -262,6 +265,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 if (key == null) continue;
                 if (Math.Abs(key.GetValue(0)) > ShearEpsilon) return true;
             }
+
             return false;
         }
 
@@ -378,8 +382,10 @@ namespace BH.SDK.Interop.AfterBeat.Import
         {
             /// <summary> Character of the parent-type string that says position is inherited. </summary>
             public const int Position = 0;
+
             /// <summary> The one that says scale is. </summary>
             public const int Scale = 1;
+
             /// <summary> The one that says rotation is. </summary>
             public const int Rotation = 2;
         }
@@ -665,7 +671,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
             ABImportContext context, string path)
         {
             var track = source.Scale;
-            if (!HasChannel(track, ABParticleMap.ParticleScaleXIndex) && !HasChannel(track, ABParticleMap.ParticleScaleYIndex))
+            if (!HasChannel(track, ABParticleMap.ParticleScaleXIndex) &&
+                !HasChannel(track, ABParticleMap.ParticleScaleYIndex))
                 return new EffectScaleValue();
 
             return new EffectScaleCurvesOverLife
@@ -689,7 +696,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 return new EffectAngleValue
                 {
                     Angle = new FloatValue(ToRadians(
-                        ReadChannel(track.Keyframes[0], ABParticleMap.ParticleAngleIndex, ABParticleMap.ParticleAngleDefault))),
+                        ReadChannel(track.Keyframes[0], ABParticleMap.ParticleAngleIndex,
+                            ABParticleMap.ParticleAngleDefault))),
                 };
 
             return new EffectAngleCurvesOverLife
@@ -1087,7 +1095,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             // produces a playable level, and it is reported as dropped because it loses content.
             if (text.Length > ValueRules.MaxGameString)
             {
-                text = text[..ValueRules.MaxGameString];
+                text = TrimToLength(text, ValueRules.MaxGameString);
                 context.Report.Dropped("text_over_cap",
                     $"Some text objects carry more than {ValueRules.MaxGameString} characters, which is the fixed length this format's text buffers hold; those strings were cut to fit.",
                     path);
@@ -1404,6 +1412,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 target.Positions.Add(new PosKey(value, LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
             }
+
             ABTimeMap.DeduplicateByFrame(target.Positions, k => k.Frame, report, path);
         }
 
@@ -1457,6 +1466,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 into.Add(new ScaKey(value, LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
             }
+
             ABTimeMap.DeduplicateByFrame(into, k => k.Frame, report, path);
 
             // The object's own scale went to Scales, so the shape's shrink has nowhere to be undone
@@ -1503,12 +1513,23 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var offset = GetShearRotation(source, context);
 
             var accumulated = 0f;
+            var randomKeys = 0;
             foreach (var key in Take(track.Keyframes, LevelRules.MaxObjectKeys, report, path))
             {
-                var radians = ABValueMap.AccumulateRotation(key.GetValue(0), ref accumulated) + offset;
-                target.Rotations.Add(new AngleKey(new FloatValue(radians), LocalFrame(key, framerate),
+                var angle = ABValueMap.AccumulateRotationValue(key.GetValue(0), key,
+                    ref accumulated, offset, report, path);
+                if (angle is not FloatValue) randomKeys++;
+                target.Rotations.Add(new AngleKey(angle, LocalFrame(key, framerate),
                     ABEaseMap.Import(key.Ease, report, path)));
             }
+
+            // Only worth saying once a track holds MORE than one random keyframe - a single one
+            // crosses exactly, and it is the compounding between them that this format cannot say.
+            if (randomKeys > 1)
+                report?.Approximated("rotation_random_not_compounded",
+                    "Afterbeat randomizes a rotation as a delta from the keyframe before it, so its spread grows along a track; this format rolls every keyframe against the authored total, so those tracks vary by the right amount at each keyframe but no longer drift apart along it.",
+                    path);
+
             ABTimeMap.DeduplicateByFrame(target.Rotations, k => k.Frame, report, path);
         }
 
@@ -1569,12 +1590,37 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 context.Options.BakeGradientCorners, report, path);
         }
 
+        // Cutting a C# string at a fixed length cuts UTF-16 CODE UNITS, and two of those can be one
+        // character: an emoji or any other non-BMP glyph is a surrogate PAIR, so a cut landing
+        // between them leaves a lone half - a string that is not valid UTF-16 at all, which a JSON
+        // writer and a text renderer are each entitled to handle differently. The second hazard is
+        // a rich-text tag the cut opens and never closes, which draws the tag's own source instead
+        // of formatting anything. Both are cheap to avoid and neither announces itself.
+
+        /// <summary> The longest prefix of <paramref name="text"/> that fits and is still a whole
+        /// string - never splitting a surrogate pair, never leaving a tag open. </summary>
+        private static string TrimToLength(string text, int maxLength)
+        {
+            if (string.IsNullOrEmpty(text) || text.Length <= maxLength) return text;
+
+            var end = maxLength;
+            if (char.IsHighSurrogate(text[end - 1])) end--;
+
+            // An unclosed '<' after the cut would swallow whatever the renderer reads next, so the
+            // cut moves back to before it. Only when the tag really is unterminated: a '<' with its
+            // own '>' still inside the kept text is a finished tag and stays.
+            var open = text.LastIndexOf('<', end - 1);
+            if (open >= 0 && text.IndexOf('>', open) >= end) end = open;
+
+            return end <= 0 ? string.Empty : text[..end];
+        }
+
         private static IColor4 ReadStartColor(VgdKeyframe key, ABImportContext context, string path)
-            => ABColorMap.Import((int)key.GetValue(0), OpacityOf(key), ABPalette.Objects,
+            => ABColorMap.Import(ABColorMap.ToIndex(key.GetValue(0)), OpacityOf(key), ABPalette.Objects,
                 context.ReferenceTheme, context.Report, path);
 
         private static IColor4 ReadEndColor(VgdKeyframe key, ABImportContext context, string path)
-            => ABColorMap.Import((int)key.GetValue(2), OpacityOf(key), ABPalette.Objects,
+            => ABColorMap.Import(ABColorMap.ToIndex(key.GetValue(2)), OpacityOf(key), ABPalette.Objects,
                 context.ReferenceTheme, context.Report, path);
 
         // Afterbeat writes opacity as a PERCENTAGE, 0 to 100, and this format stores alpha as 0 to
@@ -1626,6 +1672,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                         path);
                     yield break;
                 }
+
                 taken++;
                 yield return key;
             }

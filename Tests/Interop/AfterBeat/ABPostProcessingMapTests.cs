@@ -22,10 +22,13 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     public class ABPostProcessingMapTests
     {
         // Not remapped: LSEffectsManager.UpdateBloom writes it into bloom.intensity as it stands.
+        // 50 is where this format's own ceiling sits, and it is there because a real workshop level
+        // authors exactly that - so 50 has to cross untouched, and only past it may anything clamp.
         [TestCase(0f, 0f)]
         [TestCase(5f, 5f)]
         [TestCase(10f, 10f)]
-        [TestCase(80f, 10f, TestName = "ImportBloomIntensity_PastThisFormatsRange_Clamps")]
+        [TestCase(50f, 50f, TestName = "ImportBloomIntensity_TheStrongestRealLevelAuthors_CrossesUntouched")]
+        [TestCase(80f, 50f, TestName = "ImportBloomIntensity_PastThisFormatsRange_Clamps")]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]

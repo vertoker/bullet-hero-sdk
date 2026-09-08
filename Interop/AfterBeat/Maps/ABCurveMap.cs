@@ -97,7 +97,7 @@ namespace BH.SDK.Interop.AfterBeat
                 last = time;
 
                 var themeIndex = ABColorMap.ToThemeIndex(
-                    (int)ReadValue(keyframe, ColorSlotIndex, 0f), ABPalette.Objects);
+                    ABColorMap.ToIndex(ReadValue(keyframe, ColorSlotIndex, 0f)), ABPalette.Objects);
                 var slot = ABColorMap.ResolveSlot(referenceTheme, new Color4ThemeRef(themeIndex));
                 var alpha = Math.Clamp(ReadValue(keyframe, ColorOpacityIndex, ColorOpacityScale)
                                        / ColorOpacityScale,

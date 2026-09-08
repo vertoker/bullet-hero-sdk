@@ -37,10 +37,30 @@ namespace BH.SDK.Interop.AfterBeat
         // so an Afterbeat bloom intensity is already a URP one. The old /5 made every converted
         // level's bloom five times too weak.
 
+        // THIS IS THE ONE CLAMP IN THIS FILE THAT LOSES ANYTHING, which is why it is also the only
+        // one that reports. URP's Bloom.intensity is an unbounded MinFloatParameter and the source
+        // writes into it raw, so a level authoring 80 really does render at 80 over there and
+        // cannot here. Every other clamp below lands on a URP ClampedFloatParameter - vignette,
+        // grain, glitch, lens, chromatic - so the source game clamps those itself, identically, and
+        // reporting them would be reporting that nothing happened.
+        //
+        // The ceiling was 10 and is 50, which is the strongest value the real corpus authors, so
+        // nothing in it clamps any more. The report is what covers the level that goes further.
+
         /// <summary> Crosses untouched - the source writes this straight into URP - and is only clamped. </summary>
-        public static float ImportBloomIntensity(float intensity)
-            => Clamp(intensity,
+        public static float ImportBloomIntensity(float intensity,
+            InteropReport report = null, string path = null)
+        {
+            var clamped = Clamp(intensity,
                 PostProcessingRules.Bloom.IntensityMin, PostProcessingRules.Bloom.IntensityMax);
+
+            if (intensity > PostProcessingRules.Bloom.IntensityMax)
+                report?.Approximated("bloom_clamped",
+                    $"This level's bloom is authored stronger than {PostProcessingRules.Bloom.IntensityMax}, which is this format's limit; those keyframes glow less than they did.",
+                    path);
+
+            return clamped;
+        }
 
         /// <summary> Back, unchanged. </summary>
         public static float ExportBloomIntensity(float intensity) => intensity;
@@ -48,6 +68,7 @@ namespace BH.SDK.Interop.AfterBeat
         /// <summary> Afterbeat bloom diffusion runs 5-30 and is remapped onto URP's 0-1 scatter -
         /// EventManager.InitBloomEvents does LSMath.Remap(ev[1], 5, 30, 0, 1). </summary>
         public const float BloomDiffusionMin = 5f;
+
         /// <summary> Top of that diffusion range. </summary>
         public const float BloomDiffusionMax = 30f;
 
@@ -78,6 +99,7 @@ namespace BH.SDK.Interop.AfterBeat
         /// <summary> Afterbeat chromatic intensity runs 0-8, remapped onto 0-3 before it reaches a
         /// volume whose own range is 0-1. </summary>
         public const float ChromaticSourceMax = 8f;
+
         /// <summary> Top of the remapped range, and above URP's own 1 - which is why the source saturates. </summary>
         public const float ChromaticTargetMax = 3f;
 
@@ -268,6 +290,7 @@ namespace BH.SDK.Interop.AfterBeat
                 isFlat = false;
                 break;
             }
+
             return ExportHue(value);
         }
 

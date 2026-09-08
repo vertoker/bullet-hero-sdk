@@ -111,6 +111,17 @@ namespace BH.SDK.Interop.AfterBeat.Models
         /// <summary> Seconds from the start of the level. </summary>
         [JsonProperty(ABNames.MarkerTime)]
         public float Time { get; set; }
+
+        // A marker with a duration is a RANGE highlight rather than a point, which is a different
+        // authoring concept from the one this format's Marker expresses - and modelling it here is
+        // what makes the difference visible instead of leaving it in the extension data. Nothing
+        // imports it: a duration nothing draws is a field an author cannot see, so it is reported
+        // as a loss and the marker still lands on its start. Six of one real level's 45 markers
+        // carry one, spanning up to 7.5 seconds.
+
+        /// <summary> How long the marker covers, in seconds; zero is an ordinary point marker. </summary>
+        [JsonProperty(ABNames.MarkerDuration)]
+        public float Duration { get; set; }
     }
 
     // Freehand notes drawn over the editor's canvas: a stroke of points, a time, and a marker it

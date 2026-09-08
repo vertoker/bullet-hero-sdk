@@ -92,6 +92,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var shapeId = ABShapeMap.Import(source.Shape?.Shape ?? 0, source.Shape?.ShapeOption ?? 0,
                 context.Shapes, report, path);
 
+            ReportUnappliedShape(source.Shape, report, path);
+
             var target = new ShapeObject
             {
                 // A background object cannot hit the player in Afterbeat either, so this is not an
@@ -174,12 +176,14 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     if (half < levelFrameDuration)
                         target.Positions.Add(new PosKey(loopPosition.Copy(), half, FrameRules.DefaultEase));
                 }
+
                 if (animation.LoopScale)
                 {
                     target.Sizes.Add(new ScaKey(baseScale.Copy(), frame, FrameRules.DefaultEase));
                     if (half < levelFrameDuration)
                         target.Sizes.Add(new ScaKey(loopScale.Copy(), half, FrameRules.DefaultEase));
                 }
+
                 if (animation.LoopRotation)
                 {
                     target.Rotations.Add(new AngleKey(new FloatValue(baseRotation), frame, FrameRules.DefaultEase));
@@ -201,6 +205,37 @@ namespace BH.SDK.Interop.AfterBeat.Import
             if (truncated)
                 context.Report.Approximated("parallax_loop_truncated",
                     $"A background loop needs more than {maxKeys} keyframes to cover the whole level; it was baked as far as the limit allows and stops after that.",
+                    path);
+        }
+
+        // A parallax shape node carries four things this importer does not act on, and until they
+        // were modelled they were not even visible - they rested in ABNode's extension data, so a
+        // background painted with a gradient imported flat and nothing said so. They are REPORTED
+        // rather than implemented because no parallax object in five real workshop levels uses any
+        // of them: implementing a gradient, a text or a custom polygon here would be a second
+        // implementation of each, written against nothing that exercises it. The day a level does,
+        // the report is what says so - see VgdParallaxShape.
+
+        /// <summary> Names what a parallax object's shape asked for and did not get. </summary>
+        private static void ReportUnappliedShape(VgdParallaxShape shape, InteropReport report,
+            string path)
+        {
+            if (shape == null || report == null) return;
+
+            if (shape.GradientType != 0)
+                report.Dropped("parallax_gradient",
+                    "A background object is painted with a gradient; this importer draws it in the layer's flat colour instead.",
+                    path);
+
+            if (shape.CustomShape is { Count: > 0 }
+                && shape.ShapeOption == ABShapeOptions.GetCustomOption(shape.Shape))
+                report.Dropped("parallax_custom_shape",
+                    "A background object uses a custom polygon; this importer resolves it against the built-in shapes instead.",
+                    path);
+
+            if (!string.IsNullOrEmpty(shape.Text))
+                report.Dropped("parallax_text",
+                    "A background object is a piece of text; this importer draws background objects as shapes only, so it is not imported.",
                     path);
         }
     }

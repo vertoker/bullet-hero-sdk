@@ -23,8 +23,10 @@ other sources have since been read, in this order of trust:
 2. **The game's own shipped data** — `Afterbeat_Data/level2`, which holds the Inspector-authored
    lists the code only references: the 21 default themes, and the 23 easing names a curve may carry.
 3. **Real levels** — measured, not read. Key frequencies, value ranges and start-time distributions
-   over a workshop level and its autosaves, which is what tells a value that does not exist from one
-   that merely never came up.
+   over **five** workshop levels and their autosaves (20 415 root objects, 4 774 template objects,
+   March 2024 to August 2026), which is what tells a value that does not exist from one that merely
+   never came up. It was one level for a long time, and widening it to five found ten more losses a
+   player can see — see `docs/issues/AFTERBEAT_ISSUE.md` §11.
 
 The wiki was wrong or silent on, among others: `ShapeType` 3 (Misc, not Arrow), `AutoKillType` 0,
 randomization type 2, the fact that `er` is a range END rather than an offset, the default `p_t`,

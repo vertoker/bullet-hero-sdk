@@ -41,8 +41,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
         {
             /// <summary> The .vgd document that came out. </summary>
             public VgdLevel Level { get; }
+
             /// <summary> The .vgm document beside it. </summary>
             public VgmMeta Meta { get; }
+
             /// <summary> What the export had to say about itself. </summary>
             public InteropReport Report { get; }
 
@@ -215,7 +217,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 }));
 
             target.SetEvents(ABEventTrack.CameraShake, Map(camera.Shakes, framerate, context,
-                key => new List<float> { key.Intensity }));
+                Import.ABEventsImporter.ExportShakeValues));
 
             target.SetEvents(ABEventTrack.Theme, MapThemes(events.Themes, framerate, context));
 
@@ -325,6 +327,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
         /// <summary> Glitch width and speed Afterbeat is given when this format has neither. </summary>
         public const float DefaultExportedGlitchWidth = 1f;
+
         /// <summary> The source's glitch carries a speed this format has no counterpart for, so one is written. </summary>
         public const float DefaultExportedGlitchSpeed = 1f;
 
@@ -423,6 +426,10 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     Id = marker.Frame.ToString(),
                     Name = marker.Name ?? string.Empty,
                     Description = marker.Description ?? string.Empty,
+                    // Afterbeat stores a choice among seven editor colours, this format stores a
+                    // colour, so the round trip snaps to the nearest - exact for anything that came
+                    // from there, approximate for a colour authored here.
+                    Color = ABEditorColors.Export(marker.Color4),
                     Time = ABTimeMap.ToSeconds(marker.Frame, framerate),
                 });
 
@@ -481,6 +488,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
                     || fixedLimit.Aspect.Height != Import.ABEventsImporter.SourceAspectHeight)
                     return false;
             }
+
             return true;
         }
 
@@ -543,7 +551,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
             // Velocities are NOT on this list - they have Afterbeat's own force track to go to.
             if (player.Visibilities is { Count: > 0 } || player.Controls is { Count: > 0 }
-                || player.Collisions is { Count: > 0 })
+                                                      || player.Collisions is { Count: > 0 })
                 report.Dropped("player_events",
                     "Afterbeat levels cannot hide the player, take control away or turn collision off; those tracks are not exported.",
                     "player_events");
@@ -578,10 +586,12 @@ namespace BH.SDK.Interop.AfterBeat.Export
         private static bool HasColouredMarkerOrCheckpoint(Level level)
         {
             foreach (var marker in level.Game.Events.Markers)
-                if (marker != null && IsColoured(marker.Color4)) return true;
+                if (marker != null && IsColoured(marker.Color4))
+                    return true;
 
             foreach (var checkpoint in level.Game.Events.Checkpoints)
-                if (checkpoint != null && IsColoured(checkpoint.Color4)) return true;
+                if (checkpoint != null && IsColoured(checkpoint.Color4))
+                    return true;
 
             return false;
         }
@@ -643,6 +653,6 @@ namespace BH.SDK.Interop.AfterBeat.Export
         /// any curve but Hue vs Hue. </summary>
         private static bool HasOtherColorCurves(ColorCurvesKey key)
             => key.Master != null || key.Red != null || key.Green != null || key.Blue != null
-                || key.HueVsSat != null || key.SatVsSat != null || key.LumVsSat != null;
+               || key.HueVsSat != null || key.SatVsSat != null || key.LumVsSat != null;
     }
 }

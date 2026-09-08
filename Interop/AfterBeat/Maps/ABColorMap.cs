@@ -63,6 +63,17 @@ namespace BH.SDK.Interop.AfterBeat
         public static int GetCount(ABPalette palette)
             => palette == ABPalette.Players ? VgtTheme.PlayerCount : VgtTheme.ObjectCount;
 
+        // A colour index arrives as a FLOAT, because every value in a .vgd keyframe does, and the
+        // five places that read one all used a plain (int) cast - which truncates. That is the one
+        // rounding rule the rest of this converter does not follow: ABShapeMap and ABThemeMap both
+        // round away from zero, for the reason LenientIntConverter exists at all (a whole number
+        // can reach a file as 3.9999999 and mean 4). Truncating picks the ADJACENT theme colour
+        // and nothing reports it, so an object simply renders in the wrong colour.
+
+        /// <summary> One of a keyframe's float components as the palette index it names. </summary>
+        public static int ToIndex(float value)
+            => (int)Math.Round(value, MidpointRounding.AwayFromZero);
+
         /// <summary> A palette index as a slot of the 64. Out-of-range indices clamp into the
         /// palette rather than reaching a neighbouring one - a bad index should read as the wrong
         /// object colour, never as an effect colour. </summary>
@@ -278,8 +289,10 @@ namespace BH.SDK.Interop.AfterBeat
         {
             /// <summary> Theme slot the colour starts at. </summary>
             public int StartIndex { get; }
+
             /// <summary> Theme slot its gradient ends at, equal to the start where there is no gradient. </summary>
             public int EndIndex { get; }
+
             /// <summary> How opaque it is. </summary>
             public float Opacity { get; }
 

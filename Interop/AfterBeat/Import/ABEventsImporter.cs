@@ -55,12 +55,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     new FloatValue(key.GetFloat(0) * ABValueMap.DegreesToRadians),
                     Frame(key, framerate), Ease(key, report, path)));
 
-            // Afterbeat's shake is one number. This format splits intensity from speed and from the
-            // two per-axis amounts, so the single number becomes the overall intensity and the rest
-            // keep their own defaults - a shake of the right size at this engine's own rate.
-            foreach (var key in source.GetEvents(ABEventTrack.CameraShake))
-                camera.Shakes.Add(new ShakeKey(key.GetFloat(0), DefaultShakeSpeed,
-                    Frame(key, framerate), Ease(key, report, path)));
+            ImportShake(source, camera, context, path);
 
             ImportThemes(source, level, context, path);
             ImportBackground(level, context);
@@ -77,7 +72,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             foreach (var key in source.GetEvents(ABEventTrack.Bloom))
                 post.Blooms.Add(new BloomKey(
-                    ABPostProcessingMap.ImportBloomIntensity(key.GetFloat(0)),
+                    ABPostProcessingMap.ImportBloomIntensity(key.GetFloat(0), report, path),
                     ABPostProcessingMap.ImportBloomScatter(
                         key.GetFloat(1, ABPostProcessingMap.DefaultBloomDiffusion)),
                     EffectColor(key, 2, ABColorMap.EffectColorWhite, context, path),
@@ -215,9 +210,17 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static bool IsActive(VgdEventKeyframe key, int intensityIndex)
             => key.GetFloat(intensityIndex) > 0f;
 
-        /// <summary> How fast an imported camera shake oscillates. Afterbeat carries no rate of its
-        /// own, so this is this engine's own. </summary>
-        public const float DefaultShakeSpeed = 20f;
+        /// <summary> And back: this format's four shake numbers as Afterbeat's own
+        /// <c>[mult, strengthX, strengthY, speedBlend]</c>, undoing exactly what
+        /// <c>ImportShake</c> did - the amplitude the blend folded in comes back out of the
+        /// intensity, so a level that made the round trip shakes the same on both sides. </summary>
+        public static List<float> ExportShakeValues(ShakeKey key)
+        {
+            var blend = Math.Clamp((key.Speed - ShakeSpeedSlow) / (ShakeSpeedFast - ShakeSpeedSlow),
+                0f, 1f);
+            var amplitude = 1f + (ShakeFastAmplitude - 1f) * blend;
+            return new List<float> { key.Intensity / amplitude, key.IntensityX, key.IntensityY, blend };
+        }
 
         /// <summary> Lens distortion scale Afterbeat has no field for. 1 is "no extra zoom", which
         /// is what a level authored without the field expects to see. </summary>
@@ -307,8 +310,21 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var keys = source.GetEvents(ABEventTrack.CameraZoom);
 
             foreach (var key in keys)
-                camera.Zooms.Add(new ZoomKey(new FloatValue(ImportZoomValue(key.GetFloat(0))),
+            {
+                var sourceZoom = key.GetFloat(0);
+
+                // An imported zoom is the source's own number DOUBLED, so this clamp is reached at
+                // half the number a reader expects - one real level authors zooms up to 71, which
+                // is 142 here. It is a real loss, unlike most clamps in this converter: over there
+                // the camera genuinely frames that far out.
+                if (ImportZoomValue(sourceZoom) < sourceZoom * 2f)
+                    context.Report.Approximated("zoom_clamped",
+                        $"This level zooms further out than this format allows ({ValueRules.MaxZoom}); those keyframes frame less of the level than they did.",
+                        path);
+
+                camera.Zooms.Add(new ZoomKey(new FloatValue(ImportZoomValue(sourceZoom)),
                     Frame(key, framerate), Ease(key, context.Report, path)));
+            }
 
             if (keys.Count > 0) return;
 
@@ -330,6 +346,63 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
         /// <summary> And back. </summary>
         public static float ExportZoomValue(float zoom) => zoom * 0.5f;
+
+        // A shake keyframe over there is FOUR numbers, and this read only the first of them - so a
+        // shake authored purely sideways came out circular and one authored as a rumble came out as
+        // a jitter, on 90% of the shake keyframes five real workshop levels carry. The layout is
+        // EventManager's own: [shakeMult, shakeStrengthX (default 1), shakeStrengthY (default 1),
+        // shakeSpeedMult (default 0)], applied at updateShake as
+        //     Lerp(shakeVector, shakeVectorHighSpeed, speedMult) * mult, then .x *= X, .y *= Y
+        // so the two per-axis weights are exactly this format's IntensityX/IntensityY and cross
+        // untouched.
+        //
+        // The speed blend is the half that cannot cross exactly, and the reason is structural
+        // rather than a missing number: over there it cross-fades the OUTPUT of two fixed DOTween
+        // generators (InitShakeEvents - vibrato 10 at amplitude 1, and vibrato 30 at amplitude
+        // 1.25), so a blend of 0.5 is the average of two independent noises rather than a signal at
+        // one and a half times the rate. Here a shake is one noise with a sampling rate. What
+        // carries across is their RATIO: the fast generator is three times the slow one and a
+        // quarter stronger, so the blend drives this format's rate over the same 3:1 span and folds
+        // the amplitude difference into the intensity, where it is exact.
+
+        private static void ImportShake(VgdLevel source, CameraEvents camera,
+            ABImportContext context, string path)
+        {
+            var framerate = context.Options.Framerate;
+            var report = context.Report;
+
+            foreach (var key in source.GetEvents(ABEventTrack.CameraShake))
+            {
+                var blend = Math.Clamp(key.GetFloat(3), 0f, 1f);
+                var speed = ShakeSpeedSlow + (ShakeSpeedFast - ShakeSpeedSlow) * blend;
+                var amplitude = 1f + (ShakeFastAmplitude - 1f) * blend;
+
+                if (blend > 0f)
+                    report?.Approximated("shake_speed_blended",
+                        "Afterbeat blends between two fixed shake generators, which is not a rate; those keyframes shake at the matching point of this engine's own rate range instead.",
+                        path);
+
+                camera.Shakes.Add(new ShakeKey(key.GetFloat(0) * amplitude, speed,
+                    key.GetFloat(1, DefaultShakeWeight), key.GetFloat(2, DefaultShakeWeight),
+                    Frame(key, framerate), Ease(key, report, path)));
+            }
+        }
+
+        /// <summary> This format's shake rate standing in for Afterbeat's slow generator. A rate is
+        /// samples per frame, so 1 is a fresh offset every frame and nothing above it is faster. </summary>
+        public const float ShakeSpeedSlow = 1f / 3f;
+
+        /// <summary> And for its fast one - three times the slow generator's vibrato, which is the
+        /// ratio this mapping preserves. </summary>
+        public const float ShakeSpeedFast = 1f;
+
+        /// <summary> How much stronger the fast generator is over there (DOTween strength 1.25
+        /// against 1), folded into intensity because this format has one noise, not two. </summary>
+        public const float ShakeFastAmplitude = 1.25f;
+
+        /// <summary> The per-axis shake weight a keyframe that omits one means - the source's own
+        /// default, and "no weighting at all". </summary>
+        public const float DefaultShakeWeight = 1f;
 
         // Afterbeat's world is calibrated around ITS player, and this engine's avatar is not the
         // same size - so a converted level plays with a player of the wrong size against content
@@ -415,6 +488,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> The one frame Afterbeat runs at, and therefore the one every level was
         /// authored inside. </summary>
         public const int SourceAspectWidth = 16;
+
         /// <summary> The source frames its levels 16:9; this is the half of it that is fixed. </summary>
         public const int SourceAspectHeight = 9;
 
@@ -521,8 +595,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
                         break;
                     }
 
+                    if (marker.Duration > 0f)
+                        context.Report.Dropped("marker_duration",
+                            "Some markers cover a stretch of the level rather than one moment; this format's markers are points, so those land on their start and their length is not imported.",
+                            path);
+
+                    // A marker's colour is an index into the editor's own seven-entry list, not
+                    // into any theme - see ABEditorColors. It used to arrive white, which threw
+                    // away the only signal a marker carries beyond its name.
                     events.Markers.Add(new Marker(marker.Name ?? string.Empty,
-                        marker.Description ?? string.Empty, Color4Value.white,
+                        marker.Description ?? string.Empty, ABEditorColors.Import(marker.Color),
                         ABTimeMap.ToFrame(marker.Time, framerate)));
                 }
 
@@ -533,7 +615,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     if (events.Checkpoints.Count >= LevelRules.MaxCheckpointEvents)
                     {
                         context.Report.Dropped("checkpoints_over_cap",
-                            $"This format allows {LevelRules.MaxCheckpointEvents} checkpoints; the rest were dropped.", path);
+                            $"This format allows {LevelRules.MaxCheckpointEvents} checkpoints; the rest were dropped.",
+                            path);
                         break;
                     }
 
@@ -556,7 +639,18 @@ namespace BH.SDK.Interop.AfterBeat.Import
         {
             var bpm = source?.Editor?.Bpm;
             if (bpm == null || level == null) return;
-            if (bpm.Value < LevelRules.MinBpm || bpm.Value > LevelRules.MaxBpm) return;
+
+            // The one silent substitution left in this importer, and it produced the state hardest
+            // to explain from the outside: a level with a tempo, and an empty beat grid, with
+            // nothing anywhere saying why. Beats are advisory - no playback reads them - which is
+            // why it is a note rather than a louder severity, not why it went unsaid.
+            if (bpm.Value < LevelRules.MinBpm || bpm.Value > LevelRules.MaxBpm)
+            {
+                context.Report.Dropped("beat_bpm_out_of_range",
+                    $"This level's editor tempo ({bpm.Value}) is outside the range this format allows ({LevelRules.MinBpm} to {LevelRules.MaxBpm}), so no beat grid was imported.",
+                    "editor");
+                return;
+            }
 
             var framerate = context.Options.Framerate;
             var duration = level.Settings.FrameDuration;
@@ -591,7 +685,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static IColor4 EffectColor(VgdEventKeyframe key, int index, Color4Value none,
             ABImportContext context, string path)
         {
-            var paletteIndex = (int)key.GetFloat(index, EffectColorNone);
+            var paletteIndex = ABColorMap.ToIndex(key.GetFloat(index, EffectColorNone));
             if (paletteIndex == EffectColorNone) return none;
 
             return ABColorMap.Import(paletteIndex, 1f, ABPalette.Effects,
@@ -604,7 +698,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static IColor3 EffectColor3(VgdEventKeyframe key, int index, Color4Value none,
             ABImportContext context, string path)
         {
-            var paletteIndex = (int)key.GetFloat(index, EffectColorNone);
+            var paletteIndex = ABColorMap.ToIndex(key.GetFloat(index, EffectColorNone));
             if (paletteIndex == EffectColorNone) return new Color3Value(none.R, none.G, none.B);
 
             return ABColorMap.ImportColor3(paletteIndex, 1f, ABPalette.Effects,

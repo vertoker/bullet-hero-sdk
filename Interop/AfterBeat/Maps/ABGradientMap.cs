@@ -94,6 +94,17 @@ namespace BH.SDK.Interop.AfterBeat
                     "Afterbeat's radial object gradient is a shape this format's four-corner colour cannot hold; those objects arrive filled flat with the colour their edge had.",
                     path);
 
+            // IsExact was written for exactly this line and then nothing called it, so the single
+            // commonest gradient loss went unreported: a ramp whose clamp is still active inside
+            // the box reaches its two ends BEFORE the corners, and four corner samples cannot say
+            // that - the result is the same colours spread more gently across the object. It is
+            // 68% of the linear gradients in five real workshop levels, so it is the rule rather
+            // than the exception, which is also why it is a note rather than a louder severity.
+            else if (!IsExact(rotation, scale))
+                report?.Approximated("gradient_softened",
+                    "A gradient that reaches its end colours before the edge of its object cannot be said with four corners; those gradients arrive spread more gently across the object than they were authored.",
+                    path);
+
             if (!allowBaking)
             {
                 var snapped = Snap(ref kBL) | Snap(ref kBR) | Snap(ref kTL) | Snap(ref kTR);

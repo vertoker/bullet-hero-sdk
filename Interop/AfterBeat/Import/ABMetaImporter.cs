@@ -101,6 +101,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
                     "Afterbeat rates a level's difficulty; this format does not, so the rating is not imported.",
                     path);
 
+            // CamJiggle is PlayerSelected(0)/AlwaysOn(1)/AlwaysOff(2), and only ONE of the three is
+            // a loss. This engine has no ambient camera jiggle at all, so AlwaysOff imports exactly
+            // right and PlayerSelected defers to a setting that does not exist here - reporting
+            // either would be reporting that nothing happened. AlwaysOn is the level insisting on
+            // an effect that will not be there. Three of five real levels carry AlwaysOff.
+            if (source.Song is { CamJiggle: (int)ABCamJiggle.ForceJiggle })
+                report.Dropped("meta_cam_jiggle",
+                    "This level asks for Afterbeat's ambient camera jiggle to be on regardless of the player's own setting; this engine has no such effect, so its camera is steadier than the author intended.",
+                    path);
+
             report.Info("meta_licensing_unset",
                 "Afterbeat metadata says nothing about licensing, age rating or attribution, so those were left unset rather than guessed. Fill them in before publishing.",
                 path);

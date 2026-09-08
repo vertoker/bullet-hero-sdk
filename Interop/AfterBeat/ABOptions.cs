@@ -36,10 +36,20 @@ namespace BH.SDK.Interop.AfterBeat
         /// simply not created, and the templates not stored. </summary>
         public bool ImportPrefabs = true;
 
-        /// <summary> How many keyframes a baked parallax loop may spend. Capped by the format's own
-        /// per-track limit; more cycles than this and the loop is truncated rather than thinned,
-        /// since a thinned loop drifts out of phase with the rest of the background. </summary>
-        public int MaxParallaxLoopKeys = LevelRules.MaxObjectKeys;
+        // This number is the CONVERTER's, not the format's. It was LevelRules.MaxObjectKeys, which
+        // read as "as many as a track may hold" - but that ceiling is about storage and this is
+        // about how much of a background's loop is worth baking, so raising the one silently
+        // multiplied the other. A parallax loop is a repeating cycle: past a few dozen keyframes
+        // the extra cycles are indistinguishable and only cost load time.
+
+        /// <summary> The most keyframes a baked parallax loop may spend, and the default. More
+        /// cycles than this and the loop is truncated rather than thinned, since a thinned loop
+        /// drifts out of phase with the rest of the background. </summary>
+        public const int MaxParallaxLoopKeysCap = 32;
+
+        /// <summary> How many keyframes a baked parallax loop may spend, up to
+        /// <see cref="MaxParallaxLoopKeysCap"/>. </summary>
+        public int MaxParallaxLoopKeys = MaxParallaxLoopKeysCap;
 
         /// <summary> Name imported objects after their Afterbeat name, falling back to their source
         /// id. Off leaves every name empty, which is what an author gets from this editor's own
@@ -132,7 +142,9 @@ namespace BH.SDK.Interop.AfterBeat
         public float OpacityHitThreshold = DefaultOpacityHitThreshold;
 
         /// <summary> Every option at its default. </summary>
-        public ABOptions() { }
+        public ABOptions()
+        {
+        }
 
         /// <summary> The framerate the source's seconds are resolved into; everything else defaults. </summary>
         public ABOptions(int framerate)
@@ -146,7 +158,7 @@ namespace BH.SDK.Interop.AfterBeat
         {
             var copy = (ABOptions)MemberwiseClone();
             copy.Framerate = System.Math.Clamp(Framerate, FrameRules.MinFramerate, FrameRules.MaxFramerate);
-            copy.MaxParallaxLoopKeys = System.Math.Clamp(MaxParallaxLoopKeys, 2, LevelRules.MaxObjectKeys);
+            copy.MaxParallaxLoopKeys = System.Math.Clamp(MaxParallaxLoopKeys, 2, MaxParallaxLoopKeysCap);
             copy.AudioLengthSeconds = AudioLengthSeconds > 0f ? AudioLengthSeconds : 0f;
             copy.EditorGroupStride = System.Math.Clamp(EditorGroupStride, 1, ValueRules.MaxLayer);
             copy.ParallaxLayerOffset = System.Math.Clamp(ParallaxLayerOffset, 0, ValueRules.MaxLayer);

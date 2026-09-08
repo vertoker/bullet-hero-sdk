@@ -37,8 +37,10 @@ namespace BH.SDK.Interop.AfterBeat.Import
         {
             /// <summary> The level that came out. </summary>
             public Level Level { get; }
+
             /// <summary> Its metadata, which the source keeps in a separate document. </summary>
             public LevelMeta Meta { get; }
+
             /// <summary> What the import had to say about itself. </summary>
             public InteropReport Report { get; }
 
@@ -236,7 +238,12 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             var used = false;
             foreach (var obj in source.Objects)
-                if (obj != null && obj.IsParentedToCamera) { used = true; break; }
+                if (obj != null && obj.IsParentedToCamera)
+                {
+                    used = true;
+                    break;
+                }
+
             if (!used) return;
 
             var root = new RectObject
@@ -290,11 +297,21 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             ABTimeMap.DeduplicateByFrame(into, k => k.Frame, context.Report, "events");
 
-            if (into.Count <= LevelRules.MaxObjectKeys) return;
+            // TWO ceilings meet on this one track and the lower of them wins, which is not a
+            // belt-and-braces clamp but the only correct answer: what is built here is an ordinary
+            // object's Scales track, so RectObject's own MaxObjectKeys rule validates it - yet it
+            // MIRRORS the camera's Zooms track, so a slot past MaxCameraKeys could never be filled
+            // by anything. Capping by the camera's number alone would fail validation the moment
+            // the two constants diverged; capping by the object's alone is what used to happen, and
+            // while that was 32 against the camera's 512 it froze every camera-parented object at
+            // its 32nd keyframe - three quarters of the way through one real level's zoom work,
+            // with the camera itself still zooming correctly around them.
+            var cap = System.Math.Min(LevelRules.MaxObjectKeys, LevelRules.MaxCameraKeys);
+            if (into.Count <= cap) return;
 
-            into.RemoveRange(LevelRules.MaxObjectKeys, into.Count - LevelRules.MaxObjectKeys);
-            context.Report.Dropped("keys_over_cap",
-                $"Some tracks carry more than {LevelRules.MaxObjectKeys} keyframes, which is this format's limit; the extra ones were dropped.",
+            into.RemoveRange(cap, into.Count - cap);
+            context.Report.Dropped("camera_scale_keys_over_cap",
+                $"This level animates its camera zoom with more than {cap} keyframes, which is this format's limit for the hidden node that keeps camera-parented objects the right size; past that point those objects hold the size they had.",
                 "events");
         }
 
@@ -482,18 +499,21 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             if (source.Checkpoints != null)
                 foreach (var checkpoint in source.Checkpoints)
-                    if (checkpoint != null && checkpoint.Time > seconds) seconds = checkpoint.Time;
+                    if (checkpoint != null && checkpoint.Time > seconds)
+                        seconds = checkpoint.Time;
 
             if (source.Markers != null)
                 foreach (var marker in source.Markers)
-                    if (marker != null && marker.Time > seconds) seconds = marker.Time;
+                    if (marker != null && marker.Time > seconds)
+                        seconds = marker.Time;
 
             if (source.Events != null)
                 foreach (var track in source.Events)
                 {
                     if (track == null) continue;
                     foreach (var key in track)
-                        if (key != null && key.Time > seconds) seconds = key.Time;
+                        if (key != null && key.Time > seconds)
+                            seconds = key.Time;
                 }
 
             // A placement plus the length of what it places. Measured off the TEMPLATE's own
@@ -508,7 +528,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
                     var end = placement.StartTime;
                     if (templates != null && placement.PrefabId != null
-                        && templates.TryGetValue(placement.PrefabId, out var template))
+                                          && templates.TryGetValue(placement.PrefabId, out var template))
                         end += MeasureTemplateLength(template,
                             placement.StartTime - (template?.Offset ?? 0f));
 
@@ -549,6 +569,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 var reach = ABTimeMap.ResolveEndTime(obj, null, null, absoluteBase);
                 if (reach > end) end = reach;
             }
+
             return end;
         }
 
