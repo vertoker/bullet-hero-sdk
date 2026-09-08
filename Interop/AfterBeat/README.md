@@ -77,7 +77,7 @@ generator produces content, an export consumes a level.
 ## Three decisions worth knowing before changing anything here
 
 **These documents do not go through `SerializationService`.** That service wraps every
-`[DataVersion]` aggregate in a `{"version", "value"}` envelope and installs two dozen converters
+`[ModelGeneration]` aggregate in a `{"g", "v"}` envelope and installs two dozen converters
 implementing *this* format's polymorphism. Both would corrupt a foreign document. `Interop/` is also
 not `Versions/`: that machinery upgrades this format's own domains between generations, and a
 foreign format is not a generation of it.

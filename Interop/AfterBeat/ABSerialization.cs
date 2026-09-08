@@ -9,7 +9,7 @@ namespace BH.SDK.Interop.AfterBeat
 {
     // These documents deliberately do NOT go through SerializationService, and that is the point of
     // the whole Interop/ folder rather than an optimisation. That service exists to read and write
-    // THIS project's format: it wraps every [DataVersion] aggregate in a {"version", "value"}
+    // THIS project's format: it wraps every [ModelGeneration] aggregate in a {"g", "v"}
     // envelope, and it installs two dozen converters implementing this format's own polymorphism.
     // Both would corrupt a foreign document - an envelope Afterbeat cannot read, and a value
     // converter looking for a [typeEnum, payload] pair in a file that has never heard of one.
