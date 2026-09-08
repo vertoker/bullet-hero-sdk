@@ -534,12 +534,15 @@ namespace BH.SDK.Interop.AfterBeat.Export
         /// clamps to 0-14. </summary>
         public const int EditorBinsPerLayer = 15;
 
+        /// <summary> First timeline bin the source editor offers. </summary>
         public const int MinEditorBin = 0;
+        /// <summary> Last one - a row written past it is not reachable in that editor. </summary>
         public const int MaxEditorBin = 14;
 
         /// <summary> The source editor's own layer clamp, 0-5. </summary>
         public const int MinEditorLayer = 0;
 
+        /// <summary> Last editor layer it offers. </summary>
         public const int MaxEditorLayer = 5;
 
         /// <summary> The lowest layer an export writes - see <see cref="ApplyEditorRow"/> for why it

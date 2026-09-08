@@ -19,6 +19,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // Afterbeat emitter is a much smaller thing than an effect here, so most of what an effect can
     // be has nowhere to go. What this fixture pins is that the subset which CAN cross does, and that
     // everything else is reported BY NAME rather than as a category an author cannot act on.
+
+    /// <summary> Writing this project's effects back out as Afterbeat particle systems. </summary>
     public class ABParticleExportTests
     {
         private const int Framerate = 60;

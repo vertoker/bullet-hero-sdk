@@ -39,10 +39,14 @@ namespace BH.SDK.Interop.AfterBeat.Export
         /// same way this project keeps level and metadata apart. </summary>
         public readonly struct Result
         {
+            /// <summary> The .vgd document that came out. </summary>
             public VgdLevel Level { get; }
+            /// <summary> The .vgm document beside it. </summary>
             public VgmMeta Meta { get; }
+            /// <summary> What the export had to say about itself. </summary>
             public InteropReport Report { get; }
 
+            /// <summary> All three at once; nothing mutates them afterwards. </summary>
             public Result(VgdLevel level, VgmMeta meta, InteropReport report)
             {
                 Level = level;
@@ -51,6 +55,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
             }
         }
 
+        /// <summary> A whole level and its metadata as the source's two documents. </summary>
         public static Result Export(Level level, LevelMeta meta,
             ABOptions options = null, InteropReport report = null)
         {
@@ -320,6 +325,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
         /// <summary> Glitch width and speed Afterbeat is given when this format has neither. </summary>
         public const float DefaultExportedGlitchWidth = 1f;
+        /// <summary> The source's glitch carries a speed this format has no counterpart for, so one is written. </summary>
         public const float DefaultExportedGlitchSpeed = 1f;
 
         // "NO THEME COLOUR" IS A VALUE, and it is the one every real level carries on the effects

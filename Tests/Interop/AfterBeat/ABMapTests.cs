@@ -13,6 +13,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // silently in a real level - a rotation that looks fine until the object spins, a time that
     // rounds two keyframes onto one frame - so each is pinned on its own rather than only through
     // a whole-level round trip.
+
+    /// <summary> Afterbeat's easing names against this format's own curve set. </summary>
     public class ABEaseMapTests
     {
         [Test]
@@ -87,6 +89,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         }
     }
 
+    /// <summary> Afterbeat stores time in seconds; this is the conversion into frames, and back. </summary>
     public class ABTimeMapTests
     {
         [TestCase(0f, 60, 0)]
@@ -179,6 +182,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         }
     }
 
+    /// <summary> Degrees against radians, and which way each format measures them. </summary>
     public class ABRotationTests
     {
         [Test]
@@ -215,6 +219,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         }
     }
 
+    /// <summary> The plain numeric conversions the other maps are built on. </summary>
     public class ABValueMapTests
     {
         [Test]

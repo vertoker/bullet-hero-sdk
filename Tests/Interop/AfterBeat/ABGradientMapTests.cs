@@ -24,6 +24,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     //    ends cannot, and becomes a literal. Asserting the colour VALUE cannot tell those apart -
     //    a baked corner sitting on an end has the right value and the wrong type - so these tests
     //    assert the VARIANT, not the numbers.
+
+    /// <summary> Afterbeat's gradients against this format's own. </summary>
     public class ABGradientMapTests
     {
         private const int Frame = 0;

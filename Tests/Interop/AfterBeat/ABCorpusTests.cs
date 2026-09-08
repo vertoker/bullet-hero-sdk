@@ -29,6 +29,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // source that yields nothing as a non-runnable test, which is a red suite for a corpus that is
     // legitimately absent. [Explicit]/[Ignore] are not used anywhere in this project for the same
     // family of reason - a test that never runs rots silently.
+
+    /// <summary> The import run against real Afterbeat levels rather than fixtures - the only place a document
+    /// nobody here authored is read. </summary>
     public class ABCorpusTests
     {
         /// <summary> Where the author keeps real Afterbeat content. Expected to point at the

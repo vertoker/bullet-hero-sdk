@@ -51,6 +51,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             };
         }
 
+        /// <summary> A .vgm document as this format's metadata. </summary>
         public static LevelMeta Import(VgmMeta source, InteropReport report = null, string path = "metadata")
         {
             var meta = new LevelMeta

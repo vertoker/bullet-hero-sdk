@@ -28,12 +28,19 @@ namespace BH.SDK.Interop.AfterBeat
         /// <summary> Answered when a slot is not found - documented as slot 1. </summary>
         public const int FallbackIndex = 0;
 
+        /// <summary> Where the interface colour lands. </summary>
         public const int GuiIndex = 1;
+        /// <summary> Where the background colour lands. </summary>
         public const int BackgroundIndex = 2;
+        /// <summary> First of the four player slots. </summary>
         public const int PlayerStartIndex = 3;
+        /// <summary> Where the interface accent lands. </summary>
         public const int TailIndex = 7;
+        /// <summary> First of the object slots, on a round boundary so a palette stays readable in the matrix. </summary>
         public const int ObjectStartIndex = 16;
+        /// <summary> First of the background slots. </summary>
         public const int ParallaxStartIndex = 32;
+        /// <summary> First of the effect slots. </summary>
         public const int EffectStartIndex = 48;
 
         #region Import

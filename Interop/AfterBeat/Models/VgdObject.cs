@@ -16,13 +16,19 @@ namespace BH.SDK.Interop.AfterBeat.Models
         /// <summary> Positional meaning of each entry of <see cref="Tracks"/>. </summary>
         public static class TrackIndex
         {
+            /// <summary> Position over time. </summary>
             public const int Move = 0;
+            /// <summary> Size over time. </summary>
             public const int Scale = 1;
+            /// <summary> Rotation over time. </summary>
             public const int Rotate = 2;
+            /// <summary> Theme colour, opacity and gradient end over time. </summary>
             public const int Color = 3;
+            /// <summary> How many tracks the array always holds. </summary>
             public const int Count = 4;
         }
 
+        /// <summary> The object's own id, unique within its document. </summary>
         [JsonProperty(ABNames.ObjectId)]
         public string Id { get; set; } = string.Empty;
 
@@ -34,6 +40,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ObjectPrefabInstanceId)]
         public string SourcePlacementId { get; set; } = string.Empty;
 
+        /// <summary> Author-facing name, shown in the source editor's timeline. </summary>
         [JsonProperty(ABNames.ObjectName)]
         public string Name { get; set; } = string.Empty;
 
@@ -55,6 +62,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ObjectAutokillOffset)]
         public float AutokillOffset { get; set; }
 
+        /// <summary> Which of the source's gradient shapes the object's colour ramp uses, or none. </summary>
         [JsonProperty(ABNames.ObjectGradientType)]
         public int GradientType { get; set; }
 
@@ -79,6 +87,8 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ObjectShape)]
         public int Shape { get; set; }
 
+        /// <summary> Variant within the shape family - and the value that decides whether the custom-shape
+        /// parameters are read at all. </summary>
         [JsonProperty(ABNames.ObjectShapeOption)]
         public int ShapeOption { get; set; }
 
@@ -92,11 +102,17 @@ namespace BH.SDK.Interop.AfterBeat.Models
         /// <summary> Positional meaning of <see cref="CustomShape"/>. </summary>
         public static class CustomShapeIndex
         {
+            /// <summary> How many sides the polygon has. </summary>
             public const int Sides = 0;
+            /// <summary> How rounded its corners are. </summary>
             public const int Roundness = 1;
+            /// <summary> Ring thickness, where the shape is hollow. </summary>
             public const int Thickness = 2;
+            /// <summary> How much of the full turn the shape covers. </summary>
             public const int Slices = 3;
+            /// <summary> Whether the cut-out half is drawn instead. </summary>
             public const int Inverted = 4;
+            /// <summary> How many parameters a complete custom shape writes. </summary>
             public const int Count = 5;
         }
 
@@ -144,6 +160,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ObjectParentOffsets)]
         public List<float> ParentOffsets { get; set; } = new() { 0f, 0f, 0f };
 
+        /// <summary> Editor-only bookkeeping; nothing here reaches gameplay. </summary>
         [JsonProperty(ABNames.ObjectEditor)]
         public VgdObjectEditor Editor { get; set; } = new();
 
@@ -155,12 +172,16 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ObjectTracks)]
         public List<VgdTrack> Tracks { get; set; } = CreateTracks();
 
+        /// <summary> The position track, by name rather than by remembering it is index 0. </summary>
         [JsonIgnore]
         public VgdTrack Move => GetTrack(TrackIndex.Move);
+        /// <summary> The size track. </summary>
         [JsonIgnore]
         public VgdTrack Scale => GetTrack(TrackIndex.Scale);
+        /// <summary> The rotation track. </summary>
         [JsonIgnore]
         public VgdTrack Rotate => GetTrack(TrackIndex.Rotate);
+        /// <summary> The colour track. </summary>
         [JsonIgnore]
         public VgdTrack Color => GetTrack(TrackIndex.Color);
 
@@ -179,6 +200,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
             return Tracks[index];
         }
 
+        /// <summary> Four empty tracks, which is the only shape a written object may have. </summary>
         public static List<VgdTrack> CreateTracks()
         {
             var tracks = new List<VgdTrack>(TrackIndex.Count);
@@ -190,24 +212,31 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> Editor-only bookkeeping carried on every object. </summary>
     public class VgdObjectEditor : ABNode
     {
+        /// <summary> The author locked the object against selection. </summary>
         [JsonProperty(ABNames.ObjectEditorLocked)]
         public bool Locked { get; set; }
 
+        /// <summary> Its timeline row is folded shut. </summary>
         [JsonProperty(ABNames.ObjectEditorCollapsed)]
         public bool Collapsed { get; set; }
 
+        /// <summary> Tint of the row's label. </summary>
         [JsonProperty(ABNames.ObjectEditorTextColor)]
         public VgdColorFlags TextColor { get; set; } = new();
 
+        /// <summary> Tint of the row itself. </summary>
         [JsonProperty(ABNames.ObjectEditorBackgroundColor)]
         public VgdColorFlags BackgroundColor { get; set; } = new();
 
+        /// <summary> Which timeline bin the row sits in. </summary>
         [JsonProperty(ABNames.ObjectEditorBin)]
         public int Bin { get; set; }
 
+        /// <summary> Which editor layer the row belongs to - the source's way of hiding bulk while working. </summary>
         [JsonProperty(ABNames.ObjectEditorLayer)]
         public int Layer { get; set; }
 
+        /// <summary> Where the row sorts among its neighbours. </summary>
         [JsonProperty(ABNames.ObjectEditorTimelineOrder)]
         public int TimelineOrder { get; set; }
     }
@@ -215,12 +244,15 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> Additive red/green/blue toggles - the editor's own timeline tinting. </summary>
     public class VgdColorFlags : ABNode
     {
+        /// <summary> Red channel of the tint. </summary>
         [JsonProperty(ABNames.ColorFlagRed)]
         public bool Red { get; set; }
 
+        /// <summary> Green channel. </summary>
         [JsonProperty(ABNames.ColorFlagGreen)]
         public bool Green { get; set; }
 
+        /// <summary> Blue channel. </summary>
         [JsonProperty(ABNames.ColorFlagBlue)]
         public bool Blue { get; set; }
     }
@@ -228,13 +260,17 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> A plain {x, y} pair. </summary>
     public class VgdVector2 : ABNode
     {
+        /// <summary> Horizontal component. </summary>
         [JsonProperty(ABNames.VectorX)]
         public float X { get; set; }
 
+        /// <summary> Vertical component. </summary>
         [JsonProperty(ABNames.VectorY)]
         public float Y { get; set; }
 
+        /// <summary> The zero vector, which is what an absent one reads back as. </summary>
         public VgdVector2() { }
+        /// <summary> Both components. </summary>
         public VgdVector2(float x, float y)
         {
             X = x;
@@ -245,6 +281,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> One of an object's four keyframe tracks. </summary>
     public class VgdTrack : ABNode
     {
+        /// <summary> The track's keyframes, in the order the file wrote them. </summary>
         [JsonProperty(ABNames.TrackKeyframes)]
         public List<VgdKeyframe> Keyframes { get; set; } = new();
     }
@@ -263,6 +300,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.KeyframeEase)]
         public string Ease { get; set; } = ABEaseMap.DefaultEaseName;
 
+        /// <summary> Which randomization the source applies to this keyframe's values, or none. </summary>
         [JsonProperty(ABNames.KeyframeRandomType)]
         public int RandomType { get; set; }
 
@@ -270,6 +308,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.KeyframeRandomValues)]
         public List<float> RandomValues { get; set; } = new() { 0f, 0f, 0f };
 
+        /// <summary> The keyframe's own numbers; how many there are depends on which track owns it. </summary>
         [JsonProperty(ABNames.KeyframeValues)]
         public List<float> Values { get; set; } = new();
 

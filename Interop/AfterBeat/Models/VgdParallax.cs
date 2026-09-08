@@ -14,8 +14,10 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> The .vgd parallax_settings block - five background layers plus their depth of field. </summary>
     public class VgdParallaxSettings : ABNode
     {
+        /// <summary> How many background layers the format always carries. </summary>
         public const int LayerCount = 5;
 
+        /// <summary> The layers, furthest first. </summary>
         [JsonProperty(ABNames.ParallaxLayers)]
         public List<VgdParallaxLayer> Layers { get; set; } = new();
 
@@ -23,9 +25,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ParallaxMainLayer)]
         public int MainLayer { get; set; }
 
+        /// <summary> Whether the background is blurred with distance. </summary>
         [JsonProperty(ABNames.ParallaxDofActive)]
         public bool DepthOfFieldActive { get; set; }
 
+        /// <summary> How strongly. </summary>
         [JsonProperty(ABNames.ParallaxDofValue)]
         public int DepthOfFieldValue { get; set; }
     }
@@ -33,6 +37,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> One parallax layer. </summary>
     public class VgdParallaxLayer : ABNode
     {
+        /// <summary> How far back the layer sits, which is what decides how much it drifts. </summary>
         [JsonProperty(ABNames.ParallaxLayerDepth)]
         public int Depth { get; set; }
 
@@ -40,6 +45,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ParallaxLayerColor)]
         public int Color { get; set; }
 
+        /// <summary> What the layer draws. </summary>
         [JsonProperty(ABNames.ParallaxLayerObjects)]
         public List<VgdParallaxObject> Objects { get; set; } = new();
     }
@@ -47,9 +53,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> One background object. </summary>
     public class VgdParallaxObject : ABNode
     {
+        /// <summary> The object's own id within its layer. </summary>
         [JsonProperty(ABNames.ObjectId)]
         public string Id { get; set; } = string.Empty;
 
+        /// <summary> What it draws. </summary>
         [JsonProperty(ABNames.ParallaxObjectShape)]
         public VgdParallaxShape Shape { get; set; } = new();
 
@@ -57,9 +65,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ParallaxObjectColor)]
         public int Color { get; set; }
 
+        /// <summary> Where it sits - static, since a parallax object has no keyframes. </summary>
         [JsonProperty(ABNames.ParallaxObjectTransform)]
         public VgdParallaxTransform Transform { get; set; } = new();
 
+        /// <summary> The endless loop it drifts towards, which is the only motion it has. </summary>
         [JsonProperty(ABNames.ParallaxObjectAnimation)]
         public VgdParallaxAnimation Animation { get; set; } = new();
     }
@@ -67,9 +77,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> The shape/option pair, nested here rather than flat as it is on a gameplay object. </summary>
     public class VgdParallaxShape : ABNode
     {
+        /// <summary> Main shape family, numbered as a gameplay object's is. </summary>
         [JsonProperty(ABNames.ObjectShape)]
         public int Shape { get; set; }
 
+        /// <summary> Variant within that family. </summary>
         [JsonProperty(ABNames.ObjectShapeOption)]
         public int ShapeOption { get; set; }
     }
@@ -78,12 +90,15 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// object keyframe's, and is absolute rather than relative to anything. </summary>
     public class VgdParallaxTransform : ABNode
     {
+        /// <summary> Where the object rests. </summary>
         [JsonProperty(ABNames.ParallaxTransformPosition)]
         public VgdVector2 Position { get; set; } = new();
 
+        /// <summary> How large it is. </summary>
         [JsonProperty(ABNames.ParallaxTransformScale)]
         public VgdVector2 Scale { get; set; } = new();
 
+        /// <summary> How far it is turned, in degrees. </summary>
         [JsonProperty(ABNames.ParallaxTransformRotation)]
         public float Rotation { get; set; }
     }
@@ -100,21 +115,27 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.ParallaxAnimationDelay)]
         public float Delay { get; set; }
 
+        /// <summary> The position below is a loop target rather than an offset. </summary>
         [JsonProperty(ABNames.ParallaxAnimationLoopPosition)]
         public bool LoopPosition { get; set; }
 
+        /// <summary> The same for the size. </summary>
         [JsonProperty(ABNames.ParallaxAnimationLoopScale)]
         public bool LoopScale { get; set; }
 
+        /// <summary> The same for the rotation. </summary>
         [JsonProperty(ABNames.ParallaxAnimationLoopRotation)]
         public bool LoopRotation { get; set; }
 
+        /// <summary> Position the object drifts towards, forever. </summary>
         [JsonProperty(ABNames.ParallaxTransformPosition)]
         public VgdVector2 Position { get; set; } = new();
 
+        /// <summary> Size it grows towards. </summary>
         [JsonProperty(ABNames.ParallaxTransformScale)]
         public VgdVector2 Scale { get; set; } = new();
 
+        /// <summary> Rotation it turns towards. </summary>
         [JsonProperty(ABNames.ParallaxTransformRotation)]
         public float Rotation { get; set; }
 

@@ -21,6 +21,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // Two source times a hundredth of a second apart round onto one frame at any ordinary
     // framerate, since the source grid is 10 ms and a frame is coarser. The object tracks were
     // deduplicated and capped from the start; the level-global ones and the text were not.
+
+    /// <summary> What the import does with a document that exceeds this format's own caps - clamped and reported
+    /// rather than written through. </summary>
     public class ABImportLimitsTests
     {
         private const int Framerate = 60;

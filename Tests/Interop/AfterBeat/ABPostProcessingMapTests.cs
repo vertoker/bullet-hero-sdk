@@ -17,6 +17,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     //
     // The cases below are the ends and the middle of each source range, all of them read off the
     // game rather than off an inspector.
+
+    /// <summary> Afterbeat's camera effects against URP's, which is where the two formats agree least. </summary>
     public class ABPostProcessingMapTests
     {
         // Not remapped: LSEffectsManager.UpdateBloom writes it into bloom.intensity as it stands.

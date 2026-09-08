@@ -19,6 +19,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // held at 35% is decoration for its whole life over there, and a converter reading the rule as
     // "alpha 0 is harmless" leaves every one of those lethal.
 
+    /// <summary> Which imported objects end up carrying a hitbox: Afterbeat has no separate collider, so opacity
+    /// is what the import reads that decision out of. </summary>
     public class ABOpacityHitGateTests
     {
         private const int Framerate = 60;

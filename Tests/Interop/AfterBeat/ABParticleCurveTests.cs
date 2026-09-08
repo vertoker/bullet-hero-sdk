@@ -18,6 +18,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // ONE PARTICLE over its own life. Two things here are easy to get wrong and invisible when they
     // are - the curve's time axis is the PARTICLE's life rather than the level's, and an ease has to
     // be baked into tangents because a curve key here carries no easing at all.
+
+    /// <summary> The curves an Afterbeat particle system drives its values with. </summary>
     public class ABParticleCurveTests
     {
         private const int Framerate = 60;

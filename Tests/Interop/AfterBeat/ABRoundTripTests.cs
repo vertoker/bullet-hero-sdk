@@ -21,6 +21,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // formats disagree about what a level even contains - so it is compared on the STABLE SUBSET:
     // the things both formats have a field for. Asserting more than that would be asserting that
     // nothing was lost, which is false by construction and documented as such.
+
+    /// <summary> Out and back again: what survives an export followed by an import of the same level. </summary>
     public class ABRoundTripTests
     {
         [Test]

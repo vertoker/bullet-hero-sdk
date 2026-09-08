@@ -219,10 +219,15 @@
     /// i.e. also how many presets that family has. </summary>
     public static class ABShapeOptions
     {
+        /// <summary> The option value that makes a square a custom polygon. </summary>
         public const int SquareCustom = 3;
+        /// <summary> The same for a circle. </summary>
         public const int CircleCustom = 9;
+        /// <summary> The same for a triangle. </summary>
         public const int TriangleCustom = 6;
+        /// <summary> The same for the misc family. </summary>
         public const int MiscCustom = 2;
+        /// <summary> The same for a hexagon. </summary>
         public const int HexagonCustom = 6;
 
         /// <summary> The custom-polygon option of one family, or -1 for a family that has none

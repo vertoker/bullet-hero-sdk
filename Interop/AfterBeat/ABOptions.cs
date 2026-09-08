@@ -131,8 +131,10 @@ namespace BH.SDK.Interop.AfterBeat
         /// <see cref="Import.ABOpacityHitGate"/>. </summary>
         public float OpacityHitThreshold = DefaultOpacityHitThreshold;
 
+        /// <summary> Every option at its default. </summary>
         public ABOptions() { }
 
+        /// <summary> The framerate the source's seconds are resolved into; everything else defaults. </summary>
         public ABOptions(int framerate)
         {
             Framerate = framerate;

@@ -16,6 +16,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // ABObjectImporter's own header calls out - keyframe locality, rotation, parent-relative
     // layers, and which of size/scale an Afterbeat "scale" becomes - because each of those produces
     // a level that loads and plays wrongly rather than one that fails.
+
+    /// <summary> The import's ordinary path: a document in, a level out, with the structure it described. </summary>
     public class ABImportTests
     {
         private const int Framerate = 60;

@@ -10,6 +10,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // Themes are the one part of the two formats that already agreed, so this fixture is really
     // asserting that the agreement is still true - if ThemeData's slot layout is ever renumbered,
     // this is what says so before a level's colours quietly move one band over.
+
+    /// <summary> Afterbeat's theme model against this project's theme matrix. </summary>
     public class ABThemeMapTests
     {
         [Test]
@@ -106,6 +108,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
     // The colour policy is a decision rather than a conversion, so it gets a fixture of its own:
     // "opaque follows the theme, transparent keeps its alpha" is what an author will notice.
+
+    /// <summary> The colour conversions those themes are built out of. </summary>
     public class ABColorMapTests
     {
         [Test]

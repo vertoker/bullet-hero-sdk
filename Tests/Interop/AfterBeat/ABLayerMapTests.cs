@@ -32,6 +32,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     //   ONE PLAN ORDERS THE WHOLE LEVEL - a prefab template's objects are materialized into the
     //   level and drawn against its own by depth alone, so both read one table and a depth means
     //   one layer everywhere in the file.
+
+    /// <summary> Afterbeat's draw order against this project's parent-relative layers. </summary>
     public class ABLayerMapTests
     {
         #region Fixture

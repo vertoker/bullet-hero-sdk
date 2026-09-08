@@ -13,9 +13,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.PrefabId)]
         public string Id { get; set; } = string.Empty;
 
+        /// <summary> Author-facing name of the template. </summary>
         [JsonProperty(ABNames.PrefabName)]
         public string Name { get; set; } = string.Empty;
 
+        /// <summary> What the author wrote about it. </summary>
         [JsonProperty(ABNames.PrefabDescription)]
         public string Description { get; set; } = string.Empty;
 
@@ -24,6 +26,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.PrefabPreview)]
         public string Preview { get; set; } = string.Empty;
 
+        /// <summary> Which of the source's prefab categories it is filed under. </summary>
         [JsonProperty(ABNames.PrefabType)]
         public int Type { get; set; } = (int)ABPrefabType.Misc1;
 
@@ -36,6 +39,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.PrefabMainObjectId)]
         public string MainObjectId { get; set; } = string.Empty;
 
+        /// <summary> The objects the template holds, in the same shape a level's own objects take. </summary>
         [JsonProperty(ABNames.PrefabObjectsList)]
         public List<VgdObject> Objects { get; set; } = new();
 
@@ -53,12 +57,17 @@ namespace BH.SDK.Interop.AfterBeat.Models
         /// <summary> Positional meaning of each entry of <see cref="Tracks"/>. </summary>
         public static class TrackIndex
         {
+            /// <summary> Position offset of the placement. </summary>
             public const int Position = 0;
+            /// <summary> Size multiplier. </summary>
             public const int Scale = 1;
+            /// <summary> Rotation offset. </summary>
             public const int Rotation = 2;
+            /// <summary> How many of those a placement always writes. </summary>
             public const int Count = 3;
         }
 
+        /// <summary> The placement's own id. </summary>
         [JsonProperty(ABNames.PlacementId)]
         public string Id { get; set; } = string.Empty;
 
@@ -93,6 +102,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.PlacementRepeatOffset)]
         public float RepeatOffset { get; set; }
 
+        /// <summary> Editor-only bookkeeping, the same shape an object carries. </summary>
         [JsonProperty(ABNames.PlacementEditor)]
         public VgdObjectEditor Editor { get; set; } = new();
 
@@ -110,6 +120,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
             return values[component];
         }
 
+        /// <summary> Three empty entries, which is the only shape a written placement may have. </summary>
         public static List<VgdPlacementValue> CreateTracks()
         {
             var tracks = new List<VgdPlacementValue>(TrackIndex.Count);
@@ -121,6 +132,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> One of a placement's three value slots - an object wrapping a bare float array. </summary>
     public class VgdPlacementValue : ABNode
     {
+        /// <summary> The numbers of one placement transform - two for position and scale, one for rotation. </summary>
         [JsonProperty(ABNames.KeyframeValues)]
         public List<float> Values { get; set; } = new();
     }

@@ -10,18 +10,23 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// like this project's own metadata.json is separate from level.json. </summary>
     public class VgmMeta : ABNode
     {
+        /// <summary> How the level is published, rather than anything about the level itself. </summary>
         [JsonProperty(ABNames.MetaBeatmap)]
         public VgmBeatmap Beatmap { get; set; } = new();
 
+        /// <summary> Who made it, as their store account. </summary>
         [JsonProperty(ABNames.MetaCreator)]
         public VgmCreator Creator { get; set; } = new();
 
+        /// <summary> The track it is built on. </summary>
         [JsonProperty(ABNames.MetaSong)]
         public VgmSong Song { get; set; } = new();
 
+        /// <summary> Who made the track. </summary>
         [JsonProperty(ABNames.MetaArtist)]
         public VgmArtist Artist { get; set; } = new();
 
+        /// <summary> What the level is about, where it is a tribute to something. </summary>
         [JsonProperty(ABNames.MetaReferences)]
         public VgmReferences References { get; set; } = new();
     }
@@ -38,12 +43,15 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.MetaGameVersion)]
         public string GameVersion { get; set; } = string.Empty;
 
+        /// <summary> The workshop item this level was published as, or zero while it never was. </summary>
         [JsonProperty(ABNames.MetaWorkshopId)]
         public long WorkshopId { get; set; }
 
+        /// <summary> How widely that item is shared. </summary>
         [JsonProperty(ABNames.MetaVisibility)]
         public int Visibility { get; set; }
 
+        /// <summary> What the author wrote about the last update. </summary>
         [JsonProperty(ABNames.MetaChangelog)]
         public string Changelog { get; set; } = string.Empty;
     }
@@ -51,9 +59,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> Who made the level, as Steam knows them. </summary>
     public class VgmCreator : ABNode
     {
+        /// <summary> The author's display name. </summary>
         [JsonProperty(ABNames.MetaSteamName)]
         public string SteamName { get; set; } = string.Empty;
 
+        /// <summary> Their account id. </summary>
         [JsonProperty(ABNames.MetaSteamId)]
         public long SteamId { get; set; }
     }
@@ -61,6 +71,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> The song, plus a few level-wide settings that ended up here. </summary>
     public class VgmSong : ABNode
     {
+        /// <summary> Title of the track. </summary>
         [JsonProperty(ABNames.MetaSongTitle)]
         public string Title { get; set; } = string.Empty;
 
@@ -68,21 +79,27 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.MetaSongDescription)]
         public string Description { get; set; } = string.Empty;
 
+        /// <summary> How hard the author rates the level. </summary>
         [JsonProperty(ABNames.MetaSongDifficulty)]
         public int Difficulty { get; set; }
 
+        /// <summary> Tempo of the track. </summary>
         [JsonProperty(ABNames.MetaSongBpm)]
         public float Bpm { get; set; } = 140f;
 
+        /// <summary> Its length in seconds. </summary>
         [JsonProperty(ABNames.MetaSongTime)]
         public float Time { get; set; } = 60f;
 
+        /// <summary> Where the browser's preview starts; -1 means the author picked no point. </summary>
         [JsonProperty(ABNames.MetaSongPreviewStart)]
         public float PreviewStart { get; set; } = -1f;
 
+        /// <summary> How long that preview runs; -1 means unset. </summary>
         [JsonProperty(ABNames.MetaSongPreviewLength)]
         public float PreviewLength { get; set; } = -1f;
 
+        /// <summary> How much the source shakes the camera on the beat. </summary>
         [JsonProperty(ABNames.MetaSongCamJiggle)]
         public int CamJiggle { get; set; }
     }
@@ -90,9 +107,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> Who made the song, and where to hear more of it. </summary>
     public class VgmArtist : ABNode
     {
+        /// <summary> Name of the track's artist. </summary>
         [JsonProperty(ABNames.MetaArtistName)]
         public string Name { get; set; } = string.Empty;
 
+        /// <summary> Which site the artist link points at. </summary>
         [JsonProperty(ABNames.MetaArtistLinkType)]
         public int LinkType { get; set; }
 
@@ -104,6 +123,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> External works the level points at. </summary>
     public class VgmReferences : ABNode
     {
+        /// <summary> The game the level references, where it references one. </summary>
         [JsonProperty(ABNames.MetaReferenceGame)]
         public VgmGameReference Game { get; set; } = new();
     }
@@ -111,6 +131,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> Which game the song came from. </summary>
     public class VgmGameReference : ABNode
     {
+        /// <summary> That game, as the source's own numbering. </summary>
         [JsonProperty(ABNames.MetaReferenceGameId)]
         public int Id { get; set; }
 

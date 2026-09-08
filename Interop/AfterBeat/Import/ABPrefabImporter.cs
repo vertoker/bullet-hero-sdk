@@ -83,6 +83,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// spread apart cannot resolve it at all. </summary>
         public readonly struct PlacementWindow
         {
+            /// <summary> The stretch of time a template's placements span, which is what its own timeline has to cover. </summary>
             public PlacementWindow(float earliest, float latest, int count)
             {
                 Earliest = earliest;
@@ -90,7 +91,9 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 Count = count;
             }
 
+            /// <summary> Start of the earliest placement, in seconds. </summary>
             public float Earliest { get; }
+            /// <summary> Start of the latest one. </summary>
             public float Latest { get; }
 
             /// <summary> How many placements of this template the document carries. </summary>

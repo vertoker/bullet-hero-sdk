@@ -9,6 +9,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // parameters off csp, where BeatmapObject's own field order suggests they live; the second is
     // reading a short value array as zeroes, which is right for every other track and wrong for
     // exactly these indices - world space and the arc both default to something that is not zero.
+
+    /// <summary> The field-by-field mapping between the two particle models. </summary>
     public class ABParticleMapTests
     {
         private static VgdObject Emitter(params float[] values)

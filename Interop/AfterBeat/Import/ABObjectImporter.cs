@@ -376,8 +376,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> Positional meaning of the three characters of p_t. </summary>
         public static class ParentTypeIndex
         {
+            /// <summary> Character of the parent-type string that says position is inherited. </summary>
             public const int Position = 0;
+            /// <summary> The one that says scale is. </summary>
             public const int Scale = 1;
+            /// <summary> The one that says rotation is. </summary>
             public const int Rotation = 2;
         }
 
@@ -1582,6 +1585,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
         // A keyframe that carries only its index is fully opaque: the format's own default for a
         // missing component is 0, which here would mean invisible, and the source game's own reader
         // fills a missing opacity with 100 rather than with 0.
+
+        /// <summary> The source writes opacity as a percentage; this format wants it as a fraction. </summary>
         public const float OpacityScale = 100f;
 
         private static float OpacityOf(VgdKeyframe key)

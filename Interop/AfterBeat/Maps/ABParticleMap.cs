@@ -22,28 +22,45 @@ namespace BH.SDK.Interop.AfterBeat
     {
         #region Indices, defaults and bounds
 
+        /// <summary> Slot holding how many particles are emitted per second. </summary>
         public const int SpawnRatePerSecondIndex = 4;
+        /// <summary> Slot holding how many are emitted per unit travelled. </summary>
         public const int SpawnRatePerUnitIndex = 5;
+        /// <summary> Slot saying whether particles stay where they were emitted or follow the emitter. </summary>
         public const int WorldSpaceIndex = 6;
+        /// <summary> Slot saying whether live particles are killed when the emitter ends. </summary>
         public const int DespawnOnEndIndex = 7;
+        /// <summary> Slot holding which shape particles are emitted from. </summary>
         public const int EmitterShapeIndex = 8;
+        /// <summary> Slot holding how much of that shape's turn is used. </summary>
         public const int EmitterArcIndex = 9;
+        /// <summary> Slot holding how deep into the shape emission starts. </summary>
         public const int EmitterRadiusThicknessIndex = 10;
+        /// <summary> Slot holding how fast a particle leaves. </summary>
         public const int StartSpeedIndex = 11;
 
+        /// <summary> What the source reads when that slot is absent. </summary>
         public const float SpawnRatePerSecondDefault = 0f;
+        /// <summary> What the source reads when that slot is absent. </summary>
         public const float SpawnRatePerUnitDefault = 0f;
+        /// <summary> ONE, not zero - reading an absent slot as zero would pin every particle to its emitter. </summary>
         public const float WorldSpaceDefault = 1f;
+        /// <summary> What the source reads when that slot is absent. </summary>
         public const float DespawnOnEndDefault = 0f;
+        /// <summary> What the source reads when that slot is absent. </summary>
         public const float EmitterShapeDefault = 0f;
+        /// <summary> A FULL turn - reading an absent slot as zero would emit nothing at all. </summary>
         public const float EmitterArcDefault = 360f;
+        /// <summary> What the source reads when that slot is absent. </summary>
         public const float EmitterRadiusThicknessDefault = 1f;
+        /// <summary> What the source reads when that slot is absent. </summary>
         public const float StartSpeedDefault = 1f;
 
         /// <summary> What the source game reads a stored float as a bool with - not a comparison
         /// against zero, so 0.4 is false and 0.5 is true. </summary>
         public const float TruthThreshold = 0.5f;
 
+        /// <summary> A full turn, which is as much arc as there is. </summary>
         public const float MaxEmitterArc = 360f;
 
         // THE HIDDEN CHANNELS. An emitter's four tracks do two jobs at once: values 0/1 keep their
@@ -218,6 +235,7 @@ namespace BH.SDK.Interop.AfterBeat
         /// <summary> How long one particle lives, in seconds. </summary>
         public float TimelineLength { get; }
 
+        /// <summary> Every parameter at once; the reader builds one and nothing mutates it afterwards. </summary>
         public ABParticleSettings(float spawnRatePerSecond, float spawnRatePerUnit, bool worldSpace,
             bool despawnOnEnd, ABParticleEmitterShapeType emitterShape, float emitterArc,
             float emitterRadiusThickness, float startSpeed, float timelineLength)

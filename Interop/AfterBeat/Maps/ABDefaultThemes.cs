@@ -65,15 +65,25 @@ namespace BH.SDK.Interop.AfterBeat
         /// <summary> Positional meaning of one <see cref="Table"/> row. </summary>
         private static class Field
         {
+            /// <summary> Column holding the theme's id. </summary>
             public const int Id = 0;
+            /// <summary> Column holding its name. </summary>
             public const int Name = 1;
+            /// <summary> Column holding the interface colour. </summary>
             public const int Gui = 2;
+            /// <summary> Column holding the background colour. </summary>
             public const int Background = 3;
+            /// <summary> Column holding the interface accent. </summary>
             public const int Accent = 4;
+            /// <summary> Column holding the player palette. </summary>
             public const int Players = 5;
+            /// <summary> Column holding the object palette. </summary>
             public const int Objects = 6;
+            /// <summary> Column holding the background palette. </summary>
             public const int Parallax = 7;
+            /// <summary> Column holding the effect palette. </summary>
             public const int Effects = 8;
+            /// <summary> How many columns a complete row has. </summary>
             public const int Count = 9;
         }
 

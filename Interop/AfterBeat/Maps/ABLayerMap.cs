@@ -117,8 +117,10 @@ namespace BH.SDK.Interop.AfterBeat
 
             /// <summary> Lowest and highest layer anything in the whole level landed on. </summary>
             public int Lowest { get; }
+            /// <summary> The largest layer the plan will hand out. </summary>
             public int Highest { get; }
 
+            /// <summary> Built by the planner alone, so the numbers it holds always agree with each other. </summary>
             internal Plan(ABLayerImport mode, int stride, int span, int[] layerByKey,
                 int lowest, int highest)
             {
@@ -327,8 +329,10 @@ namespace BH.SDK.Interop.AfterBeat
             /// <summary> Lowest and highest layer anything in THIS list landed on; both 0 for an
             /// empty list. The level's whole range is the plan's, not this. </summary>
             public int Lowest { get; }
+            /// <summary> The largest layer actually assigned. </summary>
             public int Highest { get; }
 
+            /// <summary> The layer assigned to each object, plus the range they ended up covering. </summary>
             public Result(int[] layers, Dictionary<string, int> byId, int lowest, int highest)
             {
                 Layers = layers;

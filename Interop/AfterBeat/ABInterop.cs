@@ -47,8 +47,10 @@ namespace BH.SDK.Interop.AfterBeat
             /// <summary> Contents of the metadata document. </summary>
             public string MetaJson { get; }
 
+            /// <summary> What the conversion had to say about itself. </summary>
             public InteropReport Report { get; }
 
+            /// <summary> Both documents plus the report, which is everything an export produces. </summary>
             public ExportedLevel(string levelJson, string metaJson, InteropReport report)
             {
                 LevelJson = levelJson;

@@ -19,6 +19,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // ABParticleMapTests. The two questions this fixture exists for are that the emitter stops being
     // a shape at all, and that two emitters authored the same way land on ONE effect resource with
     // an id that survives being imported again.
+
+    /// <summary> Reading Afterbeat particle systems in as this project's effects. </summary>
     public class ABParticleImportTests
     {
         private const int Framerate = 60;

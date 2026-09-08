@@ -46,7 +46,9 @@ namespace BH.SDK.Interop.AfterBeat
             return guid == Guid.Empty ? new Guid(1, 0, 0, bytes) : guid;
         }
 
+        /// <summary> A source theme id as this format's, derived so the same document always converts the same way. </summary>
         public static ThemeId ToThemeId(string sourceId) => new(ToGuid(ThemeTag, sourceId));
+        /// <summary> A source prefab id as this format's, on the same terms. </summary>
         public static PrefabId ToPrefabId(string sourceId) => new(ToGuid(PrefabTag, sourceId));
 
         /// <summary> For a shape this converter has to synthesize; a shape that maps onto a built-in

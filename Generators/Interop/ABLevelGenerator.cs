@@ -32,27 +32,39 @@ namespace BH.SDK.Generators.Interop
     /// <summary> Builds a level out of an Afterbeat (Project Arrhythmia) level folder. </summary>
     public class ABLevelGenerator : BaseLevelGenerator<ABLevelGenerator.Parameters>
     {
+        /// <summary> <c>"gen_level_afterbeat"</c>, the key a host lists this generator under. </summary>
         public override string NameKey => "gen_level_afterbeat";
 
         // Last: an import from another game's format is nobody's first answer to "make a level".
+
+        /// <summary> Where this sits in a host's list; lower comes first. </summary>
         public override int ListOrder => 10;
 
+        /// <summary> What must be true before a host offers this run. </summary>
         public override GeneratorRequirements Requirements => GeneratorRequirements.ExternalAnalysis;
 
+        /// <summary> The order, labels and ranges a host lays its form out with. </summary>
         public override GeneratorHints Hints => HintsValue;
 
         private static readonly GeneratorHints HintsValue = new GeneratorHints.Builder()
             .Section(GeneratorSections.Main, nameof(Parameters.Framerate),
                 nameof(Parameters.ImportParallax), nameof(Parameters.ImportPrefabs),
                 nameof(Parameters.LayerImport))
+            // Additional is ordered by WHAT TURNS A FIELD ON, in the order Main lists those
+            // switches: the two that always apply, then parallax, then prefabs, then the layer
+            // mode. Four of these rows are VisibleWhen-gated, so a group listed away from the
+            // toggle that governs it appears and vanishes somewhere the author is not looking -
+            // the section reflowed around a hole rather than under the tickbox that made it.
+            //
             // The host-filled fields are listed like any other - Hidden decides whether a row is
             // SHOWN, not whether the field is accounted for, and a field in no section still
             // renders, at the bottom, where nobody would look for it.
             .Section(GeneratorSections.Additional, nameof(Parameters.KeepObjectNames),
                 nameof(Parameters.OpacityHitThreshold),
-                nameof(Parameters.EditorGroupStride), nameof(Parameters.PlacementLayerOffset),
                 nameof(Parameters.ParallaxActive), nameof(Parameters.ParallaxLayerOffset),
                 nameof(Parameters.MaxParallaxLoopKeys),
+                nameof(Parameters.PlacementLayerOffset),
+                nameof(Parameters.EditorGroupStride),
                 nameof(Parameters.LevelJson), nameof(Parameters.MetaJson),
                 nameof(Parameters.AudioFileName), nameof(Parameters.SourceFolder),
                 nameof(Parameters.AudioLengthSeconds))
@@ -86,6 +98,11 @@ namespace BH.SDK.Generators.Interop
                 p => ((Parameters)p).ImportParallax)
             .VisibleWhen(nameof(Parameters.ParallaxActive),
                 p => ((Parameters)p).ImportParallax)
+            // Read by ABParallaxImporter and by nothing else, so it belongs to the same switch as
+            // the two rows above it - ungated it was the one parallax field left standing in the
+            // gap the rest of the group leaves behind.
+            .VisibleWhen(nameof(Parameters.MaxParallaxLoopKeys),
+                p => ((Parameters)p).ImportParallax)
             // The host fills these in from the folder it opened; showing them as editable rows would
             // invite an author to paste a level document into a text field.
             .Unit(nameof(Parameters.AudioLengthSeconds), "s")
@@ -100,6 +117,7 @@ namespace BH.SDK.Generators.Interop
         /// not part of GeneratedLevel because that struct is the format's, not this converter's. </summary>
         public InteropReport LastReport { get; private set; }
 
+        /// <summary> Builds the level and its metadata together, so the two cannot disagree. </summary>
         protected override GeneratedLevel CreateTyped(Parameters parameters)
         {
             var options = ToOptions(parameters);
@@ -149,6 +167,8 @@ namespace BH.SDK.Generators.Interop
         // The level's length is only known after the documents are read, so an estimate before that
         // can only count what the source itself carries. Reading the .vgd twice is cheap next to
         // showing the author a number that has nothing to do with their level.
+
+        /// <summary> What this run would add, answered before it runs. </summary>
         protected override GeneratorCost EstimateTyped(Parameters parameters)
         {
             if (string.IsNullOrEmpty(parameters.LevelJson)) return GeneratorCost.Zero;
@@ -208,8 +228,11 @@ namespace BH.SDK.Generators.Interop
             /// into. Higher keeps keyframes that sit close together apart. </summary>
             public int Framerate = ABOptions.DefaultFramerate;
 
+            /// <summary> Whether the background layers are converted too. </summary>
             public bool ImportParallax = true;
+            /// <summary> Whether prefab templates are. </summary>
             public bool ImportPrefabs = true;
+            /// <summary> Whether the source's object names survive. </summary>
             public bool KeepObjectNames = true;
 
             /// <summary> The alpha an object has to be drawn at to hurt the player. One - the
@@ -225,7 +248,9 @@ namespace BH.SDK.Generators.Interop
             /// <see cref="ABLayerImport"/>. </summary>
             public ABLayerImport LayerImport = ABLayerImport.Auto;
 
+            /// <summary> How far apart the imported editor groups are placed in layer space. </summary>
             public int EditorGroupStride = ABLayerMap.DepthSpan;
+            /// <summary> How far prefab placements are lifted above the rest. </summary>
             public int PlacementLayerOffset;
 
             /// <summary> Whether the imported background arrives switched on. Off - the default -
@@ -233,7 +258,9 @@ namespace BH.SDK.Generators.Interop
             /// like its own content; see <see cref="ABOptions.ParallaxActive"/>. </summary>
             public bool ParallaxActive;
 
+            /// <summary> How far background layers are pushed behind it. </summary>
             public int ParallaxLayerOffset = 1;
+            /// <summary> How many keyframes a parallax loop may be baked into before it is truncated. </summary>
             public int MaxParallaxLoopKeys = LevelRules.MaxObjectKeys;
 
             /// <summary> Filled in by the host from the folder it opened - see
@@ -241,9 +268,13 @@ namespace BH.SDK.Generators.Interop
             /// same shape every other external input in this folder takes: a form binds to fields,
             /// and an interface member is not one. </summary>
             public string LevelJson = string.Empty;
+            /// <summary> The .vgm document, where the host found one. </summary>
             public string MetaJson = string.Empty;
+            /// <summary> The song the source level names. </summary>
             public string AudioFileName = string.Empty;
+            /// <summary> Where it all came from, for the report. </summary>
             public string SourceFolder = string.Empty;
+            /// <summary> How long that song is; filled by the host, and what bounds the timeline. </summary>
             public float AudioLengthSeconds;
 
             string IABLevelInput.LevelJson

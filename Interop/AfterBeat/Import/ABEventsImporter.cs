@@ -33,6 +33,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
     /// <summary> The fourteen .vgd events[] arrays into this format's level-global tracks. </summary>
     public static class ABEventsImporter
     {
+        /// <summary> Every level-global event track: camera, theme, post-processing and the rest. </summary>
         public static void ImportAll(VgdLevel source, Level level, ABImportContext context, string path)
         {
             if (source == null || level == null) return;
@@ -414,6 +415,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> The one frame Afterbeat runs at, and therefore the one every level was
         /// authored inside. </summary>
         public const int SourceAspectWidth = 16;
+        /// <summary> The source frames its levels 16:9; this is the half of it that is fixed. </summary>
         public const int SourceAspectHeight = 9;
 
         // Afterbeat rotates the whole picture's hue with one number; this format has no hue effect,

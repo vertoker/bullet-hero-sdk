@@ -30,6 +30,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     //
     // Numbers here are the source game's own, read out of its assembly - see AB-DEFAULT-THEMES.md
     // for the same treatment of its themes.
+
+    /// <summary> How much of an imported level survives, measured rather than claimed - and what the import is
+    /// expected to lose. </summary>
     public class ABFidelityTests
     {
         private const int Framerate = 60;

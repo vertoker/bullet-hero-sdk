@@ -276,14 +276,18 @@ namespace BH.SDK.Interop.AfterBeat
         /// gradient plus the opacity the pair shares. </summary>
         public readonly struct ExportedColorKey
         {
+            /// <summary> Theme slot the colour starts at. </summary>
             public int StartIndex { get; }
+            /// <summary> Theme slot its gradient ends at, equal to the start where there is no gradient. </summary>
             public int EndIndex { get; }
+            /// <summary> How opaque it is. </summary>
             public float Opacity { get; }
 
             /// <summary> True when the two ends are genuinely different colours, i.e. when the
             /// object needs a gradient type at all. </summary>
             public bool IsGradient { get; }
 
+            /// <summary> One colour keyframe as the source writes it - two palette indices and an opacity. </summary>
             public ExportedColorKey(int startIndex, int endIndex, float opacity, bool isGradient)
             {
                 StartIndex = startIndex;

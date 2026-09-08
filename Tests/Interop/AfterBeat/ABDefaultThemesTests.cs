@@ -15,6 +15,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // The colour assertions are spot checks against the shipped game's own data rather than a full
     // transcription: the table is 714 colours, and a test that restates all of them tests the
     // copy-paste, not the code.
+
+    /// <summary> The themes Afterbeat ships and a level may reference without carrying. </summary>
     public class ABDefaultThemesTests
     {
         private const int Framerate = 60;

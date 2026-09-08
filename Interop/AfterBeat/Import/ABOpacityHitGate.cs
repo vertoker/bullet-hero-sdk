@@ -57,7 +57,9 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> One source opacity keyframe, reduced to the three things this rule reads. </summary>
         public readonly struct OpacitySample
         {
+            /// <summary> Frame the sample was taken on. </summary>
             public readonly int Frame;
+            /// <summary> How opaque the object is there. </summary>
             public readonly float Opacity;
 
             /// <summary> The curve this sample is reached BY. Afterbeat stores easing on the
@@ -65,8 +67,10 @@ namespace BH.SDK.Interop.AfterBeat.Import
             /// sample never uses its own. </summary>
             public readonly EaseType Ease;
 
+            /// <summary> A sample blended linearly from the one before it. </summary>
             public OpacitySample(int frame, float opacity) : this(frame, opacity, EaseType.Linear) { }
 
+            /// <summary> A sample with its own easing. </summary>
             public OpacitySample(int frame, float opacity, EaseType ease)
             {
                 Frame = frame;
@@ -78,9 +82,12 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> A stretch of an object's own life, local to its span. </summary>
         public readonly struct FrameRange
         {
+            /// <summary> First frame of the range. </summary>
             public readonly int Start;
+            /// <summary> How many frames it covers. </summary>
             public readonly int Duration;
 
+            /// <summary> A half-open range, as every span in this format is. </summary>
             public FrameRange(int start, int duration)
             {
                 Start = start;

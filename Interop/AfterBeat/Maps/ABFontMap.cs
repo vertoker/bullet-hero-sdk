@@ -211,11 +211,15 @@ namespace BH.SDK.Interop.AfterBeat
                 return winner;
             }
 
+            /// <summary> How much of one Afterbeat font this project can actually reproduce. </summary>
             private readonly struct Coverage
             {
+                /// <summary> The font this coverage is about. </summary>
                 public readonly FontResourceId FontResourceId;
+                /// <summary> How many of the level's characters it can actually draw. </summary>
                 public readonly int Characters;
 
+                /// <summary> One font and how much of the level's text it can draw. </summary>
                 public Coverage(FontResourceId fontResourceId, int characters)
                 {
                     FontResourceId = fontResourceId;

@@ -35,10 +35,14 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// way. </summary>
         public readonly struct Result
         {
+            /// <summary> The level that came out. </summary>
             public Level Level { get; }
+            /// <summary> Its metadata, which the source keeps in a separate document. </summary>
             public LevelMeta Meta { get; }
+            /// <summary> What the import had to say about itself. </summary>
             public InteropReport Report { get; }
 
+            /// <summary> All three at once; nothing mutates them afterwards. </summary>
             public Result(Level level, LevelMeta meta, InteropReport report)
             {
                 Level = level;

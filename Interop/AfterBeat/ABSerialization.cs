@@ -50,9 +50,13 @@ namespace BH.SDK.Interop.AfterBeat
         /// working on a JToken tree uses the same contracts. </summary>
         public static JsonSerializer GetSerializer() => Serializer;
 
+        /// <summary> Reads a .vgd document. </summary>
         public static VgdLevel DeserializeLevel(string json) => Deserialize<VgdLevel>(json);
+        /// <summary> Reads a .vgm document. </summary>
         public static VgmMeta DeserializeMeta(string json) => Deserialize<VgmMeta>(json);
+        /// <summary> Reads a .vgt document. </summary>
         public static VgtTheme DeserializeTheme(string json) => Deserialize<VgtTheme>(json);
+        /// <summary> Reads a .vgp document. </summary>
         public static VgpPrefab DeserializePrefab(string json) => Deserialize<VgpPrefab>(json);
 
         /// <summary> Reads one document. Throws <see cref="JsonException"/> on malformed JSON - a
@@ -95,8 +99,12 @@ namespace BH.SDK.Interop.AfterBeat
         // base.CreateObjectContract has run - by then the property list has already been collected
         // under the old mode, so the assignment reads as if it worked and filters nothing. The
         // extension-data member is wired up separately by the base contract and is unaffected.
+
+        /// <summary> Only members carrying a JSON name are read or written, so an Afterbeat document's unknown keys
+        /// are ignored rather than bound by accident. </summary>
         private class OptInResolver : DefaultContractResolver
         {
+            /// <summary> Keeps only the members that carry a JSON name, so an unknown key binds to nothing by accident. </summary>
             protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
                 => base.CreateProperties(type, MemberSerialization.OptIn);
         }
@@ -111,11 +119,16 @@ namespace BH.SDK.Interop.AfterBeat
         // Retyping the fields would be the wrong fix twice over: they ARE integers (a depth of 59.5
         // means nothing), and the next float-shaped int in a document nobody has read yet would fail
         // exactly the same way. Rounding on the way in is what the source game itself does.
+
+        /// <summary> Afterbeat writes numbers as strings about as often as it writes them as numbers; this accepts
+        /// either and refuses neither. </summary>
         private class LenientIntConverter : JsonConverter
         {
+            /// <summary> Handles the integral types the source writes inconsistently. </summary>
             public override bool CanConvert(Type objectType)
                 => objectType == typeof(int) || objectType == typeof(int?);
 
+            /// <summary> Accepts the number either as a number or as a string, which is how the source actually writes it. </summary>
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
                 JsonSerializer serializer)
             {
@@ -146,6 +159,8 @@ namespace BH.SDK.Interop.AfterBeat
 
             // Written back as a plain integer: this is a lenient READER, and writing 59.0 because
             // that is how the file happened to say 59 would spread the problem rather than absorb it.
+
+            /// <summary> Writes it as a number, which the source reads either way. </summary>
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
                 if (value == null) writer.WriteNull();

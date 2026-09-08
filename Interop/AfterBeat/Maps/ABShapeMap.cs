@@ -71,9 +71,13 @@ namespace BH.SDK.Interop.AfterBeat
         /// this format has to write to reproduce where the source object's transform was. </summary>
         private readonly struct Entry
         {
+            /// <summary> The shape this project already ships, where one matches. </summary>
             public readonly ShapeId Preset;
+            /// <summary> How to build the geometry instead, where none does. </summary>
             public readonly Synth Synth;
+            /// <summary> What the source calls this shape, kept for the report. </summary>
             public readonly string Name;
+            /// <summary> How far the source's own pivot sits from the centre this format measures from. </summary>
             public readonly float PivotOffsetY;
 
             /// <summary> Whether this pair is the one an export writes for that shape. Two pairs
@@ -81,6 +85,7 @@ namespace BH.SDK.Interop.AfterBeat
             /// ShapeId carries no pivot to tell them apart. </summary>
             public readonly bool Canonical;
 
+            /// <summary> A shape that maps onto a shipped preset. </summary>
             public Entry(ShapeId preset, string name, float pivotOffsetY = 0f, bool canonical = true)
             {
                 Preset = preset;
@@ -89,6 +94,7 @@ namespace BH.SDK.Interop.AfterBeat
                 PivotOffsetY = pivotOffsetY;
                 Canonical = canonical;
             }
+            /// <summary> A shape that has to be built instead. </summary>
             public Entry(Synth synth, string name)
             {
                 Preset = ShapeId.Null;
@@ -114,6 +120,7 @@ namespace BH.SDK.Interop.AfterBeat
 
         /// <summary> The source editor's own slider bounds for a custom polygon's side count. </summary>
         public const int MinCustomSides = 3;
+        /// <summary> As many sides as a custom polygon may have. </summary>
         public const int MaxCustomSides = 32;
 
         /// <summary> What the source game reads for a custom polygon that wrote no side count. </summary>
@@ -130,6 +137,7 @@ namespace BH.SDK.Interop.AfterBeat
         /// polygon gains sides - a triangle rounds by up to half its radius, a twelve-sided shape by
         /// a quarter. </summary>
         public const float MaxRoundnessAtMinSides = 0.5f;
+        /// <summary> How round a polygon of that many sides may be before it stops being one. </summary>
         public const float MaxRoundnessAtMaxSides = 0.25f;
 
         /// <summary> Circumradius of a custom polygon, which the source game varies by side count so
@@ -340,14 +348,22 @@ namespace BH.SDK.Interop.AfterBeat
         //                      the ORDINARY custom polygon over there is a rounded one - and it is
         //                      the ONE axis this library has no rung for, which is why a rounded
         //                      custom polygon is still the only kind that has to be built.
+
+        /// <summary> One Afterbeat shape that has no counterpart here, carried as geometry instead of as an id. </summary>
         private readonly struct CustomShape
         {
+            /// <summary> How many sides the polygon has. </summary>
             public readonly int Sides;
+            /// <summary> How rounded its corners are. </summary>
             public readonly float Roundness;
+            /// <summary> Ring thickness, where it is hollow. </summary>
             public readonly float Thickness;
+            /// <summary> How many of its sides are actually drawn. </summary>
             public readonly int Slices;
+            /// <summary> Whether the cut-out half is drawn instead. </summary>
             public readonly bool Inverted;
 
+            /// <summary> The five parameters as the source writes them. </summary>
             public CustomShape(int sides, float roundness, float thickness, int slices, bool inverted)
             {
                 Sides = sides;
@@ -357,6 +373,7 @@ namespace BH.SDK.Interop.AfterBeat
                 Inverted = inverted;
             }
 
+            /// <summary> How much of the full turn the drawn slices cover. </summary>
             public float Turns => Slices >= Sides ? 1f : Slices / (float)Sides;
         }
 
@@ -504,15 +521,15 @@ namespace BH.SDK.Interop.AfterBeat
 
         #region Export
 
+        /// <summary> Whether this shape has a preset pair of its own, i.e. whether
+        /// <see cref="Export"/> answers exactly rather than approximately. </summary>
+        public static bool ReverseTableHas(ShapeId shapeId) => ReverseTable.ContainsKey(shapeId.value);
+
         /// <summary>
         /// Writes a shape back as a (shape, option) pair. Anything with no preset pair of its own is
         /// written as a CUSTOM POLYGON where it can be - see <see cref="TryExportCustom"/> - so this
         /// overload is the lossy one and only a caller that cannot write csp should use it.
         /// </summary>
-        /// <summary> Whether this shape has a preset pair of its own, i.e. whether
-        /// <see cref="Export"/> answers exactly rather than approximately. </summary>
-        public static bool ReverseTableHas(ShapeId shapeId) => ReverseTable.ContainsKey(shapeId.value);
-
         public static (int Shape, int Option) Export(ShapeId shapeId,
             InteropReport report = null, string path = null)
         {

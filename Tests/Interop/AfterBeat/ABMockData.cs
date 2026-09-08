@@ -14,6 +14,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     //
     // Nothing here is a real level. Real levels are somebody else's user content and live outside
     // this repository - see ABCorpusTests.
+
+    /// <summary> Afterbeat-shaped fixtures for the interop suite, kept apart from the SDK's own MockData. </summary>
     internal static class ABMockData
     {
         public const string ThemeSourceId = "theme-a";

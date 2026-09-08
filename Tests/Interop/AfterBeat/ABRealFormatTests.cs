@@ -19,6 +19,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // The ids are the ones a real file carries: Afterbeat generates them out of arbitrary bytes, so
     // they are not readable and must not be tidied into "obj-1" here - part of what these fixtures
     // assert is that nothing along the way assumes an id is printable.
+
+    /// <summary> The parser against documents as Afterbeat actually writes them - numbers as strings included -
+    /// rather than as its schema suggests. </summary>
     public class ABRealFormatTests
     {
         private const int Framerate = 60;

@@ -21,9 +21,13 @@ namespace BH.SDK.Interop.AfterBeat.Export
     /// <summary> Everything one Afterbeat export shares across its objects. </summary>
     public class ABExportContext
     {
+        /// <summary> What the caller asked for. </summary>
         public ABOptions Options { get; }
+        /// <summary> Where every finding of this export goes. </summary>
         public InteropReport Report { get; }
+        /// <summary> Which scope is being exported - a level's own objects, or a prefab template's. </summary>
         public IObjectScope Scope { get; }
+        /// <summary> The theme colours are resolved against, since the source references a palette by index. </summary>
         public ThemeData ReferenceTheme { get; set; }
 
         /// <summary> The level's effect definitions, so an effect placement can be written as the
@@ -33,6 +37,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
 
         private readonly Dictionary<ObjectId, int> _effectiveLayers = new();
 
+        /// <summary> Everything one export run shares, built once and passed down. </summary>
         public ABExportContext(ABOptions options, InteropReport report, IObjectScope scope)
         {
             Options = options ?? new ABOptions();

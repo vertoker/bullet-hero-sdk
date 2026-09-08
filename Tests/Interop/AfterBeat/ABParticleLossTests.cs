@@ -16,6 +16,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // act on, and buries the one emitter that lost something that mattered - so every case here
     // comes in a pair: it fires on a document using the feature, and stays silent on one that does
     // not.
+
+    /// <summary> What a particle system cannot carry across, stated as a test so the loss stays known rather
+    /// than discovered. </summary>
     public class ABParticleLossTests
     {
         private const int Framerate = 60;

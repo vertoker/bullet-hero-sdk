@@ -41,6 +41,7 @@ namespace BH.SDK.Interop.AfterBeat.Export
         /// checked against - see this block's header for why both halves matter. </summary>
         public const string GameVersionTag = "26.6.2";
 
+        /// <summary> This format's metadata as a .vgm document. </summary>
         public static VgmMeta Export(LevelMeta source, Level level, InteropReport report = null)
         {
             var meta = new VgmMeta();

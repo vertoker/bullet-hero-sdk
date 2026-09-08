@@ -12,6 +12,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     // Two properties matter more than any single number and are swept rather than spot-checked:
     // the fit must be optimal (perturbing it in either variable makes it worse), and it must never
     // be worse than doing nothing.
+
+    /// <summary> The straight-line fit used where Afterbeat expresses as a curve what this format expresses as
+    /// two keyframes. </summary>
     public class ABLinearFitTests
     {
         private const float Tolerance = 1e-4f;

@@ -26,7 +26,9 @@ namespace BH.SDK.Interop.AfterBeat.Import
     /// <summary> Everything one Afterbeat import shares across its objects. </summary>
     public class ABImportContext
     {
+        /// <summary> What the caller asked for. </summary>
         public ABOptions Options { get; }
+        /// <summary> Where every finding of this import goes. </summary>
         public InteropReport Report { get; }
 
         /// <summary> Where imported objects land. </summary>
@@ -153,8 +155,10 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// background is placed below and the prefab placements above. Both stay 0 until something
         /// is resolved, so a scope holding no objects puts its background on layer -1. </summary>
         public int LowestContentLayer { get; private set; }
+        /// <summary> The largest layer the import has assigned so far, so what comes after it can stay above. </summary>
         public int HighestContentLayer { get; private set; }
 
+        /// <summary> Everything one import run shares, built once and passed down. </summary>
         public ABImportContext(ABOptions options, InteropReport report,
             IObjectScope scope, IObjectIdCounter counter,
             IDictionary<ShapeId, CompositeShape> shapes = null,

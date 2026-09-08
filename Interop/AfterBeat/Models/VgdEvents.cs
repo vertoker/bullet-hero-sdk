@@ -22,6 +22,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.KeyframeTime)]
         public float Time { get; set; }
 
+        /// <summary> Easing NAME, as on an object keyframe. </summary>
         [JsonProperty(ABNames.KeyframeEase)]
         public string Ease { get; set; } = ABEaseMap.DefaultEaseName;
 
@@ -71,9 +72,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> A checkpoint - the one .vgd event carrying a respawn position. </summary>
     public class VgdCheckpoint : ABNode
     {
+        /// <summary> The checkpoint's own id. </summary>
         [JsonProperty(ABNames.CheckpointId)]
         public string Id { get; set; } = string.Empty;
 
+        /// <summary> Author-facing name. </summary>
         [JsonProperty(ABNames.CheckpointName)]
         public string Name { get; set; } = string.Empty;
 
@@ -81,6 +84,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.CheckpointTime)]
         public float Time { get; set; }
 
+        /// <summary> Where the player respawns. </summary>
         [JsonProperty(ABNames.CheckpointPosition)]
         public VgdVector2 Position { get; set; } = new();
     }
@@ -88,12 +92,15 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> A timeline note - decorative, exactly like this project's own Marker. </summary>
     public class VgdMarker : ABNode
     {
+        /// <summary> The marker's own id. </summary>
         [JsonProperty(ABNames.MarkerId)]
         public string Id { get; set; } = string.Empty;
 
+        /// <summary> What the marker is called on the timeline. </summary>
         [JsonProperty(ABNames.MarkerName)]
         public string Name { get; set; } = string.Empty;
 
+        /// <summary> The longer note behind that name. </summary>
         [JsonProperty(ABNames.MarkerDescription)]
         public string Description { get; set; } = string.Empty;
 
@@ -114,6 +121,7 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> One freehand annotation stroke. </summary>
     public class VgdAnnotation : ABNode
     {
+        /// <summary> The annotation's own id. </summary>
         [JsonProperty(ABNames.AnnotationId)]
         public string Id { get; set; } = string.Empty;
 
@@ -137,9 +145,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> A scripted event - the whole family has no equivalent in this project's format. </summary>
     public class VgdTrigger : ABNode
     {
+        /// <summary> What sets the trigger off. </summary>
         [JsonProperty(ABNames.TriggerActivator)]
         public int Activator { get; set; }
 
+        /// <summary> The window it is armed in, as a start/end pair of seconds. </summary>
         [JsonProperty(ABNames.TriggerTime)]
         public VgdVector2 TimeRange { get; set; } = new();
 
@@ -147,9 +157,11 @@ namespace BH.SDK.Interop.AfterBeat.Models
         [JsonProperty(ABNames.TriggerRetrigger)]
         public int Retrigger { get; set; }
 
+        /// <summary> What it does when it fires. </summary>
         [JsonProperty(ABNames.TriggerEvent)]
         public int Event { get; set; }
 
+        /// <summary> Arguments of that event, as strings whose meaning depends on it. </summary>
         [JsonProperty(ABNames.TriggerData)]
         public List<string> Data { get; set; } = new();
     }
@@ -157,15 +169,19 @@ namespace BH.SDK.Interop.AfterBeat.Models
     /// <summary> One of six hotkey slots that spawn a prefab in the editor. </summary>
     public class VgdPrefabSpawnSlot : ABNode
     {
+        /// <summary> The slot's row is unfolded in the editor. </summary>
         [JsonProperty(ABNames.SpawnExpanded)]
         public bool Expanded { get; set; }
 
+        /// <summary> The slot is armed. </summary>
         [JsonProperty(ABNames.SpawnActive)]
         public bool Active { get; set; }
 
+        /// <summary> Which prefab the slot places. </summary>
         [JsonProperty(ABNames.SpawnPrefab)]
         public string PrefabId { get; set; } = string.Empty;
 
+        /// <summary> The keys that place it. </summary>
         [JsonProperty(ABNames.SpawnKeycodes)]
         public List<string> Keycodes { get; set; } = new();
     }
