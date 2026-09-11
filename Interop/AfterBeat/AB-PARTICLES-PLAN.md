@@ -377,11 +377,12 @@ remove particle emission from "Not imported", add the named losses, and reword t
   `EffectShape*.Size` (the plan's choice) or into the object's `Scales` — and the latter would
   additionally make an *animated* emitter volume crossable, closing loss #5. **Test this first in
   stage 2**; it is the only decision in the plan that a measurement can still overturn.
-- **`Core.ParticleCount` as a rate is confirmed for the shipped graph, not for the format.**
-  `EffectData`'s own summary calls it "how many particles the system may have alive at once"
-  (`Models/Effects/EffectObjectCore.cs:34-35`), which contradicts what the graph does with it. One of
-  the two is wrong and the discrepancy is worth resolving before a conversion law is written on top
-  of it.
+- **`Core.ParticleCount` is a rate, and the format says so now — resolved 2026-09-11.** The field's
+  summary used to call it "how many particles the system may have alive at once", contradicting what
+  the graph did with it; the summary was the wrong half and was corrected. The one-shot branch was
+  made to agree rather than the loop (`Burst.Count = ParticleCount × average lifetime`), so the
+  mapping this converter already writes in both directions is the documented meaning. See the
+  consuming project's `Docs/Issues/EFFECTS_HISTORY.md`, `ONESHOT_SPAWN_FIXES`.
 - **Afterbeat's own `ev[4]` scale.** `100` particles/second is the modal value and `500` the maximum
   observed, against our `ParticleCount_Default = 10` and `_Max = 1024`. Whether a direct copy is
   visually equivalent, or whether Afterbeat's rate is throttled somewhere the dump does not show, is
