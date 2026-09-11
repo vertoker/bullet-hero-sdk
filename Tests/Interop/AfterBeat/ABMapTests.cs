@@ -92,11 +92,13 @@ namespace BH.SDK.Tests.Interop.AfterBeat
     /// <summary> Afterbeat stores time in seconds; this is the conversion into frames, and back. </summary>
     public class ABTimeMapTests
     {
-        [TestCase(0f, 60, 0)]
-        [TestCase(1f, 60, 60)]
-        [TestCase(1.5f, 60, 90)]
-        [TestCase(1f, 30, 30)]
-        [TestCase(1f, 144, 144)]
+        // Second zero over there is this format's FIRST FRAME, not its frame zero, so every
+        // expectation here is the frame count plus FrameRules.MinFrame.
+        [TestCase(0f, 60, 1)]
+        [TestCase(1f, 60, 61)]
+        [TestCase(1.5f, 60, 91)]
+        [TestCase(1f, 30, 31)]
+        [TestCase(1f, 144, 145)]
         [Author(Metadata.Author.Vertoker)]
         [Category(Metadata.Category.Self)]
         [Category(Metadata.Category.VeryEasy)]
@@ -109,8 +111,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         [Category(Metadata.Category.VeryEasy)]
         public void ToFrame_RoundsToNearest_NotDown()
         {
-            // 0.99 of a frame belongs on the frame it is nearly on, not on the one before it.
-            Assert.AreEqual(1, ABTimeMap.ToFrame(1f / 60f * 0.99f, 60));
+            // 0.99 of a frame belongs on the frame it is nearly on, not on the one before it - so
+            // the SECOND frame of the level, not the first.
+            Assert.AreEqual(FrameRules.MinFrame + 1, ABTimeMap.ToFrame(1f / 60f * 0.99f, 60));
         }
 
         [Test]
@@ -174,7 +177,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         public void ExportSpan_UsesFixedTime_SoItDoesNotDependOnKeyframes()
         {
             var target = new VgdObject();
-            ABTimeMap.ExportSpan(new Models.Primitives.FrameSpan(60, 120), 60, target);
+            ABTimeMap.ExportSpan(
+                new Models.Primitives.FrameSpan(FrameRules.MinFrame + 60, 120), 60, target);
 
             Assert.AreEqual((int)ABAutokillType.FixedTime, target.AutokillType);
             Assert.AreEqual(1f, target.StartTime, 1e-4f);

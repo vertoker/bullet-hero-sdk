@@ -108,10 +108,14 @@ namespace BH.SDK.Interop.AfterBeat
                 alphas.Add(new GradientAlphaKeyValue(alpha, time));
             }
 
-            // A ramp cannot hold fewer than two stops, and one authored colour means one colour for
-            // the whole life - so it is held at both ends rather than dropped.
+            // TWO, not ValueRules.MinGradientKeys, and the difference is the point: one stop is a
+            // legal gradient in this format, so the bound no longer says anything about what an
+            // IMPORT should produce. Afterbeat's own single colour keyframe means one colour for
+            // the whole life, and holding it at both ends is what says so in a ramp the author can
+            // then edit at either end. Collapsing it to one stop would look the same and read as
+            // an import that lost a keyframe.
             if (colors.Count == 0) return EffectRules.GetGradient_Default();
-            if (colors.Count < ValueRules.MinGradientKeys)
+            if (colors.Count < HeldRampKeys)
             {
                 colors.Add(new GradientColorKeyValue(colors[0].Color4, ValueRules.MaxGradientTime));
                 alphas.Add(new GradientAlphaKeyValue(alphas[0].Alpha, ValueRules.MaxGradientTime));
@@ -126,6 +130,9 @@ namespace BH.SDK.Interop.AfterBeat
             return new GradientValue(colors, alphas,
                 GradientInterpolationMode.PerceptualBlend, GradientColorSpace.Linear);
         }
+
+        /// <summary> Stops a single authored colour is held across - see the import above. </summary>
+        private const int HeldRampKeys = 2;
 
         /// <summary> Where a colour keyframe keeps its theme slot. </summary>
         public const int ColorSlotIndex = 0;

@@ -453,7 +453,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var songSeconds = ResolveSongLength(meta, options);
             if (songSeconds <= 0f) return measured;
 
-            var songFrames = Math.Clamp(ABTimeMap.ToFrame(songSeconds, options.Framerate),
+            var songFrames = Math.Clamp(ABTimeMap.ToFrameCount(songSeconds, options.Framerate),
                 FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration);
 
             if (measured > songFrames)
@@ -536,7 +536,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 }
             }
 
-            var frames = ABTimeMap.ToFrame(seconds, options.Framerate) + TailFrames;
+            var frames = ABTimeMap.ToFrameCount(seconds, options.Framerate) + TailFrames;
             return Math.Clamp(frames, FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration);
         }
 

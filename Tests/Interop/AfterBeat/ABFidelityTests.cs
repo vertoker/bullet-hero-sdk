@@ -157,7 +157,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             Assert.IsNotNull(themeRef, "the background follows the theme rather than being resolved once");
             Assert.AreEqual(ABThemeMap.BackgroundIndex, themeRef.ThemeColorIndex);
-            Assert.AreEqual(0, background.Frame);
+            Assert.AreEqual(FrameRules.MinFrame, background.Frame);
         }
 
         #endregion
@@ -183,7 +183,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             Assert.IsNotNull(fixedLimit, "the frame is fixed, not merely bounded");
             Assert.AreEqual(ABEventsImporter.SourceAspectWidth, fixedLimit.Aspect.Width);
             Assert.AreEqual(ABEventsImporter.SourceAspectHeight, fixedLimit.Aspect.Height);
-            Assert.AreEqual(0, limit.Frame);
+            Assert.AreEqual(FrameRules.MinFrame, limit.Frame);
         }
 
         // The export writes no limit either way - the target format has no field for one. What is
@@ -245,7 +245,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var level = Import(LevelOf(Square(0f)));
             var zoom = level.Game.CameraEvents.Zooms.Single();
 
-            Assert.AreEqual(0, zoom.Frame);
+            Assert.AreEqual(FrameRules.MinFrame, zoom.Frame);
             Assert.AreEqual(
                 ABEventsImporter.ImportZoomValue(ABEventsImporter.DefaultSourceZoom),
                 ((FloatValue)zoom.Zoom).Value, 1e-4f);
@@ -288,7 +288,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var level = Import(LevelOf(Square(0f)));
 
             var key = level.Game.PlayerEvents.Sizes.Single();
-            Assert.AreEqual(0, key.Frame, "one key on the first frame states it for the whole level");
+            Assert.AreEqual(FrameRules.MinFrame, key.Frame,
+                "one key on the first frame states it for the whole level");
             Assert.AreEqual(ABEventsImporter.ImportedPlayerSize, ((FloatValue)key.Value).Value, 1e-4f);
         }
 

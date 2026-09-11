@@ -5,6 +5,7 @@ using BH.SDK.Interop.AfterBeat.Import;
 using BH.SDK.Interop.AfterBeat.Models;
 using BH.SDK.Models.Enums;
 using BH.SDK.Models.Objects;
+using BH.SDK.Rules;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests.Interop.AfterBeat
@@ -59,8 +60,10 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
         #region Range math
 
+        // The frame is given as an OFFSET into the object's own life; a sample sits on a real local
+        // frame, which counts from FrameRules.MinFrame like every other frame in the format.
         private static ABOpacityHitGate.OpacitySample Sample(int frame, float opacity)
-            => new(frame, opacity);
+            => new(FrameRules.MinFrame + frame, opacity);
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -72,7 +75,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 new[] { Sample(0, 1f), Sample(30, 1f) }, 120);
 
             Assert.AreEqual(1, ranges.Count);
-            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 0, ranges[0].Start);
             Assert.AreEqual(120, ranges[0].Duration);
         }
 
@@ -88,7 +91,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 new[] { Sample(0, 1f), Sample(30, 1f), Sample(60, 0f) }, 120);
 
             Assert.AreEqual(1, ranges.Count);
-            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 0, ranges[0].Start);
             Assert.AreEqual(30, ranges[0].Duration);
         }
 
@@ -131,7 +134,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             // fade-in [0, 30) and the fade-out [60, 90) are both out - the stretch BETWEEN them is
             // what the name says, and it ends where the fade-out begins rather than where it ends.
             Assert.AreEqual(1, ranges.Count);
-            Assert.AreEqual(30, ranges[0].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 30, ranges[0].Start);
             Assert.AreEqual(30, ranges[0].Duration);
         }
 
@@ -152,9 +155,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             // the key after it, and runs to the end of the object because the last key's value is
             // held forward. The two adjacent opaque segments [60, 80) and [80, 120) merge into one.
             Assert.AreEqual(2, ranges.Count);
-            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 0, ranges[0].Start);
             Assert.AreEqual(20, ranges[0].Duration);
-            Assert.AreEqual(60, ranges[1].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 60, ranges[1].Start);
             Assert.AreEqual(60, ranges[1].Duration);
         }
 
@@ -170,7 +173,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 new[] { Sample(30, 1f), Sample(60, 0f) }, 120);
 
             Assert.AreEqual(1, ranges.Count);
-            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 0, ranges[0].Start);
             Assert.AreEqual(30, ranges[0].Duration);
         }
 
@@ -185,7 +188,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         // overshooting curve harmless on frames where it is at full alpha.
 
         private static ABOpacityHitGate.OpacitySample Eased(int frame, float opacity, EaseType ease)
-            => new(frame, opacity, ease);
+            => new(FrameRules.MinFrame + frame, opacity, ease);
 
         [Test]
         [Author(Metadata.Author.Vertoker)]
@@ -199,7 +202,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 new[] { Sample(0, 1f), Eased(60, 0f, EaseType.Constant) }, 120);
 
             Assert.AreEqual(1, ranges.Count);
-            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 0, ranges[0].Start);
             Assert.AreEqual(59, ranges[0].Duration,
                 "only the last cell of the hold straddles the drop");
         }
@@ -247,10 +250,10 @@ namespace BH.SDK.Tests.Interop.AfterBeat
         {
             var samples = new[] { Sample(30, 1f), Eased(60, 0.5f, EaseType.Linear) };
 
-            Assert.AreEqual(1f, ABOpacityHitGate.ResolveOpacity(samples, 0f), 1e-5f);
-            Assert.AreEqual(1f, ABOpacityHitGate.ResolveOpacity(samples, 30f), 1e-5f);
-            Assert.AreEqual(0.75f, ABOpacityHitGate.ResolveOpacity(samples, 45f), 1e-5f);
-            Assert.AreEqual(0.5f, ABOpacityHitGate.ResolveOpacity(samples, 90f), 1e-5f);
+            Assert.AreEqual(1f, ABOpacityHitGate.ResolveOpacity(samples, FrameRules.MinFrame + 0f), 1e-5f);
+            Assert.AreEqual(1f, ABOpacityHitGate.ResolveOpacity(samples, FrameRules.MinFrame + 30f), 1e-5f);
+            Assert.AreEqual(0.75f, ABOpacityHitGate.ResolveOpacity(samples, FrameRules.MinFrame + 45f), 1e-5f);
+            Assert.AreEqual(0.5f, ABOpacityHitGate.ResolveOpacity(samples, FrameRules.MinFrame + 90f), 1e-5f);
         }
 
         [Test]
@@ -305,7 +308,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var ranges = ABOpacityHitGate.ResolveOpaqueRanges(samples, 120, 0.5f);
 
             Assert.AreEqual(1, ranges.Count);
-            Assert.AreEqual(0, ranges[0].Start);
+            Assert.AreEqual(FrameRules.MinFrame + 0, ranges[0].Start);
             Assert.AreEqual(30, ranges[0].Duration,
                 "half a linear fade is where alpha drops through 0.5");
         }

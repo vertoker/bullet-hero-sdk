@@ -136,7 +136,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             // A loop shorter than two frames has no room for a there-and-back pair at this
             // framerate, and writing one anyway puts two keyframes on one frame, which the format
             // forbids outright. It is a static object as far as this import is concerned.
-            var loopFrames = ABTimeMap.ToFrame(animation.Length, framerate);
+            var loopFrames = ABTimeMap.ToFrameCount(animation.Length, framerate);
             if (!animation.IsActive || loopFrames < 2)
             {
                 target.Positions.Add(new PosKey(basePosition, FrameRules.MinFrame));
@@ -150,7 +150,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var loopRotation = animation.Rotation * ABValueMap.DegreesToRadians;
 
             var periodFrames = Math.Max(2, loopFrames);
-            var startFrame = Math.Max(0, ABTimeMap.ToFrame(animation.Delay, framerate));
+            var startFrame = FrameRules.MinFrame + ABTimeMap.ToFrameCount(animation.Delay, framerate);
             var maxKeys = context.Options.MaxParallaxLoopKeys;
 
             var truncated = false;

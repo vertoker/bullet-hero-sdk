@@ -82,7 +82,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
         /// <summary> A stretch of an object's own life, local to its span. </summary>
         public readonly struct FrameRange
         {
-            /// <summary> First frame of the range. </summary>
+            /// <summary> First frame of the range, local to the object's span and therefore counting
+            /// from <see cref="FrameRules.MinFrame"/>. </summary>
             public readonly int Start;
             /// <summary> How many frames it covers. </summary>
             public readonly int Duration;
@@ -174,12 +175,13 @@ namespace BH.SDK.Interop.AfterBeat.Import
         // earlier than the source game, in the direction that cannot kill a player who already saw
         // the object start to fade.
 
-        /// <summary> The stretches of [0, duration) over which the source was fully opaque. </summary>
+        /// <summary> The stretches of the object's own life over which the source was fully opaque. </summary>
         public static List<FrameRange> ResolveOpaqueRanges(IReadOnlyList<OpacitySample> samples, int duration)
             => ResolveOpaqueRanges(samples, duration, DefaultThreshold);
 
-        /// <summary> The stretches of [0, duration) the source spent drawn at or above
-        /// <paramref name="threshold"/> alpha. </summary>
+        /// <summary> The stretches of the object's own life the source spent drawn at or above
+        /// <paramref name="threshold"/> alpha, in LOCAL frames - so the first of them is
+        /// <see cref="FrameRules.MinFrame"/> and the last is <c>duration</c>. </summary>
         public static List<FrameRange> ResolveOpaqueRanges(IReadOnlyList<OpacitySample> samples,
             int duration, float threshold)
         {
@@ -189,10 +191,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
             // Walked forwards once, so the cursor only ever moves up: the whole sweep costs one pass
             // over the frames plus one over the keys, not a key search per frame.
             var cursor = 0;
-            var start = -1;
-            var opaqueAtOpeningEdge = IsOpaque(OpacityAt(samples, 0f, ref cursor), threshold);
+            var start = FrameRules.NoFrame;
+            var lastFrame = FrameRules.LastFrameOf(duration);
+            var opaqueAtOpeningEdge = IsOpaque(OpacityAt(samples, FrameRules.MinFrame, ref cursor), threshold);
 
-            for (var frame = 0; frame < duration; frame++)
+            for (var frame = FrameRules.MinFrame; frame <= lastFrame; frame++)
             {
                 var opaqueAtClosingEdge = IsOpaque(OpacityAt(samples, frame + 1f, ref cursor), threshold);
                 var opaque = opaqueAtOpeningEdge && opaqueAtClosingEdge;
@@ -200,16 +203,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
                 if (opaque)
                 {
-                    if (start < 0) start = frame;
+                    if (start == FrameRules.NoFrame) start = frame;
                     continue;
                 }
 
-                if (start < 0) continue;
+                if (start == FrameRules.NoFrame) continue;
                 ranges.Add(new FrameRange(start, frame - start));
-                start = -1;
+                start = FrameRules.NoFrame;
             }
 
-            if (start >= 0) ranges.Add(new FrameRange(start, duration - start));
+            if (start != FrameRules.NoFrame) ranges.Add(new FrameRange(start, lastFrame - start + 1));
             return ranges;
         }
 
@@ -246,7 +249,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
         private static bool IsOpaque(float opacity, float threshold) => opacity >= threshold;
 
         private static bool IsWholeSpan(IReadOnlyList<FrameRange> ranges, int duration)
-            => ranges.Count == 1 && ranges[0].Start == 0 && ranges[0].Duration >= duration;
+            => ranges.Count == 1 && ranges[0].Start == FrameRules.MinFrame && ranges[0].Duration >= duration;
 
         // The easing comes across unreported on purpose: ABObjectImporter reads the same names off
         // the same keys for the colour track itself and reports whatever it approximates there, and
@@ -286,7 +289,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 Name = string.Empty,
                 Active = true,
                 Layer = 0,
-                Span = new FrameSpan(parent.Span.StartFrame + range.Start, range.Duration),
+                Span = new FrameSpan(parent.Span.ToGlobalFrame(range.Start), range.Duration),
                 ShapeId = ShapeId.Null,
                 ColliderId = colliderId,
                 ShaderType = ShaderType.Auto,

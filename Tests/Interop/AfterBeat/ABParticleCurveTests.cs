@@ -315,7 +315,9 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             var gradient = ((EffectColorGradientOverLife)EffectOf(source).Color).Gradient;
 
-            Assert.AreEqual(ValueRules.MinGradientKeys, gradient.ColorKeys.Count);
+            // Two, though one stop is legal now: the import holds a single authored colour at both
+            // ends rather than collapsing it, so the author can edit either end afterwards.
+            Assert.AreEqual(2, gradient.ColorKeys.Count);
             Assert.AreEqual(0f, gradient.ColorKeys[0].Time, 1e-4f);
             Assert.AreEqual(1f, gradient.ColorKeys[^1].Time, 1e-4f);
         }

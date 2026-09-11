@@ -317,13 +317,15 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 var obj = pair.Value;
                 if (obj == null) continue;
 
-                if (obj.Span.EndFrame > end) end = obj.Span.EndFrame;
+                // A COUNT is what this measures, and a timeline of N frames holds frames 1..N, so
+                // the count a frame demands is that frame's own number. EndFrame is the exclusive
+                // boundary AFTER the span, hence its LastFrame here.
+                if (obj.Span.LastFrame > end) end = obj.Span.LastFrame;
 
                 foreach (var track in ObjectTracks.Of(obj, ObjectTrackMask.All))
                 for (var i = 0; i < track.Count; i++)
                 {
-                    // +1 because a duration is a COUNT: a key on frame 32 needs a length of 33.
-                    var reach = obj.Span.StartFrame + track.FrameAt(i) + 1;
+                    var reach = FrameRules.CountOf(obj.Span.ToGlobalFrame(track.FrameAt(i)));
                     if (reach > end) end = reach;
                 }
             }

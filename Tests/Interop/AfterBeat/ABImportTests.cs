@@ -58,15 +58,17 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.Import(ABMockData.CreateLevel(), null, Options());
             var imported = result.Level.Game.Objects.Values.First();
 
-            Assert.AreEqual(60, imported.Span.StartFrame, "object starts at 1s");
-            CollectionAssert.AreEqual(new[] { 0, 120 }, imported.Positions.Select(k => k.Frame).ToArray());
+            Assert.AreEqual(FrameRules.MinFrame + 60, imported.Span.StartFrame, "object starts at 1s");
+            CollectionAssert.AreEqual(new[] { 0, 120 },
+                imported.Positions.Select(k => k.Frame - FrameRules.MinFrame).ToArray());
 
             // Autokill Last Keyframe means the object dies AS it reaches its final keyframe, so
             // that keyframe lands exactly on the span's end boundary rather than inside it. It is
             // still needed: it is what every frame before it interpolates towards. Anything PAST
             // the boundary would be the real bug.
             foreach (var key in imported.Positions)
-                Assert.LessOrEqual(key.Frame, imported.Span.FrameDuration,
+                Assert.LessOrEqual(key.Frame,
+                    FrameRules.EndBoundaryOf(imported.Span.FrameDuration),
                     "a key past the span's own end would be unreachable in both formats");
         }
 

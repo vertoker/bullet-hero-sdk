@@ -4,6 +4,7 @@ using BH.SDK.Interop.AfterBeat.Import;
 using BH.SDK.Interop.AfterBeat.Models;
 using BH.SDK.Models.Objects;
 using BH.SDK.Models.Primitives;
+using BH.SDK.Rules;
 using NUnit.Framework;
 
 namespace BH.SDK.Tests.Interop.AfterBeat
@@ -49,7 +50,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
 
             Assert.AreEqual(2, result.Level.Game.Events.Themes.Count, "both theme keyframes crossed");
             Assert.AreEqual(ABIdMap.ToThemeId("theme-a"), result.Level.Game.Events.Themes[0].ThemeId);
-            Assert.AreEqual(1181, result.Level.Game.Events.Themes[1].Frame, "19.68s at 60fps");
+            Assert.AreEqual(FrameRules.MinFrame + 1181, result.Level.Game.Events.Themes[1].Frame,
+                "19.68s at 60fps");
         }
 
         // A level defining themes but never switching to one is ordinary authored content there and
@@ -68,7 +70,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.ImportJson(json, null, Options());
 
             Assert.AreEqual(1, result.Level.Game.Events.Themes.Count);
-            Assert.AreEqual(0, result.Level.Game.Events.Themes[0].Frame);
+            Assert.AreEqual(FrameRules.MinFrame, result.Level.Game.Events.Themes[0].Frame);
             CollectionAssert.Contains(result.Report.Issues.Select(i => i.Code).ToArray(),
                 "theme_track_synthesized");
         }
@@ -95,7 +97,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.ImportJson(json, null, Options());
             var placement = result.Level.Game.Objects.Values.OfType<PrefabObject>().Single();
 
-            Assert.AreEqual(457, placement.Span.StartFrame, "7.6166s at 60fps");
+            Assert.AreEqual(FrameRules.MinFrame + 457, placement.Span.StartFrame, "7.6166s at 60fps");
 
             // The length is the template's own, not the level's - a placement covering the whole
             // timeline is unreadable in the editor and useless to trim.
@@ -188,7 +190,8 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var result = ABLevelImporter.ImportJson(json, null, Options());
             var rotations = result.Level.Game.Objects.Values.Single().Rotations;
 
-            CollectionAssert.AreEqual(new[] { 0, 60, 120 }, rotations.Select(k => k.Frame).ToArray());
+            CollectionAssert.AreEqual(new[] { 0, 60, 120 },
+                rotations.Select(k => k.Frame - FrameRules.MinFrame).ToArray());
             Assert.AreEqual(90f, Degrees(rotations[0]), 1e-3f, "first delta is measured from no rotation");
             Assert.AreEqual(60f, Degrees(rotations[1]), 1e-3f, "90 - 30");
             Assert.AreEqual(90f, Degrees(rotations[2]), 1e-3f, "60 + 30");
@@ -213,7 +216,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var force = (BH.SDK.Models.Values.Vector2Value)velocities[0].Force;
             Assert.AreEqual(3f, force.X, 1e-4f);
             Assert.AreEqual(-4f, force.Y, 1e-4f);
-            Assert.AreEqual(60, velocities[1].Frame, "1s at 60fps");
+            Assert.AreEqual(FrameRules.MinFrame + 60, velocities[1].Frame, "1s at 60fps");
 
             var deferred = result.Report.Issues.Single(i => i.Code == "event_player_force");
             Assert.AreEqual(BH.SDK.Interop.InteropSeverity.Deferred, deferred.Severity);

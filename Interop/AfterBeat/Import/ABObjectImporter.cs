@@ -982,7 +982,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
             var settings = ABParticleMap.TryRead(source);
             if (settings == null || settings.Value.DespawnOnEnd) return span;
 
-            var tail = ABTimeMap.ToFrame(settings.Value.TimelineLength, framerate);
+            var tail = ABTimeMap.ToFrameCount(settings.Value.TimelineLength, framerate);
             return ABTimeMap.FromFrames(span.StartFrame, span.StartFrame + span.FrameDuration + tail);
         }
 

@@ -97,7 +97,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var camera = ABLevelImporter.Import(LevelWithCollidingEvents(), null, Options())
                 .Level.Game.CameraEvents;
 
-            var collided = (Vector2Value)camera.Positions.Single(key => key.Frame == 1).Pos;
+            var collided = (Vector2Value)camera.Positions.Single(key => key.Frame == FrameRules.MinFrame + 1).Pos;
 
             Assert.AreEqual(3f, collided.X, "later keyframe's x");
             Assert.AreEqual(4f, collided.Y, "later keyframe's y");
@@ -141,7 +141,7 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 root.Scales.Select(key => key.Frame).ToArray(),
                 "camera zoom and camera scale must agree on which keyframe survived");
 
-            var scale = (Vector2Value)root.Scales.Single(key => key.Frame == 1).Scale;
+            var scale = (Vector2Value)root.Scales.Single(key => key.Frame == FrameRules.MinFrame + 1).Scale;
             Assert.AreEqual(40f / ABEventsImporter.DefaultSourceZoom, scale.X, 1e-5f,
                 "the later zoom is the one the scale node carries");
         }

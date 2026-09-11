@@ -20,14 +20,31 @@ namespace BH.SDK.Interop.AfterBeat
     /// <summary> Seconds to frames, and Afterbeat's autokill rules to a <see cref="FrameSpan"/>. </summary>
     public static class ABTimeMap
     {
+        // A TIME AND A LENGTH CROSS THIS BORDER DIFFERENTLY. Afterbeat's second zero is this
+        // format's FIRST FRAME, not its frame zero, so an instant picks the origin up on the way in
+        // and drops it on the way out. A DURATION has no origin to pick up - it is the same number
+        // of frames whichever frame it starts on - which is why ToFrameCount/ToSecondsCount exist
+        // beside these rather than being spelled with them.
+
         /// <summary> Seconds to the frame containing them. </summary>
         public static int ToFrame(float seconds, int framerate)
         {
             if (framerate <= 0) framerate = FrameRules.MinFramerate;
-            var frame = (long)Math.Round((double)seconds * framerate, MidpointRounding.AwayFromZero);
+            var frame = (long)Math.Round((double)seconds * framerate, MidpointRounding.AwayFromZero)
+                        + FrameRules.MinFrame;
             if (frame < FrameRules.MinFrame) return FrameRules.MinFrame;
             if (frame > FrameRules.MaxFrame) return FrameRules.MaxFrame;
             return (int)frame;
+        }
+
+        /// <summary> Seconds to a COUNT of frames - a length, never a position on the timeline. </summary>
+        public static int ToFrameCount(float seconds, int framerate)
+        {
+            if (framerate <= 0) framerate = FrameRules.MinFramerate;
+            var count = (long)Math.Round((double)seconds * framerate, MidpointRounding.AwayFromZero);
+            if (count < 0) return 0;
+            if (count > FrameRules.MaxFrameDuration) return FrameRules.MaxFrameDuration;
+            return (int)count;
         }
 
         // AFTERBEAT KEEPS NO TIME IT WAS GIVEN. Every keyframe time it reads or writes goes through
@@ -49,11 +66,20 @@ namespace BH.SDK.Interop.AfterBeat
         /// keyframe per time. </summary>
         public const int MaxLosslessFramerate = 100;
 
-        /// <summary> A frame's own start, in seconds, on the grid the target format stores. </summary>
+        /// <summary> A frame's own start, in seconds, on the grid the target format stores. The
+        /// timeline's first frame is second zero. </summary>
         public static float ToSeconds(int frame, int framerate)
         {
             if (framerate <= 0) framerate = FrameRules.MinFramerate;
-            return SnapToSourceGrid(frame / (float)framerate);
+            return SnapToSourceGrid((frame - FrameRules.MinFrame) / (float)framerate);
+        }
+
+        /// <summary> How long a COUNT of frames lasts, on that same grid - the counterpart
+        /// <see cref="ToSeconds"/> must not be used for. </summary>
+        public static float ToSecondsCount(int frameCount, int framerate)
+        {
+            if (framerate <= 0) framerate = FrameRules.MinFramerate;
+            return SnapToSourceGrid(frameCount / (float)framerate);
         }
 
         /// <summary> One time as the target format will hold it. </summary>
@@ -187,7 +213,7 @@ namespace BH.SDK.Interop.AfterBeat
 
             var start = Math.Clamp(startFrame, FrameRules.MinFrame, FrameRules.MaxFrame);
             var duration = Math.Max(FrameRules.MinFrameDuration, endFrame - start);
-            var maxDuration = FrameRules.MaxFrameDuration - start;
+            var maxDuration = FrameRules.MaxFrame - start + 1;
             if (duration > maxDuration) duration = Math.Max(FrameRules.MinFrameDuration, maxDuration);
 
             return new FrameSpan(start, duration);
@@ -244,7 +270,7 @@ namespace BH.SDK.Interop.AfterBeat
 
             target.StartTime = ToSeconds(span.StartFrame, framerate);
             target.AutokillType = (int)ABAutokillType.FixedTime;
-            target.AutokillOffset = ToSeconds(span.FrameDuration, framerate);
+            target.AutokillOffset = ToSecondsCount(span.FrameDuration, framerate);
         }
     }
 }
