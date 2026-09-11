@@ -374,8 +374,9 @@ namespace BH.SDK.Interop.AfterBeat.Import
         }
 
         // Placements are minted into the LEVEL's scope, after the ordinary objects, so an id table
-        // built for the objects cannot collide with them. Their materialized children do not exist
-        // yet - see ABPrefabImporter's header.
+        // built for the objects cannot collide with them. Their children are minted too - into the
+        // placement's own id table rather than as objects, which is what a level file carries now;
+        // see ABPrefabImporter's header.
         private static void ImportPlacements(VgdLevel source, Level level, ABImportContext context)
         {
             if (source.PrefabPlacements == null) return;
@@ -412,8 +413,8 @@ namespace BH.SDK.Interop.AfterBeat.Import
             }
 
             if (source.PrefabPlacements.Count > 0)
-                context.Report.Info("placements_need_materializing",
-                    "Prefab placements were imported as placements. They draw nothing until the editor materializes them, which it does once on load.",
+                context.Report.Info("placements_imported",
+                    "Prefab placements were imported as placements rather than as copies of their templates, with the id table that makes their content rebuildable.",
                     "prefab_objects");
         }
 

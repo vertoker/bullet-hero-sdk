@@ -15,13 +15,16 @@ namespace BH.SDK.Interop.AfterBeat.Import
     // here too, so this is one of the few parts of the format that crosses structurally rather than
     // by approximation.
     //
-    // What does NOT happen here is materialization. A placement in this format draws nothing until
-    // PrefabMaterializer copies the template's objects into the hosting scope, and that service
-    // lives in the consuming Unity project, not in the SDK. So an imported level arrives with real
-    // templates and real placements and an empty ObjectIds table, and the host is expected to
-    // resync once after the import. An import used somewhere without a materializer produces a
-    // level whose prefabs are present in the file and invisible on screen - which is the same thing
-    // that happens to a placement created by hand, so it is a known state rather than a broken one.
+    // What does NOT happen here is materialization - but the ID TABLE IS STILL FILLED, and the
+    // difference matters. A placement's copies stopped being written to the file: they are rebuilt
+    // from pfid + ids + mod every time a level is read (BH.SDK.Utils.PrefabVirtualizationUtils), so
+    // an imported level with a filled table is a COMPLETE level, drawn correctly by anything that
+    // opens it, with or without a host. It used to arrive with an empty table and wait for the
+    // editor to resync it once; an empty table now means a placement that expands to nothing, which
+    // is the state of a placement created by hand and not yet pointed at a template.
+    //
+    // Minting the ids is all that is needed here, and it is deliberately all that happens: whether
+    // the copies exist as objects is the reader's business at every other entry point too.
     //
     // The template gets its OWN ObjectId namespace, minted by the Prefab itself: ids are
     // scope-relative in this format, so a template object and a level object may share the number 1
@@ -93,6 +96,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             /// <summary> Start of the earliest placement, in seconds. </summary>
             public float Earliest { get; }
+
             /// <summary> Start of the latest one. </summary>
             public float Latest { get; }
 
@@ -122,6 +126,7 @@ namespace BH.SDK.Interop.AfterBeat.Import
                         Math.Max(window.Latest, time), window.Count + 1)
                     : new PlacementWindow(time, time, 1);
             }
+
             return windows.Count > 0 ? windows : null;
         }
 
@@ -210,6 +215,17 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 Layer = ResolveLayer(context, placementIndex, path),
                 ParentObjectId = context.ResolveParent(source.ParentId, path),
             };
+
+            // THE ID TABLE IS FILLED HERE, and that is what makes an imported level complete on its
+            // own rather than complete once a host has resynced it. A placement's copies are not in
+            // the file any more - they are rebuilt from pfid + ids + mod on the way in - so an empty
+            // table is no longer "not materialized yet", it is a placement that expands to nothing.
+            // Minting is all that is needed: the ids are what the table means, and the copies
+            // themselves are BH.SDK.Utils.PrefabVirtualizationUtils' work, here as everywhere else.
+            if (templates != null && templates.TryGetValue(prefabId, out var placed)
+                                  && placed?.Objects != null)
+                foreach (var innerId in placed.Objects.Keys)
+                    placement.ObjectIds[innerId] = context.Mint(null);
 
             // See VgdPrefabPlacement.RepeatCount: the source game stores it and draws nothing from
             // it, so neither does this - but a level author who set it meant something by it.
@@ -323,12 +339,13 @@ namespace BH.SDK.Interop.AfterBeat.Import
                 if (obj.Span.LastFrame > end) end = obj.Span.LastFrame;
 
                 foreach (var track in ObjectTracks.Of(obj, ObjectTrackMask.All))
-                for (var i = 0; i < track.Count; i++)
-                {
-                    var reach = FrameRules.CountOf(obj.Span.ToGlobalFrame(track.FrameAt(i)));
-                    if (reach > end) end = reach;
-                }
+                    for (var i = 0; i < track.Count; i++)
+                    {
+                        var reach = FrameRules.CountOf(obj.Span.ToGlobalFrame(track.FrameAt(i)));
+                        if (reach > end) end = reach;
+                    }
             }
+
             return Math.Clamp(end, FrameRules.MinFrameDuration, FrameRules.MaxFrameDuration);
         }
     }

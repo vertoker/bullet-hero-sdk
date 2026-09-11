@@ -266,7 +266,15 @@ namespace BH.SDK.Tests.Interop.AfterBeat
             var placement = result.Level.Game.Objects.Values.OfType<PrefabObject>().Single();
             Assert.IsTrue(placement.PrefabId.IsEnabled());
             Assert.AreEqual(template.PrefabId, placement.PrefabId);
-            Assert.IsEmpty(placement.ObjectIds, "materializing is the host's job, not the importer's");
+
+            // ONE ENTRY PER TEMPLATE OBJECT, and the copies themselves are still nobody's job here.
+            // An empty table used to mean "not materialized yet, the host will see to it"; it now
+            // means a placement that rebuilds into nothing, so the importer mints the ids and every
+            // reader builds the same content out of them.
+            Assert.AreEqual(template.Objects.Count, placement.ObjectIds.Count,
+                "an imported placement carries the id table its content is rebuilt from");
+            CollectionAssert.AreEquivalent(template.Objects.Keys, placement.ObjectIds.Keys);
+            CollectionAssert.AllItemsAreUnique(placement.ObjectIds.Values);
         }
 
         // The regression the whole level-wide layer plan exists for. A prefab-heavy level used to
@@ -776,10 +784,14 @@ namespace BH.SDK.Tests.Interop.AfterBeat
                 Shape = (int)ABShape.Square,
             };
 
-            target.Move.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { 0f, 0f } });
-            target.Scale.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { x, y } });
-            target.Rotate.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { degrees } });
-            target.Color.Keyframes.Add(new VgdKeyframe { Time = 0f, Values = new System.Collections.Generic.List<float> { 0f, 100f } });
+            target.Move.Keyframes.Add(new VgdKeyframe
+                { Time = 0f, Values = new System.Collections.Generic.List<float> { 0f, 0f } });
+            target.Scale.Keyframes.Add(new VgdKeyframe
+                { Time = 0f, Values = new System.Collections.Generic.List<float> { x, y } });
+            target.Rotate.Keyframes.Add(new VgdKeyframe
+                { Time = 0f, Values = new System.Collections.Generic.List<float> { degrees } });
+            target.Color.Keyframes.Add(new VgdKeyframe
+                { Time = 0f, Values = new System.Collections.Generic.List<float> { 0f, 100f } });
             return target;
         }
 
