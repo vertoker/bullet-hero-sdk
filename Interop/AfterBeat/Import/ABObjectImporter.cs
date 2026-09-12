@@ -1440,7 +1440,11 @@ namespace BH.SDK.Interop.AfterBeat.Import
             if (target is EffectObject) return;
 
             var track = source.Scale;
-            if (track?.Keyframes == null) return;
+            if (track?.Keyframes == null)
+            {
+                SeedSize(source, target);
+                return;
+            }
 
             var report = context.Report;
             var toScale = target is TextObject
@@ -1469,10 +1473,35 @@ namespace BH.SDK.Interop.AfterBeat.Import
 
             ABTimeMap.DeduplicateByFrame(into, k => k.Frame, report, path);
 
-            // The object's own scale went to Scales, so the shape's shrink has nowhere to be undone
-            // except a Size of its own - which is empty here and would otherwise fall back to one.
-            if (toScale && target is not TextObject && Math.Abs(shapeFit - 1f) > float.Epsilon)
-                target.Sizes.Add(new ScaKey(new Vector2Value(shapeFit, shapeFit), FrameRules.MinFrame));
+            // Two ways to end up with no extent of its own, and both are ordinary: the scale went to
+            // Scales because this object's children inherit it, or the source carried no scale
+            // KEYFRAME at all - the track itself is always present, empty or not.
+            if (toScale || target.Sizes.Count == 0) SeedSize(source, target);
+        }
+
+        // THE UNIT SQUARE AN OBJECT USED TO GET FOR FREE, written out because it no longer comes for
+        // free: an empty Sizes track reads as ZERO now (BH.Shared.defaults.size) - a group node with
+        // no extent of its own - and two paths through ImportScales leave it empty. One is an object
+        // whose scale went to Scales because its children inherit it, which is 39% of the parents in
+        // the measured corpus (see AFTERBEAT_ISSUE.md), the other an object whose scale track carries
+        // no keyframe. Both are ordinary drawn shapes over there and would otherwise arrive invisible -
+        // and a child anchor-stretched over such a parent (ABOpacityHitGate's collider) would come
+        // out with no rect either, since RectTransform2D.Apply adds `parent.size * (max - min)`.
+        //
+        // It carries the custom-polygon shrink where there is one: that factor multiplies into the
+        // SIZE and never into the scale, since the object grew and its children did not - see
+        // ABShapeMap.GetCustomSizeCompensation.
+        //
+        // Text is not seeded here because ApplyTextSize measures its own block and clears whatever is
+        // on the track first, and an emitter never reaches this method at all.
+        private static void SeedSize(VgdObject source, RectObject target)
+        {
+            if (target is TextObject) return;
+
+            var shapeFit = ABShapeMap.GetCustomSizeCompensation(source);
+            target.Sizes.Add(new ScaKey(
+                new Vector2Value(ValueRules.DefaultScaX * shapeFit, ValueRules.DefaultScaY * shapeFit),
+                FrameRules.MinFrame));
         }
 
         // A child whose own mask disagreed with the field its parent's scale had to go into. Both

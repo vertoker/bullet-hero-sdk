@@ -763,6 +763,15 @@ namespace BH.SDK.Interop.AfterBeat.Export
                 track.Keyframes.Add(NewKeyframe(key.Frame, key.Ease, framerate, x, y));
             }
 
+            // AN EMPTY SIZE TRACK IS A VALUE, NOT AN ABSENCE, and writing nothing would hand the far
+            // side its own default instead. Over there an object without a scale keyframe is one unit
+            // square; here it is a group node with no extent at all (BH.Shared.defaults.size), which
+            // is what a bare rect and a prefab placement are. So it goes out as the zero it means,
+            // and the object draws nothing on either side. Text and placements are exported from
+            // Scales, whose empty-track value is still one, so they are left alone.
+            if (!fromScales && exported.Count == 0)
+                track.Keyframes.Add(NewKeyframe(FrameRules.MinFrame, EaseType.Linear, framerate, 0f, 0f));
+
             if (!fromScales && dropped is { Count: > 0 })
                 context.Report.Approximated("scale_track_dropped",
                     "Afterbeat has one size per object; this format's separate scale multiplier has no field there and is not exported.",
